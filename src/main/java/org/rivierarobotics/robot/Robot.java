@@ -20,7 +20,55 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.DaggerGlobalComponent;
+import org.rivierarobotics.inject.GlobalComponent;
 
 public class Robot extends TimedRobot {
+    private GlobalComponent globalComponent;
+    private CommandComponent commandComponent;
+
+    @Override
+    public void robotInit() {
+        globalComponent = DaggerGlobalComponent.create();
+        globalComponent.robotInit();
+        commandComponent = globalComponent.getCommandComponentBuilder().build();
+        DriverStation.getInstance().silenceJoystickConnectionWarning(true);
+    }
+
+    @Override
+    public void robotPeriodic() {
+    }
+
+    @Override
+    public void autonomousInit() {
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void teleopInit() {
+        globalComponent.getButtonConfiguration().initTeleop();
+    }
+
+    @Override
+    public void teleopPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void disabledInit() {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().clearButtons();
+    }
+
+    @Override
+    public void disabledPeriodic() {
+    }
 }
