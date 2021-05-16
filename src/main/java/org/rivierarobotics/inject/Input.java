@@ -37,9 +37,4 @@ public @interface Input {
         RIGHT_JS,
         BUTTONS
     }
-
-    @Qualifier
-    @interface Composite {
-        User value();
-    }
 }
