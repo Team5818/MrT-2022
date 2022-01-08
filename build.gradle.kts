@@ -1,7 +1,5 @@
-import com.techshroom.inciseblue.commonLib
-
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.8.0"
+    id("org.rivierarobotics.gradlerioredux") version "0.9.2"
 }
 
 gradleRioRedux {
@@ -10,7 +8,7 @@ gradleRioRedux {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven {
         name = "octyl.net"
         url = uri("https://maven.octyl.net/repository/team5818-releases")
@@ -19,14 +17,14 @@ repositories {
 
 dependencies {
     implementation("org.rivierarobotics:5818-lib:0.2.1")
-    implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
-    commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
-        compileOnly(lib("annotations"))
-        annotationProcessor(lib("processor"))
-    }
-    commonLib("com.google.dagger", "dagger", "2.25.4") {
-        implementation(lib())
-        annotationProcessor(lib("compiler"))
-    }
-    simulation("edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${edu.wpi.first.toolchain.NativePlatforms.desktop}@zip")
+    implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.2")
+
+    compileOnly("net.octyl.apt-creator:apt-creator-annotations:0.1.4")
+    annotationProcessor("net.octyl.apt-creator:apt-creator-processor:0.1.4")
+
+    implementation("com.google.dagger:dagger:2.40.5")
+    annotationProcessor("com.google.dagger:dagger-compiler:2.40.5")
 }
+
+// Gradle RIO is not applied until this is called!
+gradleRioRedux.applyGradleRioConfiguration()
