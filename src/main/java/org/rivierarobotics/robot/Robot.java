@@ -20,55 +20,51 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.inject.CommandComponent;
-import org.rivierarobotics.inject.DaggerGlobalComponent;
-import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
+import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
+import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
+import org.rivierarobotics.util.StateSpace.VelocityStateSpaceModel;
 
 public class Robot extends TimedRobot {
-    private GlobalComponent globalComponent;
-    private CommandComponent commandComponent;
+    VelocityStateSpaceModel m;
+    PositionStateSpaceModel p;
+    public static final RobotShuffleboard shuffleboard = new RobotShuffleboard();
 
+    /**
+     * This method is run when the robot is first started up and should be used for any
+     * initialization code.
+     */
     @Override
     public void robotInit() {
-        globalComponent = DaggerGlobalComponent.create();
-        globalComponent.robotInit();
-        commandComponent = globalComponent.getCommandComponentBuilder().build();
-        DriverStation.getInstance().silenceJoystickConnectionWarning(true);
+        Logging.initialize();
+        initializeAllSubsystems();
+        Gyro.getInstance().resetGyro();
+
     }
 
     @Override
     public void robotPeriodic() {
-    }
-
-    @Override
-    public void autonomousInit() {
-    }
-
-    @Override
-    public void autonomousPeriodic() {
         CommandScheduler.getInstance().run();
     }
 
     @Override
     public void teleopInit() {
-        globalComponent.getButtonConfiguration().initTeleop();
-    }
-
-    @Override
-    public void teleopPeriodic() {
-        CommandScheduler.getInstance().run();
+        new ButtonConfiguration().initTeleop();
     }
 
     @Override
     public void disabledInit() {
         CommandScheduler.getInstance().cancelAll();
-        CommandScheduler.getInstance().clearButtons();
     }
 
-    @Override
-    public void disabledPeriodic() {
+    private void initializeAllSubsystems() {
+        DriveTrain.getInstance();
     }
+
+
 }
+
+

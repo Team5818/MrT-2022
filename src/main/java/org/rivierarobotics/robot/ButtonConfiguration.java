@@ -20,38 +20,15 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
-import org.rivierarobotics.inject.CommandComponent;
-import org.rivierarobotics.inject.Input;
-
-import javax.inject.Inject;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.drive.SetDriveVoltage;
+import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 
 public class ButtonConfiguration {
-    private final Joystick driverLeft;
-    private final Joystick driverRight;
-    private final Joystick coDriverLeft;
-    private final Joystick coDriverRight;
-    private final Joystick driverButtons;
-    private final Joystick coDriverButtons;
-    private final CommandComponent cmds;
-
-    @Inject
-    public ButtonConfiguration(@Input(user = Input.User.DRIVER, type = Input.Type.LEFT_JS) Joystick driverLeft,
-                               @Input(user = Input.User.DRIVER, type = Input.Type.RIGHT_JS) Joystick driverRight,
-                               @Input(user = Input.User.CODRIVER, type = Input.Type.LEFT_JS) Joystick coDriverLeft,
-                               @Input(user = Input.User.CODRIVER, type = Input.Type.RIGHT_JS) Joystick coDriverRight,
-                               @Input(user = Input.User.DRIVER, type = Input.Type.BUTTONS) Joystick driverButtons,
-                               @Input(user = Input.User.CODRIVER, type = Input.Type.BUTTONS) Joystick coDriverButtons,
-                               CommandComponent.Builder component) {
-        this.driverLeft = driverLeft;
-        this.driverRight = driverRight;
-        this.coDriverLeft = coDriverLeft;
-        this.coDriverRight = coDriverRight;
-        this.driverButtons = driverButtons;
-        this.coDriverButtons = coDriverButtons;
-        this.cmds = component.build();
-    }
-
     public void initTeleop() {
+        new JoystickButton(ControlMap.driverLeft, 1).whenPressed(new SetDriveVoltage(7));
+        new JoystickButton(ControlMap.driverLeft, 2).whenPressed(new SetWheelbaseAngle(-90).withTimeout(4));
+        new JoystickButton(ControlMap.driverRight, 1).whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
+        new JoystickButton(ControlMap.driverRight, 2).whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
     }
 }
