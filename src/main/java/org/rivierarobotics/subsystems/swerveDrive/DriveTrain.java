@@ -1,3 +1,23 @@
+/*
+ * This file is part of Placeholder-2022, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.rivierarobotics.subsystems.swerveDrive;
 
 import edu.wpi.first.math.MatBuilder;
@@ -51,9 +71,9 @@ public class DriveTrain extends SubsystemBase {
     private final SwerveDriveKinematics swerveDriveKinematics;
     private final HolonomicDriveController holonomicDriveController;
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
-
-    RSTable[] loggingTables = new RSTable[4];
-
+    private double startTime = Timer.getFPGATimestamp();
+    private Trajectory trajectory = new Trajectory();
+    private RSTable[] loggingTables = new RSTable[4];
     private final RSTab tab;
 
     public DriveTrain() {
@@ -69,9 +89,7 @@ public class DriveTrain extends SubsystemBase {
         swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 5636, false, false);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
-
         this.gyro = Gyro.getInstance();
-
         this.swerveDriveKinematics = new SwerveDriveKinematics(
                 swervePosition[0], swervePosition[1], swervePosition[2], swervePosition[3]
         );
@@ -107,20 +125,20 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
     }
 
-    public void setAngleOfSwerveModules(double angle) {
+    public void setSwerveModuleAngle(double angle) {
         for (var m : swerveModules) {
             m.setSteeringMotorAngle(angle);
         }
     }
 
-    public void setVelocityOfSwerveModules(double vel) {
+    public void setSwerveModuleVelocity(double vel) {
         for (var m : swerveModules) {
             m.setDriveMotorVelocity(vel);
         }
     }
 
-    public void testSetVoltage(double v) {
-        swerveModules[3].setDriveMotorVoltage(v);
+    public void testSetVoltage(double v, int id) {
+        swerveModules[id].setDriveMotorVoltage(v);
     }
 
     public SwerveDriveKinematics getSwerveDriveKinematics() {
@@ -157,9 +175,6 @@ public class DriveTrain extends SubsystemBase {
             throw new UncheckedIOException(exception);
         }
     }
-
-    private double startTime = Timer.getFPGATimestamp();
-    Trajectory trajectory = new Trajectory();
 
     /**
      * Call this method periodically to follow a trajectory.
@@ -223,7 +238,6 @@ public class DriveTrain extends SubsystemBase {
     @Override
     public void periodic() {
         updateOdometry();
-
         periodicLogging();
 
         for (var m : swerveModules) {

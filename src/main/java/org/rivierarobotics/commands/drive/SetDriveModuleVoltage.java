@@ -20,35 +20,22 @@
 
 package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
-import org.rivierarobotics.util.Gyro;
 
-
-public class SetDriveAngle extends CommandBase {
+public class SetDriveModuleVoltage extends InstantCommand {
     private final DriveTrain dt;
-    private final Gyro gyro;
-    private final double angle;
+    private final double v;
+    private final int id;
 
-    public SetDriveAngle(double angle) {
+    public SetDriveModuleVoltage(double v, int id) {
         this.dt = DriveTrain.getInstance();
-        this.gyro = Gyro.getInstance();
-        this.angle = angle;
-        addRequirements(this.dt);
+        this.v = v;
+        this.id = id;
     }
 
     @Override
-    public void execute() {
-        if (angle >= 0) {
-            dt.drive(0, 0, DriveTrain.MAX_ANGULAR_SPEED, false);
-        } else {
-            dt.drive(0, 0, -DriveTrain.MAX_ANGULAR_SPEED, false);
-        }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(gyro.getAngle(), angle, 1);
+    public void initialize() {
+        dt.testSetVoltage(v, id);
     }
 }

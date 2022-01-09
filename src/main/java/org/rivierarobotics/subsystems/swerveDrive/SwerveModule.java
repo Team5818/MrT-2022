@@ -1,3 +1,23 @@
+/*
+ * This file is part of Placeholder-2022, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.rivierarobotics.subsystems.swerveDrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -14,16 +34,16 @@ public class SwerveModule {
     private static final double WHEEL_RADIUS = 0.0508;
     private final double zeroTicks;
     private static final int ENCODER_RESOLUTION = 4096;
-
-    private final CANSparkMax driveMotor;
-    private final VelocityStateSpaceModel driveController;
     private double currDriveVoltage = 0;
     private double currSteerVoltage = 0;
     private double targetVelocity = 0;
+    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+
+    private final CANSparkMax driveMotor;
+    private final VelocityStateSpaceModel driveController;
     private final SystemIdentification dmSID = new SystemIdentification(0.0, 7.0 / 2.5, 7 / (2.5 / 0.01));
 
     private final WPI_TalonSRX steeringMotor;
-    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     private final PositionStateSpaceModel steerController;
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
@@ -46,7 +66,6 @@ public class SwerveModule {
 
         steeringMotor.setInverted(!steeringInverted);
         driveMotor.setInverted(driveInverted);
-
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
@@ -145,7 +164,6 @@ public class SwerveModule {
         double targetRotation = state.angle.getRadians();
         double currAng = getAngle();
         double clampedAng = clampAngle(getAngle());
-
 
         double posTarget = targetRotation + Math.PI;
         double negTarget = targetRotation - Math.PI;

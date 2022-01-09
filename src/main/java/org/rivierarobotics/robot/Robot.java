@@ -22,27 +22,16 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
 import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
-import org.rivierarobotics.util.StateSpace.VelocityStateSpaceModel;
 
 public class Robot extends TimedRobot {
-    VelocityStateSpaceModel m;
-    PositionStateSpaceModel p;
-    public static final RobotShuffleboard shuffleboard = new RobotShuffleboard();
 
-    /**
-     * This method is run when the robot is first started up and should be used for any
-     * initialization code.
-     */
     @Override
     public void robotInit() {
         Logging.initialize();
         initializeAllSubsystems();
         Gyro.getInstance().resetGyro();
-
     }
 
     @Override
@@ -63,7 +52,6 @@ public class Robot extends TimedRobot {
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
     }
-
 
 }
 
