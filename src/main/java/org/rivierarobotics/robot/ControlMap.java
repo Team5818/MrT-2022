@@ -11,6 +11,8 @@ public class ControlMap {
     public static final Joystick driverButtons = new Joystick(4);
     public static final Joystick coDriverButtons = new Joystick(5);
 
+    private ControlMap() {
 
+    }
 
 }

@@ -10,4 +10,9 @@ public class MotorIDs {
     public static final int BACK_LEFT_STEER = 6;
     public static final int BACK_RIGHT_DRIVE = 7;
     public static final int BACK_RIGHT_STEER = 8;
+
+    private MotorIDs() {
+
+    }
+
 }

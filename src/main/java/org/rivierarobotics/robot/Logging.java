@@ -8,6 +8,10 @@ public class Logging {
     public static NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     public static RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
 
+    private Logging() {
+
+    }
+
     public static void initialize() {
         networkTableInstance = NetworkTableInstance.getDefault();
         robotShuffleboard = new RobotShuffleboard();
