@@ -13,7 +13,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import org.rivierarobotics.lib.MathUtil;
 
 /**
- * State-Space Control System using the FRC Characterization method - kS kV and kA
+ * State-Space Control System using the FRC Characterization method - kS kV and kA.
  */
 public class PositionStateSpaceModel {
     private final LinearSystemLoop<N2, N1, N1> linearSystemLoop;
@@ -22,7 +22,7 @@ public class PositionStateSpaceModel {
     private final double loopTime;
 
     /**
-     * State-Space Position Control System using the FRC Characterization method - kV and kA
+     * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
      * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
      * @param positionAccuracy       how accurate we think our position model is (higher is more aggressive)
@@ -43,7 +43,7 @@ public class PositionStateSpaceModel {
     }
 
     /**
-     * State-Space Position Control System using the FRC Characterization method - kV and kA
+     * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
      * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
      * @param positionAccuracy       how accurate we think our position model is (higher is more aggressive)
@@ -105,7 +105,10 @@ public class PositionStateSpaceModel {
         linearSystemLoop.correct(VecBuilder.fill(units));
         linearSystemLoop.predict(loopTime);
         var target = linearSystemLoop.getU(0);
-        if(target > 0) return target + (MathUtil.isWithinTolerance(units, 0, 0.01) ? 0 : systemIdentification.kS);
-        else return target - (MathUtil.isWithinTolerance(units, 0, 0.01) ? 0 : systemIdentification.kS);
+        if (target > 0) {
+            return target + (MathUtil.isWithinTolerance(units, 0, 0.01) ? 0 : systemIdentification.kS);
+        } else {
+            return target - (MathUtil.isWithinTolerance(units, 0, 0.01) ? 0 : systemIdentification.kS);
+        }
     }
 }

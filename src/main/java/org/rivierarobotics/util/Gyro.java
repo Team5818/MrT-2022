@@ -8,8 +8,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Gyro {
     private final AHRS navX;
     private static Gyro gyro;
+
     public static Gyro getInstance() {
-        if(gyro == null) gyro = new Gyro();
+        if (gyro == null) {
+            gyro = new Gyro();
+        }
         return gyro;
     }
 

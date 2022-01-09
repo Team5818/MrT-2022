@@ -10,6 +10,7 @@ public class SwerveControl extends CommandBase {
     private final DriveTrain drivetrain;
     private final Joystick leftJoystick;
     private final Joystick rightJoystick;
+
     public SwerveControl() {
         this.drivetrain = DriveTrain.getInstance();
         this.leftJoystick = ControlMap.driverLeft;

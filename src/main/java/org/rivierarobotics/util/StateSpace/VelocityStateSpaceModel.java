@@ -12,7 +12,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import org.rivierarobotics.lib.MathUtil;
 
 /**
- * State-Space Control System using the FRC Characterization method - kS kV and kA
+ * State-Space Control System using the FRC Characterization method - kS kV and kA.
  */
 public class VelocityStateSpaceModel {
     private final LinearSystemLoop<N1, N1, N1> linearSystemLoop;
@@ -21,7 +21,7 @@ public class VelocityStateSpaceModel {
     private final double loopTime;
 
     /**
-     * State-Space Position Control System using the FRC Characterization method - kV and kA
+     * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
      * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
      * @param velocityAccuracy       how accurate we think our velocity model is (higher is more aggressive)
@@ -38,7 +38,7 @@ public class VelocityStateSpaceModel {
     }
 
     /**
-     * State-Space Position Control System using the FRC Characterization method - kV and kA
+     * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
      * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
      * @param velocityAccuracy       how accurate we think our velocity model is (higher is more aggressive)

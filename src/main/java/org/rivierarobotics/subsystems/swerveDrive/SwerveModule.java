@@ -12,7 +12,7 @@ import org.rivierarobotics.util.StateSpace.VelocityStateSpaceModel;
 
 public class SwerveModule {
     private static final double WHEEL_RADIUS = 0.0508;
-    private final double zero_ticks;
+    private final double zeroTicks;
     private static final int ENCODER_RESOLUTION = 4096;
 
     private final CANSparkMax driveMotor;
@@ -20,30 +20,29 @@ public class SwerveModule {
     private double currDriveVoltage = 0;
     private double currSteerVoltage = 0;
     private double targetVelocity = 0;
+    private final SystemIdentification dmSID = new SystemIdentification(0.0, 7.0 / 2.5, 7 / (2.5 / 0.01));
 
     private final WPI_TalonSRX steeringMotor;
-    private final static double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     private final PositionStateSpaceModel steerController;
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
+    private final SystemIdentification tmSID = new SystemIdentification(0.0, 7.0 / 4.0, 7 / (4.0 / 0.01));
 
     /**
      * Constructs a SwerveModule.
      *
      * @param driveMotorChannel    ID for the drive motor.
      * @param steeringMotorChannel ID for the turning motor.
-     * @param zero_ticks           ticks when angle = 0
+     * @param zeroTicks           ticks when angle = 0
      */
-    public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zero_ticks, boolean driveInverted, boolean steeringInverted) {
+    public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks, boolean driveInverted, boolean steeringInverted) {
         this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
-        this.zero_ticks = zero_ticks;
+        this.zeroTicks = zeroTicks;
 
         driveMotor.getEncoder().setPositionConversionFactor(2 * Math.PI * WHEEL_RADIUS / ENCODER_RESOLUTION);
         driveMotor.getEncoder().setVelocityConversionFactor((2 * Math.PI * WHEEL_RADIUS / ENCODER_RESOLUTION) * 10);
-
-        SystemIdentification dmSID = new SystemIdentification(0.0, 7.0/2.5, 7/(2.5/0.01));
-        SystemIdentification tmSID = new SystemIdentification(0.0, 7.0/4.0, 7/(4.0/0.01));
 
         steeringMotor.setInverted(!steeringInverted);
         driveMotor.setInverted(driveInverted);
@@ -65,8 +64,12 @@ public class SwerveModule {
         double low = -Math.PI;
         double high = Math.PI;
         angle = MathUtil.wrapToCircle(angle, 2 * Math.PI);
-        if (angle > high) angle -= 2 * Math.PI;
-        if (angle < low) angle += 2 * Math.PI;
+        if (angle > high) {
+            angle -= 2 * Math.PI;
+        }
+        if (angle < low) {
+            angle += 2 * Math.PI;
+        }
         return angle;
     }
 
@@ -75,7 +78,7 @@ public class SwerveModule {
     }
 
     public double getAngle() {
-        return (steeringMotor.getSensorCollection().getPulseWidthPosition() - zero_ticks) * STEER_MOTOR_TICK_TO_ANGLE;
+        return (steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getPosTicks() {
@@ -118,10 +121,15 @@ public class SwerveModule {
 
     public double getAngleDiff(double src, double target) {
         double diff = target - src;
-        if (Math.abs(diff) <= Math.PI) return diff;
+        if (Math.abs(diff) <= Math.PI) {
+            return diff;
+        }
 
-        if (diff > 0) diff -= 2 * Math.PI;
-        else diff += 2 * Math.PI;
+        if (diff > 0) {
+            diff -= 2 * Math.PI;
+        } else {
+            diff += 2 * Math.PI;
+        }
 
         return diff;
     }
@@ -145,7 +153,9 @@ public class SwerveModule {
 
         if (Math.abs(getAngleDiff(clampedAng, posTarget)) <= Math.abs(getAngleDiff(clampedAng, negTarget))) {
             diff = getAngleDiff(clampedAng, posTarget);
-        } else diff = getAngleDiff(clampedAng, negTarget);
+        } else {
+            diff = getAngleDiff(clampedAng, negTarget);
+        }
 
         if (Math.abs(getAngleDiff(clampedAng, targetRotation)) <= Math.abs(diff)) {
             diff = getAngleDiff(clampedAng, targetRotation);
@@ -153,9 +163,11 @@ public class SwerveModule {
 
         double targetAng = currAng + diff;
 
-        if (MathUtil.isWithinTolerance(targetRotation, clampAngle(targetAng), 0.1))
+        if (MathUtil.isWithinTolerance(targetRotation, clampAngle(targetAng), 0.1)) {
             targetSpeed = state.speedMetersPerSecond;
-        else targetSpeed = -state.speedMetersPerSecond;
+        } else {
+            targetSpeed = -state.speedMetersPerSecond;
+        }
 
         this.targetRotation = new Rotation2d(targetAng);
         this.targetRotationClamped = new Rotation2d(clampAngle(targetAng));

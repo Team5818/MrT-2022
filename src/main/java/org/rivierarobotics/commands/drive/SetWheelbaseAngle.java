@@ -6,6 +6,7 @@ import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
 public class SetWheelbaseAngle extends CommandBase {
     private final DriveTrain dt;
     private final double angle;
+
     public SetWheelbaseAngle(double angle) {
         this.angle = Math.toRadians(angle);
         dt = DriveTrain.getInstance();

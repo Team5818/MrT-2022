@@ -20,12 +20,15 @@ public class SetDriveAngle extends CommandBase {
 
     @Override
     public void execute() {
-        if (angle >= 0) dt.drive(0, 0, DriveTrain.MAX_ANGULAR_SPEED, false);
-        else dt.drive(0, 0, -DriveTrain.MAX_ANGULAR_SPEED, false);
+        if (angle >= 0) {
+            dt.drive(0, 0, DriveTrain.MAX_ANGULAR_SPEED, false);
+        } else {
+            dt.drive(0, 0, -DriveTrain.MAX_ANGULAR_SPEED, false);
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(gyro.getAngle(),angle,1);
+        return MathUtil.isWithinTolerance(gyro.getAngle(), angle, 1);
     }
 }

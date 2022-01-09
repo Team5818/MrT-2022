@@ -6,6 +6,7 @@ import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
 public class SetDriveVoltage extends InstantCommand {
     private final DriveTrain dt;
     private final double v;
+
     public SetDriveVoltage(double v) {
         this.dt = DriveTrain.getInstance();
         this.v = v;

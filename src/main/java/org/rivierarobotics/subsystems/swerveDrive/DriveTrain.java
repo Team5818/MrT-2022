@@ -15,7 +15,6 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
@@ -24,6 +23,8 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
 /**
@@ -33,7 +34,9 @@ public class DriveTrain extends SubsystemBase {
     private static DriveTrain swerveDriveTrain;
 
     public static DriveTrain getInstance() {
-        if (swerveDriveTrain == null) swerveDriveTrain = new DriveTrain();
+        if (swerveDriveTrain == null) {
+            swerveDriveTrain = new DriveTrain();
+        }
         return swerveDriveTrain;
     }
 
@@ -44,7 +47,7 @@ public class DriveTrain extends SubsystemBase {
     private final Gyro gyro;
     private final SwerveModule[] swerveModules = new SwerveModule[4];
     private final Translation2d[] swervePosition = new Translation2d[4];
-    private final String[] driveIDs = new String[]{"FL","FR","BL","BR"};
+    private final String[] driveIDs = new String[]{"FL", "FR", "BL", "BR"};
     private final SwerveDriveKinematics swerveDriveKinematics;
     private final HolonomicDriveController holonomicDriveController;
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
@@ -150,7 +153,9 @@ public class DriveTrain extends SubsystemBase {
             trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
             startTime = Timer.getFPGATimestamp();
-        } catch (Exception ignored) { }
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
     }
 
     private double startTime = Timer.getFPGATimestamp();
@@ -161,7 +166,9 @@ public class DriveTrain extends SubsystemBase {
      * returns false when path is done.
      */
     public boolean followHolonomicController() {
-        if (Timer.getFPGATimestamp() - startTime > trajectory.getTotalTimeSeconds()) return false;
+        if (Timer.getFPGATimestamp() - startTime > trajectory.getTotalTimeSeconds()) {
+            return false;
+        }
 
         var state = trajectory.sample(Timer.getFPGATimestamp() - startTime);
         var controls = holonomicDriveController.calculate(
@@ -199,7 +206,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     private void periodicLogging() {
-        for(int i = 0; i < swerveModules.length; i++) {
+        for (int i = 0; i < swerveModules.length; i++) {
             loggingTables[i].setEntry(driveIDs[i] + " Swerve Velocity", swerveModules[i].getVelocity());
             loggingTables[i].setEntry(driveIDs[i] + " Swerve Angle", Math.toDegrees(swerveModules[i].getAbsoluteAngle()));
             loggingTables[i].setEntry(driveIDs[i] + " Swerve Drive Voltage", swerveModules[i].getDriveVoltage());
@@ -219,6 +226,8 @@ public class DriveTrain extends SubsystemBase {
 
         periodicLogging();
 
-        for (var m : swerveModules) m.periodic();
+        for (var m : swerveModules) {
+            m.periodic();
+        }
     }
 }
