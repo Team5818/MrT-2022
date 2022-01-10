@@ -18,16 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.util.ml;
 
-import dagger.Module;
-import dagger.Provides;
-import net.octyl.aptcreator.Provided;
+public class BoundingBox {
+    public final int ymin;
+    public final int ymax;
+    public final int xmin;
+    public final int xmax;
 
-import javax.inject.Singleton;
-
-@Module
-public class SubsystemModule {
-    private SubsystemModule() {
+    public BoundingBox(int ymin, int ymax, int xmin, int xmax) {
+        this.ymin = ymin;
+        this.ymax = ymax;
+        this.xmin = xmin;
+        this.xmax = xmax;
     }
 }

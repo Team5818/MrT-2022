@@ -18,18 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
+public class MotorIDs {
+    //Drive Train Motors
+    public static final int FRONT_RIGHT_DRIVE = 1;
+    public static final int FRONT_RIGHT_STEER = 2;
+    public static final int FRONT_LEFT_DRIVE = 3;
+    public static final int FRONT_LEFT_STEER = 4;
+    public static final int BACK_LEFT_DRIVE = 5;
+    public static final int BACK_LEFT_STEER = 6;
+    public static final int BACK_RIGHT_DRIVE = 7;
+    public static final int BACK_RIGHT_STEER = 8;
 
-public class ButtonConfiguration {
-    public void initTeleop() {
-        new JoystickButton(ControlMap.driverLeft, 2)
-                .whenPressed(new SetWheelbaseAngle(-90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 1)
-                .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 2)
-                .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+    private MotorIDs() {
     }
+
 }

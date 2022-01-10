@@ -18,23 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.inject;
+package org.rivierarobotics.commands.auto;
 
-import dagger.Component;
-import org.rivierarobotics.inject.CommandComponent.CCModule;
-import org.rivierarobotics.robot.ButtonConfiguration;
-import org.rivierarobotics.robot.ControlsModule;
-import org.rivierarobotics.subsystems.SubsystemModule;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-import javax.inject.Singleton;
+public class SimpleAuto extends CommandBase {
+    private final DriveTrain dt;
 
-@Component(modules = {SubsystemModule.class, ControlsModule.class, CCModule.class})
-@Singleton
-public abstract class GlobalComponent {
-    public void robotInit() {
+    public SimpleAuto() {
+        this.dt = DriveTrain.getInstance();
+        addRequirements(this.dt);
     }
 
-    public abstract ButtonConfiguration getButtonConfiguration();
+    @Override
+    public void initialize() {
+        dt.drivePath("testpath");
+    }
 
-    public abstract CommandComponent.Builder getCommandComponentBuilder();
+    @Override
+    public boolean isFinished() {
+        return !dt.followHolonomicController();
+    }
 }

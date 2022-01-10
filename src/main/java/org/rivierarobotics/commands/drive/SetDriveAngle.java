@@ -18,45 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.commands.drive.SwerveControl;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
-public class Robot extends TimedRobot {
 
-    @Override
-    public void robotInit() {
-        initializeAllSubsystems();
-        initializeDefaultCommands();
-        Gyro.getInstance().resetGyro();
+public class SetDriveAngle extends CommandBase {
+    private final DriveTrain dt;
+    private final Gyro gyro;
+    private final double angle;
+
+    public SetDriveAngle(double angle) {
+        this.dt = DriveTrain.getInstance();
+        this.gyro = Gyro.getInstance();
+        this.angle = angle;
+        addRequirements(this.dt);
     }
 
     @Override
-    public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
+    public void execute() {
+        dt.drive(0, 0, Math.signum(angle) * DriveTrain.MAX_ANGULAR_SPEED, false);
     }
 
     @Override
-    public void teleopInit() {
-        new ButtonConfiguration().initTeleop();
-    }
-
-    @Override
-    public void disabledInit() {
-        CommandScheduler.getInstance().cancelAll();
-    }
-
-    private void initializeAllSubsystems() {
-        DriveTrain.getInstance();
-    }
-
-    private void initializeDefaultCommands() {
-        CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(gyro.getAngle(), angle, 1);
     }
 }
-
-

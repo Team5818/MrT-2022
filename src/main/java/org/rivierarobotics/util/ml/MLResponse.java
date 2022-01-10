@@ -18,20 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.inject;
+package org.rivierarobotics.util.ml;
 
-import dagger.Module;
-import dagger.Subcomponent;
+import java.util.ArrayList;
 
-@Subcomponent
-public abstract class CommandComponent {
-
-    @Module(subcomponents = CommandComponent.class)
-    public interface CCModule {
-    }
-
-    @Subcomponent.Builder
-    public interface Builder {
-        CommandComponent build();
-    }
+public class MLResponse {
+    public ArrayList<MLObject> objects = new ArrayList<>();
 }

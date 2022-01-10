@@ -1,0 +1,7 @@
+RECTANGLE OBJECTS (top left of field is 0,0) all measurements in cm. Higher weight means less priority. Input is (top left), (bottom right)
+10.0
+(300,400),(350,870)
+50.0
+(300,0),(350,600)
+30.0
+(900,300),(1200,700)

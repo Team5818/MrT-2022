@@ -18,23 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.inject;
+package org.rivierarobotics.robot;
 
-import javax.inject.Qualifier;
+import edu.wpi.first.wpilibj.Joystick;
 
-@Qualifier
-public @interface Input {
-    User user();
-    Type type();
+public class ControlMap {
+    public static final Joystick driverLeft = new Joystick(0);
+    public static final Joystick driverRight = new Joystick(1);
+    public static final Joystick coDriverLeft = new Joystick(2);
+    public static final Joystick coDriverRight = new Joystick(3);
+    public static final Joystick driverButtons = new Joystick(4);
+    public static final Joystick coDriverButtons = new Joystick(5);
 
-    enum User {
-        DRIVER,
-        CODRIVER
+    private ControlMap() {
     }
 
-    enum Type {
-        LEFT_JS,
-        RIGHT_JS,
-        BUTTONS
-    }
 }

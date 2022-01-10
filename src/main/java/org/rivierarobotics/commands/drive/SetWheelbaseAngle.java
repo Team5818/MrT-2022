@@ -18,18 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-public class ButtonConfiguration {
-    public void initTeleop() {
-        new JoystickButton(ControlMap.driverLeft, 2)
-                .whenPressed(new SetWheelbaseAngle(-90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 1)
-                .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 2)
-                .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+public class SetWheelbaseAngle extends CommandBase {
+    private final DriveTrain dt;
+    private final double angle;
+
+    public SetWheelbaseAngle(double angle) {
+        this.angle = Math.toRadians(angle);
+        dt = DriveTrain.getInstance();
+    }
+
+    @Override
+    public void execute() {
+        dt.setSwerveModuleAngle(angle);
     }
 }

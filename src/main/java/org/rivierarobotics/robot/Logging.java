@@ -20,16 +20,13 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
 
-public class ButtonConfiguration {
-    public void initTeleop() {
-        new JoystickButton(ControlMap.driverLeft, 2)
-                .whenPressed(new SetWheelbaseAngle(-90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 1)
-                .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 2)
-                .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+public class Logging {
+    public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
+    public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
+
+    private Logging() {
     }
 }
