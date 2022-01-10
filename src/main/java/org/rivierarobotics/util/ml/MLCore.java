@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.ML;
+package org.rivierarobotics.util.ml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,12 +35,12 @@ import java.util.List;
 import java.util.Map;
 
 public class MLCore {
-    private static MLCore mlCore;
-    private final Gson mlInputParser;
     public static final double ANGLE_PER_PIXEL_X = 1.125 / 4.0;
     public static final double ANGLE_PER_PIXEL_Y = 0.75 / 2.0;
     public static final int CAMERA_WIDTH = 640;
     public static final int CAMERA_HEIGHT = 480;
+    private static MLCore mlCore;
+    private final Gson mlInputParser;
 
     public static MLCore getInstance() {
         if (mlCore == null) {

@@ -24,9 +24,6 @@ dependencies {
 
     compileOnly("net.octyl.apt-creator:apt-creator-annotations:0.1.4")
     annotationProcessor("net.octyl.apt-creator:apt-creator-processor:0.1.4")
-
-    //implementation("com.google.dagger:dagger:2.40.5")
-    //annotationProcessor("com.google.dagger:dagger-compiler:2.40.5")
 }
 
 // Gradle RIO is not applied until this is called!

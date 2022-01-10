@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.ML;
+package org.rivierarobotics.util.ml;
 
 public class MLObject {
     public final String label;

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.AIField;
+package org.rivierarobotics.util.aifield;
 
 import java.util.ArrayList;
 import java.util.List;

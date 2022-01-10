@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.AIField;
+package org.rivierarobotics.util.aifield;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
@@ -104,8 +104,6 @@ public class AIFieldDisplay implements Runnable {
 
                         needsToRender = false;
                     }
-                    // Imgproc.resize(fieldMat, resized, new Size(640,480));
-                    // outputStream.putFrame(resized);
                     outputStream.putFrame(fieldMat);
                 }, 0, updateRate, TimeUnit.MILLISECONDS
         );

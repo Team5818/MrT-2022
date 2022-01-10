@@ -18,10 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.ML;
+package org.rivierarobotics.util.ml;
 
-import java.util.ArrayList;
+public class BoundingBox {
+    public final int ymin;
+    public final int ymax;
+    public final int xmin;
+    public final int xmax;
 
-public class MLResponse {
-    public ArrayList<MLObject> objects = new ArrayList<>();
+    public BoundingBox(int ymin, int ymax, int xmin, int xmax) {
+        this.ymin = ymin;
+        this.ymax = ymax;
+        this.xmin = xmin;
+        this.xmax = xmax;
+    }
 }
