@@ -21,10 +21,6 @@
 package org.rivierarobotics.subsystems;
 
 import dagger.Module;
-import dagger.Provides;
-import net.octyl.aptcreator.Provided;
-
-import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {

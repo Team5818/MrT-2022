@@ -18,15 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.util.ML;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
+import java.util.ArrayList;
 
-public class Logging {
-    public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
-    public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
-
-    private Logging() {
-    }
+public class MLResponse {
+    public ArrayList<MLObject> objects = new ArrayList<>();
 }

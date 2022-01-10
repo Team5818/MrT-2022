@@ -18,15 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.util.ML;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
+public class BoundingBox {
+    public final int ymin;
+    public final int ymax;
+    public final int xmin;
+    public final int xmax;
 
-public class Logging {
-    public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
-    public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
-
-    private Logging() {
+    public BoundingBox(int ymin, int ymax, int xmin, int xmax) {
+        this.ymin = ymin;
+        this.ymax = ymax;
+        this.xmin = xmin;
+        this.xmax = xmax;
     }
 }
