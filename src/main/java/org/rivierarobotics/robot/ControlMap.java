@@ -23,7 +23,6 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class ControlMap {
-
     public static final Joystick driverLeft = new Joystick(0);
     public static final Joystick driverRight = new Joystick(1);
     public static final Joystick coDriverLeft = new Joystick(2);

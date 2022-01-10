@@ -21,7 +21,7 @@
 package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetDriveModuleVoltage extends InstantCommand {
     private final DriveTrain dt;

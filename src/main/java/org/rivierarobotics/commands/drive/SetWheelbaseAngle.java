@@ -21,7 +21,7 @@
 package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetWheelbaseAngle extends CommandBase {
     private final DriveTrain dt;

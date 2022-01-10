@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems.swerveDrive;
+package org.rivierarobotics.subsystems.swervedrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -42,12 +42,12 @@ public class SwerveModule {
     private final CANSparkMax driveMotor;
     private final VelocityStateSpaceModel driveController;
     private final SystemIdentification dmSID = new SystemIdentification(0.0, 7.0 / 2.5, 7 / (2.5 / 0.01));
-
     private final WPI_TalonSRX steeringMotor;
     private final PositionStateSpaceModel steerController;
+    private final SystemIdentification tmSID = new SystemIdentification(0.0, 7.0 / 4.0, 7 / (4.0 / 0.01));
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
-    private final SystemIdentification tmSID = new SystemIdentification(0.0, 7.0 / 4.0, 7 / (4.0 / 0.01));
+
 
     /**
      * Constructs a SwerveModule.
@@ -164,7 +164,6 @@ public class SwerveModule {
         double targetRotation = state.angle.getRadians();
         double currAng = getAngle();
         double clampedAng = clampAngle(getAngle());
-
         double posTarget = targetRotation + Math.PI;
         double negTarget = targetRotation - Math.PI;
         double diff;

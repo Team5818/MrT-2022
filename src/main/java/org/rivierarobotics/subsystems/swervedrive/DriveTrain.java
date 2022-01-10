@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems.swerveDrive;
+package org.rivierarobotics.subsystems.swervedrive;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;

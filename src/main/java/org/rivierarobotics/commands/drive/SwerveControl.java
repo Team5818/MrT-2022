@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
-import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SwerveControl extends CommandBase {
     private final DriveTrain driveTrain;
