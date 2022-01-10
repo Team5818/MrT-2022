@@ -21,7 +21,7 @@
 package org.rivierarobotics.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SimpleAuto extends CommandBase {
     private final DriveTrain dt;
