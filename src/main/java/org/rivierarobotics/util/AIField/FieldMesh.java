@@ -77,7 +77,7 @@ public class FieldMesh {
     private double totalTimePassed = 0;
     private double amtOfCalculations = 1;
 
-    public FieldMesh() throws FileNotFoundException {
+    private FieldMesh() throws FileNotFoundException {
         Path fieldDimension = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldInfo.txt");
         Scanner sc = new Scanner(new FileReader(fieldDimension.toFile()));
 

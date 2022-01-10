@@ -36,7 +36,7 @@ public class Gyro {
         return gyro;
     }
 
-    public Gyro() {
+    private Gyro() {
         this.navX = new AHRS(SPI.Port.kMXP);
     }
 

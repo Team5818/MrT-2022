@@ -76,7 +76,7 @@ public class DriveTrain extends SubsystemBase {
     private RSTable[] loggingTables = new RSTable[4];
     private final RSTab tab;
 
-    public DriveTrain() {
+    private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center
         swervePosition[0] = new Translation2d(0.3, -0.3); //FL
         swervePosition[1] = new Translation2d(0.3, 0.3); //FR

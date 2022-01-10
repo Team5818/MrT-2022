@@ -49,7 +49,7 @@ public class MLCore {
         return mlCore;
     }
 
-    public MLCore() {
+    private MLCore() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(MLResponse.class, new MLResponseDeserializer());
         mlInputParser = builder.create();
