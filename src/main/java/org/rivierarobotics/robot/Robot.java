@@ -29,7 +29,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        Logging.initialize();
         initializeAllSubsystems();
         Gyro.getInstance().resetGyro();
     }
@@ -52,7 +51,6 @@ public class Robot extends TimedRobot {
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
     }
-
 }
 
 
