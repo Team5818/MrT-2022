@@ -18,24 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.drive;
+package org.rivierarobotics.commands.auto;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
 
-public class SetDriveModuleVoltage extends InstantCommand {
+public class SimpleAuto extends CommandBase {
     private final DriveTrain dt;
-    private final double v;
-    private final int id;
 
-    public SetDriveModuleVoltage(double v, int id) {
+    public SimpleAuto() {
         this.dt = DriveTrain.getInstance();
-        this.v = v;
-        this.id = id;
+        addRequirements(this.dt);
     }
 
     @Override
     public void initialize() {
-        dt.testSetVoltage(v, id);
+        dt.drivePath("testpath");
+    }
+
+    @Override
+    public boolean isFinished() {
+        return !dt.followHolonomicController();
     }
 }

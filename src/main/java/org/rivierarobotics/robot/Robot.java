@@ -22,7 +22,8 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.commands.drive.SwerveControl;
+import org.rivierarobotics.subsystems.swerveDrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
 public class Robot extends TimedRobot {
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         initializeAllSubsystems();
+        initializeDefaultCommands();
         Gyro.getInstance().resetGyro();
     }
 
@@ -50,6 +52,10 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+    }
+
+    private void initializeDefaultCommands() {
+        CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
     }
 }
 

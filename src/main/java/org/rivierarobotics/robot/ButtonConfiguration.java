@@ -21,13 +21,10 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.drive.SetDriveModuleVoltage;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 
 public class ButtonConfiguration {
     public void initTeleop() {
-        new JoystickButton(ControlMap.driverLeft, 1)
-                .whenPressed(new SetDriveModuleVoltage(7, 3));
         new JoystickButton(ControlMap.driverLeft, 2)
                 .whenPressed(new SetWheelbaseAngle(-90).withTimeout(4));
         new JoystickButton(ControlMap.driverRight, 1)
