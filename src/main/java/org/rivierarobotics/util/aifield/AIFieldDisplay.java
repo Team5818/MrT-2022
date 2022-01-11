@@ -23,7 +23,6 @@ package org.rivierarobotics.util.aifield;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.Timer;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -33,87 +32,85 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Adds the "AI Mesh" Camera to the CameraServer which is
- * able to be updated with paths as the robot calculates them.
- * The Thread is only here for testing purposes only,
- * Updating the path should be done by calling updatePath
+ * Adds the "AI Mesh" Camera to the CameraServer which is able to be updated with paths as the robot calculates them.
+ * The Thread is only here for testing purposes only, Updating the path should be done by calling updatePath
  */
-public class AIFieldDisplay implements Runnable {
+public class AIFieldDisplay {
+    private final ScheduledExecutorService mainImageThread = Executors.newSingleThreadScheduledExecutor();
+    private final AtomicReference<Mat> renderFrame = new AtomicReference<>();
     private final CvSource outputStream;
     private final FieldMesh fieldMesh;
     private final int imgWidth;
     private final int imgHeight;
     private final double scalingRatio;
-    private final int updateRate;
-    private static final List<FieldNode> path = Collections.synchronizedList(new ArrayList<>());
-    private static volatile Trajectory generatedTrajectory;
-    private static volatile boolean needsToRender = false;
-    private static ScheduledExecutorService mainImageThread;
+    private Trajectory generatedTrajectory;
+    private Mat fieldMat;
+    private int tick;
 
-    public AIFieldDisplay(FieldMesh fieldMesh, int updateRate) throws IOException {
+    public AIFieldDisplay(int updateRate) throws IOException {
         int scalingFactor = 1000;
-        this.updateRate = updateRate;
         imgHeight = scalingFactor;
-        this.fieldMesh = fieldMesh;
+        this.fieldMesh = FieldMesh.getInstance();
         imgWidth = (int) (scalingFactor * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
         scalingRatio = (double) scalingFactor / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
-        mainImageThread = Executors.newSingleThreadScheduledExecutor();
-        startFieldThread(updateRate);
-    }
-
-    public void refresh() throws InterruptedException {
-        mainImageThread.shutdown();
-        mainImageThread.awaitTermination(10, TimeUnit.SECONDS);
-        mainImageThread = Executors.newSingleThreadScheduledExecutor();
+        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1));
+        updateField();
         startFieldThread(updateRate);
     }
 
     private void startFieldThread(int updateRate) {
-        Mat fieldMat = new Mat(imgHeight, imgWidth, CvType.CV_8UC(4), Scalar.all(100));
-        Mat fieldRef = createField();
-        Mat resized = new Mat();
-        fieldRef.copyTo(fieldMat);
-        mainImageThread.scheduleAtFixedRate(
-                () -> {
-                    if (needsToRender) {
-                        fieldRef.copyTo(fieldMat);
-                        List<FieldNode> tmp = path;
-                        if (generatedTrajectory != null) {
-                            for (double i = 0; i < generatedTrajectory.getTotalTimeSeconds(); i += 0.1) {
-                                if (generatedTrajectory.getTotalTimeSeconds() < i + 0.1) {
-                                    continue;
-                                }
-                                var pose1 = generatedTrajectory.sample(i);
-                                var pose2 = generatedTrajectory.sample(i + 0.1);
+        mainImageThread.scheduleAtFixedRate(() -> {
+            Mat image = renderFrame.getOpaque();
+            outputStream.putFrame(image);
+        }, 0, updateRate, TimeUnit.MILLISECONDS);
+    }
 
-                                Imgproc.arrowedLine(
-                                        fieldMat,
-                                        new Point(pose1.poseMeters.getX() * 100 * scalingRatio, pose1.poseMeters.getY() * 100 * scalingRatio),
-                                        new Point(pose2.poseMeters.getX() * 100 * scalingRatio, pose2.poseMeters.getY() * 100 * scalingRatio),
-                                        new Scalar(0, 0, 255 * (generatedTrajectory.sample(i).velocityMetersPerSecond) / 2), 10);
-                            }
-                        }
+    private void render() {
+        if (generatedTrajectory == null || fieldMat == null) {
+            return;
+        }
+        var trajectory = generatedTrajectory;
+        var newRenderFrame = fieldMat.clone();
 
-                        needsToRender = false;
-                    }
-                    outputStream.putFrame(fieldMat);
-                }, 0, updateRate, TimeUnit.MILLISECONDS
-        );
+        mainImageThread.submit(() -> {
+            for (double i = 0; i < trajectory.getTotalTimeSeconds(); i += 0.1) {
+                if (trajectory.getTotalTimeSeconds() < i + 0.1) {
+                    continue;
+                }
+                var pose1 = trajectory.sample(i);
+                var pose2 = trajectory.sample(i + 0.1);
+
+                Imgproc.arrowedLine(
+                    newRenderFrame,
+                    new Point(pose1.poseMeters.getX() * 100 * scalingRatio, pose1.poseMeters.getY() * 100 * scalingRatio),
+                    new Point(pose2.poseMeters.getX() * 100 * scalingRatio, pose2.poseMeters.getY() * 100 * scalingRatio),
+                    new Scalar(0, 0, 255 * (trajectory.sample(i).velocityMetersPerSecond) / 2),
+                    10
+                );
+            }
+            renderFrame.setOpaque(newRenderFrame);
+        });
     }
 
     public void updatePath(Trajectory trajectory) {
-        //AIFieldDisplay.path.clear();
-        //AIFieldDisplay.path.addAll(path);
-        generatedTrajectory = trajectory;
-        needsToRender = true;
+        generatedTrajectory = Objects.requireNonNull(trajectory);
+        render();
+    }
+
+    public void updateField() {
+        fieldMat = createField();
+        render();
     }
 
     private Mat createField() {
@@ -145,11 +142,11 @@ public class AIFieldDisplay implements Runnable {
         var weightedAreas = fieldMesh.getAreaWeights();
         for (var aw : weightedAreas) {
             Imgproc.rectangle(
-                    field,
-                    new Point(aw.x1 * scalingRatio, aw.y1 * scalingRatio),
-                    new Point(aw.x2 * scalingRatio, aw.y2 * scalingRatio),
-                    new Scalar(0, 0, 255 * (aw.weight / 20.0)),
-                    3);
+                field,
+                new Point(aw.x1 * scalingRatio, aw.y1 * scalingRatio),
+                new Point(aw.x2 * scalingRatio, aw.y2 * scalingRatio),
+                new Scalar(0, 0, 255 * (aw.weight / 20.0)),
+                3);
         }
     }
 
@@ -173,74 +170,16 @@ public class AIFieldDisplay implements Runnable {
         }
     }
 
-    private static boolean obstacles = false;
-    private static ScheduledExecutorService exe = Executors.newSingleThreadScheduledExecutor();
-
-    @Override
-    public void run() {
-        ScheduledExecutorService exe1 = Executors.newSingleThreadScheduledExecutor();
-        exe1.scheduleAtFixedRate(
-                () -> {
-                    if (!exe.isShutdown()) {
-                        exe.shutdown();
-                    }
-                    try {
-                        exe.awaitTermination(1, TimeUnit.SECONDS);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (obstacles) {
-                        for (int i = 0; i < 4; i++) {
-                            fieldMesh.removeObstacle(fieldMesh.getObstacles().get(fieldMesh.getObstacles().size() - 1));
-                        }
-                    }
-                    for (int i = 0; i < 4; i++) {
-                        int xpos = (int) (fieldMesh.fieldWidth * Math.random());
-                        int ypos = (int) (fieldMesh.fieldHeight * Math.random());
-
-                        var x1 = new int[]{xpos - 75, ypos - 75};
-                        var x2 = new int[]{xpos + 75, ypos - 75};
-                        var x3 = new int[]{xpos + 75, ypos + 75};
-                        var x4 = new int[]{xpos - 75, ypos + 75};
-                        ArrayList<int[]> list = new ArrayList<>();
-                        list.add(x1);
-                        list.add(x2);
-                        list.add(x3);
-                        list.add(x4);
-                        fieldMesh.addObstacle(list);
-                    }
-                    obstacles = true;
-                    try {
-                        refresh();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    exe = Executors.newSingleThreadScheduledExecutor();
-                    exe.scheduleWithFixedDelay(
-                            () -> {
-                                int count = 0;
-                                //System.out.println("Started");
-                                var time = Timer.getFPGATimestamp();
-                                Trajectory gen = null;
-                                while (gen == null) {
-                                    count++;
-                                    if (count > 5000) {
-                                        break;
-                                    }
-                                    int startx = (int) (0);
-                                    int endx = (int) (fieldMesh.fieldWidth * Math.random());
-                                    int starty = (int) (0);
-                                    int endy = (int) (fieldMesh.fieldHeight * Math.random());
-                                    //tmp = fieldMesh.getPath(startx, starty, endx, endy);
-                                    gen = fieldMesh.getTrajectory(startx / 100.0, starty / 100.0, endx / 100.0, endy / 100.0, true, 0);
-                                }
-                                //System.out.println("Path Generation took: " + new DecimalFormat("0.00").format((Timer.getFPGATimestamp() - time) * 100) + "ms");
-                                if (gen != null) {
-                                    updatePath(gen);
-                                }
-                            }, 0, 200, TimeUnit.MILLISECONDS
-                    );
-                }, 0, 5, TimeUnit.SECONDS
-        );
+    /**
+     * Make some visible changes to the field.
+     */
+    public void update() {
+        tick++;
+        if (tick % 50 == 0) {
+            int baseX = ThreadLocalRandom.current().nextInt(fieldMesh.fieldWidth);
+            int baseY = ThreadLocalRandom.current().nextInt(fieldMesh.fieldHeight);
+            fieldMesh.addWeightToArea(50, baseX, baseY, baseX + 100, baseY + 100);
+            updateField();
+        }
     }
 }

@@ -25,11 +25,23 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.aifield.AIFieldDisplay;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class Robot extends TimedRobot {
+    private AIFieldDisplay aiFieldDisplay;
 
     @Override
     public void robotInit() {
+        if (!isReal()) {
+            try {
+                aiFieldDisplay = new AIFieldDisplay(10);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
         initializeAllSubsystems();
         initializeDefaultCommands();
         Gyro.getInstance().resetGyro();
@@ -38,6 +50,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+
+        if (aiFieldDisplay != null) {
+            aiFieldDisplay.update();
+        }
     }
 
     @Override
