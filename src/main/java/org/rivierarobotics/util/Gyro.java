@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj.SPI;
 
 public class Gyro {
     private static Gyro gyro;
-    private final AHRS navX;
-
 
     public static Gyro getInstance() {
         if (gyro == null) {
@@ -35,6 +33,8 @@ public class Gyro {
         }
         return gyro;
     }
+
+    private final AHRS navX;
 
     private Gyro() {
         this.navX = new AHRS(SPI.Port.kMXP);

@@ -33,8 +33,8 @@ public class SwerveControl extends CommandBase {
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
-        this.leftJoystick = ControlMap.driverLeft;
-        this.rightJoystick = ControlMap.driverRight;
+        this.leftJoystick = ControlMap.DRIVER_LEFT;
+        this.rightJoystick = ControlMap.DRIVER_RIGHT;
         addRequirements(this.driveTrain);
     }
 

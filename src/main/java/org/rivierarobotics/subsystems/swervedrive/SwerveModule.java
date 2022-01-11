@@ -32,12 +32,13 @@ import org.rivierarobotics.util.StateSpace.VelocityStateSpaceModel;
 
 public class SwerveModule {
     private static final double WHEEL_RADIUS = 0.0508;
-    private final double zeroTicks;
     private static final int ENCODER_RESOLUTION = 4096;
+    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+
+    private final double zeroTicks;
     private double currDriveVoltage = 0;
     private double currSteerVoltage = 0;
     private double targetVelocity = 0;
-    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
 
     private final CANSparkMax driveMotor;
     private final VelocityStateSpaceModel driveController;
@@ -85,9 +86,6 @@ public class SwerveModule {
         angle = MathUtil.wrapToCircle(angle, 2 * Math.PI);
         if (angle > high) {
             angle -= 2 * Math.PI;
-        }
-        if (angle < low) {
-            angle += 2 * Math.PI;
         }
         return angle;
     }
@@ -180,10 +178,9 @@ public class SwerveModule {
 
         double targetAng = currAng + diff;
 
-        if (MathUtil.isWithinTolerance(targetRotation, clampAngle(targetAng), 0.1)) {
-            targetSpeed = state.speedMetersPerSecond;
-        } else {
-            targetSpeed = -state.speedMetersPerSecond;
+        targetSpeed = state.speedMetersPerSecond;
+        if (!MathUtil.isWithinTolerance(targetRotation, clampAngle(targetAng), 0.1)) {
+            targetSpeed *= -1;
         }
 
         this.targetRotation = new Rotation2d(targetAng);
