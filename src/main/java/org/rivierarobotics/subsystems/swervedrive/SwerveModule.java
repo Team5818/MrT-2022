@@ -20,20 +20,23 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
 import org.rivierarobotics.util.StateSpace.SystemIdentification;
 import org.rivierarobotics.util.StateSpace.VelocityStateSpaceModel;
 
 public class SwerveModule {
-    private static final double WHEEL_RADIUS = 0.0508;
+    private static final double WHEEL_RADIUS = 0.03915;
     private static final int ENCODER_RESOLUTION = 4096;
     private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+    private static final double GEARING = 11.0 / 40.0;
 
     private final double zeroTicks;
     private double currDriveVoltage = 0;
@@ -42,10 +45,10 @@ public class SwerveModule {
 
     private final CANSparkMax driveMotor;
     private final VelocityStateSpaceModel driveController;
-    private final SystemIdentification dmSID = new SystemIdentification(0.0, 7.0 / 2.5, 7 / (2.5 / 0.01));
+    private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
     private final WPI_TalonSRX steeringMotor;
     private final PositionStateSpaceModel steerController;
-    private final SystemIdentification tmSID = new SystemIdentification(0.0, 7.0 / 4.0, 7 / (4.0 / 0.01));
+    private final SystemIdentification tmSID = new SystemIdentification(0.093, 0.79016, 0.11946);
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
 
@@ -61,23 +64,25 @@ public class SwerveModule {
         this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
-
-        driveMotor.getEncoder().setPositionConversionFactor(2 * Math.PI * WHEEL_RADIUS / ENCODER_RESOLUTION);
-        driveMotor.getEncoder().setVelocityConversionFactor((2 * Math.PI * WHEEL_RADIUS / ENCODER_RESOLUTION) * 10);
-
-        steeringMotor.setInverted(steeringInverted);
+        driveMotor.restoreFactoryDefaults();
+        driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
+        driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60);
+        driveMotor.getEncoder().setPosition(0);
+        steeringMotor.setInverted(!steeringInverted);
         driveMotor.setInverted(driveInverted);
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
-                0.1, 0.00015, 12
+                0.1, 4, 12
         );
 
         this.steerController = new PositionStateSpaceModel(
                 tmSID, 1, 1,
                 0.01, 0.01, 0.1,
-                0.08, 12
+                0.1, 12
         );
+        this.steeringMotor.configContinuousCurrentLimit(15);
+        this.steeringMotor.configPeakCurrentLimit(20);
     }
 
     private double clampAngle(double angle) {
@@ -100,6 +105,10 @@ public class SwerveModule {
 
     public double getPosTicks() {
         return steeringMotor.getSensorCollection().getPulseWidthPosition();
+    }
+
+    public double getDriveTicks() {
+        return driveMotor.getEncoder().getPosition();
     }
 
     public double getDriveVoltage() {
@@ -157,6 +166,7 @@ public class SwerveModule {
      * @param state Desired state with speed and angle.
      */
     public void setDesiredState(SwerveModuleState state) {
+        SmartDashboard.putNumber(driveMotor.getDeviceId() + "", state.speedMetersPerSecond);
         //Update State-Space Controllers
         double targetSpeed = state.speedMetersPerSecond;
         double targetRotation = state.angle.getRadians();
