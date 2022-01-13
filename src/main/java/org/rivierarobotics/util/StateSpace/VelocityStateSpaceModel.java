@@ -117,6 +117,7 @@ public class VelocityStateSpaceModel {
     public double getAppliedVoltage(double unitsPerS) {
         linearSystemLoop.correct(VecBuilder.fill(unitsPerS));
         linearSystemLoop.predict(loopTime);
-        return linearSystemLoop.getU(0) + (MathUtil.isWithinTolerance(unitsPerS, 0, 0.01) ? 0 : systemIdentification.kS);
+        return linearSystemLoop.getU(0);
+        //return linearSystemLoop.getU(0) + (MathUtil.isWithinTolerance(unitsPerS, 0, 1) ? 0 : Math.signum(targetVelocity) * systemIdentification.kS);
     }
 }

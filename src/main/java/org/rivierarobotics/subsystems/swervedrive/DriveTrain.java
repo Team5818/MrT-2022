@@ -27,6 +27,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -52,7 +53,6 @@ import java.nio.file.Path;
  */
 public class DriveTrain extends SubsystemBase {
     private static DriveTrain swerveDriveTrain;
-    private static final String[] DRIVE_IDS = new String[]{"FL", "FR", "BL", "BR"};
 
     public static DriveTrain getInstance() {
         if (swerveDriveTrain == null) {
@@ -61,13 +61,14 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
-    public static final double MAX_SPEED = 2; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 2; // rad/s
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 4; // rad/s
+    public static final double MAX_SPEED = 0.75; // m/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 8; // rad/s
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 12; // rad/s
 
     private final Gyro gyro;
     private final SwerveModule[] swerveModules = new SwerveModule[4];
     private final Translation2d[] swervePosition = new Translation2d[4];
+    private final String[] driveIDs = new String[]{"FL", "FR", "BL", "BR"};
     private final SwerveDriveKinematics swerveDriveKinematics;
     private final HolonomicDriveController holonomicDriveController;
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
@@ -83,10 +84,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-0.3, -0.3); //BL
         swervePosition[3] = new Translation2d(-0.3, 0.3); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 2022, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 1590, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 1288, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 5636, false, true);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 2022, false, false);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 1590 + 2048, false, false);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 1288, false, false);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 5636, false, false);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -100,7 +101,7 @@ public class DriveTrain extends SubsystemBase {
                 swerveDriveKinematics,
                 //Standard deviations of model states. Increase these numbers to trust your model's state estimates less.
                 //This matrix is in the form [x, y, theta]^T, with units in meters and radians.
-                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(2, 2, .01),
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.3, 0.3, .01),
                 // Standard deviations of the encoder and gyro measurements. Increase these numbers to trust sensor
                 // readings from encoders and gyros less. This matrix is in the form [theta], with units in radians.
                 new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.1),
@@ -190,7 +191,7 @@ public class DriveTrain extends SubsystemBase {
                 swerveDrivePoseEstimator.getEstimatedPosition(),
                 state,
                 //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
-                state.poseMeters.getRotation()
+                new Rotation2d(0)
         );
 
         drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, controls.omegaRadiansPerSecond, true);
@@ -211,6 +212,10 @@ public class DriveTrain extends SubsystemBase {
         return swerveDrivePoseEstimator.getEstimatedPosition();
     }
 
+    public void resetPose() {
+        swerveDrivePoseEstimator.resetPosition(new Pose2d(0,0,new Rotation2d(0)), new Rotation2d(0));
+    }
+
     public ChassisSpeeds getChassisSpeeds() {
         return swerveDriveKinematics.toChassisSpeeds(
                 swerveModules[0].getState(),
@@ -222,16 +227,17 @@ public class DriveTrain extends SubsystemBase {
 
     private void periodicLogging() {
         for (int i = 0; i < swerveModules.length; i++) {
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Velocity", swerveModules[i].getVelocity());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Angle", Math.toDegrees(swerveModules[i].getAbsoluteAngle()));
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Drive Voltage", swerveModules[i].getDriveVoltage());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Steer Voltage", swerveModules[i].getSteerVoltage());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Full Angle", Math.toDegrees(swerveModules[i].getAngle()));
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Steer Velocity", swerveModules[i].getSteerMotorVel());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Target Rotation", swerveModules[i].getTargetRotation().getDegrees());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Abs Target Rotation", swerveModules[i].getTargetRotationClamped().getDegrees());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Target Velocity", swerveModules[i].getTargetVelocity());
-            loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Pos Ticks", swerveModules[i].getPosTicks());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Velocity", swerveModules[i].getVelocity());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Angle", Math.toDegrees(swerveModules[i].getAbsoluteAngle()));
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Drive Voltage", swerveModules[i].getDriveVoltage());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Steer Voltage", swerveModules[i].getSteerVoltage());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Full Angle", Math.toDegrees(swerveModules[i].getAngle()));
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Steer Velocity", swerveModules[i].getSteerMotorVel());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Target Rotation", swerveModules[i].getTargetRotation().getDegrees());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Abs Target Rotation", swerveModules[i].getTargetRotationClamped().getDegrees());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Target Velocity", swerveModules[i].getTargetVelocity());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Pos Ticks", swerveModules[i].getPosTicks());
+            loggingTables[i].setEntry(driveIDs[i] + " Swerve Pos Ticks Drive", swerveModules[i].getDriveTicks());
         }
     }
 

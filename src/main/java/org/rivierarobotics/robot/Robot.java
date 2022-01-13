@@ -21,6 +21,7 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -38,11 +39,17 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        SmartDashboard.putNumber("Gyro", Gyro.getInstance().getAngle());
+        SmartDashboard.putNumber("Robot PoseX", DriveTrain.getInstance().getRobotPose().getX());
+        SmartDashboard.putNumber("Robot PoseY", DriveTrain.getInstance().getRobotPose().getY());
+        SmartDashboard.putNumber("Robot Rotation", DriveTrain.getInstance().getRobotPose().getRotation().getDegrees());
     }
 
     @Override
     public void teleopInit() {
         new ButtonConfiguration().initTeleop();
+        Gyro.getInstance().resetGyro();
+        DriveTrain.getInstance().resetPose();
     }
 
     @Override

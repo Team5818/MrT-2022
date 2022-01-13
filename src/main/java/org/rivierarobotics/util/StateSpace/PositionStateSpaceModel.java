@@ -125,6 +125,6 @@ public class PositionStateSpaceModel {
         linearSystemLoop.correct(VecBuilder.fill(units));
         linearSystemLoop.predict(loopTime);
         var target = linearSystemLoop.getU(0);
-        return target + (MathUtil.isWithinTolerance(units, 0, 0.01) ? 0 : (Math.signum(target) * systemIdentification.kS));
+        return target + (MathUtil.isWithinTolerance(units, 0, 1) ? 0 : (Math.signum(target) * systemIdentification.kS));
     }
 }
