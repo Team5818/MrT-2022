@@ -112,14 +112,13 @@ public class FieldMesh {
         sc.nextLine();
 
         while (sc.hasNextLine()) {
+            double wt = sc.nextDouble();
             sc.nextLine();
             var m = parseInput.matcher(sc.nextLine());
             m.find();
             String[] in = m.group(1).split(",");
             m.find();
             String[] in2 = m.group(1).split(",");
-
-            double wt = sc.nextDouble();
 
             AREA_WEIGHTS.add(
                     new AreaWeight(
@@ -201,6 +200,10 @@ public class FieldMesh {
     public void removeObstacle(Polygon obstacle) {
         FIELD_OBSTACLES.remove(obstacle);
         updateFieldMesh();
+    }
+
+    public int getAiResolution() {
+        return aiResolution;
     }
 
     /**
