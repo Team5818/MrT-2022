@@ -65,7 +65,7 @@ public class SwerveModule {
         driveMotor.getEncoder().setPositionConversionFactor(2 * Math.PI * WHEEL_RADIUS / ENCODER_RESOLUTION);
         driveMotor.getEncoder().setVelocityConversionFactor((2 * Math.PI * WHEEL_RADIUS / ENCODER_RESOLUTION) * 10);
 
-        steeringMotor.setInverted(!steeringInverted);
+        steeringMotor.setInverted(steeringInverted);
         driveMotor.setInverted(driveInverted);
 
         this.driveController = new VelocityStateSpaceModel(

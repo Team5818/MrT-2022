@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
  */
 public class FieldMesh {
     private static FieldMesh fieldMesh;
-    private final RSTab tab;
 
     public static FieldMesh getInstance() throws FileNotFoundException {
         if (fieldMesh == null) {
@@ -64,10 +63,10 @@ public class FieldMesh {
         return fieldMesh;
     }
 
-
     public int fieldWidth;
     public int fieldHeight;
     private int aiResolution;
+    private final RSTab tab;
     private static final List<Polygon> FIELD_OBSTACLES = new ArrayList<>();
     private static final List<ArrayList<FieldNode>> NODES = new ArrayList<>();
     private static final List<AreaWeight> AREA_WEIGHTS = new ArrayList<>();
