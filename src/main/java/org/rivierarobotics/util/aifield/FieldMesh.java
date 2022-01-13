@@ -112,6 +112,7 @@ public class FieldMesh {
             sc.nextLine();
 
             while (sc.hasNextLine()) {
+                //Don't you even think about moving this to satisfy check style... I'm watching you ()-()
                 double wt = sc.nextDouble();
                 sc.nextLine();
                 var m = parseInput.matcher(sc.nextLine());
