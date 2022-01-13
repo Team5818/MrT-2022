@@ -68,7 +68,7 @@ public class SwerveModule {
         driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
         driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60);
         driveMotor.getEncoder().setPosition(0);
-        steeringMotor.setInverted(!steeringInverted);
+        steeringMotor.setInverted(steeringInverted);
         driveMotor.setInverted(driveInverted);
 
         this.driveController = new VelocityStateSpaceModel(
@@ -86,7 +86,6 @@ public class SwerveModule {
     }
 
     private double clampAngle(double angle) {
-        double low = -Math.PI;
         double high = Math.PI;
         angle = MathUtil.wrapToCircle(angle, 2 * Math.PI);
         if (angle > high) {

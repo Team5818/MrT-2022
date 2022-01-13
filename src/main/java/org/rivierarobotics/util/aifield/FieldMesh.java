@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 public class FieldMesh {
     private static FieldMesh fieldMesh;
 
-    public static FieldMesh getInstance() throws FileNotFoundException {
+    public static FieldMesh getInstance() {
         if (fieldMesh == null) {
             fieldMesh = new FieldMesh();
         }
@@ -76,61 +76,66 @@ public class FieldMesh {
     private double totalTimePassed = 0;
     private double amtOfCalculations = 1;
 
-    private FieldMesh() throws FileNotFoundException {
+    private FieldMesh() {
         Path fieldDimension = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldInfo.txt");
-        Scanner sc = new Scanner(new FileReader(fieldDimension.toFile()));
+        try {
+            Scanner sc = new Scanner(new FileReader(fieldDimension.toFile()));
+            sc.next();
+            fieldWidth = (int) (sc.nextDouble() * 100);
+            sc.next();
+            fieldHeight = (int) (sc.nextDouble() * 100);
+            sc.next();
+            aiResolution = (int) (sc.nextDouble());
+            sc.close();
 
-        sc.next();
-        fieldWidth = (int) (sc.nextDouble() * 100);
-        sc.next();
-        fieldHeight = (int) (sc.nextDouble() * 100);
-        sc.next();
-        aiResolution = (int) (sc.nextDouble());
-        sc.close();
+            Pattern parseInput = Pattern.compile("\\(([^)]+)\\)");
 
-        Pattern parseInput = Pattern.compile("\\(([^)]+)\\)");
+            Path fieldObstacles = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldObstacles.txt");
+            sc = new Scanner(fieldObstacles.toFile());
 
-        Path fieldObstacles = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldObstacles.txt");
-        sc = new Scanner(fieldObstacles.toFile());
-
-        sc.nextLine();
-        while (sc.hasNextLine()) {
-            String obstacle = sc.nextLine();
-            Matcher m = parseInput.matcher(obstacle);
-            Polygon p = new Polygon();
-            while (m.find()) {
-                String[] in = m.group(1).split(",");
-                p.addPoint(Integer.parseInt(in[0].trim()), Integer.parseInt(in[1].trim()));
-            }
-            FieldMesh.FIELD_OBSTACLES.add(p);
-        }
-        sc.close();
-
-        Path fieldWeights = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldWeights.txt");
-        sc = new Scanner(fieldWeights.toFile());
-
-        sc.nextLine();
-
-        while (sc.hasNextLine()) {
-            double wt = sc.nextDouble();
             sc.nextLine();
-            var m = parseInput.matcher(sc.nextLine());
-            m.find();
-            String[] in = m.group(1).split(",");
-            m.find();
-            String[] in2 = m.group(1).split(",");
+            while (sc.hasNextLine()) {
+                String obstacle = sc.nextLine();
+                Matcher m = parseInput.matcher(obstacle);
+                Polygon p = new Polygon();
+                while (m.find()) {
+                    String[] in = m.group(1).split(",");
+                    p.addPoint(Integer.parseInt(in[0].trim()), Integer.parseInt(in[1].trim()));
+                }
+                FieldMesh.FIELD_OBSTACLES.add(p);
+            }
+            sc.close();
 
-            AREA_WEIGHTS.add(
-                    new AreaWeight(
-                            wt,
-                            Integer.parseInt(in[0]),
-                            Integer.parseInt(in[1]),
-                            Integer.parseInt(in2[0]),
-                            Integer.parseInt(in2[1])
-                    ));
+            Path fieldWeights = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldWeights.txt");
+            sc = new Scanner(fieldWeights.toFile());
+
+            sc.nextLine();
+
+            while (sc.hasNextLine()) {
+                double wt = sc.nextDouble();
+                sc.nextLine();
+                var m = parseInput.matcher(sc.nextLine());
+                m.find();
+                String[] in = m.group(1).split(",");
+                m.find();
+                String[] in2 = m.group(1).split(",");
+
+                AREA_WEIGHTS.add(
+                        new AreaWeight(
+                                wt,
+                                Integer.parseInt(in[0]),
+                                Integer.parseInt(in[1]),
+                                Integer.parseInt(in2[0]),
+                                Integer.parseInt(in2[1])
+                        ));
+            }
+
+            sc.close();
+        } catch (Exception e) {
+            fieldWidth = 100;
+            fieldHeight = 100;
+            aiResolution = 1;
         }
-
-        sc.close();
 
         tab = Logging.robotShuffleboard.getTab("AI");
 
