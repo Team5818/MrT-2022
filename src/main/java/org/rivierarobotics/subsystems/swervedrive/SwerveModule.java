@@ -64,23 +64,27 @@ public class SwerveModule {
         this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
-        driveMotor.restoreFactoryDefaults();
+
         driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
         driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60);
         driveMotor.getEncoder().setPosition(0);
-        steeringMotor.setInverted(steeringInverted);
         driveMotor.setInverted(driveInverted);
+
+        steeringMotor.setInverted(steeringInverted);
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
                 0.1, 4, 12
         );
+        this.driveController.setKsTolerance(0.05);
 
         this.steerController = new PositionStateSpaceModel(
                 tmSID, 1, 1,
                 0.01, 0.01, 0.1,
                 0.1, 12
         );
+        this.steerController.setKsTolerance(3);
+
         this.steeringMotor.configContinuousCurrentLimit(15);
         this.steeringMotor.configPeakCurrentLimit(20);
     }

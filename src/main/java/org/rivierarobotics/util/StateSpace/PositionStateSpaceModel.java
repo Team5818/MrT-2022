@@ -39,6 +39,7 @@ public class PositionStateSpaceModel {
     private final LinearSystemLoop<N2, N1, N1> linearSystemLoop;
     private final SystemIdentification systemIdentification;
     private double targetPosition;
+    private double ksTolerance = 0.0;
     private final double loopTime;
 
     /**
@@ -117,14 +118,30 @@ public class PositionStateSpaceModel {
         return targetPosition;
     }
 
+    /**
+     * Checks if the encoder is within the specified tolerance from the target position.
+     *
+     * @param units current encoder value
+     * @param tolerance amount of units away from the target position
+     * @return true if within tolerance
+     */
     public boolean isWithinTolerance(double units, double tolerance) {
         return MathUtil.isWithinTolerance(units, targetPosition, tolerance);
+    }
+
+    /**
+     * Sets the tolerance of units away from 0 at which the ks term will be ignored.
+     *
+     * @param tolerance tolerance to set
+     */
+    public void setKsTolerance(double tolerance) {
+        this.ksTolerance = tolerance;
     }
 
     public double getAppliedVoltage(double units) {
         linearSystemLoop.correct(VecBuilder.fill(units));
         linearSystemLoop.predict(loopTime);
         var target = linearSystemLoop.getU(0);
-        return target + (MathUtil.isWithinTolerance(units, 0, 1) ? 0 : (Math.signum(target) * systemIdentification.kS));
+        return target + (MathUtil.isWithinTolerance(units, 0, ksTolerance) ? 0 : (Math.signum(target) * systemIdentification.kS));
     }
 }

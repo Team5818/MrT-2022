@@ -57,7 +57,6 @@ public class AIFieldDisplay {
     private int tick;
 
     public AIFieldDisplay(int updateRate) {
-
         imgHeight = SCALING_FACTOR;
         this.fieldMesh = FieldMesh.getInstance();
         imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));

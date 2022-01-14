@@ -233,7 +233,7 @@ public class FieldMesh {
     }
 
     public List<AreaWeight> getAreaWeights() {
-        return AREA_WEIGHTS;
+        return List.copyOf(AREA_WEIGHTS);
     }
 
     /**
@@ -287,14 +287,12 @@ public class FieldMesh {
     }
 
     public List<Polygon> getObstacles() {
-        return FIELD_OBSTACLES;
+        return List.copyOf(FIELD_OBSTACLES);
     }
 
     private double angleBetweenNodes(FieldNode a, FieldNode b) {
         return Math.atan2(b.yValue - a.yValue, b.xValue - a.xValue);
     }
-
-    private long startTime = 0;
 
     /**
      * Trajectory Generator which utilizes A* Pathfinding to generate a trajectory that avoids
@@ -310,7 +308,7 @@ public class FieldMesh {
      */
     public Trajectory getTrajectory(double x1, double y1, double x2, double y2, boolean shouldStop, double initialVelocity) {
         try {
-            startTime = System.nanoTime();
+            var startTime = System.nanoTime();
             List<FieldNode> path = getPath(x1 * 100.0, y1 * 100.0, x2 * 100.0, y2 * 100.0);
             var poseList = convertPathToPose2d(path);
             if (poseList == null || poseList.size() <= 1) {
@@ -399,7 +397,7 @@ public class FieldMesh {
      * @return All the nodes that make up the field mesh
      */
     public List<ArrayList<FieldNode>> getFieldNodes() {
-        return NODES;
+        return List.copyOf(NODES);
     }
 
     /**
