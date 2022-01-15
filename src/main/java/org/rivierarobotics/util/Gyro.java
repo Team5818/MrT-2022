@@ -25,13 +25,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
 
 public class Gyro {
-    private static Gyro gyro;
+    private static Gyro INSTANCE;
 
     public static Gyro getInstance() {
-        if (gyro == null) {
-            gyro = new Gyro();
+        if (INSTANCE == null) {
+            INSTANCE = new Gyro();
         }
-        return gyro;
+        return INSTANCE;
     }
 
     private final AHRS navX;

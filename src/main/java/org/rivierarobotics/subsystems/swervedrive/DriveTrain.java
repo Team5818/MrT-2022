@@ -52,13 +52,13 @@ import java.nio.file.Path;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrain extends SubsystemBase {
-    private static DriveTrain swerveDriveTrain;
+    private static DriveTrain INSTANCE;
 
     public static DriveTrain getInstance() {
-        if (swerveDriveTrain == null) {
-            swerveDriveTrain = new DriveTrain();
+        if (INSTANCE == null) {
+            INSTANCE = new DriveTrain();
         }
-        return swerveDriveTrain;
+        return INSTANCE;
     }
 
     public static final double MAX_SPEED = 0.75; // m/s
@@ -179,9 +179,9 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void drivePath(Trajectory path) {
-        trajectory = path;
+        this.trajectory = path;
         swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     /**
