@@ -27,8 +27,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Piston extends SubsystemBase {
     private Solenoid pistonSolenoid;
 
-    public Piston(int id, PneumaticsModuleType moduleType) {
-        pistonSolenoid = new Solenoid(moduleType, id);
+    public Piston(PistonEnum pistonEnum, PneumaticsModuleType moduleType) {
+        pistonSolenoid = new Solenoid(moduleType, pistonEnum.id);
 
     }
 
@@ -39,4 +39,19 @@ public class Piston extends SubsystemBase {
     public boolean get() {
         return pistonSolenoid.get();
     }
+
+    public enum PistonEnum {
+        LOW(0),
+        MID(1),
+        HIGH(2);
+
+        public final int id;
+
+        PistonEnum(int id){
+            this.id = id;
+        }
+
+    }
 }
+
+

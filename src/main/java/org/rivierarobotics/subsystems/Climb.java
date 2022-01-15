@@ -21,14 +21,10 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
 import org.rivierarobotics.util.StateSpace.SystemIdentification;
-
-import java.util.ArrayList;
 
 //import static edu.wpi.first.wpilibj.PneumaticsModuleType.CTREPCM;
 
@@ -42,9 +38,9 @@ public class Climb extends SubsystemBase {
         return climb;
     }
 
-    private final Piston low = new Piston(0, PneumaticsModuleType.CTREPCM);
-    private final Piston mid = new Piston(1, PneumaticsModuleType.CTREPCM);
-    private final Piston high = new Piston(2, PneumaticsModuleType.CTREPCM);
+    private final Piston low = new Piston(Piston.PistonEnum.LOW, PneumaticsModuleType.CTREPCM);
+    private final Piston mid = new Piston(Piston.PistonEnum.MID, PneumaticsModuleType.CTREPCM);
+    private final Piston high = new Piston(Piston.PistonEnum.HIGH, PneumaticsModuleType.CTREPCM);
     private final Piston[] pistons = {low, mid, high};
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
