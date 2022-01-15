@@ -103,11 +103,11 @@ public class SwerveModule {
     }
 
     public double getAngle() {
-        return (steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
+        return (-steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getPosTicks() {
-        return steeringMotor.getSensorCollection().getPulseWidthPosition();
+        return -steeringMotor.getSensorCollection().getPulseWidthPosition();
     }
 
     public double getDriveTicks() {

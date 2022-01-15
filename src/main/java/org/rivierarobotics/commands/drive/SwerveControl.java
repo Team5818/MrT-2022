@@ -42,7 +42,7 @@ public class SwerveControl extends CommandBase {
     @Override
     public void execute() {
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
-        var ySpeed = MathUtil.fitDeadband(leftJoystick.getX()) * DriveTrain.MAX_SPEED;
+        var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
         SmartDashboard.putBoolean("joystick running", true);
         SmartDashboard.putNumber("JS", System.nanoTime());

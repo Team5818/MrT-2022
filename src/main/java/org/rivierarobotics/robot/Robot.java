@@ -99,17 +99,6 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
     }
-
-    @Override
-    public void simulationInit() {
-        DriveTrain.getInstance();
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        DriveTrain.getInstance().periodicLogging();
-        DriveTrain.getInstance().drive(0,1,0,true);
-    }
 }
 
 

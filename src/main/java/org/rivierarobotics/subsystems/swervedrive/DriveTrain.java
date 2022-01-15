@@ -80,15 +80,15 @@ public class DriveTrain extends SubsystemBase {
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center
-        swervePosition[0] = new Translation2d(0.3, -0.3); //FL
-        swervePosition[1] = new Translation2d(0.3, 0.3); //FR
-        swervePosition[2] = new Translation2d(-0.3, -0.3); //BL
-        swervePosition[3] = new Translation2d(-0.3, 0.3); //BR
+        swervePosition[0] = new Translation2d(0.3, 0.3); //FL
+        swervePosition[1] = new Translation2d(0.3, -0.3); //FR
+        swervePosition[2] = new Translation2d(-0.3, 0.3); //BL
+        swervePosition[3] = new Translation2d(-0.3, -0.3); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -275+2048, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -3682, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 739+2048, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -5721, false, true);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -275+2048, false, false);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -3682, false, false);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 739+2048, false, false);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -5721, false, false);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -157,8 +157,8 @@ public class DriveTrain extends SubsystemBase {
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, -ySpeed, rot, gyro.getRotation2d())
-                        : new ChassisSpeeds(xSpeed, -ySpeed, rot)
+                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+                        : new ChassisSpeeds(xSpeed, ySpeed, rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
@@ -233,7 +233,6 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicLogging() {
-        SmartDashboard.putBoolean("hi", true);
         for (int i = 0; i < swerveModules.length; i++) {
             loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Velocity", swerveModules[i].getVelocity());
             loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Angle", Math.toDegrees(swerveModules[i].getAbsoluteAngle()));
