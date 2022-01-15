@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
+import org.rivierarobotics.commands.climb.ClimbSetPosition;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 
 public class ButtonConfiguration {
@@ -35,5 +36,9 @@ public class ButtonConfiguration {
                 .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 0)
+                .whenPressed(new ClimbSetPosition(1024));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 0)
+                .whenPressed(new ClimbSetPosition(0));
     }
 }
