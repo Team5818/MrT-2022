@@ -113,7 +113,7 @@ public class FieldMesh {
 
             while (sc.hasNextLine()) {
                 //Don't you even think about moving this to satisfy check style... I'm watching you ()-()
-                double wt = sc.nextDouble();
+                final double wt = sc.nextDouble();
                 sc.nextLine();
                 var m = parseInput.matcher(sc.nextLine());
                 m.find();
@@ -308,7 +308,7 @@ public class FieldMesh {
      */
     public Trajectory getTrajectory(double x1, double y1, double x2, double y2, boolean shouldStop, double initialVelocity) {
         try {
-            var startTime = System.nanoTime();
+            final var startTime = System.nanoTime();
             List<FieldNode> path = getPath(x1 * 100.0, y1 * 100.0, x2 * 100.0, y2 * 100.0);
             var poseList = convertPathToPose2d(path);
             if (poseList == null || poseList.size() <= 1) {
