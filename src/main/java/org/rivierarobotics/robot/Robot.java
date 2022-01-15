@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -48,7 +47,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
         shuffleboardLogging();
     }
 
@@ -79,16 +77,38 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void teleopPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
     public void disabledInit() {
         CommandScheduler.getInstance().cancelAll();
     }
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+        ControlMap.getInstance();
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
+    }
+
+    @Override
+    public void simulationInit() {
+        DriveTrain.getInstance();
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        DriveTrain.getInstance().periodicLogging();
+        DriveTrain.getInstance().drive(0,1,0,true);
     }
 }
 

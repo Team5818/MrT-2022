@@ -70,7 +70,7 @@ public class SwerveModule {
         driveMotor.getEncoder().setPosition(0);
         driveMotor.setInverted(driveInverted);
 
-        steeringMotor.setInverted(!steeringInverted);
+        steeringMotor.setInverted(steeringInverted);
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
@@ -103,11 +103,11 @@ public class SwerveModule {
     }
 
     public double getAngle() {
-        return (-steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
+        return (steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getPosTicks() {
-        return -steeringMotor.getSensorCollection().getPulseWidthPosition();
+        return steeringMotor.getSensorCollection().getPulseWidthPosition();
     }
 
     public double getDriveTicks() {
