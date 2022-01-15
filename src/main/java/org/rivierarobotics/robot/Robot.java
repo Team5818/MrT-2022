@@ -23,6 +23,8 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -53,12 +55,17 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         new ButtonConfiguration().initTeleop();
+        initializeAllSubsystems();
+        initializeDefaultCommands();
         DriveTrain.getInstance().resetPose();
+        Gyro.getInstance().resetGyro();
     }
 
     private void shuffleboardLogging() {
         var sb = Logging.robotShuffleboard;
-
+        try {
+            SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
+        } catch (Exception e) {}
         var drive = sb.getTab("Drive");
         var dt = DriveTrain.getInstance();
         field2d.setRobotPose(dt.getRobotPose());

@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
@@ -43,7 +44,13 @@ public class SwerveControl extends CommandBase {
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
         var ySpeed = MathUtil.fitDeadband(leftJoystick.getX()) * DriveTrain.MAX_SPEED;
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
-
+        SmartDashboard.putBoolean("joystick running", true);
+        SmartDashboard.putNumber("JS", System.nanoTime());
         driveTrain.drive(xSpeed, ySpeed, rot, true);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        SmartDashboard.putBoolean("joystick running", false);
     }
 }
