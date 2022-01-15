@@ -20,21 +20,23 @@
 
 package org.rivierarobotics.subsystems;
 
-public class MotorIDs {
-    //Drive Train Motors
-    public static final int FRONT_RIGHT_DRIVE = 1;
-    public static final int FRONT_RIGHT_STEER = 2;
-    public static final int FRONT_LEFT_DRIVE = 3;
-    public static final int FRONT_LEFT_STEER = 4;
-    public static final int BACK_LEFT_DRIVE = 5;
-    public static final int BACK_LEFT_STEER = 6;
-    public static final int BACK_RIGHT_DRIVE = 7;
-    public static final int BACK_RIGHT_STEER = 8;
-    //climb id tbd
-    public static final int CLIMB_ROTATE = 9;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+public class Piston extends SubsystemBase {
+    private Solenoid pistonSolenoid;
 
-    private MotorIDs() {
+    public Piston(int id, PneumaticsModuleType moduleType) {
+        pistonSolenoid = new Solenoid(moduleType, id);
+
     }
 
+    public void set(boolean isOpen) {
+        pistonSolenoid.set(isOpen);
+    }
+
+    public boolean get() {
+        return pistonSolenoid.get();
+    }
 }
