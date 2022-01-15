@@ -52,7 +52,7 @@ public class MLCore {
     private MLCore() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(MLResponse.class, new MLResponseDeserializer());
-        mlInputParser = builder.create();
+        this.mlInputParser = builder.create();
     }
 
     public Map<String, List<MLObject>> getDetectedObjects() {
@@ -82,7 +82,7 @@ public class MLCore {
 
     private static class MLResponseDeserializer implements JsonDeserializer<MLResponse> {
         public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
+            throws JsonParseException {
             MLResponse response = new MLResponse();
             var detectedObjects = json.getAsJsonArray();
 
@@ -90,10 +90,10 @@ public class MLCore {
                 var jsonObject = object.getAsJsonObject();
                 var boundingBoxJson = jsonObject.get("box").getAsJsonObject();
                 var boundingBox = new BoundingBox(
-                        boundingBoxJson.get("ymin").getAsInt(),
-                        boundingBoxJson.get("ymax").getAsInt(),
-                        boundingBoxJson.get("xmin").getAsInt(),
-                        boundingBoxJson.get("xmax").getAsInt()
+                    boundingBoxJson.get("ymin").getAsInt(),
+                    boundingBoxJson.get("ymax").getAsInt(),
+                    boundingBoxJson.get("xmin").getAsInt(),
+                    boundingBoxJson.get("xmax").getAsInt()
                 );
 
                 var tmp = new MLObject(jsonObject.get("label").getAsString(), boundingBox, jsonObject.get("confidence").getAsDouble());

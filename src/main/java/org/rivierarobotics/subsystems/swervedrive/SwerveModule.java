@@ -28,9 +28,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
-import org.rivierarobotics.util.StateSpace.SystemIdentification;
-import org.rivierarobotics.util.StateSpace.VelocityStateSpaceModel;
+import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
+import org.rivierarobotics.util.statespace.SystemIdentification;
+import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
 public class SwerveModule {
     private static final double WHEEL_RADIUS = 0.03915;
@@ -139,12 +139,12 @@ public class SwerveModule {
     }
 
     public void setDriveMotorVoltage(double voltage) {
-        currDriveVoltage = voltage;
+        this.currDriveVoltage = voltage;
         driveMotor.setVoltage(voltage);
     }
 
     public void setSteeringMotorVoltage(double voltage) {
-        currSteerVoltage = voltage;
+        this.currSteerVoltage = voltage;
         steeringMotor.setVoltage(voltage);
     }
 

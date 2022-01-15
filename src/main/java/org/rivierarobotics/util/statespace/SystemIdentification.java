@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.StateSpace;
+package org.rivierarobotics.util.statespace;
 
 public class SystemIdentification {
     public double kS;

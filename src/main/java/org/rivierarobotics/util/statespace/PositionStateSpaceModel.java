@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.StateSpace;
+package org.rivierarobotics.util.statespace;
 
 
 import edu.wpi.first.math.Nat;
@@ -45,73 +45,77 @@ public class PositionStateSpaceModel {
     /**
      * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
-     * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
-     * @param positionAccuracy       how accurate we think our position model is (higher is more aggressive)
-     * @param velocityAccuracy       how accurate we think our velocity model is (higher is more aggressive)
+     * @param systemIdentification kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
+     * @param positionAccuracy how accurate we think our position model is (higher is more aggressive)
+     * @param velocityAccuracy how accurate we think our velocity model is (higher is more aggressive)
      * @param positionErrorTolerance how tolerable we are to position error (lower is more aggressive)
      * @param velocityErrorTolerance how tolerable we are to velocity error (lower is more aggressive)
-     * @param voltageControlEffort   decrease this to penalize control effort (using more voltage)
-     * @param maxVoltage             the maximum voltage to apply to the motor (use this to limit speed)
+     * @param voltageControlEffort decrease this to penalize control effort (using more voltage)
+     * @param maxVoltage the maximum voltage to apply to the motor (use this to limit speed)
      */
-    public PositionStateSpaceModel(SystemIdentification systemIdentification, double positionAccuracy,
-                                   double velocityAccuracy, double encoderAccuracy,
-                                   double positionErrorTolerance, double velocityErrorTolerance,
-                                   double voltageControlEffort, double maxVoltage) {
+    public PositionStateSpaceModel(
+        SystemIdentification systemIdentification, double positionAccuracy,
+        double velocityAccuracy, double encoderAccuracy,
+        double positionErrorTolerance, double velocityErrorTolerance,
+        double voltageControlEffort, double maxVoltage
+    ) {
         this(systemIdentification, positionAccuracy, velocityAccuracy,
-                encoderAccuracy, positionErrorTolerance,
-                velocityErrorTolerance, voltageControlEffort, maxVoltage,
-                0.02);
+            encoderAccuracy, positionErrorTolerance,
+            velocityErrorTolerance, voltageControlEffort, maxVoltage,
+            0.02);
     }
 
     /**
      * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
-     * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
-     * @param positionAccuracy       how accurate we think our position model is (higher is more aggressive)
-     * @param velocityAccuracy       how accurate we think our velocity model is (higher is more aggressive)
+     * @param systemIdentification kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
+     * @param positionAccuracy how accurate we think our position model is (higher is more aggressive)
+     * @param velocityAccuracy how accurate we think our velocity model is (higher is more aggressive)
      * @param positionErrorTolerance how tolerable we are to position error (lower is more aggressive)
      * @param velocityErrorTolerance how tolerable we are to velocity error (lower is more aggressive)
-     * @param voltageControlEffort   decrease this to penalize control effort (using more voltage)
-     * @param maxVoltage             the maximum voltage to apply to the motor (use this to limit speed)
-     * @param loopTime               if you want to run the system faster than the default loop time of 20ms, use this
+     * @param voltageControlEffort decrease this to penalize control effort (using more voltage)
+     * @param maxVoltage the maximum voltage to apply to the motor (use this to limit speed)
+     * @param loopTime if you want to run the system faster than the default loop time of 20ms, use this
      */
-    public PositionStateSpaceModel(SystemIdentification systemIdentification, double positionAccuracy,
-                                   double velocityAccuracy, double encoderAccuracy,
-                                   double positionErrorTolerance, double velocityErrorTolerance,
-                                   double voltageControlEffort, double maxVoltage, double loopTime) {
+    public PositionStateSpaceModel(
+        SystemIdentification systemIdentification, double positionAccuracy,
+        double velocityAccuracy, double encoderAccuracy,
+        double positionErrorTolerance, double velocityErrorTolerance,
+        double voltageControlEffort, double maxVoltage, double loopTime
+    ) {
         this.loopTime = loopTime;
         this.systemIdentification = systemIdentification;
 
         LinearSystem<N2, N1, N1> linearPositionSystem =
-                LinearSystemId.identifyPositionSystem(systemIdentification.kV, systemIdentification.kA);
+            LinearSystemId.identifyPositionSystem(systemIdentification.kV, systemIdentification.kA);
 
         KalmanFilter<N2, N1, N1> observer = new KalmanFilter<>(
-                Nat.N2(), Nat.N1(),
-                linearPositionSystem,
-                VecBuilder.fill(positionAccuracy, velocityAccuracy),
-                VecBuilder.fill(encoderAccuracy),
-                loopTime
+            Nat.N2(), Nat.N1(),
+            linearPositionSystem,
+            VecBuilder.fill(positionAccuracy, velocityAccuracy),
+            VecBuilder.fill(encoderAccuracy),
+            loopTime
         );
 
         LinearQuadraticRegulator<N2, N1, N1> controller
-                = new LinearQuadraticRegulator<>(linearPositionSystem,
-                VecBuilder.fill(positionErrorTolerance, velocityErrorTolerance),
-                VecBuilder.fill(voltageControlEffort),
-                loopTime
+            = new LinearQuadraticRegulator<>(linearPositionSystem,
+            VecBuilder.fill(positionErrorTolerance, velocityErrorTolerance),
+            VecBuilder.fill(voltageControlEffort),
+            loopTime
         );
 
         this.linearSystemLoop = new LinearSystemLoop<>(
-                linearPositionSystem,
-                controller,
-                observer,
-                maxVoltage - systemIdentification.kS,
-                loopTime
+            linearPositionSystem,
+            controller,
+            observer,
+            maxVoltage - systemIdentification.kS,
+            loopTime
         );
     }
 
     public void setPosition(double units) {
         linearSystemLoop.setNextR(units, 0);
-        targetPosition = units;
+        this.targetPosition = units;
     }
 
     public double getTargetPosition() {

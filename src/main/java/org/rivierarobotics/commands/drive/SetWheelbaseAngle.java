@@ -29,7 +29,7 @@ public class SetWheelbaseAngle extends CommandBase {
 
     public SetWheelbaseAngle(double angle) {
         this.angle = Math.toRadians(angle);
-        dt = DriveTrain.getInstance();
+        this.dt = DriveTrain.getInstance();
     }
 
     @Override
