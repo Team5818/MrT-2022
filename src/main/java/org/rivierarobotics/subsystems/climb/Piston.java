@@ -25,31 +25,34 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Piston extends SubsystemBase {
+
     private Solenoid pistonSolenoid;
     private static Piston low;
     private static Piston mid;
     private static Piston high;
+
     public static Piston getInstanceLow() {
         if (low == null) {
-            low = new Piston(PistonEnum.LOW, PneumaticsModuleType.CTREPCM);
+            low = new Piston(0, PneumaticsModuleType.CTREPCM);
         }
         return low;
     }
     public static Piston getInstanceMid() {
         if (mid == null) {
-            mid = new Piston(PistonEnum.MID, PneumaticsModuleType.CTREPCM);
+            mid = new Piston(1, PneumaticsModuleType.CTREPCM);
         }
         return mid;
     }
     public static Piston getInstanceHigh() {
         if (high == null) {
-            high = new Piston(PistonEnum.HIGH, PneumaticsModuleType.CTREPCM);
+            high = new Piston(2, PneumaticsModuleType.CTREPCM);
         }
         return high;
     }
+    // find piston ids
 
-    public Piston(PistonEnum pistonEnum, PneumaticsModuleType moduleType) {
-        pistonSolenoid = new Solenoid(moduleType, pistonEnum.id);
+    public Piston(int ID, PneumaticsModuleType moduleType) {
+        pistonSolenoid = new Solenoid(moduleType, ID);
 
     }
 
@@ -61,18 +64,6 @@ public class Piston extends SubsystemBase {
         return pistonSolenoid.get();
     }
 
-    public enum PistonEnum {
-        LOW(0),
-        MID(1),
-        HIGH(2);
-
-        public final int id;
-
-        PistonEnum(int id){
-            this.id = id;
-        }
-
-    }
 }
 
 

@@ -26,8 +26,6 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
 import org.rivierarobotics.util.StateSpace.SystemIdentification;
 
-//import static edu.wpi.first.wpilibj.PneumaticsModuleType.CTREPCM;
-
 public class Climb extends SubsystemBase {
     private static Climb climb;
 
@@ -38,10 +36,7 @@ public class Climb extends SubsystemBase {
         return climb;
     }
 
-/*    private final Piston low = new Piston(Piston.PistonEnum.LOW, PneumaticsModuleType.CTREPCM);
-    private final Piston mid = new Piston(Piston.PistonEnum.MID, PneumaticsModuleType.CTREPCM);
-    private final Piston high = new Piston(Piston.PistonEnum.HIGH, PneumaticsModuleType.CTREPCM);
-    private final Piston[] pistons = {low, mid, high};*/
+
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
     private static final double MAX_FORWARD_LIMIT = 0;
