@@ -30,11 +30,9 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
@@ -46,6 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * The Thread is only here for testing purposes only, Updating the path should be done by calling updatePath
  */
 public class AIFieldDisplay {
+    private static final int SCALING_FACTOR = 1000;
     private final ScheduledExecutorService mainImageThread = Executors.newSingleThreadScheduledExecutor();
     private final AtomicReference<Mat> renderFrame = new AtomicReference<>();
     private final CvSource outputStream;
@@ -57,12 +56,11 @@ public class AIFieldDisplay {
     private Mat fieldMat;
     private int tick;
 
-    public AIFieldDisplay(int updateRate) throws IOException {
-        int scalingFactor = 1000;
-        imgHeight = scalingFactor;
+    public AIFieldDisplay(int updateRate) {
+        imgHeight = SCALING_FACTOR;
         this.fieldMesh = FieldMesh.getInstance();
-        imgWidth = (int) (scalingFactor * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
-        scalingRatio = (double) scalingFactor / fieldMesh.fieldHeight;
+        imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
+        scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1));
         updateField();

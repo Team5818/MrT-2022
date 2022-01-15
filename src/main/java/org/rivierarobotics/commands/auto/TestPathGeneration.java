@@ -18,32 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.drive;
+package org.rivierarobotics.commands.auto;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.robot.ControlMap;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.aifield.FieldMesh;
 
-public class SwerveControl extends CommandBase {
+public class TestPathGeneration extends CommandBase {
     private final DriveTrain driveTrain;
-    private final Joystick leftJoystick;
-    private final Joystick rightJoystick;
+    private final FieldMesh aiFieldMesh;
 
-    public SwerveControl() {
+    public TestPathGeneration() {
         this.driveTrain = DriveTrain.getInstance();
-        this.leftJoystick = ControlMap.DRIVER_LEFT;
-        this.rightJoystick = ControlMap.DRIVER_RIGHT;
-        addRequirements(this.driveTrain);
+        this.aiFieldMesh = FieldMesh.getInstance();
     }
 
     @Override
-    public void execute() {
-        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
-        var ySpeed = MathUtil.fitDeadband(leftJoystick.getX()) * DriveTrain.MAX_SPEED;
-        var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
+    public void initialize() {
+        var dtPose = driveTrain.getRobotPose();
+        var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), 0, 0, true, 0);
+        Logging.aiFieldDisplay.updatePath(trajectory);
+        driveTrain.drivePath(trajectory);
+    }
 
-        driveTrain.drive(xSpeed, ySpeed, rot, true);
+    @Override
+    public boolean isFinished() {
+        return !driveTrain.followHolonomicController();
     }
 }

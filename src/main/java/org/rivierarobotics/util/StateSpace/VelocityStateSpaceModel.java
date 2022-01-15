@@ -37,6 +37,7 @@ import org.rivierarobotics.lib.MathUtil;
 public class VelocityStateSpaceModel {
     private final LinearSystemLoop<N1, N1, N1> linearSystemLoop;
     private final SystemIdentification systemIdentification;
+    private double ksTolerance = 0.0;
     private double targetVelocity;
     private final double loopTime;
 
@@ -106,10 +107,26 @@ public class VelocityStateSpaceModel {
         targetVelocity = unitsPerS;
     }
 
+    /**
+     * Sets the tolerance of units away from 0 at which the ks term will be ignored.
+     *
+     * @param tolerance tolerance to set
+     */
+    public void setKsTolerance(double tolerance) {
+        this.ksTolerance = tolerance;
+    }
+
     public double getTargetVelocity() {
         return targetVelocity;
     }
 
+    /**
+     * Checks if the encoder is within the specified tolerance from the target velocity.
+     *
+     * @param unitsPerS current encoder value
+     * @param tolerance amount of units away from the target velocity
+     * @return true if within tolerance
+     */
     public boolean isWithinTolerance(double unitsPerS, double tolerance) {
         return MathUtil.isWithinTolerance(unitsPerS, targetVelocity, tolerance);
     }
@@ -117,6 +134,6 @@ public class VelocityStateSpaceModel {
     public double getAppliedVoltage(double unitsPerS) {
         linearSystemLoop.correct(VecBuilder.fill(unitsPerS));
         linearSystemLoop.predict(loopTime);
-        return linearSystemLoop.getU(0) + (MathUtil.isWithinTolerance(unitsPerS, 0, 0.01) ? 0 : systemIdentification.kS);
+        return linearSystemLoop.getU(0) + (MathUtil.isWithinTolerance(unitsPerS, 0, ksTolerance) ? 0 : Math.signum(targetVelocity) * systemIdentification.kS);
     }
 }

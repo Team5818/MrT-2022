@@ -21,15 +21,19 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.auto.SimpleAuto;
+import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 
 public class ButtonConfiguration {
     public void initTeleop() {
-        new JoystickButton(ControlMap.driverLeft, 2)
-                .whenPressed(new SetWheelbaseAngle(-90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 1)
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
+                .whenPressed(new SimpleAuto());
+        new JoystickButton(ControlMap.DRIVER_LEFT, 2)
+                .whileHeld(new TestPathGeneration());
+        new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
-        new JoystickButton(ControlMap.driverRight, 2)
+        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
     }
 }

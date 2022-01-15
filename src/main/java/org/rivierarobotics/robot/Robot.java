@@ -21,44 +21,54 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.aifield.AIFieldDisplay;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
 
 public class Robot extends TimedRobot {
-    private AIFieldDisplay aiFieldDisplay;
+    private final Field2d field2d = new Field2d();
 
     @Override
     public void robotInit() {
-        if (!isReal()) {
-            try {
-                aiFieldDisplay = new AIFieldDisplay(10);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
         initializeAllSubsystems();
         initializeDefaultCommands();
         Gyro.getInstance().resetGyro();
+
+        var drive = Shuffleboard.getTab("Drive");
+        drive.add(field2d)
+                .withSize(6, 4)
+                .withPosition(0, 0)
+                .withWidget("Field");
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-
-        if (aiFieldDisplay != null) {
-            aiFieldDisplay.update();
-        }
+        shuffleboardLogging();
     }
 
     @Override
     public void teleopInit() {
         new ButtonConfiguration().initTeleop();
+        DriveTrain.getInstance().resetPose();
+    }
+
+    private void shuffleboardLogging() {
+        var sb = Logging.robotShuffleboard;
+
+        var drive = sb.getTab("Drive");
+        var dt = DriveTrain.getInstance();
+        field2d.setRobotPose(dt.getRobotPose());
+        drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
+        drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
+        drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
+        drive.setEntry("x pose", dt.getRobotPose().getX());
+        drive.setEntry("y pose", dt.getRobotPose().getY());
+        drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
+        drive.setEntry("Gyro Angle", Gyro.getInstance().getAngle());
     }
 
     @Override
