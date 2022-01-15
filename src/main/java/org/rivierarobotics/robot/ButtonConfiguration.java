@@ -37,7 +37,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 0)
-                .whenPressed(new ClimbSetPosition(1024));
+                .whenPressed(new ClimbSetPosition(128));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 0)
                 .whenPressed(new ClimbSetPosition(0));
     }

@@ -44,8 +44,8 @@ public class Climb extends SubsystemBase {
     private final Piston[] pistons = {low, mid, high};
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
-    private static final double MAX_FORWARD_LIMIT = 50;
-    private static final double MAX_REVERSE_LIMIT = 100;
+    private static final double MAX_FORWARD_LIMIT = 0;
+    private static final double MAX_REVERSE_LIMIT = 128;
     //CHANGE THESE VALUES
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 
