@@ -35,7 +35,6 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -67,9 +66,9 @@ public class FieldMesh {
     public int fieldHeight;
     private int aiResolution;
     private final RSTab tab;
-    private static final List<Polygon> FIELD_OBSTACLES = new ArrayList<>();
-    private static final List<ArrayList<FieldNode>> NODES = new ArrayList<>();
-    private static final List<AreaWeight> AREA_WEIGHTS = new ArrayList<>();
+    private final List<Polygon> fieldObstacles = new ArrayList<>();
+    private final List<ArrayList<FieldNode>> nodes = new ArrayList<>();
+    private final List<AreaWeight> areaWeights = new ArrayList<>();
     public static final double MAX_VELOCITY = 3.0;
     public static final double MAX_ACCELERATION = 0.4;
     public static final double DEFAULT_NODE_WEIGHT = 0;
@@ -102,7 +101,7 @@ public class FieldMesh {
                     String[] in = m.group(1).split(",");
                     p.addPoint(Integer.parseInt(in[0].trim()), Integer.parseInt(in[1].trim()));
                 }
-                FieldMesh.FIELD_OBSTACLES.add(p);
+                this.fieldObstacles.add(p);
             }
             sc.close();
 
@@ -121,7 +120,7 @@ public class FieldMesh {
                 m.find();
                 String[] in2 = m.group(1).split(",");
 
-                AREA_WEIGHTS.add(
+                areaWeights.add(
                         new AreaWeight(
                                 wt,
                                 Integer.parseInt(in[0]),
@@ -150,34 +149,34 @@ public class FieldMesh {
      * node is set as a neighbor of adjacent nodes.
      */
     private void updateFieldMesh() {
-        NODES.clear();
+        nodes.clear();
         int cnt = 0;
         for (int i = 0; i <= fieldHeight; i += aiResolution) {
-            NODES.add(new ArrayList<>());
+            nodes.add(new ArrayList<>());
             for (int j = 0; j <= fieldWidth; j += aiResolution) {
                 var nToAdd = new FieldNode(j, i);
                 nToAdd.isValid = isValidPoint(nToAdd);
-                NODES.get(cnt).add(nToAdd);
+                nodes.get(cnt).add(nToAdd);
             }
             cnt++;
         }
-        for (int i = 0; i < NODES.size(); i++) {
-            for (int j = 0; j < NODES.get(i).size(); j++) {
-                if (!NODES.get(i).get(j).isValid) {
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).size(); j++) {
+                if (!nodes.get(i).get(j).isValid) {
                     continue;
                 }
-                weightNode(NODES.get(i).get(j));
-                for (int a = Math.max(0, i - 1); a <= Math.min(i + 1, NODES.size() - 1); a++) {
-                    for (int b = Math.max(0, j - 1); b <= Math.min(j + 1, NODES.get(i).size() - 1); b++) {
-                        if ((i == a && j == b) || !NODES.get(a).get(b).isValid) {
+                weightNode(nodes.get(i).get(j));
+                for (int a = Math.max(0, i - 1); a <= Math.min(i + 1, nodes.size() - 1); a++) {
+                    for (int b = Math.max(0, j - 1); b <= Math.min(j + 1, nodes.get(i).size() - 1); b++) {
+                        if ((i == a && j == b) || !nodes.get(a).get(b).isValid) {
                             continue;
                         }
-                        if (!isValidEdge(NODES.get(i).get(j), NODES.get(a).get(b))) {
+                        if (!isValidEdge(nodes.get(i).get(j), nodes.get(a).get(b))) {
                             continue;
                         }
                         int xDist = i - a;
                         int yDist = j - b;
-                        NODES.get(i).get(j).addBranch(Math.sqrt(xDist * xDist + yDist * yDist), NODES.get(a).get(b));
+                        nodes.get(i).get(j).addBranch(Math.sqrt(xDist * xDist + yDist * yDist), nodes.get(a).get(b));
                     }
                 }
             }
@@ -194,7 +193,7 @@ public class FieldMesh {
         for (var pt : values) {
             p.addPoint(pt[0], pt[1]);
         }
-        FIELD_OBSTACLES.add(p);
+        fieldObstacles.add(p);
         updateFieldMesh();
     }
 
@@ -204,7 +203,7 @@ public class FieldMesh {
      * @param obstacle the obstacle to remove
      */
     public void removeObstacle(Polygon obstacle) {
-        FIELD_OBSTACLES.remove(obstacle);
+        fieldObstacles.remove(obstacle);
         updateFieldMesh();
     }
 
@@ -225,7 +224,7 @@ public class FieldMesh {
 
     public void weightNode(FieldNode node) {
         node.nodeWeight = DEFAULT_NODE_WEIGHT;
-        for (var aw : AREA_WEIGHTS) {
+        for (var aw : areaWeights) {
             if (aw.containsNode(node)) {
                 node.nodeWeight += aw.weight;
             }
@@ -233,7 +232,7 @@ public class FieldMesh {
     }
 
     public List<AreaWeight> getAreaWeights() {
-        return List.copyOf(AREA_WEIGHTS);
+        return List.copyOf(areaWeights);
     }
 
     /**
@@ -247,19 +246,19 @@ public class FieldMesh {
      * @param y2     bottom right y location of zone (cm)
      */
     public void addWeightToArea(double weight, double x1, double y1, double x2, double y2) {
-        int cNodeX1 = MathUtil.clamp((int) (x1 / aiResolution), 0, NODES.get(0).size() - 1);
-        int cNodeY1 = MathUtil.clamp((int) (y1 / aiResolution), 0, NODES.size() - 1);
-        int cNodeX2 = MathUtil.clamp((int) (x2 / aiResolution), 0, NODES.get(0).size() - 1);
-        int cNodeY2 = MathUtil.clamp((int) (y2 / aiResolution), 0, NODES.size() - 1);
+        int cNodeX1 = MathUtil.clamp((int) (x1 / aiResolution), 0, nodes.get(0).size() - 1);
+        int cNodeY1 = MathUtil.clamp((int) (y1 / aiResolution), 0, nodes.size() - 1);
+        int cNodeX2 = MathUtil.clamp((int) (x2 / aiResolution), 0, nodes.get(0).size() - 1);
+        int cNodeY2 = MathUtil.clamp((int) (y2 / aiResolution), 0, nodes.size() - 1);
         for (int i = cNodeX1; i <= cNodeX2; i++) {
             for (int j = cNodeY1; j <= cNodeY2; j++) {
-                NODES.get(j).get(i).nodeWeight += weight;
+                nodes.get(j).get(i).nodeWeight += weight;
             }
         }
     }
 
     public boolean isValidPoint(FieldNode s) {
-        for (var obstacle : FIELD_OBSTACLES) {
+        for (var obstacle : fieldObstacles) {
             if (obstacle.contains(s.xValue, s.yValue)) {
                 return false;
             }
@@ -270,7 +269,7 @@ public class FieldMesh {
     public boolean isValidEdge(FieldNode to, FieldNode from) {
         Line2D nodeLines = new Line2D.Double();
         nodeLines.setLine(to.xValue, to.yValue, from.xValue, from.yValue);
-        for (var obstacle : FIELD_OBSTACLES) {
+        for (var obstacle : fieldObstacles) {
             for (int i = 1; i < obstacle.npoints; i++) {
                 Line2D testIntersect = new Line2D.Double();
                 testIntersect.setLine(
@@ -287,7 +286,7 @@ public class FieldMesh {
     }
 
     public List<Polygon> getObstacles() {
-        return List.copyOf(FIELD_OBSTACLES);
+        return List.copyOf(fieldObstacles);
     }
 
     private double angleBetweenNodes(FieldNode a, FieldNode b) {
@@ -381,12 +380,12 @@ public class FieldMesh {
      * @return list of mesh nodes which belong to the path
      */
     public List<FieldNode> getPath(double x1, double y1, double x2, double y2) {
-        int cNodeX1 = MathUtil.clamp((int) (x1 / aiResolution), 0, NODES.get(0).size() - 1);
-        int cNodeY1 = MathUtil.clamp((int) (y1 / aiResolution), 0, NODES.size() - 1);
-        int cNodeX2 = MathUtil.clamp((int) (x2 / aiResolution), 0, NODES.get(0).size() - 1);
-        int cNodeY2 = MathUtil.clamp((int) (y2 / aiResolution), 0, NODES.size() - 1);
-        FieldNode start = NODES.get(cNodeY1).get(cNodeX1);
-        FieldNode end = NODES.get(cNodeY2).get(cNodeX2);
+        int cNodeX1 = MathUtil.clamp((int) (x1 / aiResolution), 0, nodes.get(0).size() - 1);
+        int cNodeY1 = MathUtil.clamp((int) (y1 / aiResolution), 0, nodes.size() - 1);
+        int cNodeX2 = MathUtil.clamp((int) (x2 / aiResolution), 0, nodes.get(0).size() - 1);
+        int cNodeY2 = MathUtil.clamp((int) (y2 / aiResolution), 0, nodes.size() - 1);
+        FieldNode start = nodes.get(cNodeY1).get(cNodeX1);
+        FieldNode end = nodes.get(cNodeY2).get(cNodeX2);
         var n = findShortestPath(start, end);
         return printPath(n);
     }
@@ -397,7 +396,7 @@ public class FieldMesh {
      * @return All the nodes that make up the field mesh
      */
     public List<ArrayList<FieldNode>> getFieldNodes() {
-        return List.copyOf(NODES);
+        return List.copyOf(nodes);
     }
 
     /**
@@ -427,7 +426,7 @@ public class FieldMesh {
             return null;
         }
 
-        for (var n : NODES) {
+        for (var n : nodes) {
             for (var p : n) {
                 p.f = Double.MAX_VALUE;
                 p.g = Double.MAX_VALUE;
