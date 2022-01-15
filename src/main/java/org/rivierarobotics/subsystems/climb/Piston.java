@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.subsystems.climb;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -26,6 +26,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Piston extends SubsystemBase {
     private Solenoid pistonSolenoid;
+    private static Piston low;
+    private static Piston mid;
+    private static Piston high;
+    public static Piston getInstanceLow() {
+        if (low == null) {
+            low = new Piston(PistonEnum.LOW, PneumaticsModuleType.CTREPCM);
+        }
+        return low;
+    }
+    public static Piston getInstanceMid() {
+        if (mid == null) {
+            mid = new Piston(PistonEnum.MID, PneumaticsModuleType.CTREPCM);
+        }
+        return mid;
+    }
+    public static Piston getInstanceHigh() {
+        if (high == null) {
+            high = new Piston(PistonEnum.HIGH, PneumaticsModuleType.CTREPCM);
+        }
+        return high;
+    }
 
     public Piston(PistonEnum pistonEnum, PneumaticsModuleType moduleType) {
         pistonSolenoid = new Solenoid(moduleType, pistonEnum.id);

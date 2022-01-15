@@ -5,24 +5,23 @@ import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.Switch;
 
-public class ClimbSetPosition extends CommandBase {
+public class ClimbSetAngle extends CommandBase {
     private final Climb climb;
-    private Switch switchObject;
+    private final double angle;
 
-    public ClimbSetPosition(Switch switchObject) {
+    public ClimbSetAngle(double angle) {
         this.climb = Climb.getInstance();
-        this.switchObject = switchObject;
-        this.addRequirements(this.switchObject);
-        this.addRequirements(this.climb);
+        this.angle = angle;
+        addRequirements(this.climb);
     }
 
     @Override
     public void execute() {
-        climb.setPosition(switchObject.getAngle());
+        climb.setPosition(angle);
     }
 
     @Override
     public boolean isFinished() {
-        return switchObject.getState();
+        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 1);
     }
 }

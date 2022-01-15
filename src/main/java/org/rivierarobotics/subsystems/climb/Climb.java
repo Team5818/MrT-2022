@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.subsystems.climb;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
 import org.rivierarobotics.util.StateSpace.SystemIdentification;
 
@@ -38,10 +38,10 @@ public class Climb extends SubsystemBase {
         return climb;
     }
 
-    private final Piston low = new Piston(Piston.PistonEnum.LOW, PneumaticsModuleType.CTREPCM);
+/*    private final Piston low = new Piston(Piston.PistonEnum.LOW, PneumaticsModuleType.CTREPCM);
     private final Piston mid = new Piston(Piston.PistonEnum.MID, PneumaticsModuleType.CTREPCM);
     private final Piston high = new Piston(Piston.PistonEnum.HIGH, PneumaticsModuleType.CTREPCM);
-    private final Piston[] pistons = {low, mid, high};
+    private final Piston[] pistons = {low, mid, high};*/
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
     private static final double MAX_FORWARD_LIMIT = 0;
@@ -78,10 +78,6 @@ public class Climb extends SubsystemBase {
 
     public double getAngle() {
         return climbMotor.getSensorCollection().getIntegratedSensorAbsolutePosition();
-    }
-
-    public void setPiston(boolean isOn, int pist) {
-        pistons[pist].set(isOn);
     }
 
     @Override
