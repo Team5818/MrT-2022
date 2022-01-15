@@ -102,6 +102,7 @@ public class AIFieldDisplay {
     }
 
     public void updatePath(Trajectory trajectory) {
+        if(trajectory == null) return;
         generatedTrajectory = Objects.requireNonNull(trajectory);
         render();
     }
