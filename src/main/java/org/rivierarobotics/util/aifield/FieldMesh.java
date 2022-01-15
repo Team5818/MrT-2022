@@ -53,14 +53,18 @@ import java.util.stream.Collectors;
  * avoidance.
  */
 public class FieldMesh {
-    private static FieldMesh fieldMesh;
+    private static FieldMesh INSTANCE;
 
     public static FieldMesh getInstance() {
-        if (fieldMesh == null) {
-            fieldMesh = new FieldMesh();
+        if (INSTANCE == null) {
+            INSTANCE = new FieldMesh();
         }
-        return fieldMesh;
+        return INSTANCE;
     }
+
+    public static final double MAX_VELOCITY = 3.0;
+    public static final double MAX_ACCELERATION = 0.4;
+    public static final double DEFAULT_NODE_WEIGHT = 0;
 
     public int fieldWidth;
     public int fieldHeight;
@@ -69,9 +73,6 @@ public class FieldMesh {
     private final List<Polygon> fieldObstacles = new ArrayList<>();
     private final List<ArrayList<FieldNode>> nodes = new ArrayList<>();
     private final List<AreaWeight> areaWeights = new ArrayList<>();
-    public static final double MAX_VELOCITY = 3.0;
-    public static final double MAX_ACCELERATION = 0.4;
-    public static final double DEFAULT_NODE_WEIGHT = 0;
     private double totalTimePassed = 0;
     private double amtOfCalculations = 1;
 
@@ -80,11 +81,11 @@ public class FieldMesh {
         try {
             Scanner sc = new Scanner(new FileReader(fieldDimension.toFile()));
             sc.next();
-            fieldWidth = (int) (sc.nextDouble() * 100);
+            this.fieldWidth = (int) (sc.nextDouble() * 100);
             sc.next();
-            fieldHeight = (int) (sc.nextDouble() * 100);
+            this.fieldHeight = (int) (sc.nextDouble() * 100);
             sc.next();
-            aiResolution = (int) (sc.nextDouble());
+            this.aiResolution = (int) (sc.nextDouble());
             sc.close();
 
             Pattern parseInput = Pattern.compile("\\(([^)]+)\\)");
@@ -132,12 +133,12 @@ public class FieldMesh {
 
             sc.close();
         } catch (Exception e) {
-            fieldWidth = 100;
-            fieldHeight = 100;
-            aiResolution = 1;
+            this.fieldWidth = 100;
+            this.fieldHeight = 100;
+            this.aiResolution = 1;
         }
 
-        tab = Logging.robotShuffleboard.getTab("AI");
+        this.tab = Logging.robotShuffleboard.getTab("AI");
 
         tab.setEntry("AI Resolution (cm)", aiResolution);
 

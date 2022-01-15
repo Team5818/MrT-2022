@@ -30,6 +30,17 @@ import java.util.List;
  * connections to nearby nodes.
  */
 public class FieldNode implements Comparable<FieldNode> {
+
+    public static class Edge {
+        Edge(double weight, FieldNode node) {
+            this.weight = weight;
+            this.node = node;
+        }
+
+        public double weight;
+        public FieldNode node;
+    }
+
     boolean isValid = true;
 
     public FieldNode parent = null;
@@ -51,16 +62,6 @@ public class FieldNode implements Comparable<FieldNode> {
     @Override
     public int compareTo(FieldNode n) {
         return Double.compare(this.f, n.f);
-    }
-
-    public static class Edge {
-        Edge(double weight, FieldNode node) {
-            this.weight = weight;
-            this.node = node;
-        }
-
-        public double weight;
-        public FieldNode node;
     }
 
     public void addBranch(double weight, FieldNode node) {
