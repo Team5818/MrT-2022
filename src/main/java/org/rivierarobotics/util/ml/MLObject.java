@@ -32,10 +32,10 @@ public class MLObject {
         this.boundingBox = boundingBox;
 
         double avgX = (boundingBox.xmax + boundingBox.xmin) / 2.0;
-        tx = (avgX - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
+        this.tx = (avgX - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
 
         double avgY = (boundingBox.ymax + boundingBox.ymin) / 2.0;
-        ty = (avgY - MLCore.CAMERA_HEIGHT / 2.0) * MLCore.ANGLE_PER_PIXEL_Y;
+        this.ty = (avgY - MLCore.CAMERA_HEIGHT / 2.0) * MLCore.ANGLE_PER_PIXEL_Y;
 
         this.confidence = confidence;
     }

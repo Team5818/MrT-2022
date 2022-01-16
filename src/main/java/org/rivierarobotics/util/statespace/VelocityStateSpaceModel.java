@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util.StateSpace;
+package org.rivierarobotics.util.statespace;
 
 
 import edu.wpi.first.math.Nat;
@@ -44,67 +44,71 @@ public class VelocityStateSpaceModel {
     /**
      * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
-     * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
-     * @param velocityAccuracy       how accurate we think our velocity model is (higher is more aggressive)
+     * @param systemIdentification kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
+     * @param velocityAccuracy how accurate we think our velocity model is (higher is more aggressive)
      * @param velocityErrorTolerance how tolerable we are to velocity error (lower is more aggressive)
-     * @param voltageControlEffort   decrease this to penalize control effort (using more voltage)
-     * @param maxVoltage             the maximum voltage to apply to the motor (use this to limit speed)
+     * @param voltageControlEffort decrease this to penalize control effort (using more voltage)
+     * @param maxVoltage the maximum voltage to apply to the motor (use this to limit speed)
      */
-    public VelocityStateSpaceModel(SystemIdentification systemIdentification,
-                                   double velocityAccuracy, double encoderAccuracy,
-                                   double velocityErrorTolerance, double voltageControlEffort,
-                                   double maxVoltage) {
+    public VelocityStateSpaceModel(
+        SystemIdentification systemIdentification,
+        double velocityAccuracy, double encoderAccuracy,
+        double velocityErrorTolerance, double voltageControlEffort,
+        double maxVoltage
+    ) {
         this(systemIdentification, velocityAccuracy, encoderAccuracy,
-                velocityErrorTolerance, voltageControlEffort, maxVoltage, 0.02);
+            velocityErrorTolerance, voltageControlEffort, maxVoltage, 0.02);
     }
 
     /**
      * State-Space Position Control System using the FRC Characterization method - kV and kA.
      *
-     * @param systemIdentification   kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
-     * @param velocityAccuracy       how accurate we think our velocity model is (higher is more aggressive)
+     * @param systemIdentification kS (static friction) kV (volts/units/s) kA (volts/units/s*s)
+     * @param velocityAccuracy how accurate we think our velocity model is (higher is more aggressive)
      * @param velocityErrorTolerance how tolerable we are to velocity error (lower is more aggressive)
-     * @param voltageControlEffort   decrease this to penalize control effort (using more voltage)
-     * @param maxVoltage             the maximum voltage to apply to the motor (use this to limit speed)
-     * @param loopTime               if you want to run the system faster than the default loop time of 20ms, use this
+     * @param voltageControlEffort decrease this to penalize control effort (using more voltage)
+     * @param maxVoltage the maximum voltage to apply to the motor (use this to limit speed)
+     * @param loopTime if you want to run the system faster than the default loop time of 20ms, use this
      */
-    public VelocityStateSpaceModel(SystemIdentification systemIdentification,
-                                   double velocityAccuracy, double encoderAccuracy,
-                                   double velocityErrorTolerance, double voltageControlEffort,
-                                   double maxVoltage, double loopTime) {
+    public VelocityStateSpaceModel(
+        SystemIdentification systemIdentification,
+        double velocityAccuracy, double encoderAccuracy,
+        double velocityErrorTolerance, double voltageControlEffort,
+        double maxVoltage, double loopTime
+    ) {
         this.loopTime = loopTime;
         this.systemIdentification = systemIdentification;
 
         LinearSystem<N1, N1, N1> linearPositionSystem =
-                LinearSystemId.identifyVelocitySystem(systemIdentification.kV, systemIdentification.kA);
+            LinearSystemId.identifyVelocitySystem(systemIdentification.kV, systemIdentification.kA);
 
         KalmanFilter<N1, N1, N1> observer = new KalmanFilter<>(
-                Nat.N1(), Nat.N1(),
-                linearPositionSystem,
-                VecBuilder.fill(velocityAccuracy),
-                VecBuilder.fill(encoderAccuracy),
-                loopTime
+            Nat.N1(), Nat.N1(),
+            linearPositionSystem,
+            VecBuilder.fill(velocityAccuracy),
+            VecBuilder.fill(encoderAccuracy),
+            loopTime
         );
 
         LinearQuadraticRegulator<N1, N1, N1> controller
-                = new LinearQuadraticRegulator<>(linearPositionSystem,
-                VecBuilder.fill(velocityErrorTolerance),
-                VecBuilder.fill(voltageControlEffort),
-                loopTime
+            = new LinearQuadraticRegulator<>(linearPositionSystem,
+            VecBuilder.fill(velocityErrorTolerance),
+            VecBuilder.fill(voltageControlEffort),
+            loopTime
         );
 
         this.linearSystemLoop = new LinearSystemLoop<>(
-                linearPositionSystem,
-                controller,
-                observer,
-                maxVoltage,
-                loopTime
+            linearPositionSystem,
+            controller,
+            observer,
+            maxVoltage,
+            loopTime
         );
     }
 
     public void setVelocity(double unitsPerS) {
         linearSystemLoop.setNextR(unitsPerS);
-        targetVelocity = unitsPerS;
+        this.targetVelocity = unitsPerS;
     }
 
     /**

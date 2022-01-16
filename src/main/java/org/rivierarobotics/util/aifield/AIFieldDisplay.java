@@ -57,10 +57,10 @@ public class AIFieldDisplay {
     private int tick;
 
     public AIFieldDisplay(int updateRate) {
-        imgHeight = SCALING_FACTOR;
+        this.imgHeight = SCALING_FACTOR;
         this.fieldMesh = FieldMesh.getInstance();
-        imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
-        scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
+        this.imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
+        this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1));
         updateField();
@@ -102,12 +102,12 @@ public class AIFieldDisplay {
     }
 
     public void updatePath(Trajectory trajectory) {
-        generatedTrajectory = Objects.requireNonNull(trajectory);
+        this.generatedTrajectory = Objects.requireNonNull(trajectory);
         render();
     }
 
     public void updateField() {
-        fieldMat = createField();
+        this.fieldMat = createField();
         render();
     }
 

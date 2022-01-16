@@ -52,13 +52,13 @@ import java.nio.file.Path;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrain extends SubsystemBase {
-    private static DriveTrain swerveDriveTrain;
+    private static DriveTrain INSTANCE;
 
     public static DriveTrain getInstance() {
-        if (swerveDriveTrain == null) {
-            swerveDriveTrain = new DriveTrain();
+        if (INSTANCE == null) {
+            INSTANCE = new DriveTrain();
         }
-        return swerveDriveTrain;
+        return INSTANCE;
     }
 
     public static final double MAX_SPEED = 0.75; // m/s
@@ -79,45 +79,45 @@ public class DriveTrain extends SubsystemBase {
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center
-        swervePosition[0] = new Translation2d(0.3, -0.3); //FL
-        swervePosition[1] = new Translation2d(0.3, 0.3); //FR
-        swervePosition[2] = new Translation2d(-0.3, -0.3); //BL
-        swervePosition[3] = new Translation2d(-0.3, 0.3); //BR
+        this.swervePosition[0] = new Translation2d(0.3, -0.3); //FL
+        this.swervePosition[1] = new Translation2d(0.3, 0.3); //FR
+        this.swervePosition[2] = new Translation2d(-0.3, -0.3); //BL
+        this.swervePosition[3] = new Translation2d(-0.3, 0.3); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 2022, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 1590 + 2048, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 1288, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 5636, false, true);
+        this.swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 2022, false, true);
+        this.swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 1590 + 2048, false, true);
+        this.swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 1288, false, true);
+        this.swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 5636, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
         this.swerveDriveKinematics = new SwerveDriveKinematics(
-                swervePosition[0], swervePosition[1], swervePosition[2], swervePosition[3]
+            swervePosition[0], swervePosition[1], swervePosition[2], swervePosition[3]
         );
 
         this.swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
-                gyro.getRotation2d(),
-                new Pose2d(0, 0, gyro.getRotation2d()),
-                swerveDriveKinematics,
-                //Standard deviations of model states. Increase these numbers to trust your model's state estimates less.
-                //This matrix is in the form [x, y, theta]^T, with units in meters and radians.
-                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.3, 0.3, .01),
-                // Standard deviations of the encoder and gyro measurements. Increase these numbers to trust sensor
-                // readings from encoders and gyros less. This matrix is in the form [theta], with units in radians.
-                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.1),
-                //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
-                //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
-                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01) //Vision Measurement stdev
+            gyro.getRotation2d(),
+            new Pose2d(0, 0, gyro.getRotation2d()),
+            swerveDriveKinematics,
+            //Standard deviations of model states. Increase these numbers to trust your model's state estimates less.
+            //This matrix is in the form [x, y, theta]^T, with units in meters and radians.
+            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.3, 0.3, .01),
+            // Standard deviations of the encoder and gyro measurements. Increase these numbers to trust sensor
+            // readings from encoders and gyros less. This matrix is in the form [theta], with units in radians.
+            new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.1),
+            //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
+            //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
+            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01) //Vision Measurement stdev
         );
 
         this.holonomicDriveController = new HolonomicDriveController(
-                //PID FOR X DISTANCE (kp of 1 = 1m/s extra velocity / m of error)
-                new PIDController(1, 0, 0),
-                //PID FOR Y DISTANCE (kp of 1.2 = 1.2m/s extra velocity / m of error)
-                new PIDController(1, 0, 0),
-                //PID FOR ROTATION (kp of 1 = 1rad/s extra velocity / rad of error)
-                new ProfiledPIDController(1, 0, 0,
-                        new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED, MAX_ANGULAR_ACCELERATION))
+            //PID FOR X DISTANCE (kp of 1 = 1m/s extra velocity / m of error)
+            new PIDController(1, 0, 0),
+            //PID FOR Y DISTANCE (kp of 1.2 = 1.2m/s extra velocity / m of error)
+            new PIDController(1, 0, 0),
+            //PID FOR ROTATION (kp of 1 = 1rad/s extra velocity / rad of error)
+            new ProfiledPIDController(1, 0, 0,
+                new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED, MAX_ANGULAR_ACCELERATION))
         );
 
         loggingTables[0] = new RSTable("FL", tab, new RSTileOptions(3, 4, 0, 0));
@@ -149,15 +149,16 @@ public class DriveTrain extends SubsystemBase {
     /**
      * Method to drive the robot using joystick info.
      *
-     * @param xSpeed        Speed of the robot in the x direction (forward).
-     * @param ySpeed        Speed of the robot in the y direction (sideways).
-     * @param rot           Angular rate of the robot.
+     * @param xSpeed Speed of the robot in the x direction (forward).
+     * @param ySpeed Speed of the robot in the y direction (sideways).
+     * @param rot Angular rate of the robot.
      * @param fieldRelative Whether the provided x and y speeds are relative to the field.
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rot)
+            fieldRelative
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+                : new ChassisSpeeds(xSpeed, ySpeed, rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
@@ -169,23 +170,22 @@ public class DriveTrain extends SubsystemBase {
         try {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-            trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
-            startTime = Timer.getFPGATimestamp();
+            this.startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
     }
 
     public void drivePath(Trajectory path) {
-        trajectory = path;
+        this.trajectory = path;
         swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     /**
-     * Call this method periodically to follow a trajectory.
-     * returns false when path is done.
+     * Call this method periodically to follow a trajectory. returns false when path is done.
      */
     public boolean followHolonomicController() {
         if (Timer.getFPGATimestamp() - startTime > trajectory.getTotalTimeSeconds()) {
@@ -194,10 +194,10 @@ public class DriveTrain extends SubsystemBase {
 
         var state = trajectory.sample(Timer.getFPGATimestamp() - startTime);
         var controls = holonomicDriveController.calculate(
-                swerveDrivePoseEstimator.getEstimatedPosition(),
-                state,
-                //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
-                new Rotation2d(0)
+            swerveDrivePoseEstimator.getEstimatedPosition(),
+            state,
+            //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
+            new Rotation2d(0)
         );
 
         drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, controls.omegaRadiansPerSecond, true);
@@ -206,11 +206,11 @@ public class DriveTrain extends SubsystemBase {
 
     public void updateOdometry() {
         swerveDrivePoseEstimator.update(
-                gyro.getRotation2d(),
-                swerveModules[0].getState(),
-                swerveModules[1].getState(),
-                swerveModules[2].getState(),
-                swerveModules[3].getState()
+            gyro.getRotation2d(),
+            swerveModules[0].getState(),
+            swerveModules[1].getState(),
+            swerveModules[2].getState(),
+            swerveModules[3].getState()
         );
     }
 
@@ -224,10 +224,10 @@ public class DriveTrain extends SubsystemBase {
 
     public ChassisSpeeds getChassisSpeeds() {
         return swerveDriveKinematics.toChassisSpeeds(
-                swerveModules[0].getState(),
-                swerveModules[1].getState(),
-                swerveModules[2].getState(),
-                swerveModules[3].getState()
+            swerveModules[0].getState(),
+            swerveModules[1].getState(),
+            swerveModules[2].getState(),
+            swerveModules[3].getState()
         );
     }
 
