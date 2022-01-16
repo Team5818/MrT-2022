@@ -27,20 +27,19 @@ import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
 public class Climb extends SubsystemBase {
-    private static Climb climb;
 
-    static public Climb getInstance() {
+    public static Climb getInstance() {
         if (climb == null) {
             climb = new Climb();
         }
         return climb;
     }
 
-
+    private static Climb climb;
+    private static final double MAX_FORWARD_LIMIT = 0;
+    private static final double MAX_REVERSE_LIMIT = 128;
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
-    static private final double MAX_FORWARD_LIMIT = 0;
-    static private final double MAX_REVERSE_LIMIT = 128;
     //CHANGE THESE VALUES
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 

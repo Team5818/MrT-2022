@@ -4,17 +4,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Switch extends SubsystemBase {
-    private static Switch low;
-    private static Switch mid;
-    private static Switch high;
 
-    public enum Buttons {
-        LOW,
-        MID,
-        HIGH
-    }
-
-    static public Switch getInstance(Buttons button) {
+    public static Switch getInstance(Buttons button) {
         switch (button) {
             case LOW:
                 if (low == null) {
@@ -34,6 +25,16 @@ public class Switch extends SubsystemBase {
             default:
                 return null;
         }
+    }
+
+    private static Switch low;
+    private static Switch mid;
+    private static Switch high;
+
+    public enum Buttons {
+        LOW,
+        MID,
+        HIGH
     }
 
     //Verify IDs

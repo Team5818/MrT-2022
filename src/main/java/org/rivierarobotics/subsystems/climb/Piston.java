@@ -26,18 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Piston extends SubsystemBase {
 
-    private Solenoid pistonSolenoid;
-    static private Piston low;
-    static private Piston mid;
-    static private Piston high;
-
-    public enum Pistons {
-        LOW,
-        MID,
-        HIGH
-    }
-
-    static public Piston getInstance(Pistons piston) {
+    public static Piston getInstance(Pistons piston) {
         switch (piston) {
             case LOW:
                 if (low == null) {
@@ -58,7 +47,18 @@ public class Piston extends SubsystemBase {
                 return null;
         }
     }
-    // find piston ids
+
+    private static Piston low;
+    private static Piston mid;
+    private static Piston high;
+
+    public enum Pistons {
+        LOW,
+        MID,
+        HIGH
+    }
+
+    private Solenoid pistonSolenoid;
 
     public Piston(int id, PneumaticsModuleType moduleType) {
         this.pistonSolenoid = new Solenoid(moduleType, id);
