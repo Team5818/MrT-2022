@@ -7,8 +7,8 @@ import org.rivierarobotics.subsystems.climb.Pistons;
 public class SetPistonState extends CommandBase {
 
     private final Pistons piston;
-    private boolean isOpen;
-    private PistonControl pistonControl;
+    private final boolean isOpen;
+    private final PistonControl pistonControl;
 
     public SetPistonState(Pistons piston, boolean isOpen) {
         this.piston = piston;
