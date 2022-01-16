@@ -93,7 +93,6 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
-        ControlMap.getInstance();
     }
 
     private void initializeDefaultCommands() {

@@ -29,21 +29,17 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SwerveControl extends CommandBase {
     private final DriveTrain driveTrain;
-    private final Joystick leftJoystick;
-    private final Joystick rightJoystick;
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
-        this.leftJoystick = ControlMap.getInstance().driverLeft;
-        this.rightJoystick = ControlMap.getInstance().driverRight;
         addRequirements(this.driveTrain);
     }
 
     @Override
     public void execute() {
-        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
-        var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
-        var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
+        var xSpeed = MathUtil.fitDeadband(-ControlMap.DRIVER_LEFT.getY()) * DriveTrain.MAX_SPEED;
+        var ySpeed = MathUtil.fitDeadband(ControlMap.DRIVER_LEFT.getX()) * DriveTrain.MAX_SPEED;
+        var rot = MathUtil.fitDeadband(ControlMap.DRIVER_RIGHT.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
         SmartDashboard.putBoolean("joystick running", true);
         SmartDashboard.putNumber("JS", System.nanoTime());
         driveTrain.drive(xSpeed, ySpeed, rot, true);
