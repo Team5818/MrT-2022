@@ -8,22 +8,19 @@ import org.rivierarobotics.subsystems.climb.Switch;
 
 public class ClimbSetPosition extends CommandBase {
     private final Climb climb;
-    private Switch switchObject;
-    private final double targetTicks;
+    private final Switch switchObject;
     private final ClimbLocation climbLocation;
 
     public ClimbSetPosition(ClimbLocation climbLocation) {
         this.climb = Climb.getInstance();
         this.climbLocation = climbLocation;
         this.switchObject = climbLocation.switchInstance;
-        this.targetTicks = climbLocation.ticks;
-        this.addRequirements(this.switchObject);
-        this.addRequirements(this.climb);
+        this.addRequirements(this.switchObject, this.climb);
     }
 
     @Override
     public void execute() {
-        climb.setPosition(targetTicks);
+        climb.setPosition(climbLocation.ticks);
     }
 
     @Override

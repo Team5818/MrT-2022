@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.climb.ClimbSetPosition;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
@@ -45,9 +44,9 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
                 .whenPressed(new ClimbSetAngle(0));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
-                .whenPressed(new SetPistonState(Piston.getInstanceLow(), true));
+                .whenPressed(new SetPistonState(Piston.getInstance(Piston.Pistons.LOW), true));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
-                .whenPressed(new SetPistonState(Piston.getInstanceLow(), false));
+                .whenPressed(new SetPistonState(Piston.getInstance(Piston.Pistons.LOW), false));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 4)
                 .whenPressed(new RunClimb());
     }

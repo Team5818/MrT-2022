@@ -7,25 +7,36 @@ public class Switch extends SubsystemBase {
     private static Switch low;
     private static Switch mid;
     private static Switch high;
-    public static Switch getInstanceLow() {
-        if (low == null) {
-            low = new Switch(0);
-        }
-        return low;
+
+    public enum Buttons {
+        LOW,
+        MID,
+        HIGH
     }
-    public static Switch getInstanceMid() {
-        if (mid == null) {
-            mid = new Switch(1);
+
+    static public Switch getInstance(Buttons button) {
+        switch (button) {
+            case LOW:
+                if (low == null) {
+                    low = new Switch(0);
+                }
+                return low;
+            case MID:
+                if (mid == null) {
+                    mid = new Switch(1);
+                }
+                return mid;
+            case HIGH:
+                if (high == null) {
+                    high = new Switch(2);
+                }
+                return high;
+            default:
+                return null;
         }
-        return mid;
     }
-    public static Switch getInstanceHigh() {
-        if (high == null) {
-            high = new Switch(2);
-        }
-        return high;
-    }
-//Verify IDs
+
+    //Verify IDs
 
     private int id;
     private DigitalInput digitalInput;
@@ -34,6 +45,7 @@ public class Switch extends SubsystemBase {
         this.id = id;
         this.digitalInput = new DigitalInput(id);
     }
+
     public boolean getState() {
         return !digitalInput.get();
     }

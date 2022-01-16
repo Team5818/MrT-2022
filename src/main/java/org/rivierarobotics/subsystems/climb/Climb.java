@@ -23,13 +23,13 @@ package org.rivierarobotics.subsystems.climb;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
-import org.rivierarobotics.util.StateSpace.PositionStateSpaceModel;
-import org.rivierarobotics.util.StateSpace.SystemIdentification;
+import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
+import org.rivierarobotics.util.statespace.SystemIdentification;
 
 public class Climb extends SubsystemBase {
     private static Climb climb;
 
-    public static Climb getInstance() {
+    static public Climb getInstance() {
         if (climb == null) {
             climb = new Climb();
         }
@@ -39,8 +39,8 @@ public class Climb extends SubsystemBase {
 
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
-    private static final double MAX_FORWARD_LIMIT = 0;
-    private static final double MAX_REVERSE_LIMIT = 128;
+    static private final double MAX_FORWARD_LIMIT = 0;
+    static private final double MAX_REVERSE_LIMIT = 128;
     //CHANGE THESE VALUES
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 

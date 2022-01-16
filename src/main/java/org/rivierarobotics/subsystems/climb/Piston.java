@@ -27,33 +27,45 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Piston extends SubsystemBase {
 
     private Solenoid pistonSolenoid;
-    private static Piston low;
-    private static Piston mid;
-    private static Piston high;
+    static private Piston low;
+    static private Piston mid;
+    static private Piston high;
 
-    public static Piston getInstanceLow() {
-        if (low == null) {
-            low = new Piston(0, PneumaticsModuleType.CTREPCM);
-        }
-        return low;
+    public enum Pistons {
+        LOW,
+        MID,
+        HIGH
     }
-    public static Piston getInstanceMid() {
-        if (mid == null) {
-            mid = new Piston(1, PneumaticsModuleType.CTREPCM);
+
+    static public Piston getInstance(Pistons piston) {
+        switch (piston) {
+            case LOW:
+                if (low == null) {
+                    low = new Piston(0);
+                }
+                return low;
+            case MID:
+                if (mid == null) {
+                    mid = new Piston(1);
+                }
+                return mid;
+            case HIGH:
+                if (high == null) {
+                    high = new Piston(2);
+                }
+                return high;
+            default:
+                return null;
         }
-        return mid;
-    }
-    public static Piston getInstanceHigh() {
-        if (high == null) {
-            high = new Piston(2, PneumaticsModuleType.CTREPCM);
-        }
-        return high;
     }
     // find piston ids
 
-    public Piston(int ID, PneumaticsModuleType moduleType) {
-        pistonSolenoid = new Solenoid(moduleType, ID);
+    public Piston(int id, PneumaticsModuleType moduleType) {
+        this.pistonSolenoid = new Solenoid(moduleType, id);
+    }
 
+    public Piston(int id) {
+        this.pistonSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, id);
     }
 
     public void set(boolean isOpen) {

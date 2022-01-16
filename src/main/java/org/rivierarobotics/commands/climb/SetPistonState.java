@@ -5,17 +5,19 @@ import org.rivierarobotics.subsystems.climb.Piston;
 
 public class SetPistonState extends CommandBase {
 
-    private Piston piston;
+    private final Piston piston;
     private boolean isOpen;
 
     public SetPistonState(Piston piston, boolean isOpen) {
         this.piston = piston;
         this.isOpen = isOpen;
     }
+
     @Override
     public void execute() {
         piston.set(isOpen);
     }
+
     @Override
     public boolean isFinished() {
         return piston.get() == isOpen;
