@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.aifield.AIFieldDisplay;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -36,6 +37,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
+        Logging.aiFieldDisplay = new AIFieldDisplay(20);
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -48,6 +50,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         shuffleboardLogging();
+//        Logging.aiFieldDisplay.update();
     }
 
     @Override
@@ -67,6 +70,7 @@ public class Robot extends TimedRobot {
         var drive = sb.getTab("Drive");
         var dt = DriveTrain.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
+        //DriveTrain.getInstance().periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
@@ -97,6 +101,11 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        Logging.aiFieldDisplay.update();
     }
 }
 

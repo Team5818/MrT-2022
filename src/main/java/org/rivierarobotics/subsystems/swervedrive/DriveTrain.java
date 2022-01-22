@@ -48,6 +48,8 @@ import org.rivierarobotics.util.Gyro;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -62,9 +64,9 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
-    public static final double MAX_SPEED = 0.75; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 8; // rad/s
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 12; // rad/s
+    public static final double MAX_SPEED = 1.5; // m/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 2; // rad/s
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 3; // rad/s
     private static final String[] DRIVE_IDS = new String[]{"FL", "FR", "BL", "BR"};
 
     private final Gyro gyro;
@@ -85,8 +87,8 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-0.3, 0.3); //BL
         swervePosition[3] = new Translation2d(-0.3, -0.3); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -275+2048, false, false);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -3682, false, false);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -880+2048, false, false);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2765, false, false);
         swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 739+2048, false, false);
         swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -5721, false, false);
 
@@ -102,13 +104,14 @@ public class DriveTrain extends SubsystemBase {
                 swerveDriveKinematics,
                 //Standard deviations of model states. Increase these numbers to trust your model's state estimates less.
                 //This matrix is in the form [x, y, theta]^T, with units in meters and radians.
-                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.3, 0.3, .01),
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, .01),
                 // Standard deviations of the encoder and gyro measurements. Increase these numbers to trust sensor
                 // readings from encoders and gyros less. This matrix is in the form [theta], with units in radians.
-                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.1),
+                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.01),
                 //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
                 //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
-                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01) //Vision Measurement stdev
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01), //Vision Measurement stdev
+                .05
         );
 
         this.holonomicDriveController = new HolonomicDriveController(
@@ -125,6 +128,9 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[1] = new RSTable("FR", tab, new RSTileOptions(3, 4, 3, 0));
         loggingTables[2] = new RSTable("BL", tab, new RSTileOptions(3, 4, 6, 0));
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
+
+        var e = Executors.newSingleThreadScheduledExecutor();
+        e.scheduleAtFixedRate(this::updateOdometry, 0,50,TimeUnit.MILLISECONDS);
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -200,7 +206,8 @@ public class DriveTrain extends SubsystemBase {
                 //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
                 new Rotation2d(0)
         );
-
+        SmartDashboard.putNumber("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        SmartDashboard.putNumber("TARGET ROT", controls.omegaRadiansPerSecond);
         drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, controls.omegaRadiansPerSecond, true);
         return true;
     }
@@ -250,11 +257,10 @@ public class DriveTrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateOdometry();
         periodicLogging();
 
-        for (var m : swerveModules) {
-            m.periodic();
-        }
+//        for (var m : swerveModules) {
+//            m.periodic();
+//        }
     }
 }

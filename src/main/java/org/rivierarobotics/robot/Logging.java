@@ -29,7 +29,7 @@ import java.io.IOException;
 public class Logging {
     public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
-    public static final AIFieldDisplay aiFieldDisplay = new AIFieldDisplay(100);
+    public static AIFieldDisplay aiFieldDisplay;
 
     private Logging() {
     }

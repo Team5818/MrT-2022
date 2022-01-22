@@ -23,11 +23,8 @@ package org.rivierarobotics.util.aifield;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -68,9 +65,14 @@ public class AIFieldDisplay {
     }
 
     private void startFieldThread(int updateRate) {
+        int size = 480;
+        Mat resizeFrame = new Mat((int)(size), (int)(size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
         mainImageThread.scheduleAtFixedRate(() -> {
             Mat image = renderFrame.getOpaque();
-            outputStream.putFrame(image);
+            Imgproc.resize(image, resizeFrame, resizeFrame.size(),0,0,2);
+            outputStream.putFrame(resizeFrame);
+            outputStream.setResolution(480,480);
+            SmartDashboard.putNumber("t", System.nanoTime());
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 
@@ -78,9 +80,8 @@ public class AIFieldDisplay {
         if (generatedTrajectory == null || fieldMat == null) {
             return;
         }
-        var trajectory = generatedTrajectory;
         var newRenderFrame = fieldMat.clone();
-
+        var trajectory = generatedTrajectory;
         mainImageThread.submit(() -> {
             for (double i = 0; i < trajectory.getTotalTimeSeconds(); i += 0.1) {
                 if (trajectory.getTotalTimeSeconds() < i + 0.1) {

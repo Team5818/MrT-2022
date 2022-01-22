@@ -20,20 +20,26 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
+import org.rivierarobotics.commands.drive.SwerveControl;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class ButtonConfiguration {
     public void initTeleop() {
-        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
+        new JoystickButton(ControlMap.getInstance().driverLeft, 1)
                 .whenPressed(new SimpleAuto());
-        new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new TestPathGeneration());
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
+        new JoystickButton(ControlMap.getInstance().driverLeft, 2)
+                .whenPressed(new TestPathGeneration());
+        new JoystickButton(ControlMap.getInstance().driverRight, 1)
                 .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
+        new JoystickButton(ControlMap.getInstance().driverRight, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+        new JoystickButton(ControlMap.getInstance().driverButtons, 1).whenPressed(() -> {
+            CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
+        });
     }
 }
