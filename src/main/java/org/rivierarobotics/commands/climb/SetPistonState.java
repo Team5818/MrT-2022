@@ -21,28 +21,26 @@
 package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.Piston;
-import org.rivierarobotics.subsystems.climb.ClimbPistons;
 
 public class SetPistonState extends CommandBase {
 
-    private final ClimbPistons piston;
+    private final Climb.ClimbModule climbModule;
     private final boolean isOpen;
-    private final Piston pistonControl;
 
-    public SetPistonState(ClimbPistons piston, boolean isOpen) {
-        this.piston = piston;
+    public SetPistonState(Climb.ClimbModule climbModule, boolean isOpen) {
+        this.climbModule = climbModule;
         this.isOpen = isOpen;
-        this.pistonControl = Piston.getInstance();
     }
 
     @Override
     public void execute() {
-        pistonControl.set(piston, isOpen);
+        climbModule.piston.set(isOpen);
     }
 
     @Override
     public boolean isFinished() {
-        return pistonControl.get(piston) == isOpen;
+        return climbModule.piston.getState();
     }
 }

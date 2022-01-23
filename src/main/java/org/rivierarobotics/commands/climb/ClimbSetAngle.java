@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.climb;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.climb.Switch;
 
 public class ClimbSetAngle extends CommandBase {
     private final Climb climb;

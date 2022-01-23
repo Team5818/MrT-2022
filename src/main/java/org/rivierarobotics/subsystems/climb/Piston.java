@@ -25,48 +25,18 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Piston extends SubsystemBase {
+    private final Solenoid piston;
 
-    public static Piston getInstance() {
-        if(pistonControl == null) pistonControl = new Piston();
-        return pistonControl;
-    }
-
-    private static Piston pistonControl;
-
-    private static Solenoid low;
-    private static Solenoid mid;
-    private static Solenoid high;
-
-    //TODO: remove low,mid,high. Simply store a reference to a solenoid called piston and initialize with ID
     public Piston(int id) {
-        low = new Solenoid(PneumaticsModuleType.CTREPCM, ClimbPistons.LOW.id);
-        mid = new Solenoid(PneumaticsModuleType.CTREPCM, ClimbPistons.MID.id);
-        high = new Solenoid(PneumaticsModuleType.CTREPCM, ClimbPistons.HIGH.id);
+       this.piston = new Solenoid(PneumaticsModuleType.CTREPCM, id);
     }
 
-    //TODO: REMOVE
-    private Solenoid pistonFor(ClimbPistons piston) {
-        switch (piston) {
-            case LOW:
-                return low;
-            case MID:
-                return mid;
-            case HIGH:
-                return high;
-            default:
-                return null;
-        }
-    }
-
-
-    //TODO: Just call piston.set(isOpen), Remove the option to input a piston
     public void set(boolean isOpen) {
-        piston.set(isOpen);
+        piston.set(!isOpen);
     }
 
-    //TODO: Remove
-    public boolean get(ClimbPistons piston) {
-        return pistonFor(piston).get();
+    public boolean getState() {
+        return piston.get();
     }
 
 }

@@ -20,31 +20,28 @@
 
 package org.rivierarobotics.commands.climb;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.climb.ClimbLocation;
-import org.rivierarobotics.subsystems.climb.Switch;
 
 public class ClimbSetPosition extends CommandBase {
     private final Climb climb;
-    private final Switch switchObject;
-    private final ClimbLocation climbLocation;
+    private final Climb.ClimbModule climbModule;
 
-    public ClimbSetPosition(ClimbLocation climbLocation) {
+    public ClimbSetPosition(Climb.ClimbModule climbModule) {
         this.climb = Climb.getInstance();
-        this.climbLocation = climbLocation;
-        this.switchObject = climbLocation.switchInstance;
-        this.addRequirements(this.switchObject, this.climb);
+        this.climbModule = climbModule;
+        this.addRequirements(this.climb);
     }
 
     @Override
     public void execute() {
-        climb.setPosition(climbLocation.ticks);
+        climb.setPosition(climbModule.ticks);
     }
 
     @Override
     public boolean isFinished() {
-        return switchObject.getState();
+        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.ticks, 1);
     }
 }

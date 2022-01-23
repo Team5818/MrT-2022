@@ -20,13 +20,11 @@
 
 package org.rivierarobotics.commands.climb;
 
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.climb.ClimbLocation;
-import org.rivierarobotics.subsystems.climb.ClimbPistons;
-import org.rivierarobotics.subsystems.climb.Switch;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class RunClimb extends SequentialCommandGroup {
     //TODO: Change Command to look like this:
@@ -57,6 +55,11 @@ public class RunClimb extends SequentialCommandGroup {
 
     public RunClimb() {
         addCommands(
+                new ClimbSetAngle(0),
+                new ClimbSetPosition(Climb.ClimbModule.LOW),
+
+                ParallelDeadlineGroup(),
+
                 new SetPistonState(ClimbPistons.MID, true),
                 new SetPistonState(ClimbPistons.HIGH, true),
                 new ClimbSetPosition(ClimbLocation.MID),
