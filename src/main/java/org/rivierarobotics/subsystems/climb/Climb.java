@@ -105,7 +105,7 @@ public class Climb extends SubsystemBase {
 
     //TODO: Implement method using your switches stored at the class level
     public boolean isSwitchSet(ClimbModule climbModule) {
-        return climbModule.sw.get();
+        return climbModule.lSwitch.get();
     }
 
     public void setPosition(double radians) {
@@ -161,16 +161,15 @@ public class Climb extends SubsystemBase {
         MID(climbSwitches[1], climbPistons[1], MID_TICKS),
         HIGH(climbSwitches[2], climbPistons[2], HIGH_TICKS);
 
-        public final DigitalInput sw;
+        public final DigitalInput lSwitch;
         public final Piston piston;
         public final double ticks;
 
-        ClimbModule(DigitalInput sw, Piston piston, double ticks){
-            this.sw = sw;
+        ClimbModule(DigitalInput lSwitch, Piston piston, double ticks){
+            this.lSwitch = lSwitch;
             this.piston = piston;
             this.ticks = ticks;
         }
-
 
     }
 
