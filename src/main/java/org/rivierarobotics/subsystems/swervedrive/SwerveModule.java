@@ -222,9 +222,9 @@ public class SwerveModule {
 
     public void periodic() {
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
-        setDriveMotorVoltage(driveVoltage);
+        //setDriveMotorVoltage(driveVoltage);
 
         var turnMotorVoltage = steerController.getAppliedVoltage(getAngle());
-        setSteeringMotorVoltage(turnMotorVoltage);
+        //setSteeringMotorVoltage(turnMotorVoltage);
     }
 }

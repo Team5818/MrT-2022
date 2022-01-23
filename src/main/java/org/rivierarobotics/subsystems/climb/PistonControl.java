@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class PistonControl extends SubsystemBase {
 
     public static PistonControl getInstance() {
+        if(pistonControl == null) pistonControl = new PistonControl();
         return pistonControl;
     }
 

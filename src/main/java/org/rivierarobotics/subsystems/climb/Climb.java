@@ -21,8 +21,12 @@
 package org.rivierarobotics.subsystems.climb;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
@@ -37,8 +41,11 @@ public class Climb extends SubsystemBase {
     }
 
     private static Climb climb;
-    private static final double MAX_FORWARD_LIMIT = 0;
-    private static final double MAX_REVERSE_LIMIT = 128;
+    //private static final double zero_ticks = -0.3;
+    private final Compressor compressor;
+    private static final double MAX_FORWARD_LIMIT = 823742;
+    private static final double MAX_REVERSE_LIMIT = -2255;
+    private static final double gearing = 1 / ((54.0/12.0) * 100);
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
     //CHANGE THESE VALUES
@@ -56,10 +63,13 @@ public class Climb extends SubsystemBase {
                 0.01,
                 0.01
         );
+        compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        compressor.enabled();
         climbMotor.configForwardSoftLimitEnable(true);
-        climbMotor.configForwardSoftLimitThreshold(climb.MAX_FORWARD_LIMIT);
+        climbMotor.getSensorCollection().setIntegratedSensorPosition(0, 10);
+        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
         climbMotor.configReverseSoftLimitEnable(true);
-        climbMotor.configReverseSoftLimitThreshold(climb.MAX_REVERSE_LIMIT);
+        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
     }
 
@@ -72,13 +82,14 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return climbMotor.getSensorCollection().getIntegratedSensorAbsolutePosition();
+        return climbMotor.getSensorCollection().getIntegratedSensorPosition() * gearing / 2048;
     }
 
     @Override
     public void periodic() {
-        var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
-        setVoltage(climbVoltage);
-        Shuffleboard.getTab("climb").add("climb ticks", climbMotor.getSensorCollection().getIntegratedSensorAbsolutePosition());
+        Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Enabled", compressor.enabled());
+        Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Pressure", compressor.getPressure());
+        //var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
+        //setVoltage(climbVoltage);
     }
 }

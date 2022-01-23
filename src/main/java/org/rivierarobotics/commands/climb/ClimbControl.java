@@ -20,29 +20,28 @@
 
 package org.rivierarobotics.commands.climb;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.climb.PistonControl;
-import org.rivierarobotics.subsystems.climb.Pistons;
+import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.robot.ControlMap;
+import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-public class SetPistonState extends CommandBase {
+public class ClimbControl extends CommandBase {
+    private final Climb climb;
+    private final Joystick leftJoystick;
 
-    private final Pistons piston;
-    private final boolean isOpen;
-    private final PistonControl pistonControl;
-
-    public SetPistonState(Pistons piston, boolean isOpen) {
-        this.piston = piston;
-        this.isOpen = isOpen;
-        this.pistonControl = PistonControl.getInstance();
+    public ClimbControl() {
+        this.climb = Climb.getInstance();
+        this.leftJoystick = ControlMap.CO_DRIVER_LEFT;
+        addRequirements(this.climb);
     }
 
     @Override
     public void execute() {
-        pistonControl.set(piston, isOpen);
-    }
+        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 6;
 
-    @Override
-    public boolean isFinished() {
-        return pistonControl.get(piston) == isOpen;
+        this.climb.setVoltage(xSpeed);
     }
 }
+

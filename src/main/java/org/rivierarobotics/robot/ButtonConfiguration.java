@@ -44,11 +44,19 @@ public class ButtonConfiguration {
                 .whenPressed(new ClimbSetAngle(128));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
                 .whenPressed(new ClimbSetAngle(0));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
                 .whenPressed(new SetPistonState(Pistons.LOW, true));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
                 .whenPressed(new SetPistonState(Pistons.LOW, false));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 4)
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
+                .whenPressed(new SetPistonState(Pistons.MID, true));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
+                .whenPressed(new SetPistonState(Pistons.MID, false));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
+                .whenPressed(new SetPistonState(Pistons.HIGH, true));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
+                .whenPressed(new SetPistonState(Pistons.HIGH, false));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
                 .whenPressed(new RunClimb());
     }
 }

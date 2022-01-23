@@ -24,7 +24,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
+import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
@@ -60,7 +62,9 @@ public class Robot extends TimedRobot {
         var sb = Logging.robotShuffleboard;
 
         var drive = sb.getTab("Drive");
+        var climb = sb.getTab("Climb");
         var dt = DriveTrain.getInstance();
+        var cl = Climb.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
@@ -69,6 +73,9 @@ public class Robot extends TimedRobot {
         drive.setEntry("y pose", dt.getRobotPose().getY());
         drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
         drive.setEntry("Gyro Angle", Gyro.getInstance().getAngle());
+
+        climb.setEntry("Climb Ticks", cl.getAngle());
+
     }
 
     @Override
@@ -78,10 +85,12 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+        Climb.getInstance();
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
     }
 }
 
