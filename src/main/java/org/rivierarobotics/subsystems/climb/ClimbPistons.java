@@ -20,16 +20,16 @@
 
 package org.rivierarobotics.subsystems.climb;
 
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import org.rivierarobotics.subsystems.MotorIDs;
 
-public enum Pistons {
+
+//TODO: Move class into Climb
+public enum ClimbPistons {
 
     LOW(MotorIDs.SOLENOID_LOW), MID(MotorIDs.SOLENOID_MID), HIGH(MotorIDs.SOLENOID_HIGH);
     public final int id;
 
-    Pistons(int id) {
+    ClimbPistons(int id) {
         this.id = id;
     }
 

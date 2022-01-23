@@ -22,23 +22,51 @@ package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbLocation;
-import org.rivierarobotics.subsystems.climb.Pistons;
+import org.rivierarobotics.subsystems.climb.ClimbPistons;
+import org.rivierarobotics.subsystems.climb.Switch;
 
 public class RunClimb extends SequentialCommandGroup {
+    //TODO: Change Command to look like this:
+    //
+    //  Set Robot Angle to 0 degrees
+    //  Set Climb to LOW
+    //  parallel deadline command: {
+    //   deadline: new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Switch.Buttons.LOW))),
+    //   set drive speed -Y amount
+    //  }
+    //  Close Low Piston
+    //  wait 0.5 seconds
+    //  parallel deadline command: {
+    //      deadline: new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Switch.Buttons.MID))),
+    //      Set Climb to MID
+    //  }
+    //  Close Mid Piston
+    //  wait (0.5)
+    //  Open Low Piston
+    //  parallel deadline command: {
+    //      deadline: new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Switch.Buttons.HIGH))),
+    //      Set Climb to HIGH
+    //  }
+    //  Close HIGH Piston
+    //  wait (0.5)
+    //  Open MID Piston
+    //  Set Climb to FINAL
 
     public RunClimb() {
         addCommands(
-                new SetPistonState(Pistons.MID, true),
-                new SetPistonState(Pistons.HIGH, true),
+                new SetPistonState(ClimbPistons.MID, true),
+                new SetPistonState(ClimbPistons.HIGH, true),
                 new ClimbSetPosition(ClimbLocation.MID),
-                new SetPistonState(Pistons.MID, false),
+                new SetPistonState(ClimbPistons.MID, false),
                 new WaitCommand(1.5),
-                new SetPistonState(Pistons.LOW, true),
+                new SetPistonState(ClimbPistons.LOW, true),
                 new ClimbSetPosition(ClimbLocation.HIGH),
-                new SetPistonState(Pistons.HIGH, false),
+                new SetPistonState(ClimbPistons.HIGH, false),
                 new WaitCommand(1.5),
-                new SetPistonState(Pistons.MID, true)
+                new SetPistonState(ClimbPistons.MID, true)
         );
     }
 }

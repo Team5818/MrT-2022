@@ -68,7 +68,7 @@ public class AIFieldDisplay {
     }
 
     private void startFieldThread(int updateRate) {
-        mainImageThread.scheduleAtFixedRate(() -> {
+        mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
             outputStream.putFrame(image);
         }, 0, updateRate, TimeUnit.MILLISECONDS);

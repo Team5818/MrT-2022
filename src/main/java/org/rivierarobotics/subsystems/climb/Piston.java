@@ -24,26 +24,28 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class PistonControl extends SubsystemBase {
+public class Piston extends SubsystemBase {
 
-    public static PistonControl getInstance() {
-        if(pistonControl == null) pistonControl = new PistonControl();
+    public static Piston getInstance() {
+        if(pistonControl == null) pistonControl = new Piston();
         return pistonControl;
     }
 
-    private static PistonControl pistonControl;
+    private static Piston pistonControl;
 
     private static Solenoid low;
     private static Solenoid mid;
     private static Solenoid high;
 
-    public PistonControl() {
-        this.low = new Solenoid(PneumaticsModuleType.CTREPCM, Pistons.LOW.id);
-        this.mid = new Solenoid(PneumaticsModuleType.CTREPCM, Pistons.MID.id);
-        this.high = new Solenoid(PneumaticsModuleType.CTREPCM, Pistons.HIGH.id);
+    //TODO: remove low,mid,high. Simply store a reference to a solenoid called piston and initialize with ID
+    public Piston(int id) {
+        low = new Solenoid(PneumaticsModuleType.CTREPCM, ClimbPistons.LOW.id);
+        mid = new Solenoid(PneumaticsModuleType.CTREPCM, ClimbPistons.MID.id);
+        high = new Solenoid(PneumaticsModuleType.CTREPCM, ClimbPistons.HIGH.id);
     }
 
-    private Solenoid pistonFor(Pistons piston) {
+    //TODO: REMOVE
+    private Solenoid pistonFor(ClimbPistons piston) {
         switch (piston) {
             case LOW:
                 return low;
@@ -57,11 +59,13 @@ public class PistonControl extends SubsystemBase {
     }
 
 
-    public void set(Pistons piston, boolean isOpen) {
-        pistonFor(piston).set(isOpen);
+    //TODO: Just call piston.set(isOpen), Remove the option to input a piston
+    public void set(boolean isOpen) {
+        piston.set(isOpen);
     }
 
-    public boolean get(Pistons piston) {
+    //TODO: Remove
+    public boolean get(ClimbPistons piston) {
         return pistonFor(piston).get();
     }
 

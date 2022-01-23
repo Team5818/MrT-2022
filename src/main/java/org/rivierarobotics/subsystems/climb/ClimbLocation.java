@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems.climb;
 
+//TODO: Move into Climb and delete this file
 public enum ClimbLocation {
 
     LOW(Switch.getInstance(Switch.Buttons.LOW), 0),

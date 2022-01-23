@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems.climb;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -41,16 +42,26 @@ public class Climb extends SubsystemBase {
     }
 
     private static Climb climb;
-    //private static final double zero_ticks = -0.3;
     private final Compressor compressor;
     private static final double MAX_FORWARD_LIMIT = 823742;
     private static final double MAX_REVERSE_LIMIT = -2255;
     private static final double gearing = 1 / ((54.0/12.0) * 100);
+
+    //TODO: Move initialization of climbMotor into constructor
     private final WPI_TalonFX climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
     private final PositionStateSpaceModel climbStateSpace;
-    //CHANGE THESE VALUES
+    //TODO: SysID The climb using the middle bar of the climb
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 
+    //TODO: Initialize These
+    private final DigitalInput[] switches = {
+            new DigitalInput(0)
+    };
+
+    //TODO: Initialize These
+    private final Piston[] pistons = {
+            new Piston(0)
+    };
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
@@ -63,16 +74,42 @@ public class Climb extends SubsystemBase {
                 0.01,
                 0.01
         );
+
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
         compressor.enabled();
+
         climbMotor.configForwardSoftLimitEnable(true);
         climbMotor.getSensorCollection().setIntegratedSensorPosition(0, 10);
         climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
         climbMotor.configReverseSoftLimitEnable(true);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
+    }
+
+    //TODO: Implement method using your pistons stored at the class level
+    public void setPiston(ClimbPistons piston, boolean isSet) {
+        switch(piston) {
+            case LOW: pistons[0].set(isSet);
+            case MID: pistons[0].set(isSet);
+            case HIGH: pistons[0].set(isSet);
+        }
+    }
+
+    //TODO: Loop through pistons and set all to false
+    public void openAllPistons() {
 
     }
 
+    //TODO: Implement method using your switches stored at the class level
+    public boolean isSwitchSet(Switch.Buttons switchPosition) {
+        switch(switchPosition) {
+            case LOW: return switches[0].get();
+            case MID: return switches[0].get();
+            case HIGH: return switches[0].get();
+            default: return false;
+        }
+    }
+
+    //TODO: Change to radians
     public void setPosition(double ticks) {
         climbStateSpace.setPosition(ticks);
     }
@@ -81,6 +118,7 @@ public class Climb extends SubsystemBase {
         climbMotor.setVoltage(voltage);
     }
 
+    //TODO: This currently is in units of rotation: 1 unit = 1 rotation. Change this to radians for State Space
     public double getAngle() {
         return climbMotor.getSensorCollection().getIntegratedSensorPosition() * gearing / 2048;
     }

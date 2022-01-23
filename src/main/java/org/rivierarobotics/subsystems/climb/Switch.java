@@ -22,7 +22,7 @@ package org.rivierarobotics.subsystems.climb;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+//TODO: REMOVE CLASS - Move getState to Climb. DigitalInputs/Switches are simple enough not to need their own class
 public class Switch extends SubsystemBase {
 
     public static Switch getInstance(Buttons button) {
@@ -51,6 +51,7 @@ public class Switch extends SubsystemBase {
     private static Switch mid;
     private static Switch high;
 
+    //TODO: Move Enum into climb - rename ClimbSwitches
     public enum Buttons {
         LOW,
         MID,

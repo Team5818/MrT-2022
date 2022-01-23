@@ -54,7 +54,6 @@ public class MLCore {
             throws JsonParseException {
             MLResponse response = new MLResponse();
             var detectedObjects = json.getAsJsonArray();
-
             for (var object : detectedObjects) {
                 var jsonObject = object.getAsJsonObject();
                 var boundingBoxJson = jsonObject.get("box").getAsJsonObject();

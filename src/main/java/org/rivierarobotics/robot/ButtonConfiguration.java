@@ -27,8 +27,7 @@ import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
-import org.rivierarobotics.subsystems.climb.PistonControl;
-import org.rivierarobotics.subsystems.climb.Pistons;
+import org.rivierarobotics.subsystems.climb.ClimbPistons;
 
 public class ButtonConfiguration {
     public void initTeleop() {
@@ -45,17 +44,17 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
                 .whenPressed(new ClimbSetAngle(0));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
-                .whenPressed(new SetPistonState(Pistons.LOW, true));
+                .whenPressed(new SetPistonState(ClimbPistons.LOW, true));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
-                .whenPressed(new SetPistonState(Pistons.LOW, false));
+                .whenPressed(new SetPistonState(ClimbPistons.LOW, false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
-                .whenPressed(new SetPistonState(Pistons.MID, true));
+                .whenPressed(new SetPistonState(ClimbPistons.MID, true));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
-                .whenPressed(new SetPistonState(Pistons.MID, false));
+                .whenPressed(new SetPistonState(ClimbPistons.MID, false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
-                .whenPressed(new SetPistonState(Pistons.HIGH, true));
+                .whenPressed(new SetPistonState(ClimbPistons.HIGH, true));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
-                .whenPressed(new SetPistonState(Pistons.HIGH, false));
+                .whenPressed(new SetPistonState(ClimbPistons.HIGH, false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
                 .whenPressed(new RunClimb());
     }
