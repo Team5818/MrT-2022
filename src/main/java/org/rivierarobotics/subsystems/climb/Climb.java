@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems.climb;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
@@ -78,5 +79,6 @@ public class Climb extends SubsystemBase {
     public void periodic() {
         var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
         setVoltage(climbVoltage);
+        Shuffleboard.getTab("climb").add("climb ticks", climbMotor.getSensorCollection().getIntegratedSensorAbsolutePosition());
     }
 }
