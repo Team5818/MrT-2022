@@ -29,22 +29,24 @@ import org.rivierarobotics.util.Gyro;
 public class SetDriveAngle extends CommandBase {
     private final DriveTrain dt;
     private final Gyro gyro;
-    private final double angle;
+    private final double targetAngle;
+    private final double angleDiff;
 
     public SetDriveAngle(double angle) {
         this.dt = DriveTrain.getInstance();
         this.gyro = Gyro.getInstance();
-        this.angle = angle;
+        this.targetAngle = angle;
+        this.angleDiff = targetAngle - gyro.getAngle();
         addRequirements(this.dt);
     }
 
     @Override
     public void execute() {
-        dt.drive(0, 0, Math.signum(angle) * DriveTrain.MAX_ANGULAR_SPEED, false);
+        dt.drive(0, 0, Math.signum(angleDiff) * DriveTrain.MAX_ANGULAR_SPEED, false);
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(gyro.getAngle(), angle, 1);
+        return MathUtil.isWithinTolerance(gyro.getAngle(), targetAngle, 1);
     }
 }
