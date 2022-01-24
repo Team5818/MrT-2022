@@ -30,6 +30,8 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
+import java.util.EnumMap;
+
 public class Climb extends SubsystemBase {
 
     public static Climb getInstance() {
@@ -50,9 +52,9 @@ public class Climb extends SubsystemBase {
     private static final double WHEEL_RADIUS = 0.03915;
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
-    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+    private static final double MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     //TODO: add a decimal point to actually make this a double
-    private static final double GEARING = 1 / 450;
+    private static final double GEARING = 1 / 450.;
 
     private final WPI_TalonFX climbMotor;
     private final PositionStateSpaceModel climbStateSpace;
@@ -60,8 +62,9 @@ public class Climb extends SubsystemBase {
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 
     private static final DigitalInput[] climbSwitches = new DigitalInput[3];
-
     private static final Piston[] climbPistons = new Piston[3];
+    private static final EnumMap<ClimbModule, DigitalInput> climbSwitchesMap = new EnumMap<ClimbModule, DigitalInput>(ClimbModule.class);
+    private static final EnumMap<ClimbModule, Piston> climbPistonsMap = new EnumMap<ClimbModule, Piston>(ClimbModule.class);
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
@@ -88,14 +91,29 @@ public class Climb extends SubsystemBase {
         climbSwitches[0] = new DigitalInput(0);
         climbSwitches[1] = new DigitalInput(1);
         climbSwitches[2] = new DigitalInput(2);
+        climbSwitchesMap.put(ClimbModule.LOW, climbSwitches[0]);
+        climbSwitchesMap.put(ClimbModule.MID, climbSwitches[1]);
+        climbSwitchesMap.put(ClimbModule.HIGH, climbSwitches[2]);
+
 
         climbPistons[0] = new Piston(0);
         climbPistons[1] = new Piston(1);
         climbPistons[2] = new Piston(2);
+        climbPistonsMap.put(ClimbModule.LOW, climbPistons[0]);
+        climbPistonsMap.put(ClimbModule.MID, climbPistons[1]);
+        climbPistonsMap.put(ClimbModule.HIGH, climbPistons[2]);
+    }
+
+    public static EnumMap<ClimbModule, DigitalInput> getClimbSwitchesMap() {
+        return climbSwitchesMap;
+    }
+
+    public static EnumMap<ClimbModule, Piston> getClimbPistonsMap() {
+        return climbPistonsMap;
     }
 
     public void setPiston(ClimbModule climbModule, boolean isOpen) {
-        climbModule.piston.set(isOpen);
+        climbPistonsMap.get(climbModule).set(isOpen);
     }
 
     public void openAllPistons() {
@@ -104,9 +122,8 @@ public class Climb extends SubsystemBase {
         }
     }
 
-    //TODO: Implement method using your switches stored at the class level
     public boolean isSwitchSet(ClimbModule climbModule) {
-        return climbModule.lSwitch.get();
+        return climbSwitchesMap.get(climbModule).get();
     }
 
     public void setPosition(double radians) {
@@ -118,59 +135,18 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return climbMotor.getSensorCollection().getIntegratedSensorPosition() * GEARING / ENCODER_RESOLUTION * STEER_MOTOR_TICK_TO_ANGLE;
+        return climbMotor.getSensorCollection().getIntegratedSensorPosition() * GEARING * MOTOR_TICK_TO_ANGLE;
     }
 
-//    public enum ClimbPistons {
-//
-//        LOW(climbPistons[0]), MID(climbPistons[1]), HIGH(climbPistons[2]);
-//        private final Piston id;
-//
-//        ClimbPistons(Piston id) {
-//            this.id = id;
-//        }
-//
-//        public boolean getState(){
-//            return id.getState();
-//        }
-//
-//        public Piston getPiston(){
-//            return id;
-//        }
-//
-//    }
-//
-//    public enum ClimbSwitches {
-//        LOW(climbSwitches[0]),
-//        MID(climbSwitches[1]),
-//        HIGH(climbSwitches[2]);
-//
-//        public final DigitalInput swi;
-//
-//        ClimbSwitches(DigitalInput swi){
-//            this.swi = swi;
-//        }
-//
-//        public boolean isOpen(){
-//            return !swi.get();
-//        }
-//
-//    }
-
-    //TODO: Please use EnumMaps or HashMaps to achieve this, or just use a simple array. Storing the switches and pistons on here will cause IndexOutOfBounds and also NullPtr
     public enum ClimbModule {
-        LOW(climbSwitches[0], climbPistons[0], LOW_TICKS),
-        MID(climbSwitches[1], climbPistons[1], MID_TICKS),
-        HIGH(climbSwitches[2], climbPistons[2], HIGH_TICKS);
+        LOW(LOW_TICKS),
+        MID(MID_TICKS),
+        HIGH(HIGH_TICKS);
 
-        public final DigitalInput lSwitch;
-        public final Piston piston;
-        public final double ticks;
+        public final double locationTicks;
 
-        ClimbModule(DigitalInput lSwitch, Piston piston, double ticks){
-            this.lSwitch = lSwitch;
-            this.piston = piston;
-            this.ticks = ticks;
+        ClimbModule(double ticks){
+            this.locationTicks=ticks;
         }
 
     }

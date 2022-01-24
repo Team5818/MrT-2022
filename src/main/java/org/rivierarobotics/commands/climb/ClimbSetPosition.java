@@ -37,11 +37,11 @@ public class ClimbSetPosition extends CommandBase {
 
     @Override
     public void execute() {
-        climb.setPosition(climbModule.ticks);
+        climb.setPosition(climbModule.locationTicks);
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.ticks, 1);
+        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.locationTicks, 1);
     }
 }

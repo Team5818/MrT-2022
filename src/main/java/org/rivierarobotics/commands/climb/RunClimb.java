@@ -24,13 +24,13 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetDriveVelocity;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class RunClimb extends SequentialCommandGroup {
-    //TODO: Change Command to look like this:
     //
     //  Set Robot Angle to 0 degrees
     //  Set Climb to LOW
@@ -61,20 +61,19 @@ public class RunClimb extends SequentialCommandGroup {
                 new ClimbSetAngle(0),
                 new ClimbSetPosition(Climb.ClimbModule.LOW),
                 new OpenAllPistons(),
-                //TODO: Change to use SetDriveAngle and not SetWheelbaseAngle. We want gyro == 0 not wheels == 0.
-                new SetWheelbaseAngle(0),
-                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.LOW.lSwitch::get), new SetDriveVelocity(1)),
-                //TODO: Make sure to set drive vel to 0 once the switch is hit.
+                new SetDriveAngle(0),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.ClimbModule.LOW)::get), new SetDriveVelocity(0,-1, 0)),
                 new SetPistonState(Climb.ClimbModule.LOW,false),
+                new SetDriveVelocity(0,0,0),
                 new WaitCommand(0.5),
 
-                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.MID.lSwitch::get), new ClimbSetPosition(Climb.ClimbModule.MID)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.ClimbModule.MID)::get), new ClimbSetPosition(Climb.ClimbModule.MID)),
                 new SetPistonState(Climb.ClimbModule.MID,false),
                 new WaitCommand(0.5),
                 new SetPistonState( Climb.ClimbModule.LOW, true),
                 new WaitCommand(0.5),
 
-                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.HIGH.lSwitch::get), new ClimbSetPosition(Climb.ClimbModule.HIGH)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.ClimbModule.HIGH)::get), new ClimbSetPosition(Climb.ClimbModule.HIGH)),
                 new SetPistonState(Climb.ClimbModule.HIGH,false),
                 new WaitCommand(0.5),
                 new SetPistonState( Climb.ClimbModule.MID, true)

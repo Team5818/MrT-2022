@@ -3,19 +3,22 @@ package org.rivierarobotics.commands.drive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-//TODO: change this class to use the .drive() method from driveTrain. Remember that our drive is field centric, meaning that -y will always move us backwards in respect to our gyro.
 public class SetDriveVelocity extends CommandBase {
     private final DriveTrain driveTrain;
-    private final double velocity;
+    private final double velocityX;
+    private final double velocityY;
+    private final double rotationVel;
 
-    public SetDriveVelocity(double vel){
+    public SetDriveVelocity(double velocityX, double velyocityY, double rotationVel){
         this.driveTrain = DriveTrain.getInstance();
-        this.velocity = vel;
+        this.velocityX = velocityX;
+        this.velocityY = velyocityY;
+        this.rotationVel = rotationVel;
     }
 
     @Override
     public void execute() {
-        driveTrain.setSwerveModuleVelocity(velocity);
+        driveTrain.drive(velocityX, velocityY, rotationVel, true);
     }
 
     @Override

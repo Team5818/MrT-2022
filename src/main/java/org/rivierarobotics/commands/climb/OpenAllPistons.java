@@ -17,6 +17,6 @@ public class OpenAllPistons extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        return Climb.ClimbModule.LOW.piston.getState();
+        return Climb.getClimbPistonsMap().get(Climb.ClimbModule.LOW).getState();
     }
 }
