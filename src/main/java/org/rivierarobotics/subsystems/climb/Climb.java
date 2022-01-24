@@ -51,6 +51,7 @@ public class Climb extends SubsystemBase {
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
     private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+    //TODO: add a decimal point to actually make this a double
     private static final double GEARING = 1 / 450;
 
     private final WPI_TalonFX climbMotor;
@@ -156,6 +157,7 @@ public class Climb extends SubsystemBase {
 //
 //    }
 
+    //TODO: Please use EnumMaps or HashMaps to achieve this, or just use a simple array. Storing the switches and pistons on here will cause IndexOutOfBounds and also NullPtr
     public enum ClimbModule {
         LOW(climbSwitches[0], climbPistons[0], LOW_TICKS),
         MID(climbSwitches[1], climbPistons[1], MID_TICKS),
