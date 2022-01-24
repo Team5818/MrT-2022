@@ -45,17 +45,17 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
                 .whenPressed(new ClimbSetAngle(0));
         Button button = new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
-                .whenPressed(new SetPistonState(Climb.Position.LOW, true));
+                .whenPressed(new SetPistonState(Climb.Position.LOW, true, 0.5));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
-                .whenPressed(new SetPistonState(Climb.Position.LOW, false));
+                .whenPressed(new SetPistonState(Climb.Position.LOW, false, 0.5));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
-                .whenPressed(new SetPistonState(Climb.Position.MID, true));
+                .whenPressed(new SetPistonState(Climb.Position.MID, true, 0.5));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
-                .whenPressed(new SetPistonState(Climb.Position.MID, false));
+                .whenPressed(new SetPistonState(Climb.Position.MID, false, 0.5));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
-                .whenPressed(new SetPistonState(Climb.Position.HIGH, true));
+                .whenPressed(new SetPistonState(Climb.Position.HIGH, true, 0.5));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
-                .whenPressed(new SetPistonState(Climb.Position.HIGH, false));
+                .whenPressed(new SetPistonState(Climb.Position.HIGH, false, 0.5));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
                 .whenPressed(new RunClimb());
     }
