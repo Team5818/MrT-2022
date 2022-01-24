@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.drive.SetDriveVelocity;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class RunClimb extends SequentialCommandGroup {
     //TODO: Change Command to look like this:
@@ -58,20 +59,21 @@ public class RunClimb extends SequentialCommandGroup {
     public RunClimb() {
         addCommands(
                 new ClimbSetAngle(0),
-                new OpenAllPistons(),
                 new ClimbSetPosition(Climb.ClimbModule.LOW),
+                //TODO: Change to use SetDriveAngle and not SetWheelbaseAngle. We want gyro == 0 not wheels == 0.
                 new SetWheelbaseAngle(0),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.ClimbModule.LOW.lSwitch.get()) ,new SetDriveVelocity(1)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.LOW.sw::get), new SetDriveVelocity(1)),
+                //TODO: Make sure to set drive vel to 0 once the switch is hit.
                 new SetPistonState(Climb.ClimbModule.LOW,false),
                 new WaitCommand(0.5),
 
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.ClimbModule.MID.lSwitch.get()) ,new ClimbSetPosition(Climb.ClimbModule.MID)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.MID.sw::get), new ClimbSetPosition(Climb.ClimbModule.MID)),
                 new SetPistonState(Climb.ClimbModule.MID,false),
                 new WaitCommand(0.5),
                 new SetPistonState( Climb.ClimbModule.LOW, true),
                 new WaitCommand(0.5),
 
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.ClimbModule.HIGH.lSwitch.get()) ,new ClimbSetPosition(Climb.ClimbModule.HIGH)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.HIGH.sw::get), new ClimbSetPosition(Climb.ClimbModule.HIGH)),
                 new SetPistonState(Climb.ClimbModule.HIGH,false),
                 new WaitCommand(0.5),
                 new SetPistonState( Climb.ClimbModule.MID, true)
