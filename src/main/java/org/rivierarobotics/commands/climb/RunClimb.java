@@ -60,6 +60,7 @@ public class RunClimb extends SequentialCommandGroup {
         addCommands(
                 new ClimbSetAngle(0),
                 new ClimbSetPosition(Climb.ClimbModule.LOW),
+                new OpenAllPistons(),
                 //TODO: Change to use SetDriveAngle and not SetWheelbaseAngle. We want gyro == 0 not wheels == 0.
                 new SetWheelbaseAngle(0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(Climb.ClimbModule.LOW.sw::get), new SetDriveVelocity(1)),
