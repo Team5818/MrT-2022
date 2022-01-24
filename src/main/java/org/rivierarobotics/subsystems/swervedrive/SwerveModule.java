@@ -27,12 +27,14 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
-public class SwerveModule {
+public class SwerveModule extends SubsystemBase {
     private static final double WHEEL_RADIUS = 0.03915;
     private static final int ENCODER_RESOLUTION = 4096;
     private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
@@ -47,8 +49,9 @@ public class SwerveModule {
     private final VelocityStateSpaceModel driveController;
     private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
     private final WPI_TalonSRX steeringMotor;
+    private boolean setDriveEnabled = false;
     private final PositionStateSpaceModel steerController;
-    private final SystemIdentification tmSID = new SystemIdentification(0.093, 0.79016, 0.11946);
+    private final SystemIdentification tmSID = new SystemIdentification(0.7, 1.0242, 0.546);
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
 
@@ -66,7 +69,7 @@ public class SwerveModule {
         this.zeroTicks = zeroTicks;
 
         driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
-        driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60);
+        driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60.0);
         driveMotor.getEncoder().setPosition(0);
         driveMotor.setInverted(driveInverted);
 
@@ -79,11 +82,12 @@ public class SwerveModule {
         this.driveController.setKsTolerance(0.05);
 
         this.steerController = new PositionStateSpaceModel(
-                tmSID, 1, 1,
+                tmSID, 5, 1,
                 0.01, 0.01, 0.1,
-                0.1, 12
+                0.05, 12
         );
-        this.steerController.setKsTolerance(3);
+        this.steerController.setPosition(getPosTicks());
+        this.steerController.setKsTolerance(2);
 
         this.steeringMotor.configContinuousCurrentLimit(15);
         this.steeringMotor.configPeakCurrentLimit(20);
@@ -103,11 +107,11 @@ public class SwerveModule {
     }
 
     public double getAngle() {
-        return (steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
+        return (-steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getPosTicks() {
-        return steeringMotor.getSensorCollection().getPulseWidthPosition();
+        return -steeringMotor.getSensorCollection().getPulseWidthPosition();
     }
 
     public double getDriveTicks() {
@@ -202,6 +206,7 @@ public class SwerveModule {
 
         setDriveMotorVelocity(targetSpeed);
         setSteeringMotorAngle(targetAng);
+        setDriveEnabled = true;
     }
 
     public Rotation2d getTargetRotation() {
@@ -220,7 +225,9 @@ public class SwerveModule {
         return steeringMotor.getSensorCollection().getPulseWidthVelocity() * 10 * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
+    @Override
     public void periodic() {
+        if(!setDriveEnabled) return;
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
         //setDriveMotorVoltage(driveVoltage);
 

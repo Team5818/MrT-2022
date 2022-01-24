@@ -23,15 +23,27 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class ControlMap {
-    public static final Joystick DRIVER_LEFT = new Joystick(0);
-    public static final Joystick DRIVER_RIGHT = new Joystick(1);
-    public static final Joystick CO_DRIVER_LEFT = new Joystick(2);
-    public static final Joystick CO_DRIVER_RIGHT = new Joystick(3);
-    public static final Joystick DRIVER_BUTTONS = new Joystick(4);
-    public static final Joystick CO_DRIVER_BUTTONS = new Joystick(5);
+    private static ControlMap controlMap;
+    public static ControlMap getInstance() {
+        controlMap = new ControlMap();
+        return controlMap;
+    }
+
+    public Joystick driverLeft;
+    public Joystick driverRight;
+    public Joystick coDriverLeft;
+    public Joystick coDriverRight;
+    public Joystick driverButtons;
+    public Joystick coDriverButtons;
 
 
     private ControlMap() {
+        driverLeft = new Joystick(0);
+        driverRight = new Joystick(1);
+        coDriverLeft = new Joystick(2);
+        coDriverRight = new Joystick(3);
+        driverButtons = new Joystick(4);
+        coDriverButtons = new Joystick(5);
     }
 
 }

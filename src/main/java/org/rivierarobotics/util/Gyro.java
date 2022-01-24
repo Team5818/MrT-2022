@@ -45,11 +45,11 @@ public class Gyro {
     }
 
     public Rotation2d getRotation2d() {
-        return new Rotation2d(Math.toRadians(getAngle()));
+        return new Rotation2d(Math.toRadians(-getAngle()));
     }
 
     public double getRate() {
-        return Math.toRadians(navX.getRate());
+        return Math.toRadians(-navX.getRate());
     }
 
     public void setAngleAdjustment(double angle) {

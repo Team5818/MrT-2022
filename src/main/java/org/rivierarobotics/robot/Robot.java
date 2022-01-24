@@ -23,12 +23,14 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.aifield.AIFieldDisplay;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
+        Logging.aiFieldDisplay = new AIFieldDisplay(20);
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -48,24 +51,30 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
         shuffleboardLogging();
+//        Logging.aiFieldDisplay.update();
     }
 
     @Override
     public void teleopInit() {
         new ButtonConfiguration().initTeleop();
+        initializeAllSubsystems();
+        initializeDefaultCommands();
         DriveTrain.getInstance().resetPose();
+        Gyro.getInstance().resetGyro();
     }
 
     private void shuffleboardLogging() {
         var sb = Logging.robotShuffleboard;
-
+        try {
+            SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
+        } catch (Exception e) {}
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
+        //DriveTrain.getInstance().periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
@@ -76,6 +85,16 @@ public class Robot extends TimedRobot {
 
         climb.setEntry("Climb Ticks", cl.getAngle());
 
+    }
+
+    @Override
+    public void teleopPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
     @Override
@@ -91,6 +110,11 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        Logging.aiFieldDisplay.update();
     }
 }
 
