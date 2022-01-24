@@ -49,22 +49,18 @@ public class Climb extends SubsystemBase {
     private static final double MID_TICKS = 1;
     private static final double HIGH_TICKS = 2;
 
-    private static final double WHEEL_RADIUS = 0.03915;
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
     private static final double MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
-    //TODO: add a decimal point to actually make this a double
-    private static final double GEARING = 1 / 450.;
+    private static final double GEARING = 1 / 450.0;
 
     private final WPI_TalonFX climbMotor;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 
-    private static final DigitalInput[] climbSwitches = new DigitalInput[3];
-    private static final Piston[] climbPistons = new Piston[3];
-    private static final EnumMap<ClimbModule, DigitalInput> climbSwitchesMap = new EnumMap<ClimbModule, DigitalInput>(ClimbModule.class);
-    private static final EnumMap<ClimbModule, Piston> climbPistonsMap = new EnumMap<ClimbModule, Piston>(ClimbModule.class);
+    private final EnumMap<Position, DigitalInput> climbSwitchesMap = new EnumMap<Position, DigitalInput>(Position.class);
+    private final EnumMap<Position, Piston> climbPistonsMap = new EnumMap<Position, Piston>(Position.class);
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
@@ -88,41 +84,26 @@ public class Climb extends SubsystemBase {
         climbMotor.configReverseSoftLimitEnable(true);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
-        climbSwitches[0] = new DigitalInput(0);
-        climbSwitches[1] = new DigitalInput(1);
-        climbSwitches[2] = new DigitalInput(2);
-        climbSwitchesMap.put(ClimbModule.LOW, climbSwitches[0]);
-        climbSwitchesMap.put(ClimbModule.MID, climbSwitches[1]);
-        climbSwitchesMap.put(ClimbModule.HIGH, climbSwitches[2]);
+        climbSwitchesMap.put(Position.LOW, new DigitalInput(0));
+        climbSwitchesMap.put(Position.MID, new DigitalInput(1));
+        climbSwitchesMap.put(Position.HIGH, new DigitalInput(2));
 
-
-        climbPistons[0] = new Piston(0);
-        climbPistons[1] = new Piston(1);
-        climbPistons[2] = new Piston(2);
-        climbPistonsMap.put(ClimbModule.LOW, climbPistons[0]);
-        climbPistonsMap.put(ClimbModule.MID, climbPistons[1]);
-        climbPistonsMap.put(ClimbModule.HIGH, climbPistons[2]);
+        climbPistonsMap.put(Position.LOW, new Piston(0));
+        climbPistonsMap.put(Position.MID, new Piston(1));
+        climbPistonsMap.put(Position.HIGH, new Piston(2));
     }
 
-    public static EnumMap<ClimbModule, DigitalInput> getClimbSwitchesMap() {
-        return climbSwitchesMap;
-    }
-
-    public static EnumMap<ClimbModule, Piston> getClimbPistonsMap() {
-        return climbPistonsMap;
-    }
-
-    public void setPiston(ClimbModule climbModule, boolean isOpen) {
+    public void setPiston(Position climbModule, boolean isOpen) {
         climbPistonsMap.get(climbModule).set(isOpen);
     }
 
     public void openAllPistons() {
-        for(int i = 0 ; i < climbPistons.length; i++){
-           climbPistons[i].set(true);
+        for(Position p : climbPistonsMap.keySet()){
+            climbPistonsMap.get(p).set(true);
         }
     }
 
-    public boolean isSwitchSet(ClimbModule climbModule) {
+    public boolean isSwitchSet(Position climbModule) {
         return climbSwitchesMap.get(climbModule).get();
     }
 
@@ -138,17 +119,16 @@ public class Climb extends SubsystemBase {
         return climbMotor.getSensorCollection().getIntegratedSensorPosition() * GEARING * MOTOR_TICK_TO_ANGLE;
     }
 
-    public enum ClimbModule {
+    public enum Position {
         LOW(LOW_TICKS),
         MID(MID_TICKS),
         HIGH(HIGH_TICKS);
 
         public final double locationTicks;
 
-        ClimbModule(double ticks){
+        Position(double ticks){
             this.locationTicks=ticks;
         }
-
     }
 
     @Override

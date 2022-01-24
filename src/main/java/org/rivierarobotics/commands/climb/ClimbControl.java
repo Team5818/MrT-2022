@@ -33,7 +33,7 @@ public class ClimbControl extends CommandBase {
 
     public ClimbControl() {
         this.climb = Climb.getInstance();
-        this.leftJoystick = ControlMap.getInstance().coDriverLeft;
+        this.leftJoystick = ControlMap.CO_DRIVER_LEFT;
         addRequirements(this.climb);
     }
 

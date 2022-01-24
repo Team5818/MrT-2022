@@ -21,26 +21,16 @@
 package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.climb.Piston;
 
-public class SetPistonState extends CommandBase {
-
-    private final Climb.ClimbModule climbModule;
-    private final boolean isOpen;
-
-    public SetPistonState(Climb.ClimbModule climbModule, boolean isOpen) {
-        this.climbModule = climbModule;
-        this.isOpen = isOpen;
-    }
-
-    @Override
-    public void execute() {
-        climbModule.piston.set(isOpen);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return climbModule.piston.getState();
+public class SetPistonState extends SequentialCommandGroup {
+    public SetPistonState(Climb.Position climbPosition, boolean isOpen, double timeToWait) {
+        super(
+          new InstantCommand(() -> {Climb.getInstance().setPiston(climbPosition, isOpen);}),
+          new WaitCommand(timeToWait)
+        );
     }
 }

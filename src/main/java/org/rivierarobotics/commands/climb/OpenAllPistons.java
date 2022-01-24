@@ -3,6 +3,7 @@ package org.rivierarobotics.commands.climb;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.climb.Climb;
 
+//TODO: Make instant command, remove isFinished
 public class OpenAllPistons extends CommandBase {
     private final Climb climb;
 
@@ -17,6 +18,6 @@ public class OpenAllPistons extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        return Climb.getClimbPistonsMap().get(Climb.ClimbModule.LOW).getState();
+        return Climb.getClimbPistonsMap().get(Climb.Position.LOW).getState();
     }
 }

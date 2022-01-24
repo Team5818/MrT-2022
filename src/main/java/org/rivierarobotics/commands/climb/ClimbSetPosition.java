@@ -20,16 +20,15 @@
 
 package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class ClimbSetPosition extends CommandBase {
     private final Climb climb;
-    private final Climb.ClimbModule climbModule;
+    private final Climb.Position climbModule;
 
-    public ClimbSetPosition(Climb.ClimbModule climbModule) {
+    public ClimbSetPosition(Climb.Position climbModule) {
         this.climb = Climb.getInstance();
         this.climbModule = climbModule;
         this.addRequirements(this.climb);

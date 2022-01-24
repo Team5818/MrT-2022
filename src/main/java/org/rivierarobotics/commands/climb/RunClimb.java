@@ -26,9 +26,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetDriveVelocity;
-import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class RunClimb extends SequentialCommandGroup {
     //
@@ -57,26 +55,20 @@ public class RunClimb extends SequentialCommandGroup {
     //  Set Climb to FINAL
 
     public RunClimb() {
-        addCommands(
+        super(
                 new ClimbSetAngle(0),
-                new ClimbSetPosition(Climb.ClimbModule.LOW),
+                new ClimbSetPosition(Climb.Position.LOW),
                 new OpenAllPistons(),
                 new SetDriveAngle(0),
-                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.ClimbModule.LOW)::get), new SetDriveVelocity(0,-1, 0)),
-                new SetPistonState(Climb.ClimbModule.LOW,false),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.Position.LOW)::get), new SetDriveVelocity(0,-1, 0)),
+                new SetPistonState(Climb.Position.LOW,false),
                 new SetDriveVelocity(0,0,0),
-                new WaitCommand(0.5),
-
-                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.ClimbModule.MID)::get), new ClimbSetPosition(Climb.ClimbModule.MID)),
-                new SetPistonState(Climb.ClimbModule.MID,false),
-                new WaitCommand(0.5),
-                new SetPistonState( Climb.ClimbModule.LOW, true),
-                new WaitCommand(0.5),
-
-                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.ClimbModule.HIGH)::get), new ClimbSetPosition(Climb.ClimbModule.HIGH)),
-                new SetPistonState(Climb.ClimbModule.HIGH,false),
-                new WaitCommand(0.5),
-                new SetPistonState( Climb.ClimbModule.MID, true)
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.Position.MID)::get), new ClimbSetPosition(Climb.Position.MID)),
+                new SetPistonState(Climb.Position.MID,false),
+                new SetPistonState( Climb.Position.LOW, true),
+                new ParallelDeadlineGroup(new WaitUntilCommand(Climb.getClimbSwitchesMap().get(Climb.Position.HIGH)::get), new ClimbSetPosition(Climb.Position.HIGH)),
+                new SetPistonState(Climb.Position.HIGH,false),
+                new SetPistonState( Climb.Position.MID, true)
         );
     }
 }
