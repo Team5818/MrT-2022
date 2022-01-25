@@ -59,8 +59,8 @@ public class Climb extends SubsystemBase {
     //TODO: SysID The climb using the middle bar of the climb
     private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
 
-    private final EnumMap<Position, DigitalInput> climbSwitchesMap = new EnumMap<Position, DigitalInput>(Position.class);
-    private final EnumMap<Position, Piston> climbPistonsMap = new EnumMap<Position, Piston>(Position.class);
+    private final EnumMap<Position, DigitalInput> climbSwitchesMap = new EnumMap<>(Position.class);
+    private final EnumMap<Position, Piston> climbPistonsMap = new EnumMap<>(Position.class);
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
@@ -79,7 +79,6 @@ public class Climb extends SubsystemBase {
 
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
         climbMotor.configForwardSoftLimitEnable(true);
-        climbMotor.getSensorCollection().setIntegratedSensorPosition(0, 10);
         climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
         climbMotor.configReverseSoftLimitEnable(true);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
@@ -98,7 +97,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void openAllPistons() {
-        for(Position p : climbPistonsMap.keySet()){
+        for (Position p : climbPistonsMap.keySet()) {
             climbPistonsMap.get(p).set(true);
         }
     }
@@ -126,8 +125,8 @@ public class Climb extends SubsystemBase {
 
         public final double locationTicks;
 
-        Position(double ticks){
-            this.locationTicks=ticks;
+        Position(double ticks) {
+            this.locationTicks = ticks;
         }
     }
 

@@ -56,10 +56,9 @@ public class RunClimb extends SequentialCommandGroup {
 
     public RunClimb() {
         super(
-                new ClimbSetAngle(0),
-                new ClimbSetPosition(Climb.Position.LOW),
+                new SetDriveAngle(0, 0.2),
                 new OpenAllPistons(),
-                new SetDriveAngle(0),
+                new ClimbSetPosition(Climb.Position.LOW),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.LOW)), new SetDriveVelocity(0,-1, 0)),
                 new SetPistonState(Climb.Position.LOW,false, 1),
                 new SetDriveVelocity(0,0,0),

@@ -29,8 +29,10 @@ import org.rivierarobotics.subsystems.climb.Climb;
 public class SetPistonState extends SequentialCommandGroup {
     public SetPistonState(Climb.Position climbPosition, boolean isOpen, double timeToWait) {
         super(
-          new InstantCommand(() -> {Climb.getInstance().setPiston(climbPosition, isOpen);}),
-          new WaitCommand(timeToWait)
+                new InstantCommand(() -> {
+                    Climb.getInstance().setPiston(climbPosition, isOpen);
+                }),
+                new WaitCommand(timeToWait)
         );
     }
 }

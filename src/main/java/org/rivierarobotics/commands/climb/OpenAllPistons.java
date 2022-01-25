@@ -12,7 +12,7 @@ public class OpenAllPistons extends InstantCommand {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         climb.openAllPistons();
     }
 }
