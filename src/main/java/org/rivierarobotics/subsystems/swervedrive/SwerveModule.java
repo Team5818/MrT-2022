@@ -51,7 +51,7 @@ public class SwerveModule extends SubsystemBase {
     private final WPI_TalonSRX steeringMotor;
     private boolean setDriveEnabled = false;
     private final PositionStateSpaceModel steerController;
-    private final SystemIdentification tmSID = new SystemIdentification(0.7, 1.0242, 0.546);
+    private final SystemIdentification tmSID = new SystemIdentification(0.43078, 0.93224, 1.4245);
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
 
@@ -229,9 +229,9 @@ public class SwerveModule extends SubsystemBase {
     public void periodic() {
         if(!setDriveEnabled) return;
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
-        //setDriveMotorVoltage(driveVoltage);
+        setDriveMotorVoltage(driveVoltage);
 
         var turnMotorVoltage = steerController.getAppliedVoltage(getAngle());
-        //setSteeringMotorVoltage(turnMotorVoltage);
+        setSteeringMotorVoltage(turnMotorVoltage);
     }
 }

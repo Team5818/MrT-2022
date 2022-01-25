@@ -43,9 +43,9 @@ public class Climb extends SubsystemBase {
 
     private static Climb climb;
     private final Compressor compressor;
-    private static final double MAX_FORWARD_LIMIT = 823742;
-    private static final double MAX_REVERSE_LIMIT = -2255;
-    private static final double LOW_TICKS = 0;
+    private static final double MAX_FORWARD_LIMIT = -5232;
+    private static final double MAX_REVERSE_LIMIT = -748537;
+    private static final double LOW_TICKS = -2.24;
     private static final double MID_TICKS = 1;
     private static final double HIGH_TICKS = 2;
 
@@ -57,7 +57,7 @@ public class Climb extends SubsystemBase {
     private final WPI_TalonFX climbMotor;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb
-    private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
+    private final SystemIdentification sysId = new SystemIdentification(0.43863, 7.7154, 0.19185);
 
     private final EnumMap<Position, DigitalInput> climbSwitchesMap = new EnumMap<>(Position.class);
     private final EnumMap<Position, Piston> climbPistonsMap = new EnumMap<>(Position.class);
@@ -65,13 +65,13 @@ public class Climb extends SubsystemBase {
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
                 sysId,
+                0.1,
                 0.01,
                 0.01,
                 0.01,
                 0.01,
-                0.01,
-                0.01,
-                0.01
+                0.15,
+                6
         );
 
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
@@ -83,13 +83,13 @@ public class Climb extends SubsystemBase {
         climbMotor.configReverseSoftLimitEnable(true);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
-        climbSwitchesMap.put(Position.LOW, new DigitalInput(0));
+        climbSwitchesMap.put(Position.LOW, new DigitalInput(2));
         climbSwitchesMap.put(Position.MID, new DigitalInput(1));
-        climbSwitchesMap.put(Position.HIGH, new DigitalInput(2));
+        climbSwitchesMap.put(Position.HIGH, new DigitalInput(0));
 
-        climbPistonsMap.put(Position.LOW, new Piston(0));
+        climbPistonsMap.put(Position.LOW, new Piston(2));
         climbPistonsMap.put(Position.MID, new Piston(1));
-        climbPistonsMap.put(Position.HIGH, new Piston(2));
+        climbPistonsMap.put(Position.HIGH, new Piston(0));
     }
 
     public void setPiston(Position climbModule, boolean isOpen) {
@@ -103,7 +103,11 @@ public class Climb extends SubsystemBase {
     }
 
     public boolean isSwitchSet(Position climbModule) {
-        return climbSwitchesMap.get(climbModule).get();
+        return !climbSwitchesMap.get(climbModule).get();
+    }
+
+    public boolean isPistonSet(Position climbModule) {
+        return !climbPistonsMap.get(climbModule).getState();
     }
 
     public void setPosition(double radians) {
@@ -130,11 +134,15 @@ public class Climb extends SubsystemBase {
         }
     }
 
+    public void followStateSpace() {
+        var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
+        setVoltage(climbVoltage);
+    }
+
     @Override
     public void periodic() {
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Enabled", compressor.enabled());
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Pressure", compressor.getPressure());
-        //var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
-        //setVoltage(climbVoltage);
+
     }
 }

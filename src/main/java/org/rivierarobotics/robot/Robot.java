@@ -75,6 +75,7 @@ public class Robot extends TimedRobot {
         var cl = Climb.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
+        dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
@@ -84,6 +85,12 @@ public class Robot extends TimedRobot {
         drive.setEntry("Gyro Angle", Gyro.getInstance().getAngle());
 
         climb.setEntry("Climb Ticks", cl.getAngle());
+        climb.setEntry("Switch 1", cl.isSwitchSet(Climb.Position.LOW));
+        climb.setEntry("Switch 2", cl.isSwitchSet(Climb.Position.MID));
+        climb.setEntry("Switch 3", cl.isSwitchSet(Climb.Position.HIGH));
+        climb.setEntry("Piston 1", cl.isPistonSet(Climb.Position.LOW));
+        climb.setEntry("Piston 2", cl.isPistonSet(Climb.Position.MID));
+        climb.setEntry("Piston 3", cl.isPistonSet(Climb.Position.HIGH));
 
     }
 

@@ -35,12 +35,17 @@ public class ClimbSetPosition extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         climb.setPosition(climbModule.locationTicks);
     }
 
     @Override
+    public void execute() {
+        climb.followStateSpace();
+    }
+
+    @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.locationTicks, 1);
+        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.locationTicks, 0.005);
     }
 }
