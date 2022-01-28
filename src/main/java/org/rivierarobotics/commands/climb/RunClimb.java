@@ -56,18 +56,25 @@ public class RunClimb extends SequentialCommandGroup {
 
     public RunClimb() {
         super(
-                new SetDriveAngle(-90, 0.2),
+//                new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
-                new ClimbSetPosition(Climb.Position.LOW)
-//                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.LOW)), new SetDriveVelocity(0,-1, 0)),
-//                new SetPistonState(Climb.Position.LOW,false, 1),
+                new ParallelDeadlineGroup(
+                        new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.LOW)),
+                        new ClimbSetPosition(Climb.Position.LOW)
+                ),
+                new SetPistonState(Climb.Position.LOW,true, 2),
+                new WaitCommand(1),
 //                new SetDriveVelocity(0,0,0),
-//                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)), new ClimbSetPosition(Climb.Position.MID)),
-//                new SetPistonState(Climb.Position.MID,false, 1),
-//                new SetPistonState(Climb.Position.LOW, true, 1),
-//                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.HIGH)), new ClimbSetPosition(Climb.Position.HIGH)),
-//                new SetPistonState(Climb.Position.HIGH,false, 1),
-//                new SetPistonState(Climb.Position.MID, true, 1)
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)), new ClimbSetPosition(Climb.Position.MID)),
+                new SetPistonState(Climb.Position.MID,true, 0),
+                new WaitCommand(1),
+                new SetPistonState(Climb.Position.LOW, false, 0),
+                new WaitCommand(1),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.HIGH)), new ClimbSetPosition(Climb.Position.HIGH)),
+                new SetPistonState(Climb.Position.HIGH,true, 0),
+                new WaitCommand(1),
+                new SetPistonState(Climb.Position.MID, false, 0),
+                new WaitCommand(1)
        );
     }
 }

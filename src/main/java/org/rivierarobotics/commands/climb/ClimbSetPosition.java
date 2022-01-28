@@ -46,6 +46,6 @@ public class ClimbSetPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.locationTicks, 0.005);
+        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.locationTicks, Math.toRadians(3));
     }
 }

@@ -35,9 +35,9 @@ import org.rivierarobotics.subsystems.climb.Climb;
 public class ButtonConfiguration {
     public void initTeleop() {
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .whenPressed(new SimpleAuto());
+                .whenPressed(new RunClimb());
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new TestPathGeneration());
+                .whileHeld(new SetDriveAngle(-90, 0.1));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)

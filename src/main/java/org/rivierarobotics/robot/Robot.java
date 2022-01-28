@@ -49,10 +49,27 @@ public class Robot extends TimedRobot {
                 .withWidget("Field");
     }
 
+    boolean isOn = false;
+    int tick = 0;
+    boolean[] states = {false,true,false,true,false,true};
+
     @Override
     public void robotPeriodic() {
         shuffleboardLogging();
 //        Logging.aiFieldDisplay.update();
+
+        tick++;
+        if(tick > 20) {
+            boolean temp = states[5];
+            System.arraycopy(states, 0, states, 1, 5);
+            states[0] = temp;
+            for(int i = 1; i <= 6; i++) {
+                ControlMap.DRIVER_BUTTONS.setOutput(i, states[i - 1]);
+            }
+            isOn = !isOn;
+            tick = 0;
+        }
+
     }
 
     @Override

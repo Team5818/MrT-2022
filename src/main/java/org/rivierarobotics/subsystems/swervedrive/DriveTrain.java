@@ -257,7 +257,7 @@ public class DriveTrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        periodicLogging();
+       // periodicLogging();
 
 //        for (var m : swerveModules) {
 //            m.periodic();
