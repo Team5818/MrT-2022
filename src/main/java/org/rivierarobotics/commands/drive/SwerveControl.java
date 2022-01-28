@@ -20,18 +20,32 @@
 
 package org.rivierarobotics.commands.drive;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.Gyro;
 
 public class SwerveControl extends CommandBase {
     private final DriveTrain driveTrain;
+    private final ProfiledPIDController pidController =
+            new ProfiledPIDController(0.1, 0.0, 0.0, new TrapezoidProfile.Constraints(0,0));
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
         addRequirements(this.driveTrain);
+    }
+
+    private double getRotationSpeed() {
+        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
+            return 0.0;
+        }
+        return pidController.calculate(Gyro.getInstance().getRotation2d().getDegrees());
     }
 
     @Override
@@ -40,12 +54,15 @@ public class SwerveControl extends CommandBase {
         var rightJoystick = ControlMap.DRIVER_RIGHT;
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
         var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
+
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
-        SmartDashboard.putBoolean("joystick running", true);
-        SmartDashboard.putNumber("JS1", leftJoystick.getY());
-        SmartDashboard.putNumber("JS2", rightJoystick.getX());
-        SmartDashboard.putNumber("JS", System.nanoTime());
-        driveTrain.drive(xSpeed, ySpeed, rot, true);
+        if(rot == 0) {
+            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
+        } else {
+            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
+            pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
+            driveTrain.drive(xSpeed, ySpeed, rot, true);
+        }
     }
 
     @Override

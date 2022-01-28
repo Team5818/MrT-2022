@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
                 .withSize(6, 4)
                 .withPosition(0, 0)
                 .withWidget("Field");
+
+        initializeCustomLoops();
     }
 
     boolean isOn = false;
@@ -55,7 +57,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        shuffleboardLogging();
 //        Logging.aiFieldDisplay.update();
 
         tick++;
@@ -134,6 +135,16 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+    }
+
+    private void initializeCustomLoops() {
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicStateSpaceControl();
+        }, DriveTrain.STATE_SPACE_LOOP_TIME, 0.0);
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicLogging();
+        }, 0.5, 0.0);
+        addPeriodic(this::shuffleboardLogging, 0.5, 0.0);
     }
 
     @Override

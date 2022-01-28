@@ -146,6 +146,5 @@ public class Climb extends SubsystemBase {
     public void periodic() {
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Enabled", compressor.enabled());
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Pressure", compressor.getPressure());
-
     }
 }

@@ -67,7 +67,7 @@ public class AIFieldDisplay {
     private void startFieldThread(int updateRate) {
         int size = 480;
         Mat resizeFrame = new Mat((int)(size), (int)(size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
-        mainImageThread.scheduleAtFixedRate(() -> {
+        mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
             Imgproc.resize(image, resizeFrame, resizeFrame.size(),0,0,2);
             outputStream.putFrame(resizeFrame);
