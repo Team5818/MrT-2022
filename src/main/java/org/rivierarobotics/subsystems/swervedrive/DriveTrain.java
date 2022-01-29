@@ -145,6 +145,10 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
+    public void setSwerveVel(double anglepersec) {
+        swerveModules[0].testSetSpeed(anglepersec);
+    }
+
     public void setSwerveModuleVelocity(double vel) {
         for (var m : swerveModules) {
             m.setDriveMotorVelocity(vel);
@@ -270,8 +274,9 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicStateSpaceControl() {
-        for(var m : swerveModules) {
-            m.followControllers();
-        }
+//        for(var m : swerveModules) {
+//            m.followControllers();
+//        }
+        swerveModules[0].followControllers();
     }
 }

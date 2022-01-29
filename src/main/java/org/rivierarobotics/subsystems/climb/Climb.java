@@ -44,11 +44,11 @@ public class Climb extends SubsystemBase {
 
     private static Climb climb;
     private final Compressor compressor;
-    private static final double MAX_FORWARD_LIMIT = -5232;
-    private static final double MAX_REVERSE_LIMIT = -748537 - (30 / 360.0 * 450 * 2048);
-    private static final double LOW_TICKS = -2.5;
-    private static final double MID_TICKS = -3.5;
-    private static final double HIGH_TICKS = -7.5;
+    private static final double MAX_FORWARD_LIMIT = 713433;
+    private static final double MAX_REVERSE_LIMIT = -84703;
+    private static final double LOW_TICKS = 2.5;
+    private static final double MID_TICKS = -1.2;
+    private static final double HIGH_TICKS = -0.16;
 
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
@@ -72,7 +72,7 @@ public class Climb extends SubsystemBase {
                 0.01,
                 0.01,
                 0.15,
-                5
+                7
         );
 
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
@@ -103,6 +103,10 @@ public class Climb extends SubsystemBase {
         for (Position p : climbPistonsMap.keySet()) {
             climbPistonsMap.get(p).set(false);
         }
+    }
+
+    public void setCoast() {
+        climbMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     public boolean isSwitchSet(Position climbModule) {

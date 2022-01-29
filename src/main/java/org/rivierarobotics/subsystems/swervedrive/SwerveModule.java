@@ -57,7 +57,7 @@ public class SwerveModule extends SubsystemBase {
     private final VelocityStateSpaceModel steerController;
     private final SystemIdentification tmSID = new SystemIdentification(0.43078, 0.93224, 1.4245);
     private final ProfiledPIDController turnMotorVelocityPID =
-            new ProfiledPIDController(0.1, 0.0, 0.0, new TrapezoidProfile.Constraints(DriveTrain.MAX_ANGULAR_SPEED,DriveTrain.MAX_ANGULAR_ACCELERATION));
+            new ProfiledPIDController(0.4, 0.0, 0.0, new TrapezoidProfile.Constraints(3,2));
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
 
@@ -90,16 +90,16 @@ public class SwerveModule extends SubsystemBase {
         this.driveController.setKsTolerance(0.05);
 
         this.steerController = new VelocityStateSpaceModel(
-                tmSID, 1,
-                0.01, 0.1,
-                0.05, 12, DriveTrain.STATE_SPACE_LOOP_TIME
+                tmSID, 0.4,
+                0.01, 0.01,
+                0.017, 12, DriveTrain.STATE_SPACE_LOOP_TIME
         );
 
         this.steerController.setVelocity(0);
         this.steerController.setKsTolerance(0.1);
 
-        this.steeringMotor.configContinuousCurrentLimit(15);
-        this.steeringMotor.configPeakCurrentLimit(20);
+        this.steeringMotor.configContinuousCurrentLimit(40);
+        this.steeringMotor.configPeakCurrentLimit(40);
     }
 
     private double clampAngle(double angle) {
@@ -236,7 +236,12 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getSteerMotorVel() {
-        return steeringMotor.getSensorCollection().getPulseWidthVelocity() * 10 * STEER_MOTOR_TICK_TO_ANGLE;
+        return getSteeringMotorSpeed();
+    }
+
+    public void testSetSpeed(double speed) {
+        SmartDashboard.putNumber("called", speed);
+        steerController.setVelocity(speed);
     }
 
     public void followControllers() {
@@ -246,7 +251,11 @@ public class SwerveModule extends SubsystemBase {
 
         var targetSpeed = MathUtil.isWithinTolerance(getAngle(), getTargetRotation().getRadians(), 0.05) ? 0 : turnMotorVelocityPID.calculate(getAngle());
         steerController.setVelocity(targetSpeed);
+        SmartDashboard.putNumber("Target Speed", targetSpeed);
+        SmartDashboard.putNumber("Vel Error", turnMotorVelocityPID.getVelocityError());
+        SmartDashboard.putNumber("Position Error", turnMotorVelocityPID.getPositionError());
+        SmartDashboard.putNumber("Goal", turnMotorVelocityPID.getGoal().position);
         var turnMotorVoltage = steerController.getAppliedVoltage(getSteeringMotorSpeed());
-        setSteeringMotorVoltage(turnMotorVoltage);
+        //setSteeringMotorVoltage(turnMotorVoltage);
     }
 }

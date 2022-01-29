@@ -60,7 +60,7 @@ public class SwerveControl extends CommandBase {
             driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
         } else {
             driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
-            pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
+            //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
             driveTrain.drive(xSpeed, ySpeed, rot, true);
         }
     }
