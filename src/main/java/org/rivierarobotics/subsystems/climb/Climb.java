@@ -45,10 +45,10 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private final Compressor compressor;
     private static final double MAX_FORWARD_LIMIT = 713433;
-    private static final double MAX_REVERSE_LIMIT = -84703;
-    private static final double LOW_TICKS = 2.5;
-    private static final double MID_TICKS = -1.2;
-    private static final double HIGH_TICKS = -0.16;
+    private static final double MAX_REVERSE_LIMIT = -7;
+    private static final double LOW_TICKS = 4.03;
+    private static final double MID_TICKS = 2.64;
+    private static final double HIGH_TICKS = 0.9146;
 
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
@@ -68,21 +68,21 @@ public class Climb extends SubsystemBase {
                 sysId,
                 0.1,
                 0.01,
+                0.05,
                 0.01,
                 0.01,
-                0.01,
-                0.15,
-                7
+                0.2,
+                11
         );
 
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
         compressor.enabled();
 
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
-        climbMotor.configForwardSoftLimitEnable(true);
-        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
-        climbMotor.configReverseSoftLimitEnable(true);
-        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
+//        climbMotor.configForwardSoftLimitEnable(true);
+//        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
+//        climbMotor.configReverseSoftLimitEnable(true);
+//        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
         climbMotor.setNeutralMode(NeutralMode.Brake);
 

@@ -59,8 +59,10 @@ public class WaitPiston extends CommandBase {
                 this.retryTimeout = Timer.getFPGATimestamp();
                 this.switchTime = Timer.getFPGATimestamp();
             }
+            climb.setVoltage(-3);
         }
         else {
+            climb.setVoltage(0);
             if (Timer.getFPGATimestamp() <= retryTimeout + timeout) {
                 if (!climb.isSwitchSet(climbModule)) {
                     this.switchTime = Timer.getFPGATimestamp();
