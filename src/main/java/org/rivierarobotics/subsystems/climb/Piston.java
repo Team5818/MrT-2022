@@ -28,7 +28,7 @@ public class Piston extends SubsystemBase {
     private final Solenoid piston;
 
     public Piston(int id) {
-       this.piston = new Solenoid(PneumaticsModuleType.CTREPCM, id);
+        this.piston = new Solenoid(PneumaticsModuleType.CTREPCM, id);
     }
 
     public void set(boolean isOpen) {

@@ -43,7 +43,9 @@ public class TestPathGeneration extends CommandBase {
         SmartDashboard.putNumber("tt", System.nanoTime());
         var trajectory = aiFieldMesh.getTrajectory(1, 1, 3, 3, true, 0);
         Logging.aiFieldDisplay.updatePath(trajectory);
-        if(trajectory != null) driveTrain.drivePath(trajectory);
+        if (trajectory != null) {
+            driveTrain.drivePath(trajectory);
+        }
     }
 
     @Override

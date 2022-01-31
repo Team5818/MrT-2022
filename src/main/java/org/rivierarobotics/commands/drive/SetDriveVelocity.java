@@ -30,7 +30,7 @@ public class SetDriveVelocity extends CommandBase {
     private final double velocityY;
     private final double rotationVel;
 
-    public SetDriveVelocity(double velocityX, double velyocityY, double rotationVel){
+    public SetDriveVelocity(double velocityX, double velyocityY, double rotationVel) {
         this.driveTrain = DriveTrain.getInstance();
         this.velocityX = velocityX;
         this.velocityY = velyocityY;
@@ -43,7 +43,7 @@ public class SetDriveVelocity extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted){
+    public void end(boolean interrupted) {
         driveTrain.setSwerveModuleVelocity(0);
     }
 }
