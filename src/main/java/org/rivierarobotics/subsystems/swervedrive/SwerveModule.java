@@ -20,16 +20,12 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,10 +50,8 @@ public class SwerveModule extends SubsystemBase {
     private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
     private final WPI_TalonSRX steeringMotor;
     private boolean setDriveEnabled = false;
-    private final VelocityStateSpaceModel steerController;
+    private final PositionStateSpaceModel steerController;
     private final SystemIdentification tmSID = new SystemIdentification(0.43078, 0.93224, 1.4245);
-    private final ProfiledPIDController turnMotorVelocityPID =
-            new ProfiledPIDController(0.4, 0.0, 0.0, new TrapezoidProfile.Constraints(3,2));
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
 
@@ -80,26 +74,23 @@ public class SwerveModule extends SubsystemBase {
         driveMotor.setInverted(driveInverted);
 
         steeringMotor.setInverted(steeringInverted);
-        steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, (int)(DriveTrain.STATE_SPACE_LOOP_TIME * 1000));
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
-                0.1, 4, 12, DriveTrain.STATE_SPACE_LOOP_TIME
+                0.1, 4, 12
         );
         this.driveController.setKsTolerance(0.05);
 
-        this.steerController = new VelocityStateSpaceModel(
-                tmSID, 0.4,
-                0.01, 0.01,
-                0.017, 12, DriveTrain.STATE_SPACE_LOOP_TIME
+        this.steerController = new PositionStateSpaceModel(
+                tmSID, 5, 1,
+                0.01, 0.01, 0.1,
+                0.05, 12
         );
+        this.steerController.setPosition(getPosTicks());
+        this.steerController.setKsTolerance(2);
 
-        this.steerController.setVelocity(0);
-        this.steerController.setKsTolerance(0.1);
-
-        this.steeringMotor.configContinuousCurrentLimit(40);
-        this.steeringMotor.configPeakCurrentLimit(40);
+        this.steeringMotor.configContinuousCurrentLimit(15);
+        this.steeringMotor.configPeakCurrentLimit(20);
     }
 
     private double clampAngle(double angle) {
@@ -116,12 +107,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getAngle() {
-        steeringMotor.getSelectedSensorPosition();
         return (-steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
-    }
-
-    public double getSteeringMotorSpeed() {
-        return (-(steeringMotor.getSensorCollection().getPulseWidthVelocity() * 10)) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getPosTicks() {
@@ -153,7 +139,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void setSteeringMotorAngle(double angleInRad) {
-        turnMotorVelocityPID.setGoal(angleInRad);
+        steerController.setPosition(angleInRad);
     }
 
     public void setDriveMotorVoltage(double voltage) {
@@ -236,26 +222,16 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getSteerMotorVel() {
-        return getSteeringMotorSpeed();
+        return steeringMotor.getSensorCollection().getPulseWidthVelocity() * 10 * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
-    public void testSetSpeed(double speed) {
-        SmartDashboard.putNumber("called", speed);
-        steerController.setVelocity(speed);
-    }
-
-    public void followControllers() {
+    @Override
+    public void periodic() {
         if(!setDriveEnabled) return;
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
         setDriveMotorVoltage(driveVoltage);
 
-        var targetSpeed = MathUtil.isWithinTolerance(getAngle(), getTargetRotation().getRadians(), 0.05) ? 0 : turnMotorVelocityPID.calculate(getAngle());
-        steerController.setVelocity(targetSpeed);
-        SmartDashboard.putNumber("Target Speed", targetSpeed);
-        SmartDashboard.putNumber("Vel Error", turnMotorVelocityPID.getVelocityError());
-        SmartDashboard.putNumber("Position Error", turnMotorVelocityPID.getPositionError());
-        SmartDashboard.putNumber("Goal", turnMotorVelocityPID.getGoal().position);
-        var turnMotorVoltage = steerController.getAppliedVoltage(getSteeringMotorSpeed());
-        //setSteeringMotorVoltage(turnMotorVoltage);
+        var turnMotorVoltage = steerController.getAppliedVoltage(getAngle());
+        setSteeringMotorVoltage(turnMotorVoltage);
     }
 }
