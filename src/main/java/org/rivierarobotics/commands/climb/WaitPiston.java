@@ -30,8 +30,8 @@ public class WaitPiston extends CommandBase {
     private final Climb.Position climbModule;
     private double switchTime;
     private double retryTimeout;
-    private final double endTime;
-    private final double timeout;
+    private double endTime;
+    private double timeout;
     private boolean retryMode;
 
 
