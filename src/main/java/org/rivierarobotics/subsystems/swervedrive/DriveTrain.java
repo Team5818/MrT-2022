@@ -42,6 +42,7 @@ import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 
@@ -67,6 +68,7 @@ public class DriveTrain extends SubsystemBase {
     public static final double MAX_SPEED = 1.5; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 2; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 3; // rad/s
+    public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
     private static final String[] DRIVE_IDS = new String[]{"FL", "FR", "BL", "BR"};
 
     private final Gyro gyro;
@@ -78,6 +80,10 @@ public class DriveTrain extends SubsystemBase {
     private double startTime = Timer.getFPGATimestamp();
     private Trajectory trajectory = new Trajectory();
     private RSTable[] loggingTables = new RSTable[4];
+
+
+
+    private double targetRotationAngle = 0.0;
     private final RSTab tab;
 
     private DriveTrain() {
@@ -137,6 +143,10 @@ public class DriveTrain extends SubsystemBase {
         for (var m : swerveModules) {
             m.setSteeringMotorAngle(angle);
         }
+    }
+
+    public void setSwerveVel(double anglepersec) {
+        swerveModules[0].testSetSpeed(anglepersec);
     }
 
     public void setSwerveModuleVelocity(double vel) {
@@ -239,6 +249,14 @@ public class DriveTrain extends SubsystemBase {
         );
     }
 
+    public double getTargetRotationAngle() {
+        return targetRotationAngle;
+    }
+
+    public void setTargetRotationAngle(double targetRotationAngle) {
+        this.targetRotationAngle = targetRotationAngle;
+    }
+
     public void periodicLogging() {
         for (int i = 0; i < swerveModules.length; i++) {
             loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Velocity", swerveModules[i].getVelocity());
@@ -255,12 +273,10 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
-    @Override
-    public void periodic() {
-       // periodicLogging();
-
-//        for (var m : swerveModules) {
-//            m.periodic();
+    public void periodicStateSpaceControl() {
+//        for(var m : swerveModules) {
+//            m.followControllers();
 //        }
+        swerveModules[0].followControllers();
     }
 }
