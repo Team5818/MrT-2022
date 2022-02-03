@@ -2,8 +2,9 @@ package org.rivierarobotics.subsystems.vision;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Limelight {
+public class Limelight extends SubsystemBase {
     private final NetworkTable limelightTable;
 
     private static Limelight limelight;
