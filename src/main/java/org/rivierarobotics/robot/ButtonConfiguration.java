@@ -27,6 +27,7 @@ import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
+import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
