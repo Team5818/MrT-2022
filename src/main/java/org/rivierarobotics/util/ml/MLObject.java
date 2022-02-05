@@ -20,6 +20,9 @@
 
 package org.rivierarobotics.util.ml;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MLObject {
     public static final double CAMERA_HEIGHT = 0.0;
 
@@ -31,6 +34,8 @@ public class MLObject {
     public final double fieldLocationY;
     public final double fieldLocationDistance;
     public final double confidence;
+//    private final Map<Double, Double> yAngle = new HashMap<Double, Double>();
+//    private final Map<Double, Double> xAngle = new HashMap<Double, Double>();
 
     public MLObject(String label, BoundingBox boundingBox, double confidence) {
         this.label = label;
@@ -46,5 +51,47 @@ public class MLObject {
 
         this.fieldLocationDistance = fieldLocationY / Math.abs(Math.cos(tx));
         this.confidence = confidence;
+
+//        yAngle.put(464., 36.87);
+//        yAngle.put(432., 32.005);
+//        yAngle.put(400., 26.565);
+//        yAngle.put(361., 20.556);
+//        yAngle.put(322., 14.036);
+//        yAngle.put(278., 7.125);
+//        yAngle.put(240., 0.);
+//        yAngle.put(202., 7.125);
+//        yAngle.put(158.,14.036);
+//        yAngle.put(119.,20.556);
+//        yAngle.put(80., 26.565);
+//        yAngle.put(48., 32.005);
+//        yAngle.put(16., 36.87);
+//
+//        xAngle.put(633., 53.972);
+//        xAngle.put(616., 51.34);
+//        xAngle.put(602., 48.36);
+//        xAngle.put(583., 45.);
+//        xAngle.put(562., 41.18);
+//        xAngle.put(537., 36.87);
+//        xAngle.put(509., 32.005);
+//        xAngle.put(479., 26.565);
+//        xAngle.put(446., 20.556);
+//        xAngle.put(403., 14.036);
+//        xAngle.put(365., 7.125);
+//        xAngle.put(320., 0.);
+//        xAngle.put(275., 7.125);
+//        xAngle.put(237.,14.036);
+//        xAngle.put(194.,20.556);
+//        xAngle.put(161., 26.565);
+//        xAngle.put(131., 32.005);
+//        xAngle.put(103., 36.87);
+//        xAngle.put(78., 41.18);
+//        xAngle.put(57., 45.);
+//        xAngle.put(38., 48.36);
+//        xAngle.put(24., 51.34);
+//        xAngle.put(7., 53.972);
+
     }
+
+
+
 }
