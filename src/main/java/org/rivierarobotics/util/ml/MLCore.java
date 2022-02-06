@@ -26,6 +26,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import org.rivierarobotics.robot.Logging;
 
 import java.lang.reflect.Type;

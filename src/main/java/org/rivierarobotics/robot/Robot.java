@@ -31,6 +31,9 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.AIFieldDisplay;
+import org.rivierarobotics.util.ml.BoundingBox;
+import org.rivierarobotics.util.ml.MLCore;
+import org.rivierarobotics.util.ml.MLObject;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -71,8 +74,10 @@ public class Robot extends TimedRobot {
         } catch (Exception e) {}
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
+        var machineLearning = sb.getTab("ML");
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
+        var ml = MLCore.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
@@ -84,6 +89,23 @@ public class Robot extends TimedRobot {
         drive.setEntry("Gyro Angle", Gyro.getInstance().getAngle());
 
         climb.setEntry("Climb Ticks", cl.getAngle());
+
+        MLObject ball = new MLObject("red", new BoundingBox(0,0,0,0),1);
+        try {
+            ball = ml.getDetectedObjects().get("red").get(0);
+        } catch (NullPointerException nullPointerException){ }
+
+        try {
+            Logging.robotShuffleboard.getTab("ML").setEntry("Num of Balls", ml.getDetectedObjects().get("red").size());
+            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationX", ball.fieldLocationX);
+            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationY", ball.fieldLocationY);
+        } catch (NullPointerException e) {
+            Logging.robotShuffleboard.getTab("ML").setEntry("Num of Balls", 0);
+            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationX", 0);
+            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationY", 0);
+        }
+
+
 
     }
 
@@ -105,6 +127,7 @@ public class Robot extends TimedRobot {
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
         Climb.getInstance();
+        MLCore.getInstance();
     }
 
     private void initializeDefaultCommands() {

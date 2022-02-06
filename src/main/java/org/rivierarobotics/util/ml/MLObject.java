@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MLObject {
-    public static final double CAMERA_HEIGHT = 0.0;
+    public static final double CAMERA_HEIGHT = 10;
 
     public final String label;
     public final BoundingBox boundingBox;
