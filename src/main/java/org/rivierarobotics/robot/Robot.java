@@ -96,13 +96,13 @@ public class Robot extends TimedRobot {
         } catch (NullPointerException nullPointerException){ }
 
         try {
-            Logging.robotShuffleboard.getTab("ML").setEntry("Num of Balls", ml.getDetectedObjects().get("red").size());
-            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationX", ball.fieldLocationX);
-            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationY", ball.fieldLocationY);
+            machineLearning.setEntry("Num of Balls", ml.getDetectedObjects().get("red").size());
+            machineLearning.setEntry("Closest ballLocationX", ball.relativeLocationX);
+            machineLearning.setEntry("Closest ballLocationY", ball.relativeLocationY);
         } catch (NullPointerException e) {
-            Logging.robotShuffleboard.getTab("ML").setEntry("Num of Balls", 0);
-            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationX", 0);
-            Logging.robotShuffleboard.getTab("ML").setEntry("ballLocationY", 0);
+            machineLearning.setEntry("Num of Balls", 0);
+            machineLearning.setEntry("Closest ballLocationX", 0);
+            machineLearning.setEntry("Closest ballLocationY", 0);
         }
 
 

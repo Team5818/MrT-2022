@@ -20,9 +20,6 @@
 
 package org.rivierarobotics.util.ml;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MLObject {
     public static final double CAMERA_HEIGHT = 10;
 
@@ -30,9 +27,9 @@ public class MLObject {
     public final BoundingBox boundingBox;
     public final double tx;
     public final double ty;
-    public final double fieldLocationX;
-    public final double fieldLocationY;
-    public final double fieldLocationDistance;
+    public final double relativeLocationX;
+    public final double relativeLocationY;
+    public final double relativeLocationDistance;
     public final double confidence;
 //    private final Map<Double, Double> yAngle = new HashMap<Double, Double>();
 //    private final Map<Double, Double> xAngle = new HashMap<Double, Double>();
@@ -43,13 +40,13 @@ public class MLObject {
 
         double avgY = (boundingBox.ymax + boundingBox.ymin) / 2.0;
         this.ty = ( MLCore.CAMERA_HEIGHT / 2.0 - avgY) * MLCore.ANGLE_PER_PIXEL_Y;
-        this.fieldLocationY = Math.tan(ty) * CAMERA_HEIGHT;
+        this.relativeLocationY = Math.tan(ty) * CAMERA_HEIGHT;
 
         double avgX = (boundingBox.xmax + boundingBox.xmin) / 2.0;
-        this.tx = (MLCore.CAMERA_WIDTH / 2.0 - avgX) * MLCore.ANGLE_PER_PIXEL_X;
-        this.fieldLocationX = fieldLocationY * Math.tan(fieldLocationY);
+        this.tx = (avgX - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
+        this.relativeLocationX = relativeLocationY * Math.tan(relativeLocationY);
 
-        this.fieldLocationDistance = fieldLocationY / Math.abs(Math.cos(tx));
+        this.relativeLocationDistance = relativeLocationY / Math.abs(Math.cos(tx));
         this.confidence = confidence;
 
 //        yAngle.put(464., 36.87);
