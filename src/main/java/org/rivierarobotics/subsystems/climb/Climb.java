@@ -24,6 +24,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.robot.Logging;
@@ -56,6 +57,7 @@ public class Climb extends SubsystemBase {
     private static final double GEARING = 1 / 450.0;
 
     private final WPI_TalonFX climbMotor;
+    private final Encoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb
     private final SystemIdentification sysId = new SystemIdentification(0.0, 7.7154, 0.19185);
@@ -85,6 +87,7 @@ public class Climb extends SubsystemBase {
 //        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
         climbMotor.setNeutralMode(NeutralMode.Brake);
+        this.encoder = new Encoder(9, 8, 7);
 
         climbSwitchesMap.put(Position.LOW, new DigitalInput(2));
         climbSwitchesMap.put(Position.MID, new DigitalInput(1));
@@ -150,5 +153,6 @@ public class Climb extends SubsystemBase {
     public void periodic() {
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Enabled", compressor.enabled());
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Pressure", compressor.getPressure());
+        Logging.robotShuffleboard.getTab("Climb").setEntry("Climb Encoder", encoder.get());
     }
 }
