@@ -20,13 +20,20 @@
 
 package org.rivierarobotics.subsystems.intake;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.subsystems.climb.Piston;
 import org.rivierarobotics.util.statespace.SystemIdentification;
+import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
 public class Intake extends SubsystemBase {
+    private static Intake intake;
+    private final Piston p1;
+    private final Piston p2;
+    private final VelocityStateSpaceModel driveController;
+    private final TalonSRX motor;
+    private final boolean setDriveEnabled = false;
+
     public static Intake getInstance() {
         if (intake == null) {
             intake = new Intake();
@@ -34,29 +41,35 @@ public class Intake extends SubsystemBase {
         return intake;
     }
 
-    private static Intake intake;
-    private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
-    private MechLogger logger;
-
-    //the 3 rollers that intake the ball
-    private static TalonSRX roller1;
-    private static TalonSRX roller2;
-    private static TalonSRX roller3;
-
-
-    private Intake(){
-        roller1 = new TalonSRX(0);
-        roller2 = new TalonSRX(1);
-        roller3 = new TalonSRX(2);
+    public Intake() {
+        // Figure out constants later
+        this.p1 = new Piston(0);
+        this.p2 = new Piston(1);
+        this.motor = new TalonSRX(0);
+        this.driveController = new VelocityStateSpaceModel(
+                new SystemIdentification(0.01, 0.01, 0.01),
+                0.,
+                0.,
+                0.,
+                0.,
+                0.
+        );
+    }
+    public void setVelocity(double radPerSecond) {
+        // Don't know what to do here.
+        driveController.setVelocity(radPerSecond);
+    }
+    public void setIntakeState(boolean in) {
+        p1.set(in);
+        p2.set(in);
     }
 
-    public void setVoltage(double v){
-        //sets voltage
-        logger.powerChange(v);
+    @Override
+    public void periodic() {
+        if(!setDriveEnabled) return;
+        var driveVoltage = driveController.getAppliedVoltage(1);
 
-        roller1.set(ControlMode.Velocity, v);
-        roller2.set(ControlMode.Velocity, v);
-        roller3.set(ControlMode.Velocity, v);
+        //setDriveMotorVoltage(driveVoltage);
     }
 
 }
