@@ -27,6 +27,7 @@ import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.SetPistonState;
+import org.rivierarobotics.commands.collect.CollectVisionTest;
 import org.rivierarobotics.commands.collect.DriveAndCollectClosest;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
@@ -34,7 +35,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 public class ButtonConfiguration {
     public void initTeleop() {
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .whenPressed(new DriveAndCollectClosest().withTimeout(5));
+                .whenPressed(new CollectVisionTest().withTimeout(5));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new TestPathGeneration());
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)

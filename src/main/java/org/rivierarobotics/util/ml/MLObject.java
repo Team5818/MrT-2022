@@ -21,7 +21,8 @@
 package org.rivierarobotics.util.ml;
 
 public class MLObject {
-    public static final double CAMERA_HEIGHT = 10;
+    public static final double BALL_RADIUS = 2*0.12;
+    public static final double CAMERA_OFFSET = 0.74 - BALL_RADIUS;
 
     public final String label;
     public final BoundingBox boundingBox;
@@ -40,13 +41,13 @@ public class MLObject {
 
         double avgY = (boundingBox.ymax + boundingBox.ymin) / 2.0;
         this.ty = ( MLCore.CAMERA_HEIGHT / 2.0 - avgY) * MLCore.ANGLE_PER_PIXEL_Y;
-        this.relativeLocationY = Math.tan(ty) * CAMERA_HEIGHT;
+        this.relativeLocationY = Math.tan((90 - Math.abs(ty)) * Math.PI / 180) * CAMERA_OFFSET;
 
         double avgX = (boundingBox.xmax + boundingBox.xmin) / 2.0;
         this.tx = (avgX - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
-        this.relativeLocationX = relativeLocationY * Math.tan(relativeLocationY);
+        this.relativeLocationX = relativeLocationY * Math.tan(tx * Math.PI / 180);
 
-        this.relativeLocationDistance = relativeLocationY / Math.abs(Math.cos(tx));
+        this.relativeLocationDistance = Math.sqrt(relativeLocationX * relativeLocationX + relativeLocationY * relativeLocationY);
         this.confidence = confidence;
 
 //        yAngle.put(464., 36.87);
