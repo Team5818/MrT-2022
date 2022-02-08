@@ -36,17 +36,10 @@ public class Limelight extends SubsystemBase {
     public boolean getDetected(){
         return limelightTable.getEntry("tv").getDouble(-1) == 0;
     }
-    //REPLACE WITH HOOD ANGLE
-    double hoodTest = 0.5;
+
     public double getDistance(){
-
-        double hoodAngle = hoodTest;
-        double llHeight = Math.sin(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY() + ShooterConstants.getRobotHeight();
-        double llTy = getTy() + hoodAngle;
-        double llDist = (ShooterConstants.getGoalHeight() - llHeight) / Math.tan(Math.toRadians(llTy));
-        double dist = llDist + Math.cos(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY();
-
-        return Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist));
+        return Math.atan(Math.toRadians(getTy()))*(ShooterConstants.getGoalHeight() - ShooterConstants.getRobotHeight());
     }
+
 
 }
