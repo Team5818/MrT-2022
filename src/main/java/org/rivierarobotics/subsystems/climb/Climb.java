@@ -127,7 +127,7 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return (encoder.getDistance() * 2 * Math.PI - ZERO_RADIANS) % (2 * Math.PI);
+        return (encoder.getDistance() * 2 * Math.PI - ZERO_RADIANS + (2 * Math.PI)) % (2 * Math.PI);
     }
 
     public enum Position {
