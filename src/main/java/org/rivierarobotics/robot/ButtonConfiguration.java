@@ -55,6 +55,7 @@ public class ButtonConfiguration {
             DriveTrain.getInstance().setSwerveVel(3.5);
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
 
 //        Button button = new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
 //                .whenPressed(new SetPistonState(Climb.Position.LOW, true, 0.5));
