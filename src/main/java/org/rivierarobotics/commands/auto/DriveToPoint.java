@@ -27,6 +27,7 @@ public class DriveToPoint extends CommandBase {
         addRequirements(driveTrain);
     }
 
+    //TODO: Surround all of this in a try/catch just in case a trajectory is invalid.
     @Override
     public void initialize() {
         var dtPose = driveTrain.getRobotPose();

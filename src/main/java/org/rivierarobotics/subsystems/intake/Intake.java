@@ -28,11 +28,6 @@ import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
 public class Intake extends SubsystemBase {
     private static Intake intake;
-    private final Piston p1;
-    private final Piston p2;
-    private final VelocityStateSpaceModel driveController;
-    private final TalonSRX motor;
-    private final boolean setDriveEnabled = false;
 
     public static Intake getInstance() {
         if (intake == null) {
@@ -41,11 +36,19 @@ public class Intake extends SubsystemBase {
         return intake;
     }
 
+    private final Piston p1;
+    private final Piston p2;
+    private final VelocityStateSpaceModel driveController;
+    private final TalonSRX motor;
+    private final boolean setDriveEnabled = false;
+
+    //TODO: Extract ID's into MotorID's class
     public Intake() {
         // Figure out constants later
         this.p1 = new Piston(0);
         this.p2 = new Piston(1);
         this.motor = new TalonSRX(0);
+        //TODO: Get rid of State Space stuff. This will be a setPower() or setVoltage() component. We don't need to actively manage its speed
         this.driveController = new VelocityStateSpaceModel(
                 new SystemIdentification(0.01, 0.01, 0.01),
                 0.,
@@ -55,15 +58,19 @@ public class Intake extends SubsystemBase {
                 0.
         );
     }
+
+
     public void setVelocity(double radPerSecond) {
         // Don't know what to do here.
         driveController.setVelocity(radPerSecond);
     }
+
     public void setIntakeState(boolean in) {
         p1.set(in);
         p2.set(in);
     }
 
+    //TODO: Remove all state space stuff.
     @Override
     public void periodic() {
         if(!setDriveEnabled) return;

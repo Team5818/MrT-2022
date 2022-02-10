@@ -36,6 +36,8 @@ public class MotorIDs {
     public static final int SOLENOID_HIGH = 2;
     public static final int CLIMB_ROTATE = 10;
 
+    //TODO: Create intake ID's
+
 
     private MotorIDs() {
     }
