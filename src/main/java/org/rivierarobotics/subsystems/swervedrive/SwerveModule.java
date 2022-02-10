@@ -47,8 +47,8 @@ public class SwerveModule extends SubsystemBase {
     private double currSteerVoltage = 0;
     private double targetVelocity = 0;
 
-    private final double MAX_TURN_ACCELERATION = 5; //Rad/s
-    private final double MAX_TURN_VELOCITY = 5; //Rad/s
+    private final double MAX_TURN_ACCELERATION = 30000; //Rad/s
+    private final double MAX_TURN_VELOCITY = 30000; //Rad/s
     private final int timeoutMs = 30;
 
     private final CANSparkMax driveMotor;
@@ -56,9 +56,6 @@ public class SwerveModule extends SubsystemBase {
     private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
     private final WPI_TalonSRX steeringMotor;
     private boolean setDriveEnabled = false;
-    private final VelocityStateSpaceModel steerController;
-    private final SystemIdentification tmSID = new SystemIdentification(0.43078, 0.93224, 1.4245);
-
 
     private Rotation2d targetRotation = new Rotation2d(0);
     private Rotation2d targetRotationClamped = new Rotation2d(0);
@@ -76,12 +73,16 @@ public class SwerveModule extends SubsystemBase {
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
 
+        steeringMotor.configFactoryDefault(timeoutMs);
+
         driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
         driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60.0);
         driveMotor.getEncoder().setPosition(0);
         driveMotor.setInverted(driveInverted);
 
-        steeringMotor.setInverted(steeringInverted);
+        steeringMotor.setSensorPhase(true);
+        steeringMotor.setInverted(false);
+
 
         configureMotionMagic();
 
@@ -91,43 +92,34 @@ public class SwerveModule extends SubsystemBase {
         );
         this.driveController.setKsTolerance(0.05);
 
-        this.steerController = new VelocityStateSpaceModel(
-                tmSID, 0.4,
-                0.01, 0.01,
-                0.017, 12, DriveTrain.STATE_SPACE_LOOP_TIME
-        );
-
-        this.steerController.setVelocity(0);
-        this.steerController.setKsTolerance(0.1);
-
         this.steeringMotor.configContinuousCurrentLimit(40);
         this.steeringMotor.configPeakCurrentLimit(40);
     }
 
     private void configureMotionMagic() {
-        steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20, timeoutMs);
-        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, timeoutMs);
+        steeringMotor.selectProfileSlot(0, 0);
+        steeringMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, timeoutMs);
+        steeringMotor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, timeoutMs);
+        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 10, timeoutMs);
 
-        steeringMotor.configSelectedFeedbackCoefficient(STEER_MOTOR_TICK_TO_ANGLE, 0, timeoutMs);
-        steeringMotor.configSelectedFeedbackSensor(	FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
+        steeringMotor.configNominalOutputForward(0, timeoutMs);
+        steeringMotor.configNominalOutputReverse(0, timeoutMs);
+        steeringMotor.configPeakOutputForward(1, timeoutMs);
+        steeringMotor.configPeakOutputReverse(-1, timeoutMs);
+
+        steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
         steeringMotor.configMotionAcceleration(MAX_TURN_ACCELERATION, timeoutMs);
         steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
+        steeringMotor.configMotionSCurveStrength(2, timeoutMs);
 
-        steeringMotor.config_kP(0, 0.1, timeoutMs);
+        steeringMotor.config_kP(0, 1.7, timeoutMs);
         steeringMotor.config_kI(0, 0.0, timeoutMs);
         steeringMotor.config_kD(0, 0.0, timeoutMs);
         steeringMotor.config_kF(0, 0.1, timeoutMs);
 
         steeringMotor.config_IntegralZone(0, 100, timeoutMs);
-        steeringMotor.configClosedLoopPeakOutput(0, 100, timeoutMs);
-        steeringMotor.configClosedLoopPeriod(0, 1, timeoutMs);
+        steeringMotor.setSelectedSensorPosition(steeringMotor.getSelectedSensorPosition(), 0, timeoutMs);
 
-        steeringMotor.configMotionSCurveStrength(3, timeoutMs);
-        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10, timeoutMs);
-
-        steeringMotor.setSensorPhase(false);
-        steeringMotor.selectProfileSlot(0, 0);
     }
 
     private double clampAngle(double angle) {
@@ -144,11 +136,15 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getAngle() {
-        return steeringMotor.getSelectedSensorPosition() - zeroTicks;
+        return (steeringMotor.getSelectedSensorPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
+    }
+
+    public double convertAngleToTick(double angleInRads) {
+        return (angleInRads / STEER_MOTOR_TICK_TO_ANGLE) + zeroTicks;
     }
 
     public double getSteeringMotorSpeed() {
-        return steeringMotor.getSelectedSensorVelocity();
+        return (steeringMotor.getSelectedSensorVelocity() * 10) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getPosTicks() {
@@ -180,7 +176,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void setSteeringMotorAngle(double angleInRad) {
-        steeringMotor.set(ControlMode.MotionMagic, angleInRad, DemandType.ArbitraryFeedForward, 0.25);
+        steeringMotor.set(ControlMode.MotionMagic, angleInRad);
     }
 
     public void setDriveMotorVoltage(double voltage) {
@@ -241,7 +237,7 @@ public class SwerveModule extends SubsystemBase {
         this.targetVelocity = targetSpeed;
 
         setDriveMotorVelocity(targetSpeed);
-        setSteeringMotorAngle(targetAng);
+        setSteeringMotorAngle(convertAngleToTick(targetAng));
         setDriveEnabled = true;
     }
 
@@ -259,11 +255,6 @@ public class SwerveModule extends SubsystemBase {
 
     public double getSteerMotorVel() {
         return getSteeringMotorSpeed();
-    }
-
-    public void testSetSpeed(double speed) {
-        SmartDashboard.putNumber("called", speed);
-        steerController.setVelocity(speed);
     }
 
     public void followControllers() {

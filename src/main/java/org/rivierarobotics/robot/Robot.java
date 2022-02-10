@@ -109,7 +109,6 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston 1", cl.isPistonSet(Climb.Position.LOW));
         climb.setEntry("Piston 2", cl.isPistonSet(Climb.Position.MID));
         climb.setEntry("Piston 3", cl.isPistonSet(Climb.Position.HIGH));
-
     }
 
     @Override

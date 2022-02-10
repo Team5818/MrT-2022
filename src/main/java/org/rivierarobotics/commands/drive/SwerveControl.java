@@ -56,12 +56,15 @@ public class SwerveControl extends CommandBase {
         var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
 
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
-        if(rot == 0) {
-            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
-        } else {
-            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
-            //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
-            driveTrain.drive(xSpeed, ySpeed, rot, true);
-        }
+
+        driveTrain.drive(xSpeed, ySpeed, rot, true);
+
+//        if(rot == 0) {
+//            //driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
+//        } else {
+//            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
+//            //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
+//            driveTrain.drive(xSpeed, ySpeed, rot, true);
+//        }
     }
 }
