@@ -26,6 +26,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class AIFieldDisplay {
         imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
         scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
-        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1));
+        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
         startFieldThread(updateRate);
     }

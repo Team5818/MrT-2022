@@ -145,7 +145,6 @@ public class SwerveModule extends SubsystemBase {
 
     public double getAngle() {
         return steeringMotor.getSelectedSensorPosition() - zeroTicks;
-        //return (steeringMotor.getSensorCollection().getPulseWidthPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
     }
 
     public double getSteeringMotorSpeed() {

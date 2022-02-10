@@ -117,7 +117,7 @@ public class DriveTrain extends SubsystemBase {
                 //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
                 //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01), //Vision Measurement stdev
-                .05
+                .02
         );
 
         this.holonomicDriveController = new HolonomicDriveController(
@@ -136,7 +136,7 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 0,50,TimeUnit.MILLISECONDS);
+        e.scheduleAtFixedRate(this::updateOdometry, 0,20,TimeUnit.MILLISECONDS);
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -145,18 +145,10 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
-    public void setSwerveVel(double anglepersec) {
-        swerveModules[0].testSetSpeed(anglepersec);
-    }
-
     public void setSwerveModuleVelocity(double vel) {
         for (var m : swerveModules) {
             m.setDriveMotorVelocity(vel);
         }
-    }
-
-    public void testSetVoltage(double v, int id) {
-        swerveModules[id].setDriveMotorVoltage(v);
     }
 
     public SwerveDriveKinematics getSwerveDriveKinematics() {
@@ -274,9 +266,8 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicStateSpaceControl() {
-//        for(var m : swerveModules) {
-//            m.followControllers();
-//        }
-        swerveModules[0].followControllers();
+        for(var m : swerveModules) {
+            m.followControllers();
+        }
     }
 }

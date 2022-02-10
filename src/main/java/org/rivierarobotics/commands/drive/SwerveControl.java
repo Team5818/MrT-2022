@@ -64,9 +64,4 @@ public class SwerveControl extends CommandBase {
             driveTrain.drive(xSpeed, ySpeed, rot, true);
         }
     }
-
-    @Override
-    public void end(boolean interrupted) {
-        SmartDashboard.putBoolean("joystick running", false);
-    }
 }

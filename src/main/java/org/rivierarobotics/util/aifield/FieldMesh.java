@@ -24,6 +24,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -306,7 +307,7 @@ public class FieldMesh {
      * @param initialVelocity initial velocity of robot. useful for periodic path generation
      * @return Trajectory which corresponds to the start and end values on the field. Avoid objects specified in fieldObstacles.txt
      */
-    public Trajectory getTrajectory(double x1, double y1, double x2, double y2, boolean shouldStop, double initialVelocity) {
+    public Trajectory getTrajectory(double x1, double y1, double x2, double y2, boolean shouldStop, double initialVelocity, SwerveDriveKinematics swerveDriveKinematics) {
         try {
             final var startTime = System.nanoTime();
             List<FieldNode> path = getPath(x1 * 100.0, y1 * 100.0, x2 * 100.0, y2 * 100.0);
@@ -316,6 +317,7 @@ public class FieldMesh {
             }
 
             TrajectoryConfig config = new TrajectoryConfig(MAX_VELOCITY, MAX_ACCELERATION);
+            config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
             if (Robot.isReal()) {
