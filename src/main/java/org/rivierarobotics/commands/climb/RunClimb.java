@@ -26,7 +26,7 @@ import org.rivierarobotics.commands.drive.SetDriveVelocity;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double voltage = -9;
+    private static final double voltage = 11;
     private Climb.Position first;
     private Climb.Position last;
     private double modifier;
@@ -72,17 +72,17 @@ public class RunClimb extends SequentialCommandGroup {
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(first)),
-                        new ClimbSetPosition(first, modifier)
+                        new ClimbSetPosition(Climb.Position.LOW, modifier)
                 ),
                 new SetPistonState(first,true, 0),
-                new WaitCommand(0.3),
+                new WaitCommand(0.2),
 //                new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
                         new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(Climb.Position.MID,true, 0),
-                new WaitCommand(0.3),
-                new WaitPiston(Climb.Position.MID, 1, 2),
+                new WaitCommand(0.2),
+                new WaitPiston(Climb.Position.MID, 0.5, 1.5),
                 new SetPistonState(first, false, 0),
                 new WaitCommand(0.3),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
@@ -90,9 +90,9 @@ public class RunClimb extends SequentialCommandGroup {
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(last,true, 0),
                 new WaitCommand(0.3),
-                new WaitPiston(last, 1, 2),
-                new SetPistonState(Climb.Position.MID, false, 0),
-                new ClimbSetPosition(last, modifier)
+                new WaitPiston(last, 1, 3),
+                new SetPistonState(last, false, 0),
+                new ClimbSetPosition(Climb.Position.HIGH, modifier)
        );
     }
 }
