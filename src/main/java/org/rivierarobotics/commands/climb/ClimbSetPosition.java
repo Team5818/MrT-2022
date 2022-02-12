@@ -28,9 +28,9 @@ public class ClimbSetPosition extends CommandBase {
     private final Climb climb;
     private final double target;
 
-    public ClimbSetPosition(Climb.Position climbModule, int reversed) {
+    public ClimbSetPosition(Climb.Position climbModule, double reversed) {
         this.climb = Climb.getInstance();
-        this.target = climbModule.locationTicks * reversed;
+        this.target = climbModule.locationRadians * reversed;
         this.addRequirements(this.climb);
     }
 
@@ -46,6 +46,6 @@ public class ClimbSetPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(1));
+        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(3));
     }
 }

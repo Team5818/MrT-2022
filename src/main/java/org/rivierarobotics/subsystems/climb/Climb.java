@@ -42,12 +42,12 @@ public class Climb extends SubsystemBase {
 
     private static Climb climb;
     private final Compressor compressor;
-    private static final double MAX_FORWARD_LIMIT = 713433;
-    private static final double MAX_REVERSE_LIMIT = -7;
-    private static final double LOW_TICKS = 4.03;
-    private static final double MID_TICKS = 2.64;
-    private static final double HIGH_TICKS = 0.9146;
-    private static final double ZERO_RADIANS = -0.96;
+    private static final double MAX_FORWARD_LIMIT = 924412;
+    private static final double MAX_REVERSE_LIMIT = -927054;
+    private static final double LOW_RADIANS = -1;
+    private static final double MID_RADIANS = 2.64;
+    private static final double HIGH_RADIANS = 0.9146;
+    private static final double ZERO_RADIANS = -0.93;
 
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
@@ -71,7 +71,7 @@ public class Climb extends SubsystemBase {
                 0.05,
                 0.01,
                 0.01,
-                0.2,
+                0.3,
                 11
         );
 
@@ -79,13 +79,15 @@ public class Climb extends SubsystemBase {
         compressor.enabled();
 
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
-//        climbMotor.configForwardSoftLimitEnable(true);
-//        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
-//        climbMotor.configReverseSoftLimitEnable(true);
-//        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
+        climbMotor.configForwardSoftLimitEnable(true);
+        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
+        climbMotor.configReverseSoftLimitEnable(true);
+        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
-        climbMotor.setNeutralMode(NeutralMode.Brake);
+        climbMotor.setNeutralMode(NeutralMode.Coast);
         this.encoder = new DutyCycleEncoder(6);
+        this.encoder.setDistancePerRotation(2 * Math.PI);
+        this.encoder.reset();
 
         climbSwitchesMap.put(Position.LOW, new DigitalInput(2));
         climbSwitchesMap.put(Position.MID, new DigitalInput(1));
@@ -127,24 +129,24 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return (encoder.getDistance() * 2 * Math.PI - ZERO_RADIANS + (2 * Math.PI)) % (2 * Math.PI);
+        return encoder.getDistance() - ZERO_RADIANS;
     }
 
     public enum Position {
-        LOW(LOW_TICKS),
-        MID(MID_TICKS),
-        HIGH(HIGH_TICKS);
+        LOW(LOW_RADIANS),
+        MID(MID_RADIANS),
+        HIGH(HIGH_RADIANS);
 
-        public final double locationTicks;
+        public final double locationRadians;
 
-        Position(double ticks) {
-            this.locationTicks = ticks;
+        Position(double rads) {
+            this.locationRadians = rads;
         }
     }
 
     public void followStateSpace() {
         var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
-        setVoltage(climbVoltage);
+        setVoltage(-climbVoltage);
     }
 
     @Override
@@ -152,5 +154,6 @@ public class Climb extends SubsystemBase {
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Enabled", compressor.enabled());
         Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Pressure", compressor.getPressure());
         Logging.robotShuffleboard.getTab("Climb").setEntry("Climb Encoder", getAngle());
+        Logging.robotShuffleboard.getTab("Climb").setEntry("Climb Offset", encoder.getFrequency());
     }
 }
