@@ -44,10 +44,9 @@ public class Climb extends SubsystemBase {
     private final Compressor compressor;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -1;
+    private static final double LOW_RADIANS = -2.37;
     private static final double MID_RADIANS = 2.64;
-    private static final double HIGH_RADIANS = 0.9146;
-    private static final double ZERO_RADIANS = -0.93;
+    private static final double HIGH_RADIANS = -5.0;
 
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
@@ -62,6 +61,8 @@ public class Climb extends SubsystemBase {
 
     private final EnumMap<Position, DigitalInput> climbSwitchesMap = new EnumMap<>(Position.class);
     private final EnumMap<Position, Piston> climbPistonsMap = new EnumMap<>(Position.class);
+
+    private double ZERO_RADIANS = 0.0;
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
@@ -84,10 +85,9 @@ public class Climb extends SubsystemBase {
         climbMotor.configReverseSoftLimitEnable(true);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
-        climbMotor.setNeutralMode(NeutralMode.Coast);
+        climbMotor.setNeutralMode(NeutralMode.Brake);
         this.encoder = new DutyCycleEncoder(6);
         this.encoder.setDistancePerRotation(2 * Math.PI);
-        this.encoder.reset();
 
         climbSwitchesMap.put(Position.LOW, new DigitalInput(2));
         climbSwitchesMap.put(Position.MID, new DigitalInput(1));
@@ -112,6 +112,10 @@ public class Climb extends SubsystemBase {
         climbMotor.setNeutralMode(NeutralMode.Brake);
     }
 
+    public void setOffset() {
+        ZERO_RADIANS = encoder.getDistance();
+    }
+
     public boolean isSwitchSet(Position climbModule) {
         return !climbSwitchesMap.get(climbModule).get();
     }
@@ -125,6 +129,10 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
+        if(Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle())) {
+            climbMotor.setVoltage(0);
+            return;
+        }
         climbMotor.setVoltage(voltage);
     }
 

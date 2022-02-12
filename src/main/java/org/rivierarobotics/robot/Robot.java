@@ -49,6 +49,8 @@ public class Robot extends TimedRobot {
                 .withWidget("Field");
 
         initializeCustomLoops();
+
+        Climb.getInstance().setOffset();
     }
 
     boolean isOn = false;
@@ -80,6 +82,7 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
         DriveTrain.getInstance().resetPose();
         Gyro.getInstance().resetGyro();
+        Climb.getInstance().setOffset();
     }
 
     private void shuffleboardLogging() {
