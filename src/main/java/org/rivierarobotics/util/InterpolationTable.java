@@ -19,7 +19,7 @@ public class InterpolationTable {
         } else if (key < interpolationTable.firstKey()) {
             double lowestValue = interpolationTable.get(interpolationTable.firstKey());
             double higherValue = interpolationTable.get(interpolationTable.higherKey(interpolationTable.firstKey()));
-            return lowestValue - ((higherValue - lowestValue) / (interpolationTable.higherKey(interpolationTable.firstKey()) - interpolationTable.firstKey())) * (interpolationTable.firstKey() - key)
+            return lowestValue - ((higherValue - lowestValue) / (interpolationTable.higherKey(interpolationTable.firstKey()) - interpolationTable.firstKey())) * (interpolationTable.firstKey() - key);
         } else if (key > interpolationTable.lastKey()){
             double highestValue = interpolationTable.get(interpolationTable.lastKey());
             double lowerKey = interpolationTable.get(interpolationTable.lowerKey(interpolationTable.lastKey()));
