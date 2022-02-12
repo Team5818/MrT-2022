@@ -33,13 +33,15 @@ public class WaitPiston extends CommandBase {
     private double endTime;
     private double timeout;
     private boolean retryMode;
+    private final double reversed;
 
 
-    public WaitPiston(Climb.Position climbModule, double endTime, double timeout) {
+    public WaitPiston(Climb.Position climbModule, double endTime, double timeout, double reversed) {
         this.climb = Climb.getInstance();
         this.climbModule = climbModule;
         this.endTime = endTime;
         this.timeout = timeout;
+        this.reversed = reversed;
         this.addRequirements(this.climb);
     }
 
@@ -59,7 +61,7 @@ public class WaitPiston extends CommandBase {
                 this.retryTimeout = Timer.getFPGATimestamp();
                 this.switchTime = Timer.getFPGATimestamp();
             }
-            climb.setVoltage(-3);
+            climb.setVoltage(3 * reversed);
         } else {
             climb.setVoltage(0);
             if (Timer.getFPGATimestamp() <= retryTimeout + timeout) {

@@ -46,7 +46,7 @@ public class Climb extends SubsystemBase {
     private static final double MAX_REVERSE_LIMIT = -927054;
     private static final double LOW_RADIANS = -2.37;
     private static final double MID_RADIANS = 2.64;
-    private static final double HIGH_RADIANS = -5.0;
+    private static final double HIGH_RADIANS = -4.88;
 
     //TODO: Find Value
     private static final int ENCODER_RESOLUTION = 2048;
@@ -80,9 +80,9 @@ public class Climb extends SubsystemBase {
         compressor.enabled();
 
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
-        climbMotor.configForwardSoftLimitEnable(true);
+        climbMotor.configForwardSoftLimitEnable(false);
         climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
-        climbMotor.configReverseSoftLimitEnable(true);
+        climbMotor.configReverseSoftLimitEnable(false);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
         climbMotor.setNeutralMode(NeutralMode.Brake);
@@ -98,8 +98,8 @@ public class Climb extends SubsystemBase {
         climbPistonsMap.put(Position.HIGH, new Piston(0));
     }
 
-    public void setPiston(Position climbModule, boolean isOpen) {
-        climbPistonsMap.get(climbModule).set(isOpen);
+    public void setPiston(Position climbModule, boolean isEngaged) {
+        climbPistonsMap.get(climbModule).set(isEngaged);
     }
 
     public void openAllPistons() {
