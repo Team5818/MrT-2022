@@ -140,6 +140,10 @@ public class Climb extends SubsystemBase {
         return encoder.getDistance() - ZERO_RADIANS;
     }
 
+    public double getRawTicks() {
+        return climbMotor.getSelectedSensorPosition();
+    }
+
     public enum Position {
         LOW(LOW_RADIANS),
         MID(MID_RADIANS),
