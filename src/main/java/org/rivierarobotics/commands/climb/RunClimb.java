@@ -27,7 +27,8 @@ import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
     private static final double voltage = -9;
-
+    private static Climb.Position first = Climb.Position.LOW;
+    private static Climb.Position last = Climb.Position.HIGH;
     //
     //  Set Robot Angle to 0 degrees
     //  Set Climb to LOW
@@ -53,33 +54,34 @@ public class RunClimb extends SequentialCommandGroup {
     //  Open MID Piston
     //  Set Climb to FINAL
 
-    public RunClimb() {
+    //reversed needs to be 1 or -1, because I can't figure out how to have a conditional statement in the constructor before super that makes this pretty :P
+    public RunClimb(int reversed, Climb.Position first, Climb.Position last) {
         super(
 //                new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
-                        new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.LOW)),
-                        new ClimbSetPosition(Climb.Position.LOW)
+                        new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(first)),
+                        new ClimbSetPosition(first, reversed)
                 ),
-                new SetPistonState(Climb.Position.LOW,true, 0),
+                new SetPistonState(first,true, 0),
                 new WaitCommand(0.3),
 //                new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage))),
+                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * reversed))),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(Climb.Position.MID,true, 0),
                 new WaitCommand(0.3),
                 new WaitPiston(Climb.Position.MID, 1, 2),
-                new SetPistonState(Climb.Position.LOW, false, 0),
+                new SetPistonState(first, false, 0),
                 new WaitCommand(0.3),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.HIGH)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage))),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
+                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * reversed))),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
-                new SetPistonState(Climb.Position.HIGH,true, 0),
+                new SetPistonState(last,true, 0),
                 new WaitCommand(0.3),
-                new WaitPiston(Climb.Position.HIGH, 1, 2),
+                new WaitPiston(last, 1, 2),
                 new SetPistonState(Climb.Position.MID, false, 0),
-                new ClimbSetPosition(Climb.Position.HIGH)
+                new ClimbSetPosition(last, reversed)
        );
     }
 }

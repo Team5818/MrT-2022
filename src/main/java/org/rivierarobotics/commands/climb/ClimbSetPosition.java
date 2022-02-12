@@ -26,17 +26,17 @@ import org.rivierarobotics.subsystems.climb.Climb;
 
 public class ClimbSetPosition extends CommandBase {
     private final Climb climb;
-    private final Climb.Position climbModule;
+    private final double target;
 
-    public ClimbSetPosition(Climb.Position climbModule) {
+    public ClimbSetPosition(Climb.Position climbModule, int reversed) {
         this.climb = Climb.getInstance();
-        this.climbModule = climbModule;
+        this.target = climbModule.locationTicks * reversed;
         this.addRequirements(this.climb);
     }
 
     @Override
     public void initialize() {
-        climb.setPosition(climbModule.locationTicks);
+        climb.setPosition(target);
     }
 
     @Override
@@ -46,6 +46,6 @@ public class ClimbSetPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), climbModule.locationTicks, Math.toRadians(3));
+        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(1));
     }
 }
