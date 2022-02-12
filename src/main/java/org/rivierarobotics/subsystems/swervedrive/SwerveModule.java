@@ -118,8 +118,7 @@ public class SwerveModule extends SubsystemBase {
         steeringMotor.config_kF(0, 0.1, timeoutMs);
 
         steeringMotor.config_IntegralZone(0, 100, timeoutMs);
-        steeringMotor.setSelectedSensorPosition(steeringMotor.getSelectedSensorPosition(), 0, timeoutMs);
-
+        //steeringMotor.setSelectedSensorPosition(steeringMotor.getSelectedSensorPosition(), 0, timeoutMs);
     }
 
     private double clampAngle(double angle) {
