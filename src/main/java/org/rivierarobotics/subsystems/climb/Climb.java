@@ -96,6 +96,7 @@ public class Climb extends SubsystemBase {
         climbPistonsMap.put(Position.LOW, new Piston(2));
         climbPistonsMap.put(Position.MID, new Piston(1));
         climbPistonsMap.put(Position.HIGH, new Piston(0));
+        setCoast(false);
     }
 
     public void setPiston(Position climbModule, boolean isEngaged) {
@@ -108,8 +109,14 @@ public class Climb extends SubsystemBase {
         }
     }
 
-    public void setCoast() {
-        climbMotor.setNeutralMode(NeutralMode.Brake);
+    public void setCoast(boolean coast) {
+        if (coast) {
+            climbMotor.setNeutralMode(NeutralMode.Coast);
+        }
+        else {
+            climbMotor.setNeutralMode(NeutralMode.Brake);
+        }
+
     }
 
     public void setOffset() {
