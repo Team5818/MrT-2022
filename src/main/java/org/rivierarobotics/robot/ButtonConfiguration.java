@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.SimpleAuto;
@@ -40,9 +41,9 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_LEFT, 2)
                 .whenPressed(new RunClimb(true));
         new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 1)
-                .whenPressed(new ClimbSetPosition(Climb.Position.LOW, 1).withTimeout(4));
+                .whenPressed(new SequentialCommandGroup(new IdleMode(false).withTimeout(0.5), new ClimbZero().withTimeout(0.5)));
         new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 2)
-                .whenPressed(new ClimbSetPosition(Climb.Position.LOW, -1).withTimeout(4));
+                .whenPressed(new IdleMode(true));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new SetDriveAngle(-90, 0.1));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
