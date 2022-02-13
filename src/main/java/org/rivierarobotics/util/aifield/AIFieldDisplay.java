@@ -55,10 +55,10 @@ public class AIFieldDisplay {
     private int tick;
 
     public AIFieldDisplay(int updateRate) {
-        imgHeight = SCALING_FACTOR;
+        this.imgHeight = SCALING_FACTOR;
         this.fieldMesh = FieldMesh.getInstance();
-        imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
-        scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
+        this.imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
+        this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
@@ -67,12 +67,12 @@ public class AIFieldDisplay {
 
     private void startFieldThread(int updateRate) {
         int size = 480;
-        Mat resizeFrame = new Mat((int)(size), (int)(size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
+        Mat resizeFrame = new Mat((int) (size), (int) (size * this.scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
-            Imgproc.resize(image, resizeFrame, resizeFrame.size(),0,0,2);
+            Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
             outputStream.putFrame(resizeFrame);
-            outputStream.setResolution(480,480);
+            outputStream.setResolution(480, 480);
             SmartDashboard.putNumber("t", System.nanoTime());
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
@@ -104,13 +104,15 @@ public class AIFieldDisplay {
     }
 
     public void updatePath(Trajectory trajectory) {
-        if(trajectory == null) return;
-        generatedTrajectory = Objects.requireNonNull(trajectory);
+        if (trajectory == null) {
+            return;
+        }
+        this.generatedTrajectory = Objects.requireNonNull(trajectory);
         render();
     }
 
     public void updateField() {
-        fieldMat = createField();
+        this.fieldMat = createField();
         render();
     }
 

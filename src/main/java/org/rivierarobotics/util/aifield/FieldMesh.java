@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
  * and object avoidance.
  */
 public class FieldMesh {
-    private static FieldMesh fieldMesh;
 
     public static FieldMesh getInstance() {
         if (fieldMesh == null) {
@@ -63,6 +62,12 @@ public class FieldMesh {
         return fieldMesh;
     }
 
+    private static FieldMesh fieldMesh;
+    public static final double MAX_VELOCITY = 0.75;
+    public static final double MAX_ACCELERATION = 0.2;
+    public static final double DEFAULT_NODE_WEIGHT = 0;
+    private double totalTimePassed = 0;
+    private double amtOfCalculations = 1;
     public int fieldWidth;
     public int fieldHeight;
     private int aiResolution;
@@ -70,22 +75,17 @@ public class FieldMesh {
     private final List<Polygon> fieldObstacles = new ArrayList<>();
     private final List<ArrayList<FieldNode>> nodes = new ArrayList<>();
     private final List<AreaWeight> areaWeights = new ArrayList<>();
-    public static final double MAX_VELOCITY = 0.75;
-    public static final double MAX_ACCELERATION = 0.2;
-    public static final double DEFAULT_NODE_WEIGHT = 0;
-    private double totalTimePassed = 0;
-    private double amtOfCalculations = 1;
 
     private FieldMesh() {
         Path fieldDimension = Filesystem.getDeployDirectory().toPath().resolve("AI/fieldInfo.txt");
         try {
             Scanner sc = new Scanner(new FileReader(fieldDimension.toFile()));
             sc.next();
-            fieldWidth = (int) (sc.nextDouble() * 100);
+            this.fieldWidth = (int) (sc.nextDouble() * 100);
             sc.next();
-            fieldHeight = (int) (sc.nextDouble() * 100);
+            this.fieldHeight = (int) (sc.nextDouble() * 100);
             sc.next();
-            aiResolution = (int) (sc.nextDouble());
+            this.aiResolution = (int) (sc.nextDouble());
             sc.close();
 
             Pattern parseInput = Pattern.compile("\\(([^)]+)\\)");
@@ -134,12 +134,12 @@ public class FieldMesh {
             sc.close();
         } catch (Exception e) {
             e.printStackTrace();
-            fieldWidth = 100;
-            fieldHeight = 100;
-            aiResolution = 1;
+            this.fieldWidth = 100;
+            this.fieldHeight = 100;
+            this.aiResolution = 1;
         }
 
-        tab = Logging.robotShuffleboard.getTab("AI");
+        this.tab = Logging.robotShuffleboard.getTab("AI");
 
         tab.setEntry("AI Resolution (cm)", aiResolution);
 
@@ -275,10 +275,10 @@ public class FieldMesh {
             for (int i = 1; i < obstacle.npoints; i++) {
                 Line2D testIntersect = new Line2D.Double();
                 testIntersect.setLine(
-                        obstacle.xpoints[i],
-                        obstacle.ypoints[i],
-                        obstacle.xpoints[i - 1],
-                        obstacle.ypoints[i - 1]);
+                    obstacle.xpoints[i],
+                    obstacle.ypoints[i],
+                    obstacle.xpoints[i - 1],
+                    obstacle.ypoints[i - 1]);
                 if (testIntersect.intersectsLine(nodeLines)) {
                     return false;
                 }
@@ -339,8 +339,8 @@ public class FieldMesh {
 
             totalTimePassed += (System.nanoTime() - startTime) / 1e7;
             if (totalTimePassed < 0) {
-                totalTimePassed = 0;
-                amtOfCalculations = 0;
+                this.totalTimePassed = 0;
+                this.amtOfCalculations = 0;
             }
             amtOfCalculations++;
             double avgTime = totalTimePassed / amtOfCalculations;

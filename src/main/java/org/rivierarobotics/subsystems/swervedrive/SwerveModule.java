@@ -20,19 +20,18 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
@@ -47,8 +46,8 @@ public class SwerveModule extends SubsystemBase {
     private double currSteerVoltage = 0;
     private double targetVelocity = 0;
 
-    private final double MAX_TURN_ACCELERATION = 30000; //Rad/s
-    private final double MAX_TURN_VELOCITY = 30000; //Rad/s
+    private final double maxTurnAcceleration = 30000; //Rad/s
+    private final double maxTurnVelocity = 30000; //Rad/s
     private final int timeoutMs = 30;
 
     private final CANSparkMax driveMotor;
@@ -108,8 +107,8 @@ public class SwerveModule extends SubsystemBase {
         steeringMotor.configPeakOutputReverse(-1, timeoutMs);
 
         steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
-        steeringMotor.configMotionAcceleration(MAX_TURN_ACCELERATION, timeoutMs);
-        steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
+        steeringMotor.configMotionAcceleration(maxTurnAcceleration, timeoutMs);
+        steeringMotor.configMotionCruiseVelocity(maxTurnVelocity, timeoutMs);
         steeringMotor.configMotionSCurveStrength(2, timeoutMs);
 
         steeringMotor.config_kP(0, 1.7, timeoutMs);
@@ -237,7 +236,7 @@ public class SwerveModule extends SubsystemBase {
 
         setDriveMotorVelocity(targetSpeed);
         setSteeringMotorAngle(convertAngleToTick(targetAng));
-        setDriveEnabled = true;
+        this.setDriveEnabled = true;
     }
 
     public Rotation2d getTargetRotation() {
@@ -257,7 +256,9 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void followControllers() {
-        if(!setDriveEnabled) return;
+        if (!setDriveEnabled) {
+            return;
+        }
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
         setDriveMotorVoltage(driveVoltage);
     }

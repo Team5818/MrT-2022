@@ -34,7 +34,7 @@ import org.rivierarobotics.util.Gyro;
 public class SwerveControl extends CommandBase {
     private final DriveTrain driveTrain;
     private final ProfiledPIDController pidController =
-            new ProfiledPIDController(0.1, 0.0, 0.0, new TrapezoidProfile.Constraints(0,0));
+            new ProfiledPIDController(0.1, 0.0, 0.0, new TrapezoidProfile.Constraints(0, 0));
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
@@ -42,7 +42,7 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
+        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
             return 0.0;
         }
         return pidController.calculate(Gyro.getInstance().getRotation2d().getDegrees());
@@ -59,12 +59,12 @@ public class SwerveControl extends CommandBase {
 
         driveTrain.drive(xSpeed, ySpeed, rot, true);
 
-//        if(rot == 0) {
-//            //driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
-//        } else {
-//            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
-//            //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
-//            driveTrain.drive(xSpeed, ySpeed, rot, true);
-//        }
+        //if(rot == 0) {
+        //    //driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
+        //} else {
+        //    driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
+        //    //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
+        //    driveTrain.drive(xSpeed, ySpeed, rot, true);
+        //}
     }
 }

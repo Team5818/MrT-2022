@@ -37,6 +37,10 @@ import org.rivierarobotics.util.aifield.AIFieldDisplay;
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
 
+    boolean isOn = false;
+    int tick = 0;
+    boolean[] states = {false, true, false, true, false, true};
+
     @Override
     public void robotInit() {
         initializeAllSubsystems();
@@ -55,24 +59,20 @@ public class Robot extends TimedRobot {
         Climb.getInstance().setOffset();
     }
 
-    boolean isOn = false;
-    int tick = 0;
-    boolean[] states = {false,true,false,true,false,true};
-
     @Override
     public void robotPeriodic() {
-//        Logging.aiFieldDisplay.update();
+        //Logging.aiFieldDisplay.update();
 
         tick++;
-        if(tick > 20) {
+        if (tick > 20) {
             boolean temp = states[5];
             System.arraycopy(states, 0, states, 1, 5);
             states[0] = temp;
-            for(int i = 1; i <= 6; i++) {
+            for (int i = 1; i <= 6; i++) {
                 ControlMap.DRIVER_BUTTONS.setOutput(i, states[i - 1]);
             }
-            isOn = !isOn;
-            tick = 0;
+            this.isOn = !isOn;
+            this.tick = 0;
         }
 
     }
@@ -91,7 +91,9 @@ public class Robot extends TimedRobot {
         var sb = Logging.robotShuffleboard;
         try {
             SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            //bruh?
+        }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
         var dt = DriveTrain.getInstance();

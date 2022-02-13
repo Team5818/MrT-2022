@@ -56,7 +56,6 @@ import java.util.concurrent.TimeUnit;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrain extends SubsystemBase {
-    private static DriveTrain swerveDriveTrain;
 
     public static DriveTrain getInstance() {
         if (swerveDriveTrain == null) {
@@ -65,6 +64,7 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
+    private static DriveTrain swerveDriveTrain;
     public static final double MAX_SPEED = 1.5; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 2; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 3; // rad/s
@@ -137,7 +137,7 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 0,20,TimeUnit.MILLISECONDS);
+        e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -179,18 +179,18 @@ public class DriveTrain extends SubsystemBase {
         try {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-            trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
-            startTime = Timer.getFPGATimestamp();
+            this.startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
     }
 
     public void drivePath(Trajectory path) {
-        trajectory = path;
+        this.trajectory = path;
         swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     /**
@@ -204,10 +204,10 @@ public class DriveTrain extends SubsystemBase {
 
         var state = trajectory.sample(Timer.getFPGATimestamp() - startTime);
         var controls = holonomicDriveController.calculate(
-                swerveDrivePoseEstimator.getEstimatedPosition(),
-                state,
-                //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
-                new Rotation2d(0)
+            swerveDrivePoseEstimator.getEstimatedPosition(),
+            state,
+            //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
+            new Rotation2d(0)
         );
         SmartDashboard.putNumber("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("TARGET ROT", controls.omegaRadiansPerSecond);
@@ -217,11 +217,11 @@ public class DriveTrain extends SubsystemBase {
 
     public void updateOdometry() {
         swerveDrivePoseEstimator.update(
-                gyro.getRotation2d(),
-                swerveModules[0].getState(),
-                swerveModules[1].getState(),
-                swerveModules[2].getState(),
-                swerveModules[3].getState()
+            gyro.getRotation2d(),
+            swerveModules[0].getState(),
+            swerveModules[1].getState(),
+            swerveModules[2].getState(),
+            swerveModules[3].getState()
         );
     }
 
@@ -271,7 +271,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicStateSpaceControl() {
-        for(var m : swerveModules) {
+        for (var m : swerveModules) {
             m.followControllers();
         }
     }
