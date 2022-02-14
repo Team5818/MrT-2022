@@ -37,7 +37,7 @@ public class SetPistonState extends SequentialCommandGroup {
                 new WaitCommand(timeToWait)
         );
 
-        climb = Climb.getInstance();
+        this.climb = Climb.getInstance();
         addRequirements(climb);
     }
 }
