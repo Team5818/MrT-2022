@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class SetPistonState extends SequentialCommandGroup {
+    private final Climb climb;
+
     public SetPistonState(Climb.Position climbPosition, boolean isEngaged, double timeToWait) {
         super(
                 new InstantCommand(() -> {
@@ -34,5 +36,8 @@ public class SetPistonState extends SequentialCommandGroup {
                 }),
                 new WaitCommand(timeToWait)
         );
+
+        climb = Climb.getInstance();
+        addRequirements(climb);
     }
 }
