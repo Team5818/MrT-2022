@@ -11,12 +11,13 @@ public class Hood extends SubsystemBase {
     private static Hood hood;
     private double angle;
     private double speed = 0;
-    private WPI_TalonFX upper;
-    private WPI_TalonFX lower;
-    private CANSparkMax elevation;
-    private DutyCycleEncoder encoder;
-    private double fireMaxVoltage = 5;
-    private double aimMaxVoltage = 5;
+    private final WPI_TalonFX upper;
+    private final WPI_TalonFX lower;
+    private final CANSparkMax elevation;
+    private final DutyCycleEncoder encoder;
+    private final double fireMaxVoltage = 5;
+    private final double aimMaxVoltage = 5;
+
     private PositionStateSpaceModel aimStateSpace;
     private SystemIdentification aimSysId = new SystemIdentification(0.0, 0.001, 0.001);
 
