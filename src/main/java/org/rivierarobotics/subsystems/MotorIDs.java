@@ -36,6 +36,11 @@ public class MotorIDs {
     public static final int SOLENOID_MID = 1;
     public static final int SOLENOID_HIGH = 2;
     public static final int CLIMB_ROTATE = 10;
+    //shooting ids
+    //haha
+    public static final int UPPER_FIRING_WHEEL = 420;
+    public static final int LOWER_FIRING_WHEEL = 420;
+    public static final int SHOOTER_ELEVATION = 420;
 
 
     private MotorIDs() {
