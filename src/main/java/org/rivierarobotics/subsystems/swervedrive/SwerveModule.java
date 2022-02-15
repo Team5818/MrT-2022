@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems.swervedrive;
 
 import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -51,7 +52,9 @@ public class SwerveModule extends SubsystemBase {
     private final double MAX_TURN_VELOCITY = 30000; //Rad/s
     private final int timeoutMs = 30;
 
-    private final CANSparkMax driveMotor;
+    private CANSparkMax driveMotor;
+    private WPI_TalonFX driveMotor2;
+    private final boolean isNew;
     private final VelocityStateSpaceModel driveController;
     private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
     private final WPI_TalonSRX steeringMotor;
@@ -68,20 +71,31 @@ public class SwerveModule extends SubsystemBase {
      * @param steeringMotorChannel ID for the turning motor.
      * @param zeroTicks           ticks when angle = 0
      */
-    public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks, boolean driveInverted, boolean steeringInverted) {
-        this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
+    public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks, boolean driveInverted, boolean isNew) {
+
+        this.isNew = isNew;
+
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
 
         steeringMotor.configFactoryDefault(timeoutMs);
+        steeringMotor.configFeedbackNotContinuous(true, timeoutMs);
 
-        driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
-        driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60.0);
-        driveMotor.getEncoder().setPosition(0);
-        driveMotor.setInverted(driveInverted);
-
-        steeringMotor.setSensorPhase(true);
+        steeringMotor.setSensorPhase(!isNew);
         steeringMotor.setInverted(false);
+
+        if (isNew) {
+            this.driveMotor2 = new WPI_TalonFX(driveMotorChannel);
+            driveMotor2.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+            driveMotor2.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
+            steeringMotor.setInverted(true);
+        } else {
+            this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
+            driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
+            driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60.0);
+            driveMotor.getEncoder().setPosition(0);
+            driveMotor.setInverted(driveInverted);
+        }
 
 
         configureMotionMagic();
@@ -152,6 +166,9 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getDriveTicks() {
+        if (isNew) {
+            return driveMotor2.getSelectedSensorPosition();
+        }
         return driveMotor.getEncoder().getPosition();
     }
 
@@ -164,6 +181,9 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getVelocity() {
+        if (isNew){
+            return driveMotor2.getSensorCollection().getIntegratedSensorVelocity() * 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048;
+        }
         return driveMotor.getEncoder().getVelocity();
     }
 
@@ -181,7 +201,12 @@ public class SwerveModule extends SubsystemBase {
 
     public void setDriveMotorVoltage(double voltage) {
         this.currDriveVoltage = voltage;
-        driveMotor.setVoltage(voltage);
+
+        if (isNew) {
+            driveMotor2.setVoltage(voltage);
+        } else {
+            driveMotor.setVoltage(voltage);
+        }
     }
 
     public double getAngleDiff(double src, double target) {
@@ -205,7 +230,7 @@ public class SwerveModule extends SubsystemBase {
      * @param state Desired state with speed and angle.
      */
     public void setDesiredState(SwerveModuleState state) {
-        SmartDashboard.putNumber(driveMotor.getDeviceId() + "", state.speedMetersPerSecond);
+       // SmartDashboard.putNumber(driveMotor.getDeviceId() + "", state.speedMetersPerSecond);
         //Update State-Space Controllers
         double targetSpeed = state.speedMetersPerSecond;
         double targetRotation = state.angle.getRadians();

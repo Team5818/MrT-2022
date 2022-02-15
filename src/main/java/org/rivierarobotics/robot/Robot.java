@@ -101,6 +101,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("y pose", dt.getRobotPose().getY());
         drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
         drive.setEntry("Gyro Angle", Gyro.getInstance().getAngle());
+        drive.setEntry("is field centric", dt.getFieldCentric());
 
         climb.setEntry("Climb Ticks", cl.getAngle());
         climb.setEntry("Switch 1", cl.isSwitchSet(Climb.Position.LOW));

@@ -79,6 +79,7 @@ public class DriveTrain extends SubsystemBase {
     private final HolonomicDriveController holonomicDriveController;
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     private double startTime = Timer.getFPGATimestamp();
+    private boolean isFieldCentric = true;
     private Trajectory trajectory = new Trajectory();
     private RSTable[] loggingTables = new RSTable[4];
 
@@ -94,10 +95,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 37825, false, false);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 19793 + 2048, false, false);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 19118, false, false);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 12764 + 2048, false, false);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3124, false, false);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2755, false, false);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -1704, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1541, false, false);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -150,6 +151,14 @@ public class DriveTrain extends SubsystemBase {
         for (var m : swerveModules) {
             m.setDriveMotorVelocity(vel);
         }
+    }
+
+    public void setFieldCentric(boolean fieldCentric){
+        this.isFieldCentric = fieldCentric;
+    }
+
+    public boolean getFieldCentric(){
+        return isFieldCentric;
     }
 
     public SwerveDriveKinematics getSwerveDriveKinematics() {

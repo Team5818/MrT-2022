@@ -31,6 +31,7 @@ import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.climb.WaitPiston;
+import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
@@ -70,6 +71,8 @@ public class ButtonConfiguration {
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
+
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
 //        Button button = new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
 //                .whenPressed(new SetPistonState(Climb.Position.LOW, true, 0.5));
