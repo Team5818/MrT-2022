@@ -39,7 +39,6 @@ public class TestPathGeneration extends CommandBase {
     @Override
     public void initialize() {
         var dtPose = driveTrain.getRobotPose();
-        //if(MathUtil.isWithinTolerance(dtPose.getX(),0,0.3) && MathUtil.isWithinTolerance(dtPose.getY(),0,0.3)) return;
         Logging.robotShuffleboard.getTab("tt").setEntry("Path generation", System.nanoTime());
         var trajectory = aiFieldMesh.getTrajectory(1, 1, 3, 3, true, 0, DriveTrain.getInstance().getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
