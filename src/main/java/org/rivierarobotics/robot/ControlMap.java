@@ -30,7 +30,6 @@ public class ControlMap {
     public static final Joystick DRIVER_BUTTONS = new Joystick(4);
     public static final Joystick CO_DRIVER_BUTTONS = new Joystick(5);
 
-
     private ControlMap() {
     }
 }

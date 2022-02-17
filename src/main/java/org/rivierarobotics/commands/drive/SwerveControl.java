@@ -42,10 +42,11 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
+        double gyroDegrees = Gyro.getInstance().getRotation2d().getDegrees();
+        if (MathUtil.isWithinTolerance(gyroDegrees, driveTrain.getTargetRotationAngle(), 1)) {
             return 0.0;
         }
-        return pidController.calculate(Gyro.getInstance().getRotation2d().getDegrees());
+        return pidController.calculate(gyroDegrees);
     }
 
     @Override
@@ -58,13 +59,5 @@ public class SwerveControl extends CommandBase {
         var rot = - MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
         driveTrain.drive(xSpeed, ySpeed, rot, true);
-
-        //if(rot == 0) {
-        //    //driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
-        //} else {
-        //    driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
-        //    //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
-        //    driveTrain.drive(xSpeed, ySpeed, rot, true);
-        //}
     }
 }

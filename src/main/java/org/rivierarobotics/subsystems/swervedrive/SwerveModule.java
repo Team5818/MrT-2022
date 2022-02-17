@@ -73,16 +73,12 @@ public class SwerveModule extends SubsystemBase {
         this.zeroTicks = zeroTicks;
 
         steeringMotor.configFactoryDefault(timeoutMs);
-
         driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
         driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60.0);
         driveMotor.getEncoder().setPosition(0);
         driveMotor.setInverted(driveInverted);
-
         steeringMotor.setSensorPhase(true);
         steeringMotor.setInverted(false);
-
-
         configureMotionMagic();
 
         this.driveController = new VelocityStateSpaceModel(
@@ -90,7 +86,6 @@ public class SwerveModule extends SubsystemBase {
                 0.1, 4, 12, DriveTrain.STATE_SPACE_LOOP_TIME
         );
         this.driveController.setKsTolerance(0.05);
-
         this.steeringMotor.configContinuousCurrentLimit(40);
         this.steeringMotor.configPeakCurrentLimit(40);
     }

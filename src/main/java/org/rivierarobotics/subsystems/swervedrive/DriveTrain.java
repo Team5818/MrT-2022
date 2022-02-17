@@ -82,8 +82,6 @@ public class DriveTrain extends SubsystemBase {
     private Trajectory trajectory = new Trajectory();
     private RSTable[] loggingTables = new RSTable[4];
 
-
-
     private double targetRotationAngle = 0.0;
     private final RSTab tab;
 
@@ -209,8 +207,8 @@ public class DriveTrain extends SubsystemBase {
             //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
             new Rotation2d(0)
         );
-        SmartDashboard.putNumber("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-        SmartDashboard.putNumber("TARGET ROT", controls.omegaRadiansPerSecond);
+        Logging.robotShuffleboard.getTab("Drive").setEntry("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        Logging.robotShuffleboard.getTab("Drive").setEntry("TARGET ROT", controls.omegaRadiansPerSecond);
         drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, controls.omegaRadiansPerSecond, true);
         return true;
     }

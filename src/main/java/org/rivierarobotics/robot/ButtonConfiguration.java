@@ -24,13 +24,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.auto.SimpleAuto;
-import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.climb.ClimbZero;
-import org.rivierarobotics.commands.climb.IdleMode;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
@@ -45,17 +40,15 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_LEFT, 2)
                 .whenPressed(new RunClimb(true));
         new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 1)
-                .whenPressed(new SequentialCommandGroup(new IdleMode(false).withTimeout(0.5), new ClimbZero().withTimeout(0.5)));
+                .whenPressed(new SequentialCommandGroup(new InstantCommand(() -> Climb.getInstance().setCoast(false)), new InstantCommand(() -> Climb.getInstance().setOffset())));
         new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 2)
-                .whenPressed(new IdleMode(true));
+                .whenPressed(new InstantCommand(() -> Climb.getInstance().setCoast(false)));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new SetDriveAngle(-90, 0.1));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
-        //new JoystickButton(ControlMap.DRIVER_BUTTONS, 0)
-        //    .whenPressed(new ClimbSetAngle(128));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
                 .whenPressed(new ClimbSetAngle(0));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
@@ -78,24 +71,5 @@ public class ButtonConfiguration {
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, 1));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
-
-        //Button button = new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
-        //        .whenPressed(new SetPistonState(Climb.Position.LOW, true, 0.5));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
-        //        .whenPressed(new SetPistonState(Climb.Position.LOW, false, 0.5));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
-        //        .whenPressed(new SetPistonState(Climb.Position.MID, true, 0.5));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
-        //        .whenPressed(new SetPistonState(Climb.Position.MID, false, 0.5));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
-        //        .whenPressed(new SetPistonState(Climb.Position.HIGH, true, 0.5));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
-        //        .whenPressed(new SetPistonState(Climb.Position.HIGH, false, 0.5));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
-        //        .whenPressed(new RunClimb());
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)
-        //        .whenPressed(new SetDriveAngle(0, 0.2));
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9)
-        //        .whenPressed(new ClimbSetPosition(Climb.Position.LOW));
     }
 }
