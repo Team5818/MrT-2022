@@ -38,5 +38,4 @@ public class Piston extends SubsystemBase {
     public boolean getState() {
         return piston.get();
     }
-
 }

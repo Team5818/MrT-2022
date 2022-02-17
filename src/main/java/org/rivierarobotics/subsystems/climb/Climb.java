@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
@@ -50,11 +51,7 @@ public class Climb extends SubsystemBase {
     private static final double MID_RADIANS = 2.64;
     private static final double HIGH_RADIANS = -4.88;
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-
-    //TODO: Find Value
-    private static final int ENCODER_RESOLUTION = 2048;
-    private static final double MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
-    private static final double GEARING = 1 / 450.0;
+    private static final RSTab logging = Logging.robotShuffleboard.getTab("Climb");
 
     public enum Position {
         LOW(LOW_RADIANS),
@@ -171,9 +168,9 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Enabled", compressor.enabled());
-        Logging.robotShuffleboard.getTab("Climb").setEntry("Compressor Pressure", compressor.getPressure());
-        Logging.robotShuffleboard.getTab("Climb").setEntry("Climb Encoder", getAngle());
-        Logging.robotShuffleboard.getTab("Climb").setEntry("Climb Offset", encoder.getFrequency());
+        logging.setEntry("Compressor Enabled", compressor.enabled());
+        logging.setEntry("Compressor Pressure", compressor.getPressure());
+        logging.setEntry("Climb Encoder", getAngle());
+        logging.setEntry("Climb Offset", encoder.getFrequency());
     }
 }

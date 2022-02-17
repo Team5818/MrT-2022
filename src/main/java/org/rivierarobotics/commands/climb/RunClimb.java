@@ -33,6 +33,7 @@ public class RunClimb extends SequentialCommandGroup {
     private Climb.Position first;
     private Climb.Position last;
     private double modifier;
+    private boolean reversed;
     //
     //  Set Robot Angle to 0 degrees
     //  Set Climb to LOW
@@ -58,28 +59,27 @@ public class RunClimb extends SequentialCommandGroup {
     //  Open MID Piston
     //  Set Climb to FINAL
 
-    //reversed needs to be 1 or -1, because I can't figure out how to have a conditional statement in the constructor before super that makes this pretty :P
     public RunClimb(boolean reversed) {
         super();
         if (reversed) {
             this.first = Climb.Position.HIGH;
             this.last = Climb.Position.LOW;
             this.modifier = 1;
+            this.reversed = false;
         } else {
             this.last = Climb.Position.HIGH;
             this.first = Climb.Position.LOW;
             this.modifier = -1;
+            this.reversed = true;
         }
         addCommands(
-                //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(first)),
-                        new ClimbSetPosition(Climb.Position.LOW, modifier)
+                        new ClimbSetPosition(Climb.Position.LOW, reversed)
                 ),
                 new SetPistonState(first, true, 0),
                 new WaitCommand(0.2),
-                //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
                         new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
@@ -95,7 +95,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new WaitCommand(0.3),
                 new WaitPiston(last, 1, 3, modifier),
                 new SetPistonState(Climb.Position.MID, false, 0),
-                new ClimbSetPosition(Climb.Position.HIGH, modifier)
+                new ClimbSetPosition(Climb.Position.HIGH, reversed)
         );
     }
 }

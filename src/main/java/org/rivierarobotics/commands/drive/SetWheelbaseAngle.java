@@ -22,6 +22,7 @@ package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetWheelbaseAngle extends CommandBase {
@@ -36,7 +37,7 @@ public class SetWheelbaseAngle extends CommandBase {
 
     @Override
     public void initialize() {
-        SmartDashboard.putNumber("check", angle);
+        Logging.robotShuffleboard.getTab("Drive").setEntry("check", angle);
         dt.setSwerveModuleAngle(angle);
     }
 

@@ -80,5 +80,4 @@ public class WaitPiston extends CommandBase {
     public boolean isFinished() {
         return climb.isPistonSet(climbModule) && Timer.getFPGATimestamp() >= switchTime + endTime;
     }
-
 }

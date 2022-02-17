@@ -40,9 +40,9 @@ import org.rivierarobotics.util.ml.MLObject;
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
 
-    boolean isOn = false;
-    int tick = 0;
-    boolean[] states = {false, true, false, true, false, true};
+    private boolean isOn = false;
+    private int tick = 0;
+    private boolean[] states = {false, true, false, true, false, true};
 
     @Override
     public void robotInit() {
@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     private void shuffleboardLogging() {
         var sb = Logging.robotShuffleboard;
         try {
-            SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
+            Logging.robotShuffleboard.getTab("Drive").setEntry("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
         } catch (Exception e) {
             //bruh?
         }
@@ -117,7 +117,6 @@ public class Robot extends TimedRobot {
         machineLearning.setEntry("BY", ball.ty);
 
         field2d.setRobotPose(dt.getRobotPose());
-        //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
