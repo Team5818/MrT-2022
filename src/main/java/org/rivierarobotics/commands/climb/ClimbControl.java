@@ -38,6 +38,13 @@ public class ClimbControl extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        climb.setPiston(Climb.Position.LOW, true);
+        climb.setPiston(Climb.Position.MID, true);
+        climb.setPiston(Climb.Position.HIGH, true);
+    }
+
+    @Override
     public void execute() {
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 11;
         this.climb.setVoltage(xSpeed);

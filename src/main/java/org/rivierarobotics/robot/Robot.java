@@ -23,11 +23,8 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.climb.ClimbControl;
-import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -39,7 +36,7 @@ public class Robot extends TimedRobot {
 
     private boolean isOn = false;
     private int tick = 0;
-    private boolean[] states = {false, true, false, true, false, true};
+    private boolean[] states = {true, true, false, false, false, false};
 
     @Override
     public void robotInit() {
@@ -61,8 +58,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        //Logging.aiFieldDisplay.update();
-
         tick++;
         if (tick > 20) {
             boolean temp = states[5];
@@ -74,7 +69,6 @@ public class Robot extends TimedRobot {
             this.isOn = !isOn;
             this.tick = 0;
         }
-
     }
 
     @Override
@@ -91,8 +85,8 @@ public class Robot extends TimedRobot {
         var sb = Logging.robotShuffleboard;
         try {
             Logging.robotShuffleboard.getTab("Drive").setEntry("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
-        } catch (Exception e) {
-            //bruh?
+        } catch (Exception ignored) {
+            // Exception Ignored
         }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -140,9 +134,6 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.LOW, true, 0));
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.MID, true, 0));
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.HIGH, true, 0));
     }
 
     private void initializeCustomLoops() {

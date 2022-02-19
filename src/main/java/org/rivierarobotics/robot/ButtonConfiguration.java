@@ -54,20 +54,5 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3).whenPressed(new SetWheelbaseAngle(0).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 4).whenPressed(new SetWheelbaseAngle(-90).withTimeout(2));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9).whenPressed(new InstantCommand(() -> {
-            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
-            }
-        }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
-            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(Math.PI / 2)));
-            }
-        }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
-            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(-Math.PI / 2)));
-            }
-        }));
     }
 }

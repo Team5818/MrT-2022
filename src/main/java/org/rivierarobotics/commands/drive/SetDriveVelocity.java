@@ -35,6 +35,7 @@ public class SetDriveVelocity extends CommandBase {
         this.velocityX = velocityX;
         this.velocityY = velocityY;
         this.rotationVel = rotationVel;
+        addRequirements(driveTrain);
     }
 
     @Override
