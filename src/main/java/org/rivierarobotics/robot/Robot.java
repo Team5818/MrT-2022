@@ -31,9 +31,6 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.AIFieldDisplay;
-import org.rivierarobotics.util.ml.BoundingBox;
-import org.rivierarobotics.util.ml.MLCore;
-import org.rivierarobotics.util.ml.MLObject;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -50,12 +47,30 @@ public class Robot extends TimedRobot {
                 .withSize(6, 4)
                 .withPosition(0, 0)
                 .withWidget("Field");
+
+        initializeCustomLoops();
     }
+
+    boolean isOn = false;
+    int tick = 0;
+    boolean[] states = {false,true,false,true,false,true};
 
     @Override
     public void robotPeriodic() {
-        shuffleboardLogging();
 //        Logging.aiFieldDisplay.update();
+
+        tick++;
+        if(tick > 20) {
+            boolean temp = states[5];
+            System.arraycopy(states, 0, states, 1, 5);
+            states[0] = temp;
+            for(int i = 1; i <= 6; i++) {
+                ControlMap.DRIVER_BUTTONS.setOutput(i, states[i - 1]);
+            }
+            isOn = !isOn;
+            tick = 0;
+        }
+
     }
 
     @Override
@@ -74,39 +89,29 @@ public class Robot extends TimedRobot {
         } catch (Exception e) {}
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
-        var machineLearning = sb.getTab("ML");
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
-        var ml = MLCore.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
+        dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
         drive.setEntry("x pose", dt.getRobotPose().getX());
         drive.setEntry("y pose", dt.getRobotPose().getY());
         drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
-        drive.setEntry("Gyro Angle", Gyro.getInstance().getAngle());
+        drive.setEntry("is field centric", dt.getFieldCentric());
+
+        drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
+        drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Ticks", cl.getAngle());
-
-        MLObject ball = new MLObject("red", new BoundingBox(0,0,0,0),1);
-        try {
-            ball = ml.getDetectedObjects().get("red").get(0);
-        } catch (NullPointerException nullPointerException){ }
-
-        try {
-            machineLearning.setEntry("Num of Balls", ml.getDetectedObjects().get("red").size());
-            machineLearning.setEntry("Closest ballLocationX", ball.relativeLocationX);
-            machineLearning.setEntry("Closest ballLocationY", ball.relativeLocationY);
-        } catch (NullPointerException e) {
-            machineLearning.setEntry("Num of Balls", 0);
-            machineLearning.setEntry("Closest ballLocationX", 0);
-            machineLearning.setEntry("Closest ballLocationY", 0);
-        }
-
-
-
+        climb.setEntry("Switch 1", cl.isSwitchSet(Climb.Position.LOW));
+        climb.setEntry("Switch 2", cl.isSwitchSet(Climb.Position.MID));
+        climb.setEntry("Switch 3", cl.isSwitchSet(Climb.Position.HIGH));
+        climb.setEntry("Piston 1", cl.isPistonSet(Climb.Position.LOW));
+        climb.setEntry("Piston 2", cl.isPistonSet(Climb.Position.MID));
+        climb.setEntry("Piston 3", cl.isPistonSet(Climb.Position.HIGH));
     }
 
     @Override
@@ -127,12 +132,21 @@ public class Robot extends TimedRobot {
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
         Climb.getInstance();
-        MLCore.getInstance();
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+    }
+
+    private void initializeCustomLoops() {
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicStateSpaceControl();
+        }, DriveTrain.STATE_SPACE_LOOP_TIME, 0.0);
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicLogging();
+        }, 0.5, 0.0);
+        addPeriodic(this::shuffleboardLogging, 0.5, 0.0);
     }
 
     @Override

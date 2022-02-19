@@ -47,11 +47,11 @@ public class SetDriveAngle extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(gyro.getAngle(), angle, 1);
+        return MathUtil.isWithinTolerance(angle, gyro.getRotation2d().getDegrees(), 4);
     }
 
     @Override
     public void end(boolean interrupted) {
-        dt.drive(0,0,0,false);
+        dt.drive(0, 0, 0, false);
     }
 }

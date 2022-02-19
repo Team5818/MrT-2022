@@ -20,15 +20,14 @@
 
 package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetDriveVelocity;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
+    private static final double voltage = -9;
+
     //
     //  Set Robot Angle to 0 degrees
     //  Set Climb to LOW
@@ -56,18 +55,31 @@ public class RunClimb extends SequentialCommandGroup {
 
     public RunClimb() {
         super(
-                new SetDriveAngle(0, 0.2),
+//                new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
-                new ClimbSetPosition(Climb.Position.LOW),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.LOW)), new SetDriveVelocity(0,-1, 0)),
-                new SetPistonState(Climb.Position.LOW,false, 1),
-                new SetDriveVelocity(0,0,0),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)), new ClimbSetPosition(Climb.Position.MID)),
-                new SetPistonState(Climb.Position.MID,false, 1),
-                new SetPistonState(Climb.Position.LOW, true, 1),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.HIGH)), new ClimbSetPosition(Climb.Position.HIGH)),
-                new SetPistonState(Climb.Position.HIGH,false, 1),
-                new SetPistonState(Climb.Position.MID, true, 1)
-        );
+                new ParallelDeadlineGroup(
+                        new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.LOW)),
+                        new ClimbSetPosition(Climb.Position.LOW)
+                ),
+                new SetPistonState(Climb.Position.LOW,true, 0),
+                new WaitCommand(0.3),
+//                new SetDriveVelocity(0,0,0),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
+                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage))),
+                new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
+                new SetPistonState(Climb.Position.MID,true, 0),
+                new WaitCommand(0.3),
+                new WaitPiston(Climb.Position.MID, 1, 2),
+                new SetPistonState(Climb.Position.LOW, false, 0),
+                new WaitCommand(0.3),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.HIGH)),
+                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage))),
+                new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
+                new SetPistonState(Climb.Position.HIGH,true, 0),
+                new WaitCommand(0.3),
+                new WaitPiston(Climb.Position.HIGH, 1, 2),
+                new SetPistonState(Climb.Position.MID, false, 0),
+                new ClimbSetPosition(Climb.Position.HIGH)
+       );
     }
 }

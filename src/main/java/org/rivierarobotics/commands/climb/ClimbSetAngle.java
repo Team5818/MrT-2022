@@ -35,12 +35,17 @@ public class ClimbSetAngle extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         climb.setPosition(angle);
     }
 
     @Override
+    public void execute() {
+        climb.followStateSpace();
+    }
+
+    @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 1);
+        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.01);
     }
 }
