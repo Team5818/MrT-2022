@@ -47,16 +47,13 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -2.37;
-    private static final double MID_RADIANS = 2.64;
-    private static final double HIGH_RADIANS = -4.88;
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     private static final RSTab logging = Logging.robotShuffleboard.getTab("Climb");
 
     public enum Position {
-        LOW(LOW_RADIANS),
-        MID(MID_RADIANS),
-        HIGH(HIGH_RADIANS);
+        LOW(-2.37),
+        MID(2.64),
+        HIGH(-4.88);
 
         public final double locationRadians;
 
@@ -146,11 +143,8 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        if (Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle())) {
-            climbMotor.setVoltage(0);
-            return;
-        }
-        climbMotor.setVoltage(voltage);
+        boolean cutoff = Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle());
+        climbMotor.setVoltage(cutoff ? 0 : voltage);
     }
 
     public double getAngle() {

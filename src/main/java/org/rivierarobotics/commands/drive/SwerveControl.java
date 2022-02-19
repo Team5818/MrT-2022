@@ -71,7 +71,7 @@ public class SwerveControl extends CommandBase {
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
         var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
 
-        var rot = - MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
+        var rot = -MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
         //driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
 

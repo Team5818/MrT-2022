@@ -30,11 +30,7 @@ public class ClimbSetPosition extends CommandBase {
 
     public ClimbSetPosition(Climb.Position climbModule, boolean reversed) {
         this.climb = Climb.getInstance();
-        if (reversed) {
-            this.target = climbModule.locationRadians * -1;
-        } else {
-            this.target = climbModule.locationRadians;
-        }
+        this.target = climbModule.locationRadians * (reversed ? -1 : 1);
         this.addRequirements(this.climb);
     }
 
