@@ -44,7 +44,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new SetDriveAngle(-90, 0.1));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
-                .whenPressed(new SetWheelbaseAngle(90).withTimeout(4));
+                .whileHeld(new TestPathGeneration());
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
         //new JoystickButton(ControlMap.DRIVER_BUTTONS, 0)
