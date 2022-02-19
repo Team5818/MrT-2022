@@ -106,8 +106,8 @@ public class SwerveModule extends SubsystemBase {
         );
         this.driveController.setKsTolerance(0.05);
 
-        this.steeringMotor.configContinuousCurrentLimit(28);
-        this.steeringMotor.configPeakCurrentLimit(28);
+        this.steeringMotor.configContinuousCurrentLimit(40);
+        this.steeringMotor.configPeakCurrentLimit(40);
     }
 
     private void configureMotionMagic() {

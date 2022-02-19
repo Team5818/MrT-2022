@@ -66,8 +66,8 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public static final double MAX_SPEED = 1.5; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 2; // rad/s
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 3; // rad/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
     private static final double WHEEL_DIST_TO_CENTER = 0.254; //m
     private static final String[] DRIVE_IDS = new String[]{"FL", "FR", "BL", "BR"};
