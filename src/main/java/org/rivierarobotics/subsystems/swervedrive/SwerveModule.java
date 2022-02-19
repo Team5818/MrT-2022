@@ -106,8 +106,8 @@ public class SwerveModule extends SubsystemBase {
         );
         this.driveController.setKsTolerance(0.05);
 
-        this.steeringMotor.configContinuousCurrentLimit(40);
-        this.steeringMotor.configPeakCurrentLimit(40);
+        this.steeringMotor.configContinuousCurrentLimit(28);
+        this.steeringMotor.configPeakCurrentLimit(28);
     }
 
     private void configureMotionMagic() {
@@ -126,7 +126,7 @@ public class SwerveModule extends SubsystemBase {
         steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
         steeringMotor.configMotionSCurveStrength(2, timeoutMs);
 
-        steeringMotor.config_kP(0, 1.7, timeoutMs);
+        steeringMotor.config_kP(0, 1, timeoutMs);
         steeringMotor.config_kI(0, 0.0, timeoutMs);
         steeringMotor.config_kD(0, 0.0, timeoutMs);
         steeringMotor.config_kF(0, 0.1, timeoutMs);

@@ -42,10 +42,15 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
+        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 2.5)) {
             return 0.0;
         }
-        return pidController.calculate(Gyro.getInstance().getRotation2d().getDegrees());
+        return (0.025 * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
+    }
+
+    @Override
+    public void initialize() {
+        driveTrain.targetRotationAngle = 0;
     }
 
     @Override
@@ -57,14 +62,11 @@ public class SwerveControl extends CommandBase {
 
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
-        driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
-
-//        if(rot == 0) {
-//            //driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), true);
-//        } else {
-//            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
-//            //pidController.setGoal(Gyro.getInstance().getRotation2d().getDegrees());
-//            driveTrain.drive(xSpeed, ySpeed, rot, true);
-//        }
+        if(rot == 0) {
+            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
+        } else {
+            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
+            driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
+        }
     }
 }

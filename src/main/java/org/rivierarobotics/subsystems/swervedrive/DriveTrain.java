@@ -85,7 +85,7 @@ public class DriveTrain extends SubsystemBase {
 
 
 
-    private double targetRotationAngle = 0.0;
+    public double targetRotationAngle = 0;
     private final RSTab tab;
 
     private DriveTrain() {
