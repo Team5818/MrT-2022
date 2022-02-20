@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrain extends SubsystemBase {
+    private static DriveTrain swerveDriveTrain;
 
     public static DriveTrain getInstance() {
         if (swerveDriveTrain == null) {
@@ -64,10 +65,9 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
-    private static DriveTrain swerveDriveTrain;
     public static final double MAX_SPEED = 1.5; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 2 / 2; // rad/s
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI / 3; // rad/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
     private static final double WHEEL_DIST_TO_CENTER = 0.254; //m
     private static final String[] DRIVE_IDS = new String[]{"FL", "FR", "BL", "BR"};
@@ -79,12 +79,13 @@ public class DriveTrain extends SubsystemBase {
     private final HolonomicDriveController holonomicDriveController;
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     private double startTime = Timer.getFPGATimestamp();
+    private boolean isFieldCentric = true;
     private Trajectory trajectory = new Trajectory();
     private RSTable[] loggingTables = new RSTable[4];
 
 
 
-    private double targetRotationAngle = 0.0;
+    public double targetRotationAngle = 0;
     private final RSTab tab;
 
     private DriveTrain() {
@@ -94,10 +95,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, ((56268 + 2048) % 4096), false, false);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -((98968 + 2048) % 4096), false, false);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, ((22236) % 4096), false, false);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, ((16912 + 2048) % 4096), false, false);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3124, false, false);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2755, false, false);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -1704, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1541, false, false);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -137,7 +138,7 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
+        e.scheduleAtFixedRate(this::updateOdometry, 0,20,TimeUnit.MILLISECONDS);
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -150,6 +151,14 @@ public class DriveTrain extends SubsystemBase {
         for (var m : swerveModules) {
             m.setDriveMotorVelocity(vel);
         }
+    }
+
+    public void setFieldCentric(boolean fieldCentric){
+        this.isFieldCentric = fieldCentric;
+    }
+
+    public boolean getFieldCentric(){
+        return isFieldCentric;
     }
 
     public SwerveDriveKinematics getSwerveDriveKinematics() {
@@ -179,18 +188,18 @@ public class DriveTrain extends SubsystemBase {
         try {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-            this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
-            this.startTime = Timer.getFPGATimestamp();
+            startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
     }
 
     public void drivePath(Trajectory path) {
-        this.trajectory = path;
+        trajectory = path;
         swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
-        this.startTime = Timer.getFPGATimestamp();
+        startTime = Timer.getFPGATimestamp();
     }
 
     /**
@@ -204,10 +213,10 @@ public class DriveTrain extends SubsystemBase {
 
         var state = trajectory.sample(Timer.getFPGATimestamp() - startTime);
         var controls = holonomicDriveController.calculate(
-            swerveDrivePoseEstimator.getEstimatedPosition(),
-            state,
-            //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
-            new Rotation2d(0)
+                swerveDrivePoseEstimator.getEstimatedPosition(),
+                state,
+                //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
+                new Rotation2d(0)
         );
         SmartDashboard.putNumber("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("TARGET ROT", controls.omegaRadiansPerSecond);
@@ -217,11 +226,11 @@ public class DriveTrain extends SubsystemBase {
 
     public void updateOdometry() {
         swerveDrivePoseEstimator.update(
-            gyro.getRotation2d(),
-            swerveModules[0].getState(),
-            swerveModules[1].getState(),
-            swerveModules[2].getState(),
-            swerveModules[3].getState()
+                gyro.getRotation2d(),
+                swerveModules[0].getState(),
+                swerveModules[1].getState(),
+                swerveModules[2].getState(),
+                swerveModules[3].getState()
         );
     }
 
@@ -271,7 +280,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicStateSpaceControl() {
-        for (var m : swerveModules) {
+        for(var m : swerveModules) {
             m.followControllers();
         }
     }
