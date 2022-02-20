@@ -22,14 +22,14 @@ package org.rivierarobotics.util.ml;
 
 public class MLObject {
     public static final double BALL_RADIUS = 2*0.12;
-    public static final double CAMERA_OFFSET = 0.74 - BALL_RADIUS;
+    public static final double CAMERA_OFFSET = 0.775 - BALL_RADIUS;
 
     public final String label;
     public final BoundingBox boundingBox;
-    public final double tx;
     public final double ty;
-    public final double relativeLocationX;
+    public final double tx;
     public final double relativeLocationY;
+    public final double relativeLocationX;
     public final double relativeLocationDistance;
     public final double confidence;
 //    private final Map<Double, Double> yAngle = new HashMap<Double, Double>();
@@ -39,15 +39,15 @@ public class MLObject {
         this.label = label;
         this.boundingBox = boundingBox;
 
-        double avgY = (boundingBox.ymax + boundingBox.ymin) / 2.0;
-        this.ty = ( MLCore.CAMERA_HEIGHT / 2.0 - avgY) * MLCore.ANGLE_PER_PIXEL_Y;
-        this.relativeLocationY = Math.tan((90 - Math.abs(ty)) * Math.PI / 180) * CAMERA_OFFSET;
+        double avgX = (boundingBox.ymax + boundingBox.ymin) / 2.0;
+        this.tx = ( MLCore.CAMERA_HEIGHT / 2.0 - avgX) * MLCore.ANGLE_PER_PIXEL_Y;
+        this.relativeLocationX = Math.tan((90 - Math.abs(tx)) * Math.PI / 180) * CAMERA_OFFSET;
 
-        double avgX = (boundingBox.xmax + boundingBox.xmin) / 2.0;
-        this.tx = (avgX - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
-        this.relativeLocationX = relativeLocationY * Math.tan(tx * Math.PI / 180);
+        double avgY = (boundingBox.xmax + boundingBox.xmin) / 2.0;
+        this.ty = (avgY - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
+        this.relativeLocationY = relativeLocationX * Math.tan(ty * Math.PI / 180);
 
-        this.relativeLocationDistance = Math.sqrt(relativeLocationX * relativeLocationX + relativeLocationY * relativeLocationY);
+        this.relativeLocationDistance = Math.sqrt(relativeLocationY * relativeLocationY + relativeLocationX * relativeLocationX);
         this.confidence = confidence;
 
 //        yAngle.put(464., 36.87);

@@ -34,10 +34,10 @@ public class CollectVisionTest extends CommandBase {
             return;
         }
 
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationX);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationY);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationY);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationX);
         Logging.robotShuffleboard.getTab("ML").setEntry("Target Ball Distance", ball.relativeLocationDistance);
-        Logging.robotShuffleboard.getTab("ML").setEntry("TX", ball.tx);
-        Logging.robotShuffleboard.getTab("ML").setEntry("TY", ball.ty);
+        Logging.robotShuffleboard.getTab("ML").setEntry("TX", ball.ty);
+        Logging.robotShuffleboard.getTab("ML").setEntry("TY", ball.tx);
     }
 }

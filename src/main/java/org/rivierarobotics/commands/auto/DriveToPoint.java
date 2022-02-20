@@ -1,5 +1,6 @@
 package org.rivierarobotics.commands.auto;
 
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.robot.Logging;
@@ -31,7 +32,7 @@ public class DriveToPoint extends CommandBase {
     @Override
     public void initialize() {
         var dtPose = driveTrain.getRobotPose();
-        var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity);
+        var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, DriveTrain.getInstance().getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
         if(trajectory != null) driveTrain.drivePath(trajectory);
     }

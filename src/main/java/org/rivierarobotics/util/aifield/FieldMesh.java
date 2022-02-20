@@ -70,7 +70,7 @@ public class FieldMesh {
     private final List<Polygon> fieldObstacles = new ArrayList<>();
     private final List<ArrayList<FieldNode>> nodes = new ArrayList<>();
     private final List<AreaWeight> areaWeights = new ArrayList<>();
-    public static final double MAX_VELOCITY = 0.75;
+    public static final double MAX_VELOCITY = 0.5;
     public static final double MAX_ACCELERATION = 0.2;
     public static final double DEFAULT_NODE_WEIGHT = 0;
     private double totalTimePassed = 0;
@@ -291,7 +291,7 @@ public class FieldMesh {
         return List.copyOf(fieldObstacles);
     }
 
-    private double angleBetweenNodes(FieldNode a, FieldNode b) {
+    public double angleBetweenNodes(FieldNode a, FieldNode b) {
         return Math.atan2(b.yValue - a.yValue, b.xValue - a.xValue);
     }
 
@@ -327,10 +327,11 @@ public class FieldMesh {
             Trajectory trajectory = null;
             try {
                 trajectory = TrajectoryGenerator.generateTrajectory(
-                        poseList.get(0),
-                        poseList.size() >= 2 ? poseList.subList(1, poseList.size() - 2).stream().map(Pose2d::getTranslation).collect(Collectors.toList()) : new ArrayList<>(),
-                        poseList.get(poseList.size() - 1),
+                        poseList,
                         config
+//                        poseList.get(0),
+//                        poseList.size() >= 2 ? poseList.subList(1, poseList.size() - 2).stream().map(Pose2d::getTranslation).collect(Collectors.toList()) : new ArrayList<>(),
+//                        poseList.get(poseList.size() - 1),
                 );
             } catch (Exception e) {
                 e.printStackTrace();
