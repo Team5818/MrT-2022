@@ -40,10 +40,6 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("lly", getTy());
-        SmartDashboard.putNumber("llx", getTx());
-        SmartDashboard.putBoolean("detected", getDetected());
-        SmartDashboard.putNumber("Distance", getDistance());
     }
 
 

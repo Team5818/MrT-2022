@@ -31,6 +31,7 @@ import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.AIFieldDisplay;
 
@@ -96,7 +97,9 @@ public class Robot extends TimedRobot {
         }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
+        var limeLight = sb.getTab("LL");
         var dt = DriveTrain.getInstance();
+        var ll = Limelight.getInstance();
         var cl = Climb.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
@@ -119,6 +122,12 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston 1", cl.isPistonSet(Climb.Position.LOW));
         climb.setEntry("Piston 2", cl.isPistonSet(Climb.Position.MID));
         climb.setEntry("Piston 3", cl.isPistonSet(Climb.Position.HIGH));
+
+        limeLight.setEntry("lly", ll.getTy());
+        limeLight.setEntry("llx", ll.getTx());
+        limeLight.setEntry("ll detected", ll.getDetected());
+        limeLight.setEntry("ll Distance", ll.getDistance());
+        limeLight.setEntry("Please work", 69420);
     }
 
     @Override
