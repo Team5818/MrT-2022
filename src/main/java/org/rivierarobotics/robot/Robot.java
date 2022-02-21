@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 
     boolean isOn = false;
     int tick = 0;
-    boolean[] states = {false, true, false, true, false, true};
+    boolean[] states = {false, false, true, true, false, false};
 
     @Override
     public void robotInit() {

@@ -25,6 +25,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.LLCommands.TrackGoal;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
@@ -72,7 +73,7 @@ public class ButtonConfiguration {
             }
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
-
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whileHeld(new TrackGoal());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
 //        Button button = new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
