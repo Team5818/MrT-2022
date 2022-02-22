@@ -327,11 +327,10 @@ public class FieldMesh {
             Trajectory trajectory = null;
             try {
                 trajectory = TrajectoryGenerator.generateTrajectory(
-                        poseList,
+                        poseList.get(0),
+                        poseList.size() >= 2 ? poseList.subList(1, poseList.size() - 2).stream().map(Pose2d::getTranslation).collect(Collectors.toList()) : new ArrayList<>(),
+                        poseList.get(poseList.size() - 1),
                         config
-//                        poseList.get(0),
-//                        poseList.size() >= 2 ? poseList.subList(1, poseList.size() - 2).stream().map(Pose2d::getTranslation).collect(Collectors.toList()) : new ArrayList<>(),
-//                        poseList.get(poseList.size() - 1),
                 );
             } catch (Exception e) {
                 e.printStackTrace();

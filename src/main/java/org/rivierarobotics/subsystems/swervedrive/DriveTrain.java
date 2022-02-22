@@ -95,7 +95,7 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3124, false, false);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3124, false, true);
         swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2755, false, false);
         swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -1976, false, true);
         swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1541, false, false);
@@ -188,8 +188,10 @@ public class DriveTrain extends SubsystemBase {
         try {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+
             trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
+            //TODO: Fix this by making a custom pose with angle = gyro angle
+            //swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
             startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
@@ -198,7 +200,8 @@ public class DriveTrain extends SubsystemBase {
 
     public void drivePath(Trajectory path) {
         trajectory = path;
-        swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
+        //TODO: Fix this by making a custom pose with angle = gyro angle
+        //swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
         startTime = Timer.getFPGATimestamp();
     }
 
