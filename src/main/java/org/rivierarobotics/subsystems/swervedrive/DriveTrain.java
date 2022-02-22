@@ -36,11 +36,13 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 
@@ -97,6 +99,7 @@ public class DriveTrain extends SubsystemBase {
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
     public double targetRotationAngle = 0;
+    private final RSTab tab;
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center (m)
