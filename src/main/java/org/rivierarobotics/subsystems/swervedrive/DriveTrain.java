@@ -42,7 +42,6 @@ import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 
@@ -99,6 +98,8 @@ public class DriveTrain extends SubsystemBase {
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
     public double targetRotationAngle = 0;
+
+
     private final RSTab tab;
 
     private DriveTrain() {
