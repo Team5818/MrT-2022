@@ -20,13 +20,10 @@
 
 package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;

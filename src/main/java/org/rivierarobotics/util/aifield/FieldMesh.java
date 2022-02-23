@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
