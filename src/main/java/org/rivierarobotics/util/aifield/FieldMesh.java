@@ -31,6 +31,8 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Filesystem;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
@@ -273,10 +275,10 @@ public class FieldMesh {
             for (int i = 1; i < obstacle.npoints; i++) {
                 Line2D testIntersect = new Line2D.Double();
                 testIntersect.setLine(
-                    obstacle.xpoints[i],
-                    obstacle.ypoints[i],
-                    obstacle.xpoints[i - 1],
-                    obstacle.ypoints[i - 1]);
+                        obstacle.xpoints[i],
+                        obstacle.ypoints[i],
+                        obstacle.xpoints[i - 1],
+                        obstacle.ypoints[i - 1]);
                 if (testIntersect.intersectsLine(nodeLines)) {
                     return false;
                 }
@@ -319,6 +321,9 @@ public class FieldMesh {
             config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
+            if (Robot.isReal()) {
+                //config.setKinematics(DriveTrain.getInstance().getSwerveDriveKinematics());
+            }
 
             Trajectory trajectory = null;
             try {
@@ -335,8 +340,8 @@ public class FieldMesh {
 
             totalTimePassed += (System.nanoTime() - startTime) / 1e7;
             if (totalTimePassed < 0) {
-                this.totalTimePassed = 0;
-                this.amtOfCalculations = 0;
+                totalTimePassed = 0;
+                amtOfCalculations = 0;
             }
             amtOfCalculations++;
             double avgTime = totalTimePassed / amtOfCalculations;
