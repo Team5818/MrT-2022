@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetDriveVelocity extends CommandBase {

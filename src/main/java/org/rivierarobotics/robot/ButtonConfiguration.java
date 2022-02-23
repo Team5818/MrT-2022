@@ -20,18 +20,14 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
-import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class ButtonConfiguration {
     public void initTeleop() {

@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class ClimbControl extends CommandBase {
     private final Climb climb;
