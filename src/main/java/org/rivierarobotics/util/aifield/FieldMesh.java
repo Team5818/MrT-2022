@@ -70,8 +70,8 @@ public class FieldMesh {
     private final List<Polygon> fieldObstacles = new ArrayList<>();
     private final List<ArrayList<FieldNode>> nodes = new ArrayList<>();
     private final List<AreaWeight> areaWeights = new ArrayList<>();
-    public static final double MAX_VELOCITY = 0.5;
-    public static final double MAX_ACCELERATION = 0.2;
+    public static final double MAX_VELOCITY = 0.25;
+    public static final double MAX_ACCELERATION = 0.1;
     public static final double DEFAULT_NODE_WEIGHT = 0;
     private double totalTimePassed = 0;
     private double amtOfCalculations = 1;

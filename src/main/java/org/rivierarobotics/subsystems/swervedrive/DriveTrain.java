@@ -42,7 +42,6 @@ import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 
@@ -65,7 +64,8 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
-    public static final double MAX_SPEED = 1.5; // m/s
+    public static final double MAX_SPEED = 1.0; // m/s
+    public static final double MAX_CHANGE_IN_VELOCITY = 0.0005; //
     public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
@@ -86,6 +86,8 @@ public class DriveTrain extends SubsystemBase {
 
 
     public double targetRotationAngle = 0;
+
+
     private final RSTab tab;
 
     private DriveTrain() {
@@ -95,10 +97,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3124, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2755, false, false);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -1976, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1541, false, false);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3984, false, true);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2710 + 2048, false, true);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -1020, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -2891 + 2048, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -165,6 +167,23 @@ public class DriveTrain extends SubsystemBase {
         return this.swerveDriveKinematics;
     }
 
+    private double[] limitSpeeds(double xSpeed, double ySpeed) {
+        var cs = getChassisSpeeds();
+        var currentSpeed = Math.sqrt(Math.pow(cs.vxMetersPerSecond, 2) + Math.pow(cs.vyMetersPerSecond, 2));
+        var targetSpeed = Math.sqrt(Math.pow(xSpeed,2) + Math.pow(ySpeed,2));
+        var speeds = new double[2];
+
+        if (Math.abs(targetSpeed - currentSpeed) > MAX_CHANGE_IN_VELOCITY) {
+            speeds[0] = cs.vxMetersPerSecond + (MAX_CHANGE_IN_VELOCITY /Math.abs(targetSpeed - currentSpeed)) * (xSpeed - cs.vxMetersPerSecond);
+            speeds[1] = cs.vyMetersPerSecond + (MAX_CHANGE_IN_VELOCITY /Math.abs(targetSpeed - currentSpeed)) * (ySpeed - cs.vyMetersPerSecond);
+        } else {
+            speeds[0] = xSpeed;
+            speeds[1] = ySpeed;
+        }
+
+        return speeds;
+    }
+
     /**
      * Method to drive the robot using joystick info.
      *
@@ -174,9 +193,10 @@ public class DriveTrain extends SubsystemBase {
      * @param fieldRelative Whether the provided x and y speeds are relative to the field.
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rot)
+                        : new ChassisSpeeds(limitSpeeds(xSpeed, ySpeed)[0], limitSpeeds(xSpeed, ySpeed)[1], rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
