@@ -20,7 +20,10 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -244,7 +247,7 @@ public class SwerveModule extends SubsystemBase {
 
         setDriveMotorVelocity(targetSpeed);
         setSteeringMotorAngle(convertAngleToTick(targetAng));
-        setDriveEnabled = true;
+        this.setDriveEnabled = true;
     }
 
     public Rotation2d getTargetRotation() {
@@ -264,7 +267,9 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void followControllers() {
-        if (!setDriveEnabled) return;
+        if (!setDriveEnabled) {
+            return;
+        }
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
         setDriveMotorVoltage(driveVoltage);
     }
