@@ -83,11 +83,11 @@ public class SwerveModule extends SubsystemBase {
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
-                0.1, 4, 12, DriveTrain.STATE_SPACE_LOOP_TIME
+                0.1, 4, 9, DriveTrain.STATE_SPACE_LOOP_TIME
         );
         this.driveController.setKsTolerance(0.05);
-        this.steeringMotor.configContinuousCurrentLimit(40);
-        this.steeringMotor.configPeakCurrentLimit(40);
+        this.steeringMotor.configContinuousCurrentLimit(30);
+        this.steeringMotor.configPeakCurrentLimit(30);
     }
 
     private void configureMotionMagic() {
