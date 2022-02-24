@@ -78,17 +78,15 @@ public class SwerveModule extends SubsystemBase {
      * @param zeroTicks            ticks when angle = 0
      */
     public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks, boolean driveInverted, boolean isNew) {
-
         this.isNew = isNew;
-
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
 
-        var mmConfig = new MotionMagicConfig(new ArrayList<>(), true, 100000, 100000, 100, 2, timeoutMs, 10);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, new PIDConfig(0.7, 0, 0, 0.1), mmConfig, steeringMotor);
+        var mmConfig = new MotionMagicConfig(new ArrayList<>(), true, MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION, 100, 2, timeoutMs, 10);
+        var mmPID = new PIDConfig(0.7, 0, 0, 0.1);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, mmPID, mmConfig, steeringMotor);
 
         steeringMotor.configFeedbackNotContinuous(true, timeoutMs);
-
         steeringMotor.setSensorPhase(!isNew);
         steeringMotor.setInverted(false);
 

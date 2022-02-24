@@ -84,7 +84,6 @@ public class DriveTrain extends SubsystemBase {
     private RSTable[] loggingTables = new RSTable[4];
 
 
-
     public double targetRotationAngle = 0;
     private final RSTab tab;
 
@@ -138,7 +137,7 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 0,20,TimeUnit.MILLISECONDS);
+        e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -153,11 +152,11 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
-    public void setFieldCentric(boolean fieldCentric){
+    public void setFieldCentric(boolean fieldCentric) {
         this.isFieldCentric = fieldCentric;
     }
 
-    public boolean getFieldCentric(){
+    public boolean getFieldCentric() {
         return isFieldCentric;
     }
 
@@ -216,10 +215,12 @@ public class DriveTrain extends SubsystemBase {
                 swerveDrivePoseEstimator.getEstimatedPosition(),
                 state,
                 //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
-                new Rotation2d(0)
+                //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
+                //new Rotation2d(Math.toRadians(targetRotationAngle))
+                new Rotation2d(Math.toRadians(0))
         );
-        SmartDashboard.putNumber("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-        SmartDashboard.putNumber("TARGET ROT", controls.omegaRadiansPerSecond);
+        tab.setEntry("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        tab.setEntry("TARGET ROT", controls.omegaRadiansPerSecond);
         drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, 0, true);
         return true;
     }
@@ -280,7 +281,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicStateSpaceControl() {
-        for(var m : swerveModules) {
+        for (var m : swerveModules) {
             m.followControllers();
         }
     }
