@@ -51,6 +51,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -65,30 +67,38 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
+    //Drive Speed Constants
     public static final double MAX_SPEED = 1.25; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
+    //Module Mappings / Measurements
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
     private static final double WHEEL_DIST_TO_CENTER = 0.254; //m
     private static final String[] DRIVE_IDS = new String[]{"FL", "FR", "BL", "BR"};
 
     private final Gyro gyro;
+    //Modules
     private final SwerveModule[] swerveModules = new SwerveModule[4];
     private final Translation2d[] swervePosition = new Translation2d[4];
+    //Drive Controllers
     private final SwerveDriveKinematics swerveDriveKinematics;
     private final HolonomicDriveController holonomicDriveController;
+    //Pose Estimators
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
+    private final AtomicReference<Pose2d> robotPose = new AtomicReference<>();
+    private final ReentrantLock resetLock = new ReentrantLock();
+
+    //Trajectory Parameters
     private double startTime = Timer.getFPGATimestamp();
-    private boolean isFieldCentric = true;
     private Trajectory trajectory = new Trajectory();
-    private RSTable[] loggingTables = new RSTable[4];
-
-
+    private boolean isFieldCentric = true;
     public double targetRotationAngle = 0;
+    //Logging
+    private RSTable[] loggingTables = new RSTable[4];
     private final RSTab tab;
 
     private DriveTrain() {
-        //Position relative to center of robot -> (0,0) is the center
+        //Position relative to center of robot -> (0,0) is the center (m)
         swervePosition[0] = new Translation2d(WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //FL
         swervePosition[1] = new Translation2d(WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //FR
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
@@ -212,35 +222,55 @@ public class DriveTrain extends SubsystemBase {
 
         var state = trajectory.sample(Timer.getFPGATimestamp() - startTime);
         var controls = holonomicDriveController.calculate(
-                swerveDrivePoseEstimator.getEstimatedPosition(),
+                getRobotPose(),
                 state,
                 //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
                 //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
                 //new Rotation2d(Math.toRadians(targetRotationAngle))
                 new Rotation2d(Math.toRadians(0))
         );
-        tab.setEntry("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        tab.setEntry("Pose Rot", getRobotPose().getRotation().getDegrees());
         tab.setEntry("TARGET ROT", controls.omegaRadiansPerSecond);
         drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, 0, true);
         return true;
     }
 
-    public void updateOdometry() {
-        swerveDrivePoseEstimator.update(
-                gyro.getRotation2d(),
-                swerveModules[0].getState(),
-                swerveModules[1].getState(),
-                swerveModules[2].getState(),
-                swerveModules[3].getState()
-        );
+    public Pose2d getRobotPose() {
+        return robotPose.get();
     }
 
-    public Pose2d getRobotPose() {
-        return swerveDrivePoseEstimator.getEstimatedPosition();
+    public void updateOdometry() {
+        resetLock.lock();
+        try {
+            var pose2d = swerveDrivePoseEstimator.update(
+                    gyro.getRotation2d(),
+                    swerveModules[0].getState(),
+                    swerveModules[1].getState(),
+                    swerveModules[2].getState(),
+                    swerveModules[3].getState()
+            );
+            robotPose.set(pose2d);
+        } finally {
+            resetLock.unlock();
+        }
     }
 
     public void resetPose() {
-        swerveDrivePoseEstimator.resetPosition(new Pose2d(0, 0, new Rotation2d(0)), new Rotation2d(0));
+        resetLock.lock();
+        try {
+            swerveDrivePoseEstimator.resetPosition(new Pose2d(0, 0, new Rotation2d(0)), new Rotation2d(0));
+        } finally {
+            resetLock.unlock();
+        }
+    }
+
+    public void resetPose(Pose2d pose2d, Rotation2d gyroReading) {
+        resetLock.lock();
+        try {
+            swerveDrivePoseEstimator.resetPosition(pose2d, gyroReading);
+        } finally {
+            resetLock.unlock();
+        }
     }
 
     public ChassisSpeeds getChassisSpeeds() {

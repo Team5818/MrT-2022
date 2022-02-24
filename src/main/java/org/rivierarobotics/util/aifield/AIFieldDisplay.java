@@ -73,7 +73,6 @@ public class AIFieldDisplay {
             Imgproc.resize(image, resizeFrame, resizeFrame.size(),0,0,2);
             outputStream.putFrame(resizeFrame);
             outputStream.setResolution(480,480);
-            SmartDashboard.putNumber("t", System.nanoTime());
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 
