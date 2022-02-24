@@ -20,7 +20,9 @@
 
 package org.rivierarobotics.commands.auto;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.aifield.FieldMesh;
@@ -37,8 +39,9 @@ public class TestPathGeneration extends CommandBase {
     @Override
     public void initialize() {
         var dtPose = driveTrain.getRobotPose();
-        Logging.robotShuffleboard.getTab("tt").setEntry("Path generation", System.nanoTime());
-        var trajectory = aiFieldMesh.getTrajectory(1, 1, 3, 3, true, 0, DriveTrain.getInstance().getSwerveDriveKinematics());
+        //if(MathUtil.isWithinTolerance(dtPose.getX(),0,0.3) && MathUtil.isWithinTolerance(dtPose.getY(),0,0.3)) return;
+        SmartDashboard.putNumber("tt", System.nanoTime());
+        var trajectory = aiFieldMesh.getTrajectory(0, 0, 1, 1, true, 0, DriveTrain.getInstance().getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
         if (trajectory != null) {
             driveTrain.drivePath(trajectory);
