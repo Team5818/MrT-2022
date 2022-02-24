@@ -65,7 +65,7 @@ public class DriveTrain extends SubsystemBase {
         return swerveDriveTrain;
     }
 
-    public static final double MAX_SPEED = 1.5; // m/s
+    public static final double MAX_SPEED = 1.25; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
@@ -95,10 +95,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -3124, false, false);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -2755, false, false);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -1704, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1541, false, false);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -4008, false, true);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -644, false, true);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -966, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -771, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -189,7 +189,7 @@ public class DriveTrain extends SubsystemBase {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
+            //swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
             startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
@@ -198,7 +198,7 @@ public class DriveTrain extends SubsystemBase {
 
     public void drivePath(Trajectory path) {
         trajectory = path;
-        swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
+        //swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
         startTime = Timer.getFPGATimestamp();
     }
 
@@ -220,7 +220,7 @@ public class DriveTrain extends SubsystemBase {
         );
         SmartDashboard.putNumber("Pose Rot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("TARGET ROT", controls.omegaRadiansPerSecond);
-        drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, controls.omegaRadiansPerSecond, true);
+        drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, 0, true);
         return true;
     }
 
