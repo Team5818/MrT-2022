@@ -119,15 +119,15 @@ public class SwerveModule extends SubsystemBase {
 
         steeringMotor.configNominalOutputForward(0, timeoutMs);
         steeringMotor.configNominalOutputReverse(0, timeoutMs);
-        steeringMotor.configPeakOutputForward(1, timeoutMs);
-        steeringMotor.configPeakOutputReverse(-1, timeoutMs);
+        steeringMotor.configPeakOutputForward(0.75, timeoutMs);
+        steeringMotor.configPeakOutputReverse(-0.75, timeoutMs);
 
         steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
         steeringMotor.configMotionAcceleration(MAX_TURN_ACCELERATION, timeoutMs);
         steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
         steeringMotor.configMotionSCurveStrength(2, timeoutMs);
 
-        steeringMotor.config_kP(0, 1, timeoutMs);
+        steeringMotor.config_kP(0, 0.7, timeoutMs);
         steeringMotor.config_kI(0, 0.0, timeoutMs);
         steeringMotor.config_kD(0, 0.0, timeoutMs);
         steeringMotor.config_kF(0, 0.1, timeoutMs);
