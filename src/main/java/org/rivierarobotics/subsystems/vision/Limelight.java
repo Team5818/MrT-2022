@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 
 public class Limelight extends SubsystemBase {
     private final PhotonCamera camera;
@@ -40,7 +41,7 @@ public class Limelight extends SubsystemBase {
         return limelight;
     }
 
-    public Limelight(){
+    public Limelight() {
         this.camera = new PhotonCamera("gloworm");
     }
 
@@ -62,12 +63,12 @@ public class Limelight extends SubsystemBase {
         }
     }
 
-    public boolean getDetected(){
+    public boolean getDetected() {
         return camera.getLatestResult().hasTargets();
     }
 
-    public double getDistance(){
-        return Math.atan(Math.toRadians(getTy() + ShooterConstants.getLLAngle()))*(ShooterConstants.getGoalHeight() - ShooterConstants.getRobotHeight());
+    public double getDistance() {
+        return PhotonUtils.calculateDistanceToTargetMeters(ShooterConstants.getRobotHeight(), ShooterConstants.getGoalHeight(), Math.toRadians(ShooterConstants.getLLAngle()), Math.toRadians(getTy()));
     }
 
     @Override

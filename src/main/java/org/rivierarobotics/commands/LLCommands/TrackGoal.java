@@ -39,15 +39,16 @@ public class TrackGoal extends CommandBase {
         this.drive = DriveTrain.getInstance();
         this.lime = Limelight.getInstance();
         this.gyro = Gyro.getInstance();
-        addRequirements(hood, drive);
+        addRequirements(hood);
     }
 
     @Override
     public void execute() {
         if (lime.getDetected()) {
-            storedTx = Math.toRadians(lime.getTx());
+            storedTx = lime.getTx();
+            SmartDashboard.putNumber("storedtx", storedTx);
+            drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }
-        drive.setTargetRotationAngle(gyro.getRotation2d().getRadians() - storedTx);
     }
 
 }
