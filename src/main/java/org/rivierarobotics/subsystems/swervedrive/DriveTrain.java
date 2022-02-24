@@ -36,13 +36,11 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 
@@ -58,7 +56,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrain extends SubsystemBase {
-    private static DriveTrain swerveDriveTrain;
 
     public static DriveTrain getInstance() {
         if (swerveDriveTrain == null) {
@@ -66,6 +63,9 @@ public class DriveTrain extends SubsystemBase {
         }
         return swerveDriveTrain;
     }
+
+    private static DriveTrain swerveDriveTrain;
+
 
     //Drive Speed Constants
     public static final double MAX_SPEED = 1.25; // m/s
@@ -87,15 +87,15 @@ public class DriveTrain extends SubsystemBase {
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     private final AtomicReference<Pose2d> robotPose = new AtomicReference<>();
     private final ReentrantLock resetLock = new ReentrantLock();
+    //Logging
+    private final RSTable[] loggingTables = new RSTable[4];
+    private final RSTab tab;
 
     //Trajectory Parameters
     private double startTime = Timer.getFPGATimestamp();
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
     public double targetRotationAngle = 0;
-    //Logging
-    private RSTable[] loggingTables = new RSTable[4];
-    private final RSTab tab;
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center (m)
@@ -197,18 +197,18 @@ public class DriveTrain extends SubsystemBase {
         try {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-            trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             //swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
-            startTime = Timer.getFPGATimestamp();
+            this.startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
     }
 
     public void drivePath(Trajectory path) {
-        trajectory = path;
+        this.trajectory = path;
         //swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     /**
@@ -216,18 +216,18 @@ public class DriveTrain extends SubsystemBase {
      * returns false when path is done.
      */
     public boolean followHolonomicController() {
-        if (Timer.getFPGATimestamp() - startTime > trajectory.getTotalTimeSeconds()) {
+        if (Timer.getFPGATimestamp() - this.startTime > this.trajectory.getTotalTimeSeconds()) {
             return false;
         }
 
-        var state = trajectory.sample(Timer.getFPGATimestamp() - startTime);
+        var state = this.trajectory.sample(Timer.getFPGATimestamp() - this.startTime);
         var controls = holonomicDriveController.calculate(
-                getRobotPose(),
-                state,
-                //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
-                //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
-                //new Rotation2d(Math.toRadians(targetRotationAngle))
-                new Rotation2d(Math.toRadians(0))
+            getRobotPose(),
+            state,
+            //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
+            //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
+            //new Rotation2d(Math.toRadians(targetRotationAngle))
+            new Rotation2d(Math.toRadians(0))
         );
         tab.setEntry("Pose Rot", getRobotPose().getRotation().getDegrees());
         tab.setEntry("TARGET ROT", controls.omegaRadiansPerSecond);
@@ -243,11 +243,11 @@ public class DriveTrain extends SubsystemBase {
         resetLock.lock();
         try {
             var pose2d = swerveDrivePoseEstimator.update(
-                    gyro.getRotation2d(),
-                    swerveModules[0].getState(),
-                    swerveModules[1].getState(),
-                    swerveModules[2].getState(),
-                    swerveModules[3].getState()
+                gyro.getRotation2d(),
+                swerveModules[0].getState(),
+                swerveModules[1].getState(),
+                swerveModules[2].getState(),
+                swerveModules[3].getState()
             );
             robotPose.set(pose2d);
         } finally {

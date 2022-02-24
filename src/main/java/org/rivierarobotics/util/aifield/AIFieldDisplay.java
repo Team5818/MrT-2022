@@ -23,8 +23,11 @@ package org.rivierarobotics.util.aifield;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.opencv.core.*;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
@@ -67,10 +70,10 @@ public class AIFieldDisplay {
 
     private void startFieldThread(int updateRate) {
         int size = 480;
-        Mat resizeFrame = new Mat((int)(size), (int)(size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
+        Mat resizeFrame = new Mat((int) (size), (int) (size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
-            Imgproc.resize(image, resizeFrame, resizeFrame.size(),0,0,2);
+            Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
             outputStream.putFrame(resizeFrame);
             outputStream.setResolution(480, 480);
         }, 0, updateRate, TimeUnit.MILLISECONDS);
