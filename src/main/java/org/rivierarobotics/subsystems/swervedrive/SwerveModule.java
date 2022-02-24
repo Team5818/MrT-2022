@@ -33,9 +33,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.lib.MotionMagicConfig;
+import org.rivierarobotics.lib.MotorUtil;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SwerveModule extends SubsystemBase {
     private static final double WHEEL_RADIUS = 0.03915;
@@ -69,7 +75,7 @@ public class SwerveModule extends SubsystemBase {
      *
      * @param driveMotorChannel    ID for the drive motor.
      * @param steeringMotorChannel ID for the turning motor.
-     * @param zeroTicks           ticks when angle = 0
+     * @param zeroTicks            ticks when angle = 0
      */
     public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks, boolean driveInverted, boolean isNew) {
 
@@ -78,7 +84,9 @@ public class SwerveModule extends SubsystemBase {
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
 
-        steeringMotor.configFactoryDefault(timeoutMs);
+        var mmConfig = new MotionMagicConfig(new ArrayList<>(), true, 100000, 100000, 100, 2, timeoutMs, 10);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, new PIDConfig(0.7, 0, 0, 0.1), mmConfig, steeringMotor);
+
         steeringMotor.configFeedbackNotContinuous(true, timeoutMs);
 
         steeringMotor.setSensorPhase(!isNew);
@@ -99,8 +107,6 @@ public class SwerveModule extends SubsystemBase {
         }
 
 
-        configureMotionMagic();
-
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
                 0.1, 4, 9, DriveTrain.STATE_SPACE_LOOP_TIME
@@ -109,31 +115,6 @@ public class SwerveModule extends SubsystemBase {
 
         this.steeringMotor.configContinuousCurrentLimit(30);
         this.steeringMotor.configPeakCurrentLimit(30);
-    }
-
-    private void configureMotionMagic() {
-        steeringMotor.selectProfileSlot(0, 0);
-        steeringMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, timeoutMs);
-        steeringMotor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, timeoutMs);
-        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 10, timeoutMs);
-
-        steeringMotor.configNominalOutputForward(0, timeoutMs);
-        steeringMotor.configNominalOutputReverse(0, timeoutMs);
-        steeringMotor.configPeakOutputForward(0.75, timeoutMs);
-        steeringMotor.configPeakOutputReverse(-0.75, timeoutMs);
-
-        steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
-        steeringMotor.configMotionAcceleration(MAX_TURN_ACCELERATION, timeoutMs);
-        steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
-        steeringMotor.configMotionSCurveStrength(2, timeoutMs);
-
-        steeringMotor.config_kP(0, 0.7, timeoutMs);
-        steeringMotor.config_kI(0, 0.0, timeoutMs);
-        steeringMotor.config_kD(0, 0.0, timeoutMs);
-        steeringMotor.config_kF(0, 0.1, timeoutMs);
-
-        steeringMotor.config_IntegralZone(0, 100, timeoutMs);
-        //steeringMotor.setSelectedSensorPosition(steeringMotor.getSelectedSensorPosition(), 0, timeoutMs);
     }
 
     private double clampAngle(double angle) {
@@ -181,7 +162,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getVelocity() {
-        if (isNew){
+        if (isNew) {
             return driveMotor2.getSensorCollection().getIntegratedSensorVelocity() * 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048;
         }
         return driveMotor.getEncoder().getVelocity();
@@ -230,7 +211,7 @@ public class SwerveModule extends SubsystemBase {
      * @param state Desired state with speed and angle.
      */
     public void setDesiredState(SwerveModuleState state) {
-       // SmartDashboard.putNumber(driveMotor.getDeviceId() + "", state.speedMetersPerSecond);
+        // SmartDashboard.putNumber(driveMotor.getDeviceId() + "", state.speedMetersPerSecond);
         //Update State-Space Controllers
         double targetSpeed = state.speedMetersPerSecond;
         double targetRotation = state.angle.getRadians();
@@ -283,7 +264,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void followControllers() {
-        if(!setDriveEnabled) return;
+        if (!setDriveEnabled) return;
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
         setDriveMotorVoltage(driveVoltage);
     }
