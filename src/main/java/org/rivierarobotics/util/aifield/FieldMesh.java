@@ -320,9 +320,6 @@ public class FieldMesh {
             config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
-            if (Robot.isReal()) {
-                //config.setKinematics(DriveTrain.getInstance().getSwerveDriveKinematics());
-            }
 
             Trajectory trajectory = null;
             try {
