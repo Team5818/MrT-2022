@@ -32,6 +32,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
 public class SwerveControl extends CommandBase {
+    private static final double minVel = 0.3;
     private final DriveTrain driveTrain;
     private final double MaxTurnSpeed = Math.PI * (1.4 / 8) * (360 / (2 * Math.PI));
     private final ProfiledPIDController pidController =
@@ -43,10 +44,14 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 0.1)) {
+        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
             return 0.0;
         }
         double vel = (0.035 * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
+
+        if(Math.abs(vel) < minVel) {
+            vel = Math.signum(vel) * minVel;
+        }
 
         if (Math.abs(vel) > MaxTurnSpeed){
             if (vel > 0){

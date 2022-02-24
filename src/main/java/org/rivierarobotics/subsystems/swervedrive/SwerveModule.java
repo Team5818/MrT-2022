@@ -56,7 +56,7 @@ public class SwerveModule extends SubsystemBase {
     private WPI_TalonFX driveMotor2;
     private final boolean isNew;
     private final VelocityStateSpaceModel driveController;
-    private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
+    private final SystemIdentification dmSID = new SystemIdentification(0.3, 5.0379, 0.03951);
     private final WPI_TalonSRX steeringMotor;
     private boolean setDriveEnabled = false;
 

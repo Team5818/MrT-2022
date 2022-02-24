@@ -28,13 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.LLCommands.TrackGoal;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
-import org.rivierarobotics.commands.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.climb.RunClimb;
-import org.rivierarobotics.commands.climb.SetPistonState;
-import org.rivierarobotics.commands.climb.WaitPiston;
+import org.rivierarobotics.commands.climb.*;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
+import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
@@ -62,16 +60,22 @@ public class ButtonConfiguration {
                 sm.setDesiredState(new SwerveModuleState(0,new Rotation2d(0)));
             }
         }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
-            for(var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0,new Rotation2d(Math.PI / 2)));
-            }
-        }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
-            for(var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0,new Rotation2d(-Math.PI / 2)));
-            }
-        }));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
+//            for(var sm : DriveTrain.getInstance().getSwerveModules()) {
+//                sm.setDesiredState(new SwerveModuleState(0,new Rotation2d(Math.PI / 2)));
+//            }
+//        }));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
+//            for(var sm : DriveTrain.getInstance().getSwerveModules()) {
+//                sm.setDesiredState(new SwerveModuleState(0,new Rotation2d(-Math.PI / 2)));
+//            }
+//        }));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
+//            SwerveControl.minVel += 0.02;
+//        }));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
+//            SwerveControl.minVel -= 0.02;
+//        }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whileHeld(new TrackGoal());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
