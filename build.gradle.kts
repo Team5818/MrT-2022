@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.rivierarobotics:5818-lib:0.2.1")
+    implementation("org.rivierarobotics:5818-lib:0.3.0")
     implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.2")
 
     implementation ("com.google.code.gson:gson:2.8.9")
