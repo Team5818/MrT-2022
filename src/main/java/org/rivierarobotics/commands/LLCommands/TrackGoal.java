@@ -25,17 +25,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Hood;
 import org.rivierarobotics.subsystems.vision.Limelight;
+import org.rivierarobotics.util.Gyro;
 
 public class TrackGoal extends CommandBase {
     private final Hood hood;
     private final DriveTrain drive;
     private final Limelight lime;
     private double storedTx;
+    private Gyro gyro;
 
     public TrackGoal() {
         this.hood = Hood.getInstance();
         this.drive = DriveTrain.getInstance();
         this.lime = Limelight.getInstance();
+        this.gyro = Gyro.getInstance();
         addRequirements(hood, drive);
     }
 
@@ -44,7 +47,7 @@ public class TrackGoal extends CommandBase {
         if (lime.getDetected()) {
             storedTx = Math.toRadians(lime.getTx());
         }
-        drive.setTargetRotationAngle(storedTx);
+        drive.setTargetRotationAngle(gyro.getRotation2d().getRadians() - storedTx);
     }
 
 }
