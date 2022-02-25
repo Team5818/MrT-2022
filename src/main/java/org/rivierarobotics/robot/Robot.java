@@ -50,7 +50,10 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
-        Logging.aiFieldDisplay = new AIFieldDisplay(20);
+
+        //uncomment for competition
+        //DriveTrain.getInstance().resetPose();
+
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -68,6 +71,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         //Logging.aiFieldDisplay.update();
 
+        //iterates through button frames
         tick++;
         if (tick > 20) {
             for (int ii = 1; ii <= 6; ii++) {
@@ -83,8 +87,6 @@ public class Robot extends TimedRobot {
         new ButtonConfiguration().initTeleop();
         initializeAllSubsystems();
         initializeDefaultCommands();
-        DriveTrain.getInstance().resetPose();
-        Gyro.getInstance().resetGyro();
         Climb.getInstance().setOffset();
     }
 
@@ -153,9 +155,6 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.LOW, true, 0));
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.MID, true, 0));
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.HIGH, true, 0));
     }
 
     private void initializeCustomLoops() {

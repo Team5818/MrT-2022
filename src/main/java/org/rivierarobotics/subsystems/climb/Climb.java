@@ -75,12 +75,8 @@ public class Climb extends SubsystemBase {
     private final WPI_TalonFX climbMotor;
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
-    //TODO: SysID The climb using the middle bar of the climb
+    //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
     private final SystemIdentification sysId = new SystemIdentification(0.0, 7.7154, 0.19185);
-
-    private final EnumMap<Position, DigitalInput> climbSwitchesMap = new EnumMap<>(Position.class);
-    private final EnumMap<Position, Piston> climbPistonsMap = new EnumMap<>(Position.class);
-
     private double zeroRadians = 0.0;
 
     private Climb() {
@@ -111,13 +107,13 @@ public class Climb extends SubsystemBase {
     }
 
     public void setPiston(Position climbModule, boolean isEngaged) {
-        climbPistonsMap.get(climbModule).set(isEngaged);
+        climbModule.piston.set(isEngaged);
     }
 
     public void openAllPistons() {
-        for (Position p : climbPistonsMap.keySet()) {
-            climbPistonsMap.get(p).set(false);
-        }
+        Position.LOW.piston.set(false);
+        Position.MID.piston.set(false);
+        Position.HIGH.piston.set(false);
     }
 
     public void setCoast(boolean coast) {
@@ -134,11 +130,11 @@ public class Climb extends SubsystemBase {
     }
 
     public boolean isSwitchSet(Position climbModule) {
-        return !climbSwitchesMap.get(climbModule).get();
+        return !climbModule.input.get();
     }
 
     public boolean isPistonSet(Position climbModule) {
-        return !climbPistonsMap.get(climbModule).getState();
+        return climbModule.piston.getState();
     }
 
     public void setPosition(double radians) {
