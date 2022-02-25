@@ -20,14 +20,25 @@
 
 package org.rivierarobotics.subsystems.vision;
 
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.revrobotics.*;
-import edu.wpi.first.wpilibj.*;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.subsystems.*;
-import org.rivierarobotics.util.statespace.*;
+import org.rivierarobotics.subsystems.MotorIDs;
+import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
+import org.rivierarobotics.util.statespace.SystemIdentification;
 
 public class Hood extends SubsystemBase {
+
+    public static Hood getInstance() {
+        if (hood == null) {
+            hood = new Hood();
+        }
+        return hood;
+    }
+
     private static Hood hood;
     private double angle;
     private double speed = 0;
@@ -40,14 +51,6 @@ public class Hood extends SubsystemBase {
 
     private PositionStateSpaceModel aimStateSpace;
     private SystemIdentification aimSysId = new SystemIdentification(0.0, 0.001, 0.001);
-
-
-    public static Hood getInstance() {
-        if (hood == null) {
-            hood = new Hood();
-        }
-        return hood;
-    }
 
     public Hood() {
         this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ELEVATION, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -77,7 +80,7 @@ public class Hood extends SubsystemBase {
     public void setSpeed(double speed) {
         this.speed = speed;
         if (this.speed > fireMaxVoltage) {
-            this.speed = fireMaxVoltage;
+            this.speed = this.fireMaxVoltage;
         }
     }
 

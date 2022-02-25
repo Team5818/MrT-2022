@@ -26,7 +26,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 public class SetCameraCentric extends CommandBase {
     private final DriveTrain driveTrain;
 
-    public SetCameraCentric(){
+    public SetCameraCentric() {
         this.driveTrain = DriveTrain.getInstance();
     }
 
@@ -35,13 +35,13 @@ public class SetCameraCentric extends CommandBase {
         driveTrain.setFieldCentric(false);
     }
 
-//    @Override
-//    public boolean isFinished() {
-//        driveTrain.setFieldCentric(true);
-//        return super.isFinished();
-//    }
+    //@Override
+    //public boolean isFinished() {
+    //    driveTrain.setFieldCentric(true);
+    //    return super.isFinished();
+    //}
 
-        @Override
+    @Override
     public void end(boolean interrupted) {
         driveTrain.setFieldCentric(interrupted);
     }

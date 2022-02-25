@@ -20,13 +20,10 @@
 
 package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
@@ -34,9 +31,9 @@ import org.rivierarobotics.util.Gyro;
 public class SwerveControl extends CommandBase {
     private static final double minVel = 0.3;
     private final DriveTrain driveTrain;
-    private final double MaxTurnSpeed = Math.PI * (1.4 / 8) * (360 / (2 * Math.PI));
+    private final double maxTurnSpeed = Math.PI * (1.4 / 8) * (360 / (2 * Math.PI));
     private final ProfiledPIDController pidController =
-            new ProfiledPIDController(0.1, 0.0, 0.0, new TrapezoidProfile.Constraints(0,0));
+            new ProfiledPIDController(0.1, 0.0, 0.0, new TrapezoidProfile.Constraints(0, 0));
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
@@ -44,20 +41,20 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if(MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
+        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 1)) {
             return 0.0;
         }
         double vel = (0.035 * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
 
-        if(Math.abs(vel) < minVel) {
+        if (Math.abs(vel) < minVel) {
             vel = Math.signum(vel) * minVel;
         }
 
-        if (Math.abs(vel) > MaxTurnSpeed){
-            if (vel > 0){
-                return MaxTurnSpeed;
+        if (Math.abs(vel) > maxTurnSpeed) {
+            if (vel > 0) {
+                return maxTurnSpeed;
             } else {
-                return -MaxTurnSpeed;
+                return -maxTurnSpeed;
             }
         } else {
             return vel;
@@ -78,7 +75,7 @@ public class SwerveControl extends CommandBase {
 
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
-        if(rot == 0) {
+        if (rot == 0) {
             driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
         } else {
             driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());

@@ -57,14 +57,18 @@ public class Climb extends SubsystemBase {
     private static final double GEARING = 1 / 450.0;
 
     public enum Position {
-        LOW(LOW_RADIANS),
-        MID(MID_RADIANS),
-        HIGH(HIGH_RADIANS);
+        LOW(LOW_RADIANS, new Piston(2), new DigitalInput(2)),
+        MID(MID_RADIANS, new Piston(1), new DigitalInput(1)),
+        HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(0));
 
         public final double locationRadians;
+        public final Piston piston;
+        public final DigitalInput input;
 
-        Position(double rads) {
+        Position(double rads, Piston piston, DigitalInput input) {
             this.locationRadians = rads;
+            this.piston = piston;
+            this.input = input;
         }
     }
 
@@ -103,13 +107,6 @@ public class Climb extends SubsystemBase {
         this.encoder = new DutyCycleEncoder(6);
         this.encoder.setDistancePerRotation(2 * Math.PI);
 
-        climbSwitchesMap.put(Position.LOW, new DigitalInput(2));
-        climbSwitchesMap.put(Position.MID, new DigitalInput(1));
-        climbSwitchesMap.put(Position.HIGH, new DigitalInput(0));
-
-        climbPistonsMap.put(Position.LOW, new Piston(2));
-        climbPistonsMap.put(Position.MID, new Piston(1));
-        climbPistonsMap.put(Position.HIGH, new Piston(0));
         setCoast(false);
     }
 

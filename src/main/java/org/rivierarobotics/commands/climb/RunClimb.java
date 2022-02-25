@@ -30,45 +30,19 @@ import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
     private static final double voltage = 11;
-    private Climb.Position first;
-    private Climb.Position last;
-    private double modifier;
-    //
-    //  Set Robot Angle to 0 degrees
-    //  Set Climb to LOW
-    //  parallel deadline command: {
-    //   deadline: new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Switch.Buttons.LOW))),
-    //   set drive speed -Y amount
-    //  }
-    //  Close Low Piston
-    //  wait 0.5 seconds
-    //  parallel deadline command: {
-    //      deadline: new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Switch.Buttons.MID))),
-    //      Set Climb to MID
-    //  }
-    //  Close Mid Piston
-    //  wait (0.5)
-    //  Open Low Piston
-    //  parallel deadline command: {
-    //      deadline: new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Switch.Buttons.HIGH))),
-    //      Set Climb to HIGH
-    //  }
-    //  Close HIGH Piston
-    //  wait (0.5)
-    //  Open MID Piston
-    //  Set Climb to FINAL
 
-    //reversed needs to be 1 or -1, because I can't figure out how to have a conditional statement in the constructor before super that makes this pretty :P
     public RunClimb(boolean reversed) {
-        super();
+        final Climb.Position first;
+        final Climb.Position last;
+        final double modifier;
         if (reversed) {
-            this.first = Climb.Position.HIGH;
-            this.last = Climb.Position.LOW;
-            this.modifier = 1;
+            first = Climb.Position.HIGH;
+            last = Climb.Position.LOW;
+            modifier = 1;
         } else {
-            this.last = Climb.Position.HIGH;
-            this.first = Climb.Position.LOW;
-            this.modifier = -1;
+            last = Climb.Position.HIGH;
+            first = Climb.Position.LOW;
+            modifier = -1;
         }
         addCommands(
                 //new SetDriveAngle(90, 0.2),

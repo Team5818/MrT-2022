@@ -29,19 +29,15 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class ClimbControl extends CommandBase {
     private final Climb climb;
-    private final Joystick leftJoystick;
 
     public ClimbControl() {
         this.climb = Climb.getInstance();
-        this.leftJoystick = ControlMap.CO_DRIVER_LEFT;
         addRequirements(this.climb);
     }
 
     @Override
     public void execute() {
-        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 11;
-
-        this.climb.setVoltage(xSpeed);
+        this.climb.setVoltage(MathUtil.fitDeadband(-ControlMap.CO_DRIVER_LEFT.getY()) * 11);
     }
 }
 

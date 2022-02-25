@@ -35,22 +35,22 @@ public class Intake extends SubsystemBase {
     }
 
     private static Intake intake;
-    private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
-    private MechLogger logger;
 
     //the 3 rollers that intake the ball
     private static TalonSRX roller1;
     private static TalonSRX roller2;
     private static TalonSRX roller3;
 
+    private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
+    private MechLogger logger;
 
-    private Intake(){
+    private Intake() {
         roller1 = new TalonSRX(0);
         roller2 = new TalonSRX(1);
         roller3 = new TalonSRX(2);
     }
 
-    public void setVoltage(double v){
+    public void setVoltage(double v) {
         //sets voltage
         logger.powerChange(v);
 

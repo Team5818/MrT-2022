@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.LLCommands;
+package org.rivierarobotics.commands.limelight;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -45,7 +45,7 @@ public class TrackGoal extends CommandBase {
     @Override
     public void execute() {
         if (lime.getDetected()) {
-            storedTx = lime.getTx();
+            this.storedTx = lime.getTx();
             SmartDashboard.putNumber("storedtx", storedTx);
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }

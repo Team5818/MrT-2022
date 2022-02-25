@@ -38,9 +38,13 @@ import org.rivierarobotics.util.aifield.AIFieldDisplay;
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
 
-    boolean isOn = false;
-    int tick = 0;
-    boolean[] states = {false, false, true, true, false, false};
+    private int tick = 0;
+    private int frame = 0;
+    private boolean[][] states = {
+            {false, false, true, true, false, false},
+            {false, false, false, false, true, true},
+            {true, true, false, false, false, false}
+    };
 
     @Override
     public void robotInit() {
@@ -66,16 +70,12 @@ public class Robot extends TimedRobot {
 
         tick++;
         if (tick > 20) {
-            boolean temp = states[5];
-            System.arraycopy(states, 0, states, 1, 5);
-            states[0] = temp;
-            for (int i = 1; i <= 6; i++) {
-                ControlMap.DRIVER_BUTTONS.setOutput(i, states[i - 1]);
+            for (int ii = 1; ii <= 6; ii++) {
+                ControlMap.DRIVER_BUTTONS.setOutput(ii, states[frame][ii - 1]);
             }
-            this.isOn = !isOn;
+            this.frame = frame >= states.length ? 0 : frame + 1;
             this.tick = 0;
         }
-
     }
 
     @Override

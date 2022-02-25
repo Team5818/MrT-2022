@@ -20,7 +20,12 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
-import com.ctre.phoenix.motorcontrol.*;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -42,15 +47,15 @@ public class SwerveModule extends SubsystemBase {
     private static final int ENCODER_RESOLUTION = 4096;
     private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     private static final double GEARING = 11.0 / 40.0;
+    private static final double MAX_TURN_ACCELERATION = 30000; //Rad/s
+    private static final double MAX_TURN_VELOCITY = 30000; //Rad/s
+    private static final int timeoutMs = 30;
 
     private final double zeroTicks;
     private double currDriveVoltage = 0;
     private double currSteerVoltage = 0;
     private double targetVelocity = 0;
 
-    private final double MAX_TURN_ACCELERATION = 30000; //Rad/s
-    private final double MAX_TURN_VELOCITY = 30000; //Rad/s
-    private final int timeoutMs = 30;
 
     private CANSparkMax driveMotor;
     private WPI_TalonFX driveMotor2;
@@ -181,7 +186,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getVelocity() {
-        if (isNew){
+        if (isNew) {
             return driveMotor2.getSensorCollection().getIntegratedSensorVelocity() * 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048;
         }
         return driveMotor.getEncoder().getVelocity();
@@ -263,7 +268,7 @@ public class SwerveModule extends SubsystemBase {
 
         setDriveMotorVelocity(targetSpeed);
         setSteeringMotorAngle(convertAngleToTick(targetAng));
-        setDriveEnabled = true;
+        this.setDriveEnabled = true;
     }
 
     public Rotation2d getTargetRotation() {
@@ -283,7 +288,9 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void followControllers() {
-        if(!setDriveEnabled) return;
+        if (!setDriveEnabled) {
+            return;
+        }
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
         setDriveMotorVoltage(driveVoltage);
     }

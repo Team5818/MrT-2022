@@ -29,6 +29,7 @@ public class OpenAllPistons extends InstantCommand {
 
     public OpenAllPistons() {
         this.climb = Climb.getInstance();
+        addRequirements(climb);
     }
 
     @Override

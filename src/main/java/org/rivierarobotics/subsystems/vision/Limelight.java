@@ -28,11 +28,6 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
 public class Limelight extends SubsystemBase {
-    private final PhotonCamera camera;
-
-
-    private static Limelight limelight;
-
 
     public static Limelight getInstance() {
         if (limelight == null) {
@@ -40,6 +35,12 @@ public class Limelight extends SubsystemBase {
         }
         return limelight;
     }
+
+    private static Limelight limelight;
+    private static double llAngle = 50;
+    private static double robotHeight = 1;
+    private static double goalHeight = 2.6416;
+    private final PhotonCamera camera;
 
     public Limelight() {
         this.camera = new PhotonCamera("gloworm");
@@ -68,7 +69,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getDistance() {
-        return PhotonUtils.calculateDistanceToTargetMeters(ShooterConstants.getRobotHeight(), ShooterConstants.getGoalHeight(), Math.toRadians(ShooterConstants.getLLAngle()), Math.toRadians(getTy()));
+        return PhotonUtils.calculateDistanceToTargetMeters(robotHeight, goalHeight, Math.toRadians(llAngle), Math.toRadians(getTy()));
     }
 
     @Override
