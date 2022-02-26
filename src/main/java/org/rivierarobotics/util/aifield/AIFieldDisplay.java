@@ -66,6 +66,7 @@ public class AIFieldDisplay {
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
+
         startFieldThread(updateRate);
     }
 
