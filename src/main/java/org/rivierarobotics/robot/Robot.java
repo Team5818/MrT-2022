@@ -46,10 +46,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
-
-        //uncomment for competition
-        //DriveTrain.getInstance().resetPose();
-
+        DriveTrain.getInstance().resetPose();
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -91,7 +88,7 @@ public class Robot extends TimedRobot {
         try {
             SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
         } catch (Exception e) {
-            //bruh?
+            //comment line for checkstyle
         }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");

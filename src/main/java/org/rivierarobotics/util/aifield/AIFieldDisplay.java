@@ -63,6 +63,7 @@ public class AIFieldDisplay {
         this.imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
         this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
+        outputStream.setResolution(480, 480);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
         startFieldThread(updateRate);
@@ -75,7 +76,6 @@ public class AIFieldDisplay {
             Mat image = renderFrame.getOpaque();
             Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
             outputStream.putFrame(resizeFrame);
-            outputStream.setResolution(480, 480);
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 
