@@ -66,6 +66,7 @@ public class AIFieldDisplay {
         outputStream.setResolution(480, 480);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
+
         startFieldThread(updateRate);
     }
 
