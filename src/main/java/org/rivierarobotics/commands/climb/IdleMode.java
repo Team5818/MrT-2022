@@ -18,24 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems.climb;
+package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class Piston extends SubsystemBase {
-    private final Solenoid piston;
+public class IdleMode extends CommandBase {
+    private Climb climb;
+    private boolean coast;
 
-    public Piston(int id) {
-        this.piston = new Solenoid(PneumaticsModuleType.CTREPCM, id);
+    public IdleMode(boolean coast) {
+        this.climb = Climb.getInstance();
+        this.coast = coast;
+        this.addRequirements(climb);
     }
 
-    public void set(boolean isOpen) {
-        piston.set(!isOpen);
-    }
-
-    public boolean getState() {
-        return !piston.get();
+    @Override
+    public void initialize() {
+        climb.setCoast(coast);
     }
 }

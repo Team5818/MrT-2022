@@ -29,26 +29,23 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double VOLTAGE = 11;
-    private Climb.Position first;
-    private Climb.Position last;
-    private double modifier;
-    private boolean reversed;
+    private static final double voltage = 11;
 
     public RunClimb(boolean reversed) {
-        super();
+        final Climb.Position first;
+        final Climb.Position last;
+        final double modifier;
         if (reversed) {
-            this.first = Climb.Position.HIGH;
-            this.last = Climb.Position.LOW;
-            this.modifier = 1;
-            this.reversed = false;
+            first = Climb.Position.HIGH;
+            last = Climb.Position.LOW;
+            modifier = 1;
         } else {
-            this.last = Climb.Position.HIGH;
-            this.first = Climb.Position.LOW;
-            this.modifier = -1;
-            this.reversed = true;
+            last = Climb.Position.HIGH;
+            first = Climb.Position.LOW;
+            modifier = -1;
         }
         addCommands(
+                //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(first)),
@@ -56,8 +53,9 @@ public class RunClimb extends SequentialCommandGroup {
                 ),
                 new SetPistonState(first, true, 0),
                 new WaitCommand(0.2),
+                //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(VOLTAGE * modifier))),
+                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(Climb.Position.MID, true, 0),
                 new WaitCommand(0.2),
@@ -65,7 +63,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new SetPistonState(first, false, 0),
                 new WaitCommand(0.3),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(VOLTAGE * modifier))),
+                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(last, true, 0),
                 new WaitCommand(0.3),

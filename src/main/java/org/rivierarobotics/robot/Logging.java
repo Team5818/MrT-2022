@@ -24,10 +24,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
 import org.rivierarobotics.util.aifield.AIFieldDisplay;
 
+import java.io.IOException;
+
 public class Logging {
     public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
-    public static AIFieldDisplay aiFieldDisplay;
+    public static final AIFieldDisplay aiFieldDisplay = new AIFieldDisplay(20);
 
     private Logging() {
     }
