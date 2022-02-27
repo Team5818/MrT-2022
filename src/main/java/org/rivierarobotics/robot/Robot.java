@@ -67,8 +67,8 @@ public class Robot extends TimedRobot {
         //iterates through button frames
         tick++;
         if (tick > 20) {
-            for (int ii = 1; ii <= 6; ii++) {
-                ControlMap.DRIVER_BUTTONS.setOutput(ii, states[frame][ii - 1]);
+            for (int i = 1; i <= 6; i++) {
+                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
             }
             this.frame = frame >= states.length ? 0 : frame + 1;
             this.tick = 0;
