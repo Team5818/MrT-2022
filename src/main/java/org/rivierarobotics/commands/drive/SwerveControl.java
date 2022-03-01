@@ -27,6 +27,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
 public class SwerveControl extends CommandBase {
+    //this finds the max turn speed based on the "wheel" ratio, then converts from radians to degrees
     private static final double MAX_TURN_SPEED = Math.PI * (1.4 / 8) * (360 / (2 * Math.PI));
 
     private final DriveTrain driveTrain;
