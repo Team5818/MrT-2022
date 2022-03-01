@@ -198,6 +198,7 @@ public class DriveTrain extends SubsystemBase {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            //This will be needed later for automated pathing
             //swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
             this.startTime = Timer.getFPGATimestamp();
         } catch (IOException exception) {
