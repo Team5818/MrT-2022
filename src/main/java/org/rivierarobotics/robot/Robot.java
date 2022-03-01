@@ -31,6 +31,7 @@ import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 public class Robot extends TimedRobot {
@@ -108,18 +109,18 @@ public class Robot extends TimedRobot {
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Ticks", cl.getRawTicks());
-
-        limeLight.setEntry("lly", ll.getTy());
-        limeLight.setEntry("llx", ll.getTx());
-        limeLight.setEntry("ll detected", ll.getDetected());
-        limeLight.setEntry("ll Distance", ll.getDistance());
-        limeLight.setEntry("Please work", 69420);
         climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
         climb.setEntry("Switch mid", cl.isSwitchSet(Climb.Position.MID));
         climb.setEntry("Switch high", cl.isSwitchSet(Climb.Position.HIGH));
         climb.setEntry("Piston low", cl.isPistonSet(Climb.Position.LOW));
         climb.setEntry("Piston mid", cl.isPistonSet(Climb.Position.MID));
         climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
+
+        limeLight.setEntry("lly", ll.getTy());
+        limeLight.setEntry("llx", ll.getTx());
+        limeLight.setEntry("ll detected", ll.getDetected());
+        limeLight.setEntry("ll Distance", ll.getDistance());
+        limeLight.setEntry("Please work", 69420);
     }
 
     @Override
