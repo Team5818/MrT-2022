@@ -91,8 +91,6 @@ public class Climb extends SubsystemBase {
                 11
         );
 
-        compressor.enabled();
-
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
         climbMotor.configForwardSoftLimitEnable(false);
         climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
