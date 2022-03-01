@@ -208,6 +208,7 @@ public class DriveTrain extends SubsystemBase {
 
     public void drivePath(Trajectory path) {
         this.trajectory = path;
+        //This will be needed later for automated pathing
         //swerveDrivePoseEstimator.resetPosition(path.getInitialPose(), gyro.getRotation2d());
         this.startTime = Timer.getFPGATimestamp();
     }
