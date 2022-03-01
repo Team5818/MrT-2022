@@ -18,40 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.drive;
+package org.rivierarobotics.commands.climb;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.robot.ControlMap;
+import org.rivierarobotics.subsystems.climb.Climb;
 
+public class ClimbControl extends CommandBase {
+    private final Climb climb;
+    private final Joystick leftJoystick;
 
-public class SetDriveAngle extends CommandBase {
-    private final DriveTrain dt;
-    private final Gyro gyro;
-    private final double angle;
-    private final double speed;
+    public ClimbControl() {
+        this.climb = Climb.getInstance();
+        this.leftJoystick = ControlMap.CO_DRIVER_LEFT;
+        addRequirements(this.climb);
+    }
 
-    public SetDriveAngle(double angle, double speed) {
-        this.dt = DriveTrain.getInstance();
-        this.gyro = Gyro.getInstance();
-        this.angle = angle;
-        this.speed = speed;
-        addRequirements(this.dt);
+    @Override
+    public void initialize() {
+        climb.setPiston(Climb.Position.LOW, true);
+        climb.setPiston(Climb.Position.MID, true);
+        climb.setPiston(Climb.Position.HIGH, true);
     }
 
     @Override
     public void execute() {
-        dt.drive(0, 0, Math.signum(angle - gyro.getRotation2d().getDegrees()) * DriveTrain.MAX_ANGULAR_SPEED * speed, false);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(angle, gyro.getRotation2d().getDegrees(), 4);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        dt.drive(0, 0, 0, false);
+        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 11;
+        this.climb.setVoltage(xSpeed);
     }
 }
+

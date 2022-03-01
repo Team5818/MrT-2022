@@ -18,46 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands.drive;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-public class Gyro {
-    private static Gyro INSTANCE;
+public class SetCameraCentric extends CommandBase {
+    private final DriveTrain driveTrain;
 
-    public static Gyro getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Gyro();
-        }
-        return INSTANCE;
+    public SetCameraCentric() {
+        this.driveTrain = DriveTrain.getInstance();
     }
 
-    private final AHRS navX;
-
-    private Gyro() {
-        this.navX = new AHRS(SPI.Port.kMXP);
+    @Override
+    public void execute() {
+        driveTrain.setFieldCentric(false);
     }
 
-    public double getAngle() {
-        return navX.getAngle();
-    }
-
-    public Rotation2d getRotation2d() {
-        return new Rotation2d(Math.toRadians(-getAngle()));
-    }
-
-    public double getRate() {
-        return Math.toRadians(-navX.getRate());
-    }
-
-    public void setAngleAdjustment(double angle) {
-        navX.reset();
-        navX.setAngleAdjustment(angle);
-    }
-
-    public void resetGyro() {
-        navX.reset();
+    @Override
+    public void end(boolean interrupted) {
+        driveTrain.setFieldCentric(interrupted);
     }
 }

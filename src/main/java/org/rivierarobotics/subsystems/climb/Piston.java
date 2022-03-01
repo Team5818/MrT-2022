@@ -18,18 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.subsystems.climb;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ControlMap {
-    public static final Joystick DRIVER_LEFT = new Joystick(0);
-    public static final Joystick DRIVER_RIGHT = new Joystick(1);
-    public static final Joystick CO_DRIVER_LEFT = new Joystick(2);
-    public static final Joystick CO_DRIVER_RIGHT = new Joystick(3);
-    public static final Joystick DRIVER_BUTTONS = new Joystick(4);
-    public static final Joystick CO_DRIVER_BUTTONS = new Joystick(5);
+public class Piston extends SubsystemBase {
+    private final Solenoid piston;
 
-    private ControlMap() {
+    public Piston(int id) {
+        this.piston = new Solenoid(PneumaticsModuleType.CTREPCM, id);
+    }
+
+    public void set(boolean isOpen) {
+        piston.set(!isOpen);
+    }
+
+    public boolean getState() {
+        return !piston.get();
     }
 }

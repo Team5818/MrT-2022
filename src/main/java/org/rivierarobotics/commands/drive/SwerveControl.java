@@ -20,30 +20,51 @@
 
 package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.Gyro;
 
 public class SwerveControl extends CommandBase {
+    //this finds the max turn speed based on the "wheel" ratio, then converts from radians to degrees
+    private static final double MAX_TURN_SPEED = Math.PI * (1.4 / 8) * (360 / (2 * Math.PI));
+
     private final DriveTrain driveTrain;
-    private final Joystick leftJoystick;
-    private final Joystick rightJoystick;
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
-        this.leftJoystick = ControlMap.DRIVER_LEFT;
-        this.rightJoystick = ControlMap.DRIVER_RIGHT;
         addRequirements(this.driveTrain);
+    }
+
+    private double getRotationSpeed() {
+        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 2.5)) {
+            return 0.0;
+        }
+        double vel = (0.025 * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
+
+        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_TURN_SPEED);
+    }
+
+    @Override
+    public void initialize() {
+        driveTrain.targetRotationAngle = 0;
     }
 
     @Override
     public void execute() {
+        var leftJoystick = ControlMap.DRIVER_LEFT;
+        var rightJoystick = ControlMap.DRIVER_RIGHT;
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
-        var ySpeed = MathUtil.fitDeadband(leftJoystick.getX()) * DriveTrain.MAX_SPEED;
+        var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
+
         var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
-        driveTrain.drive(xSpeed, ySpeed, rot, true);
+        if (rot == 0) {
+            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
+        } else {
+            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
+            driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
+        }
     }
 }

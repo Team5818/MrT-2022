@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetWheelbaseAngle extends CommandBase {
@@ -30,10 +31,17 @@ public class SetWheelbaseAngle extends CommandBase {
     public SetWheelbaseAngle(double angle) {
         this.angle = Math.toRadians(angle);
         this.dt = DriveTrain.getInstance();
+        addRequirements(this.dt);
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
+        Logging.robotShuffleboard.getTab("Drive").setEntry("check", angle);
         dt.setSwerveModuleAngle(angle);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

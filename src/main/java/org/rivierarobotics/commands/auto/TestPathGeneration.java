@@ -20,7 +20,9 @@
 
 package org.rivierarobotics.commands.auto;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.aifield.FieldMesh;
@@ -36,10 +38,11 @@ public class TestPathGeneration extends CommandBase {
 
     @Override
     public void initialize() {
-        var dtPose = driveTrain.getRobotPose();
-        var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), 0, 0, true, 0);
+        var trajectory = aiFieldMesh.getTrajectory(0, 0, 1, 1, true, 0, driveTrain.getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
-        driveTrain.drivePath(trajectory);
+        if (trajectory != null) {
+            driveTrain.drivePath(trajectory);
+        }
     }
 
     @Override

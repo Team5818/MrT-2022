@@ -1,5 +1,5 @@
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.9.4"
+    id("org.rivierarobotics.gradlerioredux") version "0.9.5"
 }
 
 gradleRioRedux {
@@ -16,9 +16,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.rivierarobotics:5818-lib:0.2.1")
+    implementation("org.rivierarobotics:5818-lib:0.3.1")
     implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.2")
-
     implementation ("com.google.code.gson:gson:2.8.9")
     implementation("org.apache.commons:commons-math3:3.6.1")
 }

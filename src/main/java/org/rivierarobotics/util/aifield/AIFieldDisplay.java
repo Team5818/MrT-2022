@@ -29,6 +29,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,15 +63,20 @@ public class AIFieldDisplay {
         this.imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
         this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
-        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1));
+        outputStream.setResolution(480, 480);
+        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
+
         startFieldThread(updateRate);
     }
 
     private void startFieldThread(int updateRate) {
-        mainImageThread.scheduleAtFixedRate(() -> {
+        int size = 480;
+        Mat resizeFrame = new Mat((int) (size), (int) (size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
+        mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
-            outputStream.putFrame(image);
+            Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
+            outputStream.putFrame(resizeFrame);
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 
@@ -78,9 +84,8 @@ public class AIFieldDisplay {
         if (generatedTrajectory == null || fieldMat == null) {
             return;
         }
-        var trajectory = generatedTrajectory;
         var newRenderFrame = fieldMat.clone();
-
+        var trajectory = generatedTrajectory;
         mainImageThread.submit(() -> {
             for (double i = 0; i < trajectory.getTotalTimeSeconds(); i += 0.1) {
                 if (trajectory.getTotalTimeSeconds() < i + 0.1) {
@@ -102,6 +107,9 @@ public class AIFieldDisplay {
     }
 
     public void updatePath(Trajectory trajectory) {
+        if (trajectory == null) {
+            return;
+        }
         this.generatedTrajectory = Objects.requireNonNull(trajectory);
         render();
     }

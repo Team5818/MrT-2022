@@ -30,6 +30,12 @@ public class MotorIDs {
     public static final int BACK_LEFT_STEER = 6;
     public static final int BACK_RIGHT_DRIVE = 7;
     public static final int BACK_RIGHT_STEER = 8;
+    //climb ids
+    public static final int SOLENOID_LOW = 0;
+    public static final int SOLENOID_MID = 1;
+    public static final int SOLENOID_HIGH = 2;
+    public static final int CLIMB_ROTATE = 10;
+
 
     private MotorIDs() {
     }

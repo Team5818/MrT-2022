@@ -18,46 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands.climb;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class Gyro {
-    private static Gyro INSTANCE;
+public class ClimbSetPosition extends CommandBase {
+    private final Climb climb;
+    private final double target;
 
-    public static Gyro getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Gyro();
-        }
-        return INSTANCE;
+    public ClimbSetPosition(Climb.Position climbModule, boolean reversed) {
+        this.climb = Climb.getInstance();
+        this.target = climbModule.locationRadians * (reversed ? -1 : 1);
+        this.addRequirements(this.climb);
     }
 
-    private final AHRS navX;
-
-    private Gyro() {
-        this.navX = new AHRS(SPI.Port.kMXP);
+    @Override
+    public void initialize() {
+        climb.setPosition(target);
     }
 
-    public double getAngle() {
-        return navX.getAngle();
+    @Override
+    public void execute() {
+        climb.followStateSpace();
     }
 
-    public Rotation2d getRotation2d() {
-        return new Rotation2d(Math.toRadians(-getAngle()));
-    }
-
-    public double getRate() {
-        return Math.toRadians(-navX.getRate());
-    }
-
-    public void setAngleAdjustment(double angle) {
-        navX.reset();
-        navX.setAngleAdjustment(angle);
-    }
-
-    public void resetGyro() {
-        navX.reset();
+    @Override
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(3));
     }
 }

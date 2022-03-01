@@ -18,18 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class ControlMap {
-    public static final Joystick DRIVER_LEFT = new Joystick(0);
-    public static final Joystick DRIVER_RIGHT = new Joystick(1);
-    public static final Joystick CO_DRIVER_LEFT = new Joystick(2);
-    public static final Joystick CO_DRIVER_RIGHT = new Joystick(3);
-    public static final Joystick DRIVER_BUTTONS = new Joystick(4);
-    public static final Joystick CO_DRIVER_BUTTONS = new Joystick(5);
+public class OpenAllPistons extends InstantCommand {
+    private final Climb climb;
 
-    private ControlMap() {
+    public OpenAllPistons() {
+        this.climb = Climb.getInstance();
+    }
+
+    @Override
+    public void initialize() {
+        climb.openAllPistons();
     }
 }
