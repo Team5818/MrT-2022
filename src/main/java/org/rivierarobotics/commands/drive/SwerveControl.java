@@ -42,15 +42,7 @@ public class SwerveControl extends CommandBase {
         }
         double vel = (0.025 * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
 
-        if (Math.abs(vel) > MAX_TURN_SPEED) {
-            if (vel > 0) {
-                return MAX_TURN_SPEED;
-            } else {
-                return -MAX_TURN_SPEED;
-            }
-        } else {
-            return vel;
-        }
+        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_TURN_SPEED);
     }
 
     @Override
