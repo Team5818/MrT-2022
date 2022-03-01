@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetDriveVelocity extends CommandBase {
@@ -30,11 +29,12 @@ public class SetDriveVelocity extends CommandBase {
     private final double velocityY;
     private final double rotationVel;
 
-    public SetDriveVelocity(double velocityX, double velyocityY, double rotationVel) {
+    public SetDriveVelocity(double velocityX, double velocityY, double rotationVel) {
         this.driveTrain = DriveTrain.getInstance();
         this.velocityX = velocityX;
-        this.velocityY = velyocityY;
+        this.velocityY = velocityY;
         this.rotationVel = rotationVel;
+        addRequirements(driveTrain);
     }
 
     @Override

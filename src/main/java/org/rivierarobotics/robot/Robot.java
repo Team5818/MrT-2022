@@ -31,9 +31,7 @@ import org.rivierarobotics.commands.climb.SetPistonState;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.aifield.AIFieldDisplay;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -50,10 +48,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
-
-        //uncomment for competition
-        //DriveTrain.getInstance().resetPose();
-
+        DriveTrain.getInstance().resetPose();
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -74,8 +69,8 @@ public class Robot extends TimedRobot {
         //iterates through button frames
         tick++;
         if (tick > 20) {
-            for (int ii = 1; ii <= 6; ii++) {
-                ControlMap.DRIVER_BUTTONS.setOutput(ii, states[frame][ii - 1]);
+            for (int i = 1; i <= 6; i++) {
+                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
             }
             this.frame = frame >= states.length ? 0 : frame + 1;
             this.tick = 0;
@@ -92,11 +87,6 @@ public class Robot extends TimedRobot {
 
     private void shuffleboardLogging() {
         var sb = Logging.robotShuffleboard;
-        try {
-            SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
-        } catch (Exception e) {
-            //bruh?
-        }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
         var limeLight = sb.getTab("LL");
@@ -118,18 +108,18 @@ public class Robot extends TimedRobot {
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Ticks", cl.getRawTicks());
-        climb.setEntry("Switch 1", cl.isSwitchSet(Climb.Position.LOW));
-        climb.setEntry("Switch 2", cl.isSwitchSet(Climb.Position.MID));
-        climb.setEntry("Switch 3", cl.isSwitchSet(Climb.Position.HIGH));
-        climb.setEntry("Piston 1", cl.isPistonSet(Climb.Position.LOW));
-        climb.setEntry("Piston 2", cl.isPistonSet(Climb.Position.MID));
-        climb.setEntry("Piston 3", cl.isPistonSet(Climb.Position.HIGH));
 
         limeLight.setEntry("lly", ll.getTy());
         limeLight.setEntry("llx", ll.getTx());
         limeLight.setEntry("ll detected", ll.getDetected());
         limeLight.setEntry("ll Distance", ll.getDistance());
         limeLight.setEntry("Please work", 69420);
+        climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
+        climb.setEntry("Switch mid", cl.isSwitchSet(Climb.Position.MID));
+        climb.setEntry("Switch high", cl.isSwitchSet(Climb.Position.HIGH));
+        climb.setEntry("Piston low", cl.isPistonSet(Climb.Position.LOW));
+        climb.setEntry("Piston mid", cl.isPistonSet(Climb.Position.MID));
+        climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
     }
 
     @Override
@@ -155,6 +145,9 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.LOW, true, 0));
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.MID, true, 0));
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.HIGH, true, 0));
     }
 
     private void initializeCustomLoops() {
@@ -172,5 +165,4 @@ public class Robot extends TimedRobot {
         Logging.aiFieldDisplay.update();
     }
 }
-
 

@@ -25,19 +25,28 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.climb.Climb;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class ClimbControl extends CommandBase {
     private final Climb climb;
+    private final Joystick leftJoystick;
 
     public ClimbControl() {
         this.climb = Climb.getInstance();
+        this.leftJoystick = ControlMap.CO_DRIVER_LEFT;
         addRequirements(this.climb);
     }
 
     @Override
+    public void initialize() {
+        climb.setPiston(Climb.Position.LOW, true);
+        climb.setPiston(Climb.Position.MID, true);
+        climb.setPiston(Climb.Position.HIGH, true);
+    }
+
+    @Override
     public void execute() {
-        this.climb.setVoltage(MathUtil.fitDeadband(-ControlMap.CO_DRIVER_LEFT.getY()) * 11);
+        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 11;
+        this.climb.setVoltage(xSpeed);
     }
 }
 

@@ -20,36 +20,36 @@
 
 package org.rivierarobotics.robot;
 
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
+import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
-import org.rivierarobotics.commands.limelight.TrackGoal;
+import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.util.Gyro;
 
 public class ButtonConfiguration {
     public void initTeleop() {
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
-                .whenPressed(new RunClimb(false));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
-                .whenPressed(new SequentialCommandGroup(new InstantCommand(() -> DriveTrain.getInstance().resetPose()), new InstantCommand(() -> Gyro.getInstance().resetGyro())));
-        new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new SetDriveAngle(-90, 0.1));
+        //DRIVER JOYSTICK BUTTONS
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .whileHeld(new TestPathGeneration());
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
-                .whenPressed(new ClimbSetAngle(0));
+        new JoystickButton(ControlMap.DRIVER_LEFT, 2)
+                .whileHeld(new SetDriveAngle(-90, 0.1));
+
+        //CO-DRIVER JOYSTICK BUTTONS
+        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
+                .whenPressed(new RunClimb(false));
+
+        //DRIVER BUTTONS
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3).whenPressed(new SetWheelbaseAngle(0).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 4).whenPressed(new SetWheelbaseAngle(-90).withTimeout(2));
@@ -60,8 +60,20 @@ public class ButtonConfiguration {
                 sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
             }
         }));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
+            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
+                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(Math.PI / 2)));
+            }
+        }));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
+            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
+                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(-Math.PI / 2)));
+            }
+        }));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, false));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whileHeld(new TrackGoal());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
+
+        //CO-DRIVER BUTTONS
     }
 }

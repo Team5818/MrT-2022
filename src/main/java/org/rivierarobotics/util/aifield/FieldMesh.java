@@ -31,8 +31,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Filesystem;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
@@ -320,9 +318,6 @@ public class FieldMesh {
             config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
-            if (Robot.isReal()) {
-                //config.setKinematics(DriveTrain.getInstance().getSwerveDriveKinematics());
-            }
 
             Trajectory trajectory = null;
             try {

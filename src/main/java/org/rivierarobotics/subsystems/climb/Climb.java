@@ -51,7 +51,7 @@ public class Climb extends SubsystemBase {
     private static final double HIGH_RADIANS = -4.88;
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
-    //TODO: Find Value
+    //TODO: Find Value using new climb once robot is built, these values are for the prototype.
     private static final int ENCODER_RESOLUTION = 2048;
     private static final double MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     private static final double GEARING = 1 / 450.0;
@@ -90,8 +90,6 @@ public class Climb extends SubsystemBase {
                 0.3,
                 11
         );
-
-        compressor.enabled();
 
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
         climbMotor.configForwardSoftLimitEnable(false);
