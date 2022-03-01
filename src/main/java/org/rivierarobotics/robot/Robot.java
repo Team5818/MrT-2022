@@ -85,11 +85,6 @@ public class Robot extends TimedRobot {
 
     private void shuffleboardLogging() {
         var sb = Logging.robotShuffleboard;
-        try {
-            SmartDashboard.putString("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
-        } catch (Exception e) {
-            //comment line for checkstyle
-        }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
         var limeLight = sb.getTab("LL");
