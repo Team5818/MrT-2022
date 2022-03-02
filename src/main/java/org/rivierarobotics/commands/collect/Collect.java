@@ -7,26 +7,21 @@ import org.rivierarobotics.util.ml.MLCore;
 import org.rivierarobotics.util.ml.MLObject;
 
 public class Collect extends CommandBase{
-    private final boolean isIntake;
     private final Intake intake;
 
-    public Collect(boolean isIntake) {
-        intake = Intake.getInstance();
-        this.isIntake = isIntake;
+    public Collect() {
+        this.intake = Intake.getInstance();
     }
 
     @Override
-    public void initialize() {
-        intake.setIntakeState(isIntake);
-        intake.setVelocity(123);
+    public void execute() {
+        intake.setIntakeState(true);
+        intake.setVoltage(4);
     }
 
     @Override
-    public boolean isFinished() {
-        intake.setIntakeState(false);
-        intake.setVelocity(0);
-        return false;
+    public void end(boolean interrupted) {
+        intake.setIntakeState(!interrupted);
+        intake.setVoltage(0);
     }
-
-
 }
