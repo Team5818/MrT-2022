@@ -90,9 +90,6 @@ public class DriveTrain extends SubsystemBase {
 
     private final RSTab tab;
 
-
-    private final RSTab tab;
-
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center
         swervePosition[0] = new Translation2d(WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //FL

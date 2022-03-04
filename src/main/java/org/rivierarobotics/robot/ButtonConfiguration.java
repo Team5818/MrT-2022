@@ -42,9 +42,9 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 public class ButtonConfiguration {
     public void initTeleop() {
         new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
-                .whenPressed(new RunClimb(1, Climb.Position.LOW, Climb.Position.HIGH));
+                .whenPressed(new RunClimb(false));
         new JoystickButton(ControlMap.CO_DRIVER_LEFT, 2)
-                .whenPressed(new RunClimb(-1, Climb.Position.HIGH, Climb.Position.LOW));
+                .whenPressed(new RunClimb(true));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new SetDriveAngle(-90, 0.1));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
@@ -75,7 +75,7 @@ public class ButtonConfiguration {
                 sm.setDesiredState(new SwerveModuleState(0,new Rotation2d(-Math.PI / 2)));
             }
         }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, 1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, false));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
 
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
