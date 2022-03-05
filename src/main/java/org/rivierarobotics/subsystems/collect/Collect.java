@@ -20,6 +20,9 @@ package org.rivierarobotics.subsystems.collect;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -60,6 +63,23 @@ public class Collect extends SubsystemBase {
             collect = new Collect();
         }
         return collect;
+    }
+
+    private final TalonSRX tsrx;
+    private final CANSparkMax csm;
+
+    public Collect() {
+        // Figure out constants later
+        tsrx = new TalonSRX(0);
+        csm = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless); // Don't know if this type is correct??
+    }
+
+    public void setIntakeSpeed(double speed) {
+        csm.set(speed);
+    }
+
+    public void setIntakeVoltage(double voltage) {
+        csm.setVoltage(voltage);
     }
 
 
