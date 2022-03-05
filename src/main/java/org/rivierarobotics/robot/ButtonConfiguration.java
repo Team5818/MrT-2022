@@ -75,5 +75,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
         //CO-DRIVER BUTTONS
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new InstantCommand(() -> Climb.getInstance().setPlay(false)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new InstantCommand(() -> Climb.getInstance().setPlay(true)));
     }
 }

@@ -38,11 +38,9 @@ public class RunClimb extends SequentialCommandGroup {
         if (reversed) {
             first = Climb.Position.HIGH;
             last = Climb.Position.LOW;
-            modifier = 1;
         } else {
             last = Climb.Position.HIGH;
             first = Climb.Position.LOW;
-            modifier = -1;
         }
         addCommands(
                 //new SetDriveAngle(90, 0.2),
@@ -55,7 +53,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new WaitCommand(0.2),
                 //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
+                        new InteruptableSetVoltage(reversed, voltage)),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(Climb.Position.MID, true, 0),
                 new WaitCommand(0.2),
@@ -63,7 +61,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new SetPistonState(first, false, 0),
                 new WaitCommand(0.3),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
+                        new InteruptableSetVoltage(reversed, voltage)),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new SetPistonState(last, true, 0),
                 new WaitCommand(0.3),

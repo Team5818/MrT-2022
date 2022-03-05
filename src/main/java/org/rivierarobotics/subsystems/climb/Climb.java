@@ -77,7 +77,9 @@ public class Climb extends SubsystemBase {
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
     private final SystemIdentification sysId = new SystemIdentification(0.0, 7.7154, 0.19185);
-    private double zeroRadians = 0.0;
+    private final double zeroRadians = 0.0;
+    //TODO: Find this zero
+    private boolean play = true;
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
@@ -123,9 +125,6 @@ public class Climb extends SubsystemBase {
 
     }
 
-    public void setOffset() {
-        this.zeroRadians = encoder.getDistance();
-    }
 
     public boolean isSwitchSet(Position climbModule) {
         return !climbModule.input.get();
@@ -153,6 +152,13 @@ public class Climb extends SubsystemBase {
 
     public double getRawTicks() {
         return climbMotor.getSelectedSensorPosition();
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
+    public boolean getPlay() {
+        return play;
     }
 
     public void followStateSpace() {
