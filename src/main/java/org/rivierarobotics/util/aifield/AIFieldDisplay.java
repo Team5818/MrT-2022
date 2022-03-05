@@ -23,7 +23,6 @@ package org.rivierarobotics.util.aifield;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -64,6 +63,7 @@ public class AIFieldDisplay {
         this.imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
         this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
+        outputStream.setResolution(480, 480);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
 
@@ -72,13 +72,11 @@ public class AIFieldDisplay {
 
     private void startFieldThread(int updateRate) {
         int size = 480;
-        Mat resizeFrame = new Mat((int) (size), (int) (size * this.scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
+        Mat resizeFrame = new Mat((int) (size), (int) (size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
             Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
             outputStream.putFrame(resizeFrame);
-            outputStream.setResolution(480, 480);
-            SmartDashboard.putNumber("t", System.nanoTime());
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 

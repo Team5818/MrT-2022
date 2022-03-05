@@ -23,29 +23,30 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.aifield.AIFieldDisplay;
-import org.rivierarobotics.util.ml.BoundingBox;
-import org.rivierarobotics.util.ml.MLCore;
-import org.rivierarobotics.util.ml.MLObject;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
 
-    private boolean isOn = false;
     private int tick = 0;
-    private boolean[] states = {true, true, false, false, false, false};
+    private int frame = 0;
+    private boolean[][] states = {
+            {false, false, true, true, false, false},
+            {false, false, false, false, true, true},
+            {true, true, false, false, false, false}
+    };
 
     @Override
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
-        Logging.aiFieldDisplay = new AIFieldDisplay(20);
+        DriveTrain.getInstance().resetPose();
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -61,15 +62,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        //Logging.aiFieldDisplay.update();
+
+        //iterates through button frames
         tick++;
         if (tick > 20) {
-            boolean temp = states[5];
-            System.arraycopy(states, 0, states, 1, 5);
-            states[0] = temp;
             for (int i = 1; i <= 6; i++) {
-                ControlMap.DRIVER_BUTTONS.setOutput(i, states[i - 1]);
+                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
             }
-            this.isOn = !isOn;
+            this.frame = frame >= states.length ? 0 : frame + 1;
             this.tick = 0;
         }
     }
@@ -79,38 +80,18 @@ public class Robot extends TimedRobot {
         new ButtonConfiguration().initTeleop();
         initializeAllSubsystems();
         initializeDefaultCommands();
-        DriveTrain.getInstance().resetPose();
-        Gyro.getInstance().resetGyro();
         Climb.getInstance().setOffset();
     }
 
     private void shuffleboardLogging() {
         var sb = Logging.robotShuffleboard;
-        try {
-            Logging.robotShuffleboard.getTab("Drive").setEntry("DT Command", CommandScheduler.getInstance().requiring(DriveTrain.getInstance()).getName());
-        } catch (Exception ignored) {
-            // Exception Ignored
-        }
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
-        var machineLearning = sb.getTab("ML");
+        var limeLight = sb.getTab("LL");
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
-        var ml = MLCore.getInstance();
-
-        MLObject ball = new MLObject("red", new BoundingBox(0,0,0,0), 1);
-
-        try {
-            ball = ml.getDetectedObjects().get("red").get(0);
-        } catch (NullPointerException nullPointerException){ }
-
-        machineLearning.setEntry("BallX", ball.relativeLocationX);
-        machineLearning.setEntry("BallY", ball.relativeLocationY);
-        machineLearning.setEntry("Ball Distance", ball.relativeLocationDistance);
-        machineLearning.setEntry("BX", ball.tx);
-        machineLearning.setEntry("BY", ball.ty);
-
         field2d.setRobotPose(dt.getRobotPose());
+        //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
@@ -172,5 +153,4 @@ public class Robot extends TimedRobot {
         Logging.aiFieldDisplay.update();
     }
 }
-
 
