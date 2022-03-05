@@ -69,6 +69,7 @@ public class DriveTrain extends SubsystemBase {
 
     //Drive Speed Constants
     public static final double MAX_SPEED = 1.25; // m/s
+    public static final double MAX_CHANGE_IN_VELOCITY = 0.0005; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     //Module Mappings / Measurements
@@ -174,6 +175,23 @@ public class DriveTrain extends SubsystemBase {
         return this.swerveDriveKinematics;
     }
 
+    private double[] limitSpeeds(double xSpeed, double ySpeed) {
+        var cs = getChassisSpeeds();
+        var currentSpeed = Math.sqrt(Math.pow(cs.vxMetersPerSecond, 2) + Math.pow(cs.vyMetersPerSecond, 2));
+        var targetSpeed = Math.sqrt(Math.pow(xSpeed,2) + Math.pow(ySpeed,2));
+        var speeds = new double[2];
+
+        if (Math.abs(targetSpeed - currentSpeed) > MAX_CHANGE_IN_VELOCITY) {
+            speeds[0] = cs.vxMetersPerSecond + (MAX_CHANGE_IN_VELOCITY /Math.abs(targetSpeed - currentSpeed)) * (xSpeed - cs.vxMetersPerSecond);
+            speeds[1] = cs.vyMetersPerSecond + (MAX_CHANGE_IN_VELOCITY /Math.abs(targetSpeed - currentSpeed)) * (ySpeed - cs.vyMetersPerSecond);
+        } else {
+            speeds[0] = xSpeed;
+            speeds[1] = ySpeed;
+        }
+
+        return speeds;
+    }
+
     /**
      * Method to drive the robot using joystick info.
      *
@@ -183,9 +201,10 @@ public class DriveTrain extends SubsystemBase {
      * @param fieldRelative Whether the provided x and y speeds are relative to the field.
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+        var limitedSpeeds = limitSpeeds(xSpeed, ySpeed);
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rot)
+                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot, gyro.getRotation2d())
+                        : new ChassisSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
