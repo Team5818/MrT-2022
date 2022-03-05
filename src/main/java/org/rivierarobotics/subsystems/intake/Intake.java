@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase {
         p2.set(deploy);
     }
 
-    public void setVoltage( double voltage) {
+    public void setVoltage(double voltage) {
         motor.setVoltage(voltage);
     }
 
