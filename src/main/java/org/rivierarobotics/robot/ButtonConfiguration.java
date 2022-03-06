@@ -24,11 +24,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
-import org.rivierarobotics.commands.collect.Collect;
+import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
@@ -39,9 +38,9 @@ public class ButtonConfiguration {
     public void initTeleop() {
         //DRIVER JOYSTICK BUTTONS
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
-                .whileHeld(new Collect());
+                .whenPressed(new CollectToggle(true));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+                .whenPressed(new CollectToggle(false));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new SetDriveAngle(-90, 0.1));
 

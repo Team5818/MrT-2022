@@ -90,8 +90,10 @@ public class Robot extends TimedRobot {
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
         var limeLight = sb.getTab("LL");
+        var collect = sb.getTab("collect");
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
+        var col = Intake.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -113,6 +115,8 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston low", cl.isPistonSet(Climb.Position.LOW));
         climb.setEntry("Piston mid", cl.isPistonSet(Climb.Position.MID));
         climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
+
+        collect.setEntry("ispositive", col.getIsPositive());
     }
 
     @Override

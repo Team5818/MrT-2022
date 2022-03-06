@@ -45,7 +45,8 @@ public class Intake extends SubsystemBase {
 
     private double intakeVoltage = 0;
     private double beltVoltage = 0;
-    public boolean isDeployed = false;
+    private boolean isDeployed = false;
+    private double isPositive = 0;
 
 
     //TODO: Extract ID's into MotorID's class
@@ -72,13 +73,28 @@ public class Intake extends SubsystemBase {
         this.intakeVoltage = voltage;
     }
 
+    public double getIntakeVoltage() {
+        return this.intakeVoltage;
+    }
+
     public void setBeltVoltage(double voltage) {
         tsrx.setVoltage(voltage);
         this.beltVoltage = voltage;
     }
 
-    public void setBeltPower (double power) {
-        tsrx.set(power);
+    public double getBeltVoltage() {
+        return this.beltVoltage;
     }
 
+    public boolean getIsDeployed() {
+        return isDeployed;
+    }
+
+    public void setIsPositive(double isPositive) {
+        this.isPositive = isPositive;
+    }
+
+    public double getIsPositive() {
+        return this.isPositive;
+    }
 }
