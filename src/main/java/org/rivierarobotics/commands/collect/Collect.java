@@ -17,8 +17,7 @@ public class Collect extends CommandBase {
     @Override
     public void execute() {
         //intake.setIntakeState(true);
-        intake.setIntakeVoltage(3);
-        intake.setBeltVoltage(3);
+        intake.setVoltages(3,3);
     }
 
 
@@ -26,7 +25,7 @@ public class Collect extends CommandBase {
     public void end(boolean interrupted) {
         if(interrupted) {
             //intake.setIntakeState(false);
-            intake.setIntakeVoltage(0);
+            intake.setVoltages(0,0);
 //            double initialTime = Timer.getFPGATimestamp();
 //            double waitTime = 2;
 //
@@ -35,7 +34,6 @@ public class Collect extends CommandBase {
 //                // Do absolutely nothing
 //            }
 //            intake.setIntakeVoltage(0);
-            intake.setBeltVoltage(0);
         }
 
 

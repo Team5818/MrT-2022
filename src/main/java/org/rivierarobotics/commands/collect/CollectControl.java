@@ -21,7 +21,6 @@ public class CollectControl extends CommandBase {
     public void execute() {
         var voltage = MathUtil.fitDeadband(rightJoystick.getY()) * 10;
         SmartDashboard.putNumber("beltvoltage", voltage);
-//        intake.setIntakeVoltage(voltage);
-        intake.setBeltVoltage(voltage);
+        intake.setVoltages(voltage, voltage);
     }
 }

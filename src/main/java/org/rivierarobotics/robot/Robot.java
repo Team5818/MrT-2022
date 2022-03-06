@@ -117,6 +117,8 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
 
         collect.setEntry("ispositive", col.getIsPositive());
+        collect.setEntry("belt voltage", col.getBeltVoltage());
+        collect.setEntry("roller voltage", col.getIntakeVoltage());
     }
 
     @Override

@@ -7,35 +7,27 @@ public class CollectToggle extends CommandBase {
     private final Intake intake;
     private final double collectVoltage = 5.0;
     private final boolean targetPositive;
+    private final boolean useIntake;
+    private final boolean useRollers;
 
-    public CollectToggle(boolean isPositive){
+    public CollectToggle(boolean isPositive, boolean useIntake, boolean useRollers){
         this.intake = Intake.getInstance();
         this.targetPositive = isPositive;
-    }
-
-    @Override
-    public void initialize() {
-        if (targetPositive == (Math.signum(intake.getIsPositive()) > 0)) {
-            intake.setIsPositive(0);
-            end(true);
-        } else {
-            intake.setIsPositive(targetPositive ? 1. : -1.);
-        }
-//        } else {
-//            intake.setIntakeVoltage( targetPositive ? collectVoltage : -collectVoltage);
-//            intake.setBeltVoltage( targetPositive ? collectVoltage : -collectVoltage);
-//        }
+        this.useIntake = useIntake;
+        this.useRollers = useRollers;
+        addRequirements(intake);
     }
 
     @Override
     public void execute() {
-        intake.setIntakeVoltage( targetPositive ? collectVoltage : -collectVoltage);
-        intake.setBeltVoltage( targetPositive ? collectVoltage : -collectVoltage);
+        intake.setVoltages(useIntake ? (targetPositive ? collectVoltage : - collectVoltage) : 0, useRollers? (targetPositive ? collectVoltage : - collectVoltage) : 0);
     }
 
     @Override
     public void end(boolean interrupted) {
-        intake.setIntakeVoltage(0);
-        intake.setBeltVoltage(0);
+        if (interrupted) {
+            intake.setVoltages(0,0);
+            return;
+        }
     }
 }

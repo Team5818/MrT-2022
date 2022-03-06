@@ -41,6 +41,7 @@ public class MotorIDs {
     public static final int COLLECT_BELTS = 12;
 
     public static final int SHOOTER_LEFT = 15;
+    public static final int SHOOTER_ANGLE = 16;
     public static final int SHOOTER_RIGHT = 17;
 
 
