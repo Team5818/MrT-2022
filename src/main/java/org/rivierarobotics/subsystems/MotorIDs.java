@@ -34,9 +34,15 @@ public class MotorIDs {
     public static final int SOLENOID_LOW = 0;
     public static final int SOLENOID_MID = 1;
     public static final int SOLENOID_HIGH = 2;
-    public static final int CLIMB_ROTATE = 10;
+    public static final int CLIMB_ROTATE_A = 10;
+    public static final int CLIMB_ROTATE_B = 11;
 
-    //TODO: Create intake ID's
+    public static final int COLLECT_INTAKE = 13;
+    public static final int COLLECT_BELTS = 12;
+
+    public static final int SHOOTER_LEFT = 15;
+    public static final int SHOOTER_RIGHT = 17;
+
 
 
     private MotorIDs() {
