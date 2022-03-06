@@ -70,7 +70,7 @@ public class DriveTrain extends SubsystemBase {
 
     //Drive Speed Constants
     public static final double MAX_SPEED = 1.25; // m/s
-    public static final double MAX_CHANGE_IN_VELOCITY = 0.0005; // m/s
+    public static final double MAX_CHANGE_IN_VELOCITY = 0.5; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     //Module Mappings / Measurements
@@ -100,8 +100,6 @@ public class DriveTrain extends SubsystemBase {
     public double targetRotationAngle = 0;
 
 
-    private final RSTab tab;
-
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center (m)
         swervePosition[0] = new Translation2d(WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //FL
@@ -111,7 +109,7 @@ public class DriveTrain extends SubsystemBase {
 
         swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -810, false, true);
         swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1018, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -966, false, true);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -713, false, true);
         swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3995, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
@@ -206,9 +204,18 @@ public class DriveTrain extends SubsystemBase {
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
         var limitedSpeeds = limitSpeeds(xSpeed, ySpeed);
+//        var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
+//                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot, gyro.getRotation2d())
+//                        : new ChassisSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot)
+//        );
+//        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
+//        for (int i = 0; i < swerveModuleStates.length; i++) {
+//            swerveModules[i].setDesiredState(swerveModuleStates[i]);
+//        }
+
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot, gyro.getRotation2d())
-                        : new ChassisSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot)
+                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+                        : new ChassisSpeeds(xSpeed, ySpeed, rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {

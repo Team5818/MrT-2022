@@ -24,6 +24,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.subsystems.climb.Piston;
 
 public class Intake extends SubsystemBase {
@@ -42,18 +43,25 @@ public class Intake extends SubsystemBase {
     private final WPI_TalonSRX tsrx;
     private final boolean setDriveEnabled = false;
 
+    public boolean isDeployed = false;
+
     //TODO: Extract ID's into MotorID's class
     public Intake() {
         // Figure out constants later
-        p1 = new Piston(0);
-        p2 = new Piston(1);
-        csm = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
-        tsrx = new WPI_TalonSRX(0);
+        p1 = new Piston(20);
+        p2 = new Piston(21);
+        csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        tsrx = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
     }
 
     public void setIntakeState(boolean deploy) {
         p1.set(deploy);
         p2.set(deploy);
+        this.isDeployed = deploy;
+    }
+
+    public boolean getIntakeState() {
+        return p1.getState();
     }
 
     public void setIntakeVoltage(double voltage) {

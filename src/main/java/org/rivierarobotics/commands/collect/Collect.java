@@ -16,24 +16,26 @@ public class Collect extends CommandBase {
 
     @Override
     public void execute() {
-        intake.setIntakeState(true);
-        intake.setIntakeVoltage(5);
-        intake.setBeltVoltage(5);
+        //intake.setIntakeState(true);
+        intake.setIntakeVoltage(3);
+        intake.setBeltVoltage(3);
     }
 
-    @Override
+
+    //    @Override
     public void end(boolean interrupted) {
         if(interrupted) {
-            intake.setIntakeState(false);
+            //intake.setIntakeState(false);
             intake.setIntakeVoltage(0);
-            double initialTime = Timer.getFPGATimestamp();
-            double waitTime = 2;
-
-            intake.setIntakeVoltage(-1);
-            while(Timer.getFPGATimestamp() - initialTime < waitTime) {
-                // Do absolutely nothing
-            }
-            intake.setIntakeVoltage(0);
+//            double initialTime = Timer.getFPGATimestamp();
+//            double waitTime = 2;
+//
+//            intake.setIntakeVoltage(-1);
+//            while(Timer.getFPGATimestamp() - initialTime < waitTime) {
+//                // Do absolutely nothing
+//            }
+//            intake.setIntakeVoltage(0);
+            intake.setBeltVoltage(0);
         }
 
 
