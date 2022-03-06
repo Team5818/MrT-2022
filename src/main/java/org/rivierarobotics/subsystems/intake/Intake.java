@@ -37,39 +37,48 @@ public class Intake extends SubsystemBase {
         return intake;
     }
 
-    private final Piston p1;
-    private final Piston p2;
+//    private final Piston p1;
+//    private final Piston p2;
     private final CANSparkMax csm;
     private final WPI_TalonSRX tsrx;
     private final boolean setDriveEnabled = false;
 
+    private double intakeVoltage = 0;
+    private double beltVoltage = 0;
     public boolean isDeployed = false;
+
 
     //TODO: Extract ID's into MotorID's class
     public Intake() {
         // Figure out constants later
-        p1 = new Piston(20);
-        p2 = new Piston(21);
+//        p1 = new Piston(20);
+//        p2 = new Piston(21);
         csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
         tsrx = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
     }
 
     public void setIntakeState(boolean deploy) {
-        p1.set(deploy);
-        p2.set(deploy);
+//        p1.set(deploy);
+//        p2.set(deploy);
         this.isDeployed = deploy;
     }
 
-    public boolean getIntakeState() {
-        return p1.getState();
-    }
+//    public boolean getIntakeState() {
+//        return p1.getState();
+//    }
 
     public void setIntakeVoltage(double voltage) {
         csm.setVoltage(voltage);
+        this.intakeVoltage = voltage;
     }
 
     public void setBeltVoltage(double voltage) {
         tsrx.setVoltage(voltage);
+        this.beltVoltage = voltage;
+    }
+
+    public void setBeltPower (double power) {
+        tsrx.set(power);
     }
 
 }
