@@ -32,8 +32,6 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
-import java.util.EnumMap;
-
 public class Climb extends SubsystemBase {
 
     public static Climb getInstance() {
@@ -57,22 +55,25 @@ public class Climb extends SubsystemBase {
     private static final double GEARING = 1 / 450.0;
 
     public enum Position {
-        LOW(LOW_RADIANS, new Piston(2), new DigitalInput(2)),
-        MID(MID_RADIANS, new Piston(1), new DigitalInput(1)),
-        HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(0));
+        LOW(LOW_RADIANS, new Piston(2), new DigitalInput(4), new DigitalInput(5)),
+        MID(MID_RADIANS, new Piston(1), new DigitalInput(6), new DigitalInput(7)),
+        HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(8), new DigitalInput(9));
 
         public final double locationRadians;
         public final Piston piston;
-        public final DigitalInput input;
+        public final DigitalInput input1;
+        public final DigitalInput input2;
 
-        Position(double rads, Piston piston, DigitalInput input) {
+        Position(double rads, Piston piston, DigitalInput input1, DigitalInput input2) {
             this.locationRadians = rads;
             this.piston = piston;
-            this.input = input;
+            this.input1 = input1;
+            this.input2 = input2;
         }
     }
 
-    private final WPI_TalonFX climbMotor;
+    private final WPI_TalonFX climbMotorA;
+    private final WPI_TalonFX climbMotorB;
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
@@ -93,13 +94,10 @@ public class Climb extends SubsystemBase {
                 11
         );
 
-        this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE);
-        climbMotor.configForwardSoftLimitEnable(false);
-        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
-        climbMotor.configReverseSoftLimitEnable(false);
-        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
-
-        climbMotor.setNeutralMode(NeutralMode.Brake);
+        this.climbMotorA = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
+        this.climbMotorB = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
+        climbMotorA.setNeutralMode(NeutralMode.Brake);
+        climbMotorB.setNeutralMode(NeutralMode.Brake);
         this.encoder = new DutyCycleEncoder(6);
         this.encoder.setDistancePerRotation(2 * Math.PI);
 
@@ -118,16 +116,18 @@ public class Climb extends SubsystemBase {
 
     public void setCoast(boolean coast) {
         if (coast) {
-            climbMotor.setNeutralMode(NeutralMode.Coast);
+            climbMotorA.setNeutralMode(NeutralMode.Coast);
+            climbMotorB.setNeutralMode(NeutralMode.Coast);
         } else {
-            climbMotor.setNeutralMode(NeutralMode.Brake);
+            climbMotorA.setNeutralMode(NeutralMode.Brake);
+            climbMotorB.setNeutralMode(NeutralMode.Brake);
         }
 
     }
 
 
     public boolean isSwitchSet(Position climbModule) {
-        return !climbModule.input.get();
+        return !climbModule.input1.get() || !climbModule.input2.get();
     }
 
     public boolean isPistonSet(Position climbModule) {
@@ -140,10 +140,12 @@ public class Climb extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         if (Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle())) {
-            climbMotor.setVoltage(0);
+            climbMotorA.setVoltage(0);
+            climbMotorB.setVoltage(0);
             return;
         }
-        climbMotor.setVoltage(voltage);
+        climbMotorA.setVoltage(voltage);
+        climbMotorB.setVoltage(voltage);
     }
 
     public double getAngle() {
@@ -151,7 +153,7 @@ public class Climb extends SubsystemBase {
     }
 
     public double getRawTicks() {
-        return climbMotor.getSelectedSensorPosition();
+        return climbMotorA.getSelectedSensorPosition();
     }
 
     public void setPlay(boolean play) {
