@@ -20,13 +20,16 @@
 
 package org.rivierarobotics.subsystems.intake;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.appjack.MechLogger;
-import org.rivierarobotics.util.statespace.SystemIdentification;
+import org.rivierarobotics.subsystems.MotorIDs;
+import org.rivierarobotics.subsystems.climb.Piston;
 
 public class Intake extends SubsystemBase {
+    private static Intake intake;
+
     public static Intake getInstance() {
         if (intake == null) {
             intake = new Intake();
@@ -34,29 +37,58 @@ public class Intake extends SubsystemBase {
         return intake;
     }
 
-    private static Intake intake;
+    //    private final Piston p1;
+//    private final Piston p2;
+    private final CANSparkMax csm;
+    private final WPI_TalonSRX tsrx;
+    private final boolean setDriveEnabled = false;
 
-    //the 3 rollers that intake the ball
-    private static TalonSRX roller1;
-    private static TalonSRX roller2;
-    private static TalonSRX roller3;
+    private double intakeVoltage = 0;
+    private double beltVoltage = 0;
+    private boolean isDeployed = false;
+    private int isPositive = 0;
 
-    private final SystemIdentification sysId = new SystemIdentification(0.01, 0.01, 0.01);
-    private MechLogger logger;
 
-    private Intake() {
-        roller1 = new TalonSRX(0);
-        roller2 = new TalonSRX(1);
-        roller3 = new TalonSRX(2);
+    //TODO: Extract ID's into MotorID's class
+    public Intake() {
+        // Figure out constants later
+//        p1 = new Piston(20);
+//        p2 = new Piston(21);
+        csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        tsrx = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
     }
 
-    public void setVoltage(double v) {
-        //sets voltage
-        logger.powerChange(v);
-
-        roller1.set(ControlMode.Velocity, v);
-        roller2.set(ControlMode.Velocity, v);
-        roller3.set(ControlMode.Velocity, v);
+    public void setIntakeState(boolean deploy) {
+//        p1.set(deploy);
+//        p2.set(deploy);
+        this.isDeployed = deploy;
     }
 
+//    public boolean getIntakeState() {
+//        return p1.getState();
+//    }
+
+    public double getIntakeVoltage() {
+        return this.intakeVoltage;
+    }
+
+    public double getBeltVoltage() {
+        return this.beltVoltage;
+    }
+
+    public void setVoltages(double beltVoltage, double intakeVoltage) {
+        this.beltVoltage = beltVoltage;
+        tsrx.setVoltage(beltVoltage);
+
+        this.intakeVoltage = intakeVoltage;
+        csm.setVoltage(intakeVoltage);
+    }
+
+    public void setIsPositive(int isPositive) {
+        this.isPositive = isPositive;
+    }
+
+    public int getIsPositive() {
+        return this.isPositive;
+    }
 }

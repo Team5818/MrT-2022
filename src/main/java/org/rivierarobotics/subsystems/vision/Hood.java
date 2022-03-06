@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems.vision;
 
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
+import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
 public class Hood extends SubsystemBase {
 
@@ -42,24 +44,46 @@ public class Hood extends SubsystemBase {
     private static Hood hood;
     private double angle;
     private double speed = 0;
-    private final WPI_TalonFX upper;
-    private final WPI_TalonFX lower;
+    private final WPI_TalonFX leftFlywheel;
+    private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax elevation;
     private final DutyCycleEncoder encoder;
     private final double fireMaxVoltage = 5;
     private final double aimMaxVoltage = 5;
 
     private PositionStateSpaceModel aimStateSpace;
+    private VelocityStateSpaceModel rightSS;
+    private VelocityStateSpaceModel leftSS;
     private SystemIdentification aimSysId = new SystemIdentification(0.0, 0.001, 0.001);
+    private SystemIdentification leftSysId = new SystemIdentification(0.0, 0.001, 0.001);
+    private SystemIdentification rightSysId = new SystemIdentification(0.0, 0.001, 0.001);
 
     public Hood() {
-        this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ELEVATION, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.upper = new WPI_TalonFX(MotorIDs.UPPER_FIRING_WHEEL);
-        this.lower = new WPI_TalonFX(MotorIDs.LOWER_FIRING_WHEEL);
-        this.lower.setInverted(true);
-        this.encoder = new DutyCycleEncoder(9);
+        this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
+        this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
+        this.encoder = new DutyCycleEncoder(0);
         this.encoder.setDistancePerRotation(2 * Math.PI);
         this.angle = getAngle();
+        //TODO: all of this sysid
+        this.rightSS = new VelocityStateSpaceModel(
+                rightSysId,
+                0.01,
+                0.01,
+                0.01,
+                0.01,
+                fireMaxVoltage
+
+        );
+        this.leftSS = new VelocityStateSpaceModel(
+                leftSysId,
+                0.01,
+                0.01,
+                0.01,
+                0.01,
+                fireMaxVoltage
+
+        );
         this.aimStateSpace = new PositionStateSpaceModel(
                 aimSysId,
                 0.01,
@@ -71,6 +95,12 @@ public class Hood extends SubsystemBase {
                 aimMaxVoltage
 
         );
+        leftFlywheel.setInverted(true);
+        leftFlywheel.setStatusFramePeriod(10, 20);
+        leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        rightFlywheel.setStatusFramePeriod(10, 20);
+        rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+
     }
 
     public double getAngle() {
@@ -78,21 +108,21 @@ public class Hood extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        this.speed = speed;
-        if (this.speed > fireMaxVoltage) {
-            this.speed = this.fireMaxVoltage;
-        }
+        this.rightSS.setVelocity(speed);
+        this.leftSS.setVelocity(speed);
     }
 
     public void setAngle(double radians) {
-        this.angle = radians;
+        aimStateSpace.setPosition(radians);
     }
 
     @Override
     public void periodic() {
-        upper.setVoltage(speed);
-        lower.setVoltage(speed);
-        var aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
+        double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
         elevation.setVoltage(aimVoltage);
+        rightFlywheel.setVoltage(rightVoltage);
+        leftFlywheel.setVoltage(leftVoltage);
     }
 }

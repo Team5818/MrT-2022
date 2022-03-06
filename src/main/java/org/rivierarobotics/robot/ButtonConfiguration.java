@@ -33,6 +33,7 @@ import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Hood;
 
 public class ButtonConfiguration {
     public void initTeleop() {
@@ -72,6 +73,7 @@ public class ButtonConfiguration {
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, false));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12).whenPressed(new InstantCommand(() -> Hood.getInstance().setSpeed(3)));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
         //CO-DRIVER BUTTONS

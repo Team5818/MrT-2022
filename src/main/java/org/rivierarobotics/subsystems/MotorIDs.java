@@ -30,17 +30,20 @@ public class MotorIDs {
     public static final int BACK_LEFT_STEER = 6;
     public static final int BACK_RIGHT_DRIVE = 7;
     public static final int BACK_RIGHT_STEER = 8;
-    public static final int HOOD_ANGLE = 9;
     //climb ids
     public static final int SOLENOID_LOW = 0;
     public static final int SOLENOID_MID = 1;
     public static final int SOLENOID_HIGH = 2;
-    public static final int CLIMB_ROTATE = 10;
-    //shooting ids
-    //haha
-    public static final int UPPER_FIRING_WHEEL = 420;
-    public static final int LOWER_FIRING_WHEEL = 420;
-    public static final int SHOOTER_ELEVATION = 420;
+    public static final int CLIMB_ROTATE_A = 10;
+    public static final int CLIMB_ROTATE_B = 11;
+
+    public static final int COLLECT_INTAKE = 13;
+    public static final int COLLECT_BELTS = 12;
+
+    public static final int SHOOTER_LEFT = 15;
+    public static final int SHOOTER_ANGLE = 16;
+    public static final int SHOOTER_RIGHT = 17;
+
 
 
     private MotorIDs() {
