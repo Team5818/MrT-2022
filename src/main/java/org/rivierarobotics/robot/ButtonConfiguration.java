@@ -38,11 +38,11 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 public class ButtonConfiguration {
     public void initTeleop() {
         //DRIVER JOYSTICK BUTTONS
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
-                .toggleWhenPressed(new CollectToggle(true, false, true));
+        new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 1)
+                .toggleWhenPressed(new CollectToggle(true, true, true));
 
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .toggleWhenPressed(new CollectToggle(false, false, true));
+        new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 2)
+                .toggleWhenPressed(new CollectToggle(false, true, true));
 
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new SetDriveAngle(-90, 0.1));
@@ -63,6 +63,7 @@ public class ButtonConfiguration {
                 sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
             }
         }));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whenPressed(new SetCameraCentric());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
             for (var sm : DriveTrain.getInstance().getSwerveModules()) {
                 sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(Math.PI / 2)));

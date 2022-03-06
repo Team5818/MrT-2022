@@ -181,15 +181,31 @@ public class DriveTrain extends SubsystemBase {
         var cs = getChassisSpeeds();
         var currentSpeed = Math.sqrt(Math.pow(cs.vxMetersPerSecond, 2) + Math.pow(cs.vyMetersPerSecond, 2));
         var targetSpeed = Math.sqrt(Math.pow(xSpeed,2) + Math.pow(ySpeed,2));
-        var speeds = new double[2];
 
-        if (Math.abs(targetSpeed - currentSpeed) > MAX_CHANGE_IN_VELOCITY) {
-            speeds[0] = cs.vxMetersPerSecond + (MAX_CHANGE_IN_VELOCITY /Math.abs(targetSpeed - currentSpeed)) * (xSpeed - cs.vxMetersPerSecond);
-            speeds[1] = cs.vyMetersPerSecond + (MAX_CHANGE_IN_VELOCITY /Math.abs(targetSpeed - currentSpeed)) * (ySpeed - cs.vyMetersPerSecond);
-        } else {
-            speeds[0] = xSpeed;
-            speeds[1] = ySpeed;
-        }
+        var anglediff = Math.atan((ySpeed - cs.vyMetersPerSecond) / (xSpeed - cs.vxMetersPerSecond));
+        var maxChangeInXSpeed = Math.cos(anglediff) * MAX_CHANGE_IN_VELOCITY;
+        var maxChangeInYSpeed = Math.sin(anglediff) * MAX_CHANGE_IN_VELOCITY;
+
+        var speeds = new double[2];
+//        SmartDashboard.putNumber("limited change", Math.cos(Math.atan((ySpeed - cs.vyMetersPerSecond) / (xSpeed - cs.vxMetersPerSecond))) * MAX_CHANGE_IN_VELOCITY);
+        SmartDashboard.putNumber("Chassis x speed", cs.vxMetersPerSecond);
+        SmartDashboard.putNumber("Chassis y speed", cs.vyMetersPerSecond);
+
+
+
+//        if (Math.abs(targetSpeed - currentSpeed) > MAX_CHANGE_IN_VELOCITY) {
+//            if (targetSpeed - currentSpeed > 0) {
+//                speeds[0] = targetSpeed > MAX_SPEED ? Math.cos(anglediff) * MAX_SPEED  : cs.vxMetersPerSecond + maxChangeInXSpeed;
+//                speeds[1] = targetSpeed > MAX_SPEED ? Math.sin(anglediff) * MAX_SPEED  : cs.vyMetersPerSecond + maxChangeInXSpeed;
+//            } else {
+//                speeds[0] = targetSpeed < -MAX_SPEED ? Math.cos(anglediff) * -MAX_SPEED  : cs.vxMetersPerSecond - maxChangeInXSpeed;
+//                speeds[1] = targetSpeed < -MAX_SPEED ? Math.sin(anglediff) * -MAX_SPEED  : cs.vyMetersPerSecond - maxChangeInXSpeed;
+//            }
+//        } else {
+            speeds[0] = cs.vxMetersPerSecond;
+            speeds[1] = cs.vyMetersPerSecond;
+//        }
+// (xSpeed - cs.vxMetersPerSecond > 0 ? cs.vxMetersPerSecond + 0.1 : cs.vxMetersPerSecond - 0.1
 
         return speeds;
     }
@@ -203,7 +219,13 @@ public class DriveTrain extends SubsystemBase {
      * @param fieldRelative Whether the provided x and y speeds are relative to the field.
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-        var limitedSpeeds = limitSpeeds(xSpeed, ySpeed);
+//        var limitedSpeeds = limitSpeeds(xSpeed, ySpeed);
+//
+//        SmartDashboard.putNumber( "limited xSpeed", limitedSpeeds[0]);
+//        SmartDashboard.putNumber("xspeed", xSpeed);
+//        SmartDashboard.putNumber("limited ySpeed", limitedSpeeds[1]);
+//        SmartDashboard.putNumber("yspeed", ySpeed);
+//
 //        var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
 //                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot, gyro.getRotation2d())
 //                        : new ChassisSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot)
@@ -212,6 +234,10 @@ public class DriveTrain extends SubsystemBase {
 //        for (int i = 0; i < swerveModuleStates.length; i++) {
 //            swerveModules[i].setDesiredState(swerveModuleStates[i]);
 //        }
+        SmartDashboard.putNumber( "xspeed", xSpeed);
+        SmartDashboard.putNumber("chassisx", getChassisSpeeds().vxMetersPerSecond);
+        SmartDashboard.putNumber("yspeed", ySpeed);
+        SmartDashboard.putNumber("chassisy", getChassisSpeeds().vyMetersPerSecond);
 
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
