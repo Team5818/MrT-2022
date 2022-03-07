@@ -35,6 +35,7 @@ import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
+import org.rivierarobotics.commands.limelight.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Hood;
@@ -51,7 +52,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new TestPathGeneration(1,0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1).
-                whileHeld(new SimpleAuto());
+                toggleWhenPressed(new SetFlywheelSpeed(10));
 
         //CO-DRIVER JOYSTICK BUTTONS
 

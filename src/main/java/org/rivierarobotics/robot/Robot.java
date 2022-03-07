@@ -28,9 +28,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
+import org.rivierarobotics.commands.limelight.ShooterControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Hood;
 import org.rivierarobotics.util.Gyro;
 
 public class Robot extends TimedRobot {
@@ -147,6 +149,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
+        CommandScheduler.getInstance().setDefaultCommand(Hood.getInstance(), new ShooterControl());
     }
 
     private void initializeCustomLoops() {

@@ -55,8 +55,8 @@ public class Hood extends SubsystemBase {
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
     private SystemIdentification aimSysId = new SystemIdentification(0.01, 0.01, 0.01);
-    private SystemIdentification leftSysId = new SystemIdentification(0.0, 0.001, 0.001);
-    private SystemIdentification rightSysId = new SystemIdentification(0.0, 0.001, 0.001);
+    private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898, 0.00084794);
+    private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898, 0.00084794);
 
     public Hood() {
         this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -68,7 +68,7 @@ public class Hood extends SubsystemBase {
         //TODO: all of this sysid
         this.rightSS = new VelocityStateSpaceModel(
                 rightSysId,
-                0.01,
+                2,
                 0.01,
                 0.01,
                 0.1,
@@ -77,7 +77,7 @@ public class Hood extends SubsystemBase {
         );
         this.leftSS = new VelocityStateSpaceModel(
                 leftSysId,
-                0.01,
+                2,
                 0.01,
                 0.01,
                 0.1,
@@ -113,17 +113,21 @@ public class Hood extends SubsystemBase {
         this.leftSS.setVelocity(speed);
     }
 
+    public void setActuatorVoltage(double voltage) {
+        elevation.setVoltage(voltage);
+    }
+
     public void setAngle(double radians) {
         aimStateSpace.setPosition(radians);
     }
 
     @Override
     public void periodic() {
-        //double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
-        //double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
         double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
         elevation.setVoltage(aimVoltage);
-        rightFlywheel.setVoltage(speed);
-        leftFlywheel.setVoltage(speed);
+        rightFlywheel.setVoltage(Math.abs(rightVoltage));
+        leftFlywheel.setVoltage(Math.abs(rightVoltage));
     }
 }
