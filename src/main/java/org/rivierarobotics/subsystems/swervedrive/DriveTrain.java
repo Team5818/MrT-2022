@@ -97,7 +97,7 @@ public class DriveTrain extends SubsystemBase {
     private double startTime = Timer.getFPGATimestamp();
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
-    public double targetRotationAngle = 0;
+    public double targetRotationAngle;
 
 
     private DriveTrain() {
@@ -151,6 +151,7 @@ public class DriveTrain extends SubsystemBase {
 
         var e = Executors.newSingleThreadScheduledExecutor();
         e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
+        this.targetRotationAngle = 0;
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -285,7 +286,7 @@ public class DriveTrain extends SubsystemBase {
             //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
             //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
             //new Rotation2d(Math.toRadians(targetRotationAngle))
-            new Rotation2d(Math.toRadians(0))
+            new Rotation2d(targetRotationAngle)
         );
         tab.setEntry("Pose Rot", getRobotPose().getRotation().getDegrees());
         tab.setEntry("TARGET ROT", controls.omegaRadiansPerSecond);

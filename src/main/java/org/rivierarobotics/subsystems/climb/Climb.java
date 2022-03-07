@@ -73,6 +73,7 @@ public class Climb extends SubsystemBase {
     }
 
     private final WPI_TalonFX climbMotor;
+    private final WPI_TalonFX climbMotor2;
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
@@ -92,12 +93,14 @@ public class Climb extends SubsystemBase {
         );
 
         this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
+        this.climbMotor2 = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
         climbMotor.configForwardSoftLimitEnable(false);
         climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
         climbMotor.configReverseSoftLimitEnable(false);
         climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
-        climbMotor.setNeutralMode(NeutralMode.Brake);
+        climbMotor.setNeutralMode(NeutralMode.Coast);
+        climbMotor2.setNeutralMode(NeutralMode.Coast);
         this.encoder = new DutyCycleEncoder(6);
         this.encoder.setDistancePerRotation(2 * Math.PI);
 
