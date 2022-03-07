@@ -33,7 +33,7 @@ public class SimpleAuto extends CommandBase {
 
     @Override
     public void initialize() {
-        dt.drivePath("diag");
+        dt.drivePath("Straight");
     }
 
     @Override

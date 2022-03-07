@@ -25,13 +25,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.climb.ClimbControl;
-import org.rivierarobotics.commands.climb.SetPistonState;
+import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 public class Robot extends TimedRobot {
@@ -84,6 +83,7 @@ public class Robot extends TimedRobot {
         initializeAllSubsystems();
         initializeDefaultCommands();
         Climb.getInstance().setOffset();
+        Gyro.getInstance().resetGyro();
     }
 
     private void shuffleboardLogging() {
@@ -91,9 +91,10 @@ public class Robot extends TimedRobot {
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
         var limeLight = sb.getTab("LL");
+        var collect = sb.getTab("collect");
         var dt = DriveTrain.getInstance();
-        var ll = Limelight.getInstance();
         var cl = Climb.getInstance();
+        var col = Intake.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -106,6 +107,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("is field centric", dt.getFieldCentric());
 
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
+        drive.setEntry("Gyro Angle raw", Gyro.getInstance().getAngle());
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Ticks", cl.getRawTicks());
@@ -116,11 +118,9 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston mid", cl.isPistonSet(Climb.Position.MID));
         climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
 
-        limeLight.setEntry("lly", ll.getTy());
-        limeLight.setEntry("llx", ll.getTx());
-        limeLight.setEntry("ll detected", ll.getDetected());
-        limeLight.setEntry("ll Distance", ll.getDistance());
-        limeLight.setEntry("Please work", 69420);
+        collect.setEntry("ispositive", col.getIsPositive());
+        collect.setEntry("belt voltage", col.getBeltVoltage());
+        collect.setEntry("roller voltage", col.getIntakeVoltage());
     }
 
     @Override
@@ -145,10 +145,8 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.LOW, true, 0));
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.MID, true, 0));
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new SetPistonState(Climb.Position.HIGH, true, 0));
+        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
     }
 
     private void initializeCustomLoops() {

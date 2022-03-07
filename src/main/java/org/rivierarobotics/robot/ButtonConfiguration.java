@@ -24,10 +24,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.auto.SimpleAuto;
+import org.rivierarobotics.commands.auto.TestCollectAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
+import org.rivierarobotics.commands.collect.CollectControl;
+import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
@@ -39,15 +43,18 @@ public class ButtonConfiguration {
     public void initTeleop() {
         //DRIVER JOYSTICK BUTTONS
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
-                .whileHeld(new TestPathGeneration());
+                .toggleWhenPressed(new CollectToggle(true, true, true));
+
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+                .toggleWhenPressed(new CollectToggle(false, true, true));
+
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new SetDriveAngle(-90, 0.1));
+                .whileHeld(new TestPathGeneration(1,0));
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1).
+                whileHeld(new SimpleAuto());
 
         //CO-DRIVER JOYSTICK BUTTONS
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
-                .whenPressed(new RunClimb(false));
+
 
         //DRIVER BUTTONS
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
@@ -61,6 +68,7 @@ public class ButtonConfiguration {
                 sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
             }
         }));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whenPressed(new SetCameraCentric());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
             for (var sm : DriveTrain.getInstance().getSwerveModules()) {
                 sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(Math.PI / 2)));
@@ -72,8 +80,7 @@ public class ButtonConfiguration {
             }
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, false));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12).whenPressed(new InstantCommand(() -> Hood.getInstance().setSpeed(1)));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
         //CO-DRIVER BUTTONS

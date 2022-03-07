@@ -26,6 +26,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import org.rivierarobotics.robot.Logging;
 
 import java.lang.reflect.Type;
@@ -44,8 +45,8 @@ public class MLCore {
         return INSTANCE;
     }
 
-    public static final double ANGLE_PER_PIXEL_X = 1.125 / 4.0;
-    public static final double ANGLE_PER_PIXEL_Y = 0.75 / 2.0;
+    public static final double ANGLE_PER_PIXEL_X = 1 / 6.0;
+    public static final double ANGLE_PER_PIXEL_Y = 1 / 6.0;
     public static final int CAMERA_WIDTH = 640;
     public static final int CAMERA_HEIGHT = 480;
 

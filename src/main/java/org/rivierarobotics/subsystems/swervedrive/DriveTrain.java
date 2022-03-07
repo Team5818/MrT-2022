@@ -36,6 +36,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
@@ -69,6 +70,7 @@ public class DriveTrain extends SubsystemBase {
 
     //Drive Speed Constants
     public static final double MAX_SPEED = 1.25; // m/s
+    public static final double MAX_CHANGE_IN_VELOCITY = 0.5; // m/s
     public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
     //Module Mappings / Measurements
@@ -95,7 +97,8 @@ public class DriveTrain extends SubsystemBase {
     private double startTime = Timer.getFPGATimestamp();
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
-    public double targetRotationAngle = 0;
+    public double targetRotationAngle;
+
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center (m)
@@ -104,10 +107,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -4008, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -644, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -966, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -771, false, true);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -810, false, true);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1018, false, true);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -713, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3995, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -148,6 +151,7 @@ public class DriveTrain extends SubsystemBase {
 
         var e = Executors.newSingleThreadScheduledExecutor();
         e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
+        this.targetRotationAngle = 0;
     }
 
     public void setSwerveModuleAngle(double angle) {
@@ -174,6 +178,39 @@ public class DriveTrain extends SubsystemBase {
         return this.swerveDriveKinematics;
     }
 
+    private double[] limitSpeeds(double xSpeed, double ySpeed) {
+        var cs = getChassisSpeeds();
+        var currentSpeed = Math.sqrt(Math.pow(cs.vxMetersPerSecond, 2) + Math.pow(cs.vyMetersPerSecond, 2));
+        var targetSpeed = Math.sqrt(Math.pow(xSpeed,2) + Math.pow(ySpeed,2));
+
+        var anglediff = Math.atan((ySpeed - cs.vyMetersPerSecond) / (xSpeed - cs.vxMetersPerSecond));
+        var maxChangeInXSpeed = Math.cos(anglediff) * MAX_CHANGE_IN_VELOCITY;
+        var maxChangeInYSpeed = Math.sin(anglediff) * MAX_CHANGE_IN_VELOCITY;
+
+        var speeds = new double[2];
+//        SmartDashboard.putNumber("limited change", Math.cos(Math.atan((ySpeed - cs.vyMetersPerSecond) / (xSpeed - cs.vxMetersPerSecond))) * MAX_CHANGE_IN_VELOCITY);
+        SmartDashboard.putNumber("Chassis x speed", cs.vxMetersPerSecond);
+        SmartDashboard.putNumber("Chassis y speed", cs.vyMetersPerSecond);
+
+
+
+//        if (Math.abs(targetSpeed - currentSpeed) > MAX_CHANGE_IN_VELOCITY) {
+//            if (targetSpeed - currentSpeed > 0) {
+//                speeds[0] = targetSpeed > MAX_SPEED ? Math.cos(anglediff) * MAX_SPEED  : cs.vxMetersPerSecond + maxChangeInXSpeed;
+//                speeds[1] = targetSpeed > MAX_SPEED ? Math.sin(anglediff) * MAX_SPEED  : cs.vyMetersPerSecond + maxChangeInXSpeed;
+//            } else {
+//                speeds[0] = targetSpeed < -MAX_SPEED ? Math.cos(anglediff) * -MAX_SPEED  : cs.vxMetersPerSecond - maxChangeInXSpeed;
+//                speeds[1] = targetSpeed < -MAX_SPEED ? Math.sin(anglediff) * -MAX_SPEED  : cs.vyMetersPerSecond - maxChangeInXSpeed;
+//            }
+//        } else {
+            speeds[0] = cs.vxMetersPerSecond;
+            speeds[1] = cs.vyMetersPerSecond;
+//        }
+// (xSpeed - cs.vxMetersPerSecond > 0 ? cs.vxMetersPerSecond + 0.1 : cs.vxMetersPerSecond - 0.1
+
+        return speeds;
+    }
+
     /**
      * Method to drive the robot using joystick info.
      *
@@ -183,6 +220,26 @@ public class DriveTrain extends SubsystemBase {
      * @param fieldRelative Whether the provided x and y speeds are relative to the field.
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+//        var limitedSpeeds = limitSpeeds(xSpeed, ySpeed);
+//
+//        SmartDashboard.putNumber( "limited xSpeed", limitedSpeeds[0]);
+//        SmartDashboard.putNumber("xspeed", xSpeed);
+//        SmartDashboard.putNumber("limited ySpeed", limitedSpeeds[1]);
+//        SmartDashboard.putNumber("yspeed", ySpeed);
+//
+//        var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
+//                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot, gyro.getRotation2d())
+//                        : new ChassisSpeeds(limitedSpeeds[0], limitedSpeeds[1], rot)
+//        );
+//        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
+//        for (int i = 0; i < swerveModuleStates.length; i++) {
+//            swerveModules[i].setDesiredState(swerveModuleStates[i]);
+//        }
+        SmartDashboard.putNumber( "xspeed", xSpeed);
+        SmartDashboard.putNumber("chassisx", getChassisSpeeds().vxMetersPerSecond);
+        SmartDashboard.putNumber("yspeed", ySpeed);
+        SmartDashboard.putNumber("chassisy", getChassisSpeeds().vyMetersPerSecond);
+
         var swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
                         : new ChassisSpeeds(xSpeed, ySpeed, rot)
@@ -229,7 +286,7 @@ public class DriveTrain extends SubsystemBase {
             //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
             //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
             //new Rotation2d(Math.toRadians(targetRotationAngle))
-            new Rotation2d(Math.toRadians(0))
+            new Rotation2d(targetRotationAngle)
         );
         tab.setEntry("Pose Rot", getRobotPose().getRotation().getDegrees());
         tab.setEntry("TARGET ROT", controls.omegaRadiansPerSecond);
@@ -245,7 +302,7 @@ public class DriveTrain extends SubsystemBase {
         resetLock.lock();
         try {
             var pose2d = swerveDrivePoseEstimator.update(
-                gyro.getRotation2d(),
+                Rotation2d.fromDegrees(gyro.getAngle() - 180),
                 swerveModules[0].getState(),
                 swerveModules[1].getState(),
                 swerveModules[2].getState(),
