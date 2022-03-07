@@ -22,6 +22,8 @@ package org.rivierarobotics.commands.auto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.apache.commons.math3.analysis.function.Log;
+import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.aifield.FieldMesh;
@@ -29,15 +31,24 @@ import org.rivierarobotics.util.aifield.FieldMesh;
 public class TestPathGeneration extends CommandBase {
     private final DriveTrain driveTrain;
     private final FieldMesh aiFieldMesh;
+    private final double relativeX;
+    private final double relativeY;
 
-    public TestPathGeneration() {
+    public TestPathGeneration(double relativeX, double relativeY) {
         this.driveTrain = DriveTrain.getInstance();
         this.aiFieldMesh = FieldMesh.getInstance();
+        this.relativeX = relativeX;
+        this.relativeY = relativeY;
     }
 
     @Override
     public void initialize() {
-        var trajectory = aiFieldMesh.getTrajectory(0, 0, 1, 1, true, 0, driveTrain.getSwerveDriveKinematics());
+        var currentX = driveTrain.getRobotPose().getX();
+        var currentY = driveTrain.getRobotPose().getY();
+        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, currentX + relativeX, currentY + relativeY, true, 0, driveTrain.getSwerveDriveKinematics());
+
+        Logging.robotShuffleboard.getTab("Drive").setEntry("target position X", currentX + relativeX);
+        Logging.robotShuffleboard.getTab("Drive").setEntry("target position Y", currentY + relativeY);
         Logging.aiFieldDisplay.updatePath(trajectory);
         if (trajectory != null) {
             driveTrain.drivePath(trajectory);

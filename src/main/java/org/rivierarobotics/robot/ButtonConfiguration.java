@@ -24,6 +24,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.auto.SimpleAuto;
+import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
@@ -48,8 +50,8 @@ public class ButtonConfiguration {
                 .whileHeld(new SetDriveAngle(-90, 0.1));
 
         //CO-DRIVER JOYSTICK BUTTONS
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
-                .whenPressed(new RunClimb(false));
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
+                .whileHeld(new SimpleAuto());
 
         //DRIVER BUTTONS
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
