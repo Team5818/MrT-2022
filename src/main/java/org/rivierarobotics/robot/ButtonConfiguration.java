@@ -73,7 +73,7 @@ public class ButtonConfiguration {
         }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, false));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12).whenPressed(new InstantCommand(() -> Hood.getInstance().setSpeed(3)));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12).whenPressed(new InstantCommand(() -> Hood.getInstance().setSpeed(1)));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
         //CO-DRIVER BUTTONS

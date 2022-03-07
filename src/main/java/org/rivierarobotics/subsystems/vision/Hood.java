@@ -47,14 +47,14 @@ public class Hood extends SubsystemBase {
     private final WPI_TalonFX leftFlywheel;
     private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax elevation;
-    private final DutyCycleEncoder encoder;
+    //private final DutyCycleEncoder encoder;
     private final double fireMaxVoltage = 5;
     private final double aimMaxVoltage = 5;
 
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
-    private SystemIdentification aimSysId = new SystemIdentification(0.0, 0.001, 0.001);
+    private SystemIdentification aimSysId = new SystemIdentification(0.01, 0.01, 0.01);
     private SystemIdentification leftSysId = new SystemIdentification(0.0, 0.001, 0.001);
     private SystemIdentification rightSysId = new SystemIdentification(0.0, 0.001, 0.001);
 
@@ -62,8 +62,8 @@ public class Hood extends SubsystemBase {
         this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
-        this.encoder = new DutyCycleEncoder(0);
-        this.encoder.setDistancePerRotation(2 * Math.PI);
+        //this.encoder = new DutyCycleEncoder(0);
+       // this.encoder.setDistancePerRotation(2 * Math.PI);
         this.angle = getAngle();
         //TODO: all of this sysid
         this.rightSS = new VelocityStateSpaceModel(
@@ -71,7 +71,7 @@ public class Hood extends SubsystemBase {
                 0.01,
                 0.01,
                 0.01,
-                0.01,
+                0.1,
                 fireMaxVoltage
 
         );
@@ -80,7 +80,7 @@ public class Hood extends SubsystemBase {
                 0.01,
                 0.01,
                 0.01,
-                0.01,
+                0.1,
                 fireMaxVoltage
 
         );
@@ -104,10 +104,11 @@ public class Hood extends SubsystemBase {
     }
 
     public double getAngle() {
-        return encoder.getDistance();
+        return 2.0;
     }
 
     public void setSpeed(double speed) {
+        this.speed = speed;
         this.rightSS.setVelocity(speed);
         this.leftSS.setVelocity(speed);
     }
@@ -118,11 +119,11 @@ public class Hood extends SubsystemBase {
 
     @Override
     public void periodic() {
-        double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
-        double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        //double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        //double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
         double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
         elevation.setVoltage(aimVoltage);
-        rightFlywheel.setVoltage(rightVoltage);
-        leftFlywheel.setVoltage(leftVoltage);
+        rightFlywheel.setVoltage(speed);
+        leftFlywheel.setVoltage(speed);
     }
 }
