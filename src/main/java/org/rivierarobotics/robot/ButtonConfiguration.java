@@ -47,11 +47,12 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(new CollectToggle(false, true, true));
 
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new SetDriveAngle(-90, 0.1));
+                .whileHeld(new TestPathGeneration(1,1));
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1).
+                whileHeld(new SimpleAuto());
 
         //CO-DRIVER JOYSTICK BUTTONS
-        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .whileHeld(new SimpleAuto());
+
 
         //DRIVER BUTTONS
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));

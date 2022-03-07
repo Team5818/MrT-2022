@@ -88,7 +88,7 @@ public class SwerveModule extends SubsystemBase {
             this.driveMotor2 = new WPI_TalonFX(driveMotorChannel);
             driveMotor2.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
             driveMotor2.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
-            driveMotor2.setNeutralMode(NeutralMode.Coast);
+            driveMotor2.setNeutralMode(NeutralMode.Brake);
             steeringMotor.setInverted(true);
         } else {
             this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);

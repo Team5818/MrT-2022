@@ -301,7 +301,7 @@ public class DriveTrain extends SubsystemBase {
         resetLock.lock();
         try {
             var pose2d = swerveDrivePoseEstimator.update(
-                gyro.getRotation2d(),
+                Rotation2d.fromDegrees(gyro.getAngle() - 180),
                 swerveModules[0].getState(),
                 swerveModules[1].getState(),
                 swerveModules[2].getState(),
