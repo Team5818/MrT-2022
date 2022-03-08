@@ -139,6 +139,7 @@ public class Robot extends TimedRobot {
         collect.setEntry("color sensor occupied", col.colorSensorHasBall());
         collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
         collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
+        collect.setEntry("Is Full", col.getIsFull());
 
         BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
 
@@ -179,8 +180,12 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+<<<<<<< HEAD
         CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
+=======
+        //CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
+>>>>>>> ball descender implimented
     }
 
     private void initializeCustomLoops() {

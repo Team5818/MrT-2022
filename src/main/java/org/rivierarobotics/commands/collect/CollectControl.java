@@ -14,12 +14,14 @@ public class CollectControl extends CommandBase {
     public CollectControl(){
         this.intake = Intake.getInstance();
         this.rightJoystick = ControlMap.CO_DRIVER_RIGHT;
+        intake.setIntakeState(false);
         addRequirements(intake);
     }
 
     @Override
     public void execute() {
         var voltage = MathUtil.fitDeadband(rightJoystick.getY()) * 10;
+        //intake.setIntakeState(false);
         SmartDashboard.putNumber("beltvoltage", voltage);
         intake.setVoltages(voltage, voltage);
     }

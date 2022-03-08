@@ -246,7 +246,11 @@ public class DriveTrain extends SubsystemBase {
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
+<<<<<<< HEAD
             //swerveModules[i].setDesiredState(swerveModuleStates[i]);
+=======
+//            swerveModules[i].setDesiredState(swerveModuleStates[i]);
+>>>>>>> ball descender implimented
         }
     }
 
@@ -302,7 +306,7 @@ public class DriveTrain extends SubsystemBase {
         resetLock.lock();
         try {
             var pose2d = swerveDrivePoseEstimator.update(
-                Rotation2d.fromDegrees(gyro.getAngle() - 180),
+                gyro.getRotation2d(),
                 swerveModules[0].getState(),
                 swerveModules[1].getState(),
                 swerveModules[2].getState(),

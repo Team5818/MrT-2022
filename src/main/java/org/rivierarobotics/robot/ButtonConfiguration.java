@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.PathGeneration;
 import org.rivierarobotics.commands.auto.SimpleAuto;
@@ -30,11 +31,13 @@ import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.collect.CollectVisionTest;
 import org.rivierarobotics.commands.collect.DriveToClosest;
+import org.rivierarobotics.commands.collect.IntakeDeployToggle;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.commands.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.commands.shoot.SetShooterVoltage;
 import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
 
@@ -50,13 +53,17 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new PathGeneration(1,0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1).
+<<<<<<< HEAD
                 toggleWhenPressed(new SetFlywheelSpeed(0));
+=======
+                toggleWhenPressed(new IntakeDeployToggle());
+>>>>>>> ball descender implimented
 
         //CO-DRIVER JOYSTICK BUTTONS
 
 
         //DRIVER BUTTONS
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whileHeld(new DriveToClosest());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new InstantCommand(() -> Intake.getInstance().setVoltages(-8,0)).andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3).whenPressed(new SetWheelbaseAngle(0).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 4).whenPressed(new SetWheelbaseAngle(-90).withTimeout(2));

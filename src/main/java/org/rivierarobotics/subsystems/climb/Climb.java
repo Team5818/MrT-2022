@@ -55,9 +55,15 @@ public class Climb extends SubsystemBase {
     private static final double GEARING = 1 / 450.0;
 
     public enum Position {
+<<<<<<< HEAD
         LOW(LOW_RADIANS, new Piston(2), new DigitalInput(9)),
         MID(MID_RADIANS, new Piston(1), new DigitalInput(8)),
         HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(7));
+=======
+        LOW(LOW_RADIANS, new Piston(3), new DigitalInput(2)),
+        MID(MID_RADIANS, new Piston(4), new DigitalInput(1)),
+        HIGH(HIGH_RADIANS, new Piston(5), new DigitalInput(0));
+>>>>>>> ball descender implimented
 
         public final double locationRadians;
         public final Piston piston;

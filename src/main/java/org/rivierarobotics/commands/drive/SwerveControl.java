@@ -55,13 +55,13 @@ public class SwerveControl extends CommandBase {
     public void execute() {
         var leftJoystick = ControlMap.DRIVER_LEFT;
         var rightJoystick = ControlMap.DRIVER_RIGHT;
-        var xSpeed = -MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
-        var ySpeed = -MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
+        var xSpeed = - MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
+        var ySpeed = - MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
 
-        var rot = - MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
+        var rot = MathUtil.fitDeadband(rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
         if (rot == 0) {
-            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
+            driveTrain.drive(xSpeed, ySpeed, 0, driveTrain.getFieldCentric());
         } else {
             driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
             driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());

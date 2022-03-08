@@ -42,8 +42,8 @@ public class Intake extends SubsystemBase {
         return intake;
     }
 
-//    private final Piston p1;
-//    private final Piston p2;
+    private final Piston p1;
+    private final Piston p2;
     private final CANSparkMax csm;
     private final WPI_TalonSRX tsrx;
     private final ColorSensorV3 colorSensorV3;
@@ -53,14 +53,15 @@ public class Intake extends SubsystemBase {
     private double intakeVoltage = 0;
     private double beltVoltage = 0;
     private boolean isDeployed = false;
+    private boolean isFull = false;
     private int isPositive = 0;
 
 
     //TODO: Extract ID's into MotorID's class
     public Intake() {
         // Figure out constants later
-//        p1 = new Piston(20);
-//        p2 = new Piston(21);
+        p1 = new Piston(1);
+        p2 = new Piston(2);
         this.colorSensorV3 = new ColorSensorV3(I2C.Port.kOnboard);
         this.distanceSensor = new AnalogInput(3);
         csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -68,14 +69,14 @@ public class Intake extends SubsystemBase {
     }
 
     public void setIntakeState(boolean deploy) {
-//        p1.set(deploy);
-//        p2.set(deploy);
+        p1.set(!deploy);
+        p2.set(!deploy);
         this.isDeployed = deploy;
     }
 
-//    public boolean getIntakeState() {
-//        return p1.getState();
-//    }
+    public boolean getIntakeState() {
+        return p1.getState();
+    }
 
     public double getIntakeVoltage() {
         return this.intakeVoltage;
@@ -106,6 +107,14 @@ public class Intake extends SubsystemBase {
 
     public boolean canCollect() {
         return !colorSensorHasBall() || !distanceSensorHasBall();
+    }
+
+    public void setIsFull(boolean isFull) {
+        this.isFull = isFull;
+    }
+
+    public boolean getIsFull(){
+        return isFull;
     }
 
     public void setVoltages(double beltVoltage, double intakeVoltage) {
