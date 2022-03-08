@@ -40,6 +40,8 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Hood;
 
+import javax.naming.ldap.Control;
+
 public class ButtonConfiguration {
     public void initTeleop() {
         //DRIVER JOYSTICK BUTTONS
@@ -52,7 +54,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new TestPathGeneration(1,0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1).
-                toggleWhenPressed(new SetFlywheelSpeed(10));
+                toggleWhenPressed(new SetFlywheelSpeed(0));
 
         //CO-DRIVER JOYSTICK BUTTONS
 
@@ -85,5 +87,14 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
         //CO-DRIVER BUTTONS
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new InstantCommand(() -> {
+            Hood.getInstance().setActuatorVoltage(1.5);
+        }));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new InstantCommand(() -> {
+            Hood.getInstance().setActuatorVoltage(-1.5);
+        }));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whenPressed(new InstantCommand(() -> {
+            Hood.getInstance().setActuatorVoltage(0);
+        }));
     }
 }

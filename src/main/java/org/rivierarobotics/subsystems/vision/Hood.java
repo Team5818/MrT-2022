@@ -26,6 +26,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
@@ -47,9 +49,11 @@ public class Hood extends SubsystemBase {
     private final WPI_TalonFX leftFlywheel;
     private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax elevation;
-    //private final DutyCycleEncoder encoder;
+    private final DutyCycleEncoder encoder;
     private final double fireMaxVoltage = 5;
     private final double aimMaxVoltage = 5;
+    private final double AIM_DOWNWARD_LIMIT = 0.56 * Math.PI * 2;
+    private final double AIM_UPWARD_LIMIT = 0.3 * Math.PI * 2;
 
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
@@ -60,10 +64,11 @@ public class Hood extends SubsystemBase {
 
     public Hood() {
         this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        elevation.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
-        //this.encoder = new DutyCycleEncoder(0);
-       // this.encoder.setDistancePerRotation(2 * Math.PI);
+        this.encoder = new DutyCycleEncoder(0);
+        this.encoder.setDistancePerRotation(2 * Math.PI);
         this.angle = getAngle();
         //TODO: all of this sysid
         this.rightSS = new VelocityStateSpaceModel(
@@ -104,7 +109,7 @@ public class Hood extends SubsystemBase {
     }
 
     public double getAngle() {
-        return 2.0;
+        return encoder.getAbsolutePosition();
     }
 
     public void setSpeed(double speed) {
@@ -114,6 +119,11 @@ public class Hood extends SubsystemBase {
     }
 
     public void setActuatorVoltage(double voltage) {
+        if (encoder.getDistance() > AIM_DOWNWARD_LIMIT && voltage > 0) {
+            voltage = -1;
+        } else if (encoder.getDistance() < AIM_UPWARD_LIMIT && voltage < 0) {
+            voltage = 1;
+        }
         elevation.setVoltage(voltage);
     }
 
@@ -129,5 +139,6 @@ public class Hood extends SubsystemBase {
         elevation.setVoltage(aimVoltage);
         rightFlywheel.setVoltage(Math.abs(rightVoltage));
         leftFlywheel.setVoltage(Math.abs(rightVoltage));
+        SmartDashboard.putNumber("hood angle", getAngle());
     }
 }

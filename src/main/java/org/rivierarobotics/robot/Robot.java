@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        Shuffleboard.update();
         //Logging.aiFieldDisplay.update();
 
         //iterates through button frames
@@ -111,6 +112,8 @@ public class Robot extends TimedRobot {
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
         drive.setEntry("Gyro Angle raw", Gyro.getInstance().getAngle());
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
+
+        limeLight.setEntry("Hood Angle", Hood.getInstance().getAngle());
 
         climb.setEntry("Climb Ticks", cl.getRawTicks());
         climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
