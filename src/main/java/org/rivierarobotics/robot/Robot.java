@@ -33,7 +33,9 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
+import org.rivierarobotics.util.ml.MLObject;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -135,8 +137,20 @@ public class Robot extends TimedRobot {
         collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
         collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
 
+        BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
 
-        //ML.setEntry("closest ballx", )
+        MLObject ball = new MLObject("red", defaultBallBox, 1);
+
+        try {
+            ball = MLcore.getDetectedObjects().get("red").get(0);
+        } catch (NullPointerException nullPointerException){
+        }
+
+        ML.setEntry("Red BallX", ball.relativeLocationY);
+        ML.setEntry("Red BallY", ball.relativeLocationX);
+        ML.setEntry("Red Ball Distance", ball.relativeLocationDistance);
+        ML.setEntry("Red TX", ball.ty);
+        ML.setEntry("Red TY", ball.tx);
     }
 
     @Override

@@ -25,16 +25,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.auto.SimpleAuto;
-import org.rivierarobotics.commands.auto.TestCollectAuto;
-import org.rivierarobotics.commands.auto.TestPathGeneration;
-import org.rivierarobotics.commands.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.climb.RunClimb;
+import org.rivierarobotics.commands.auto.PathGeneration;
 import org.rivierarobotics.commands.climb.WaitPiston;
-import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.collect.CollectVisionTest;
+import org.rivierarobotics.commands.collect.DriveToClosest;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
-import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -49,7 +45,7 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(new CollectToggle(false, true, true));
 
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new TestPathGeneration(1,0));
+                .whileHeld(new PathGeneration(1,0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1).
                 whileHeld(new SimpleAuto());
 
@@ -57,7 +53,7 @@ public class ButtonConfiguration {
 
 
         //DRIVER BUTTONS
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new CollectVisionTest());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whileHeld(new DriveToClosest());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3).whenPressed(new SetWheelbaseAngle(0).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 4).whenPressed(new SetWheelbaseAngle(-90).withTimeout(2));

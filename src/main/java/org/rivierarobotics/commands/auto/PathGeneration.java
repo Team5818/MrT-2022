@@ -28,13 +28,13 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.aifield.FieldMesh;
 
-public class TestPathGeneration extends CommandBase {
+public class PathGeneration extends CommandBase {
     private final DriveTrain driveTrain;
     private final FieldMesh aiFieldMesh;
     private final double relativeX;
     private final double relativeY;
 
-    public TestPathGeneration(double relativeX, double relativeY) {
+    public PathGeneration(double relativeX, double relativeY) {
         this.driveTrain = DriveTrain.getInstance();
         this.aiFieldMesh = FieldMesh.getInstance();
         this.relativeX = relativeX;

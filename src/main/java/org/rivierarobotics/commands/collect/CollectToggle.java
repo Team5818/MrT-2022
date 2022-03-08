@@ -5,15 +5,15 @@ import org.rivierarobotics.subsystems.intake.Intake;
 
 public class CollectToggle extends CommandBase {
     private final Intake intake;
-    private final double collectVoltage = 8.0;
+    private final double collectVoltage = 12.0;
     private final boolean targetPositive;
     private final boolean useIntake;
     private final boolean useRollers;
 
-    public CollectToggle(boolean isPositive, boolean useIntake, boolean useRollers){
+    public CollectToggle(boolean isPositive, boolean useBelts, boolean useRollers){
         this.intake = Intake.getInstance();
         this.targetPositive = isPositive;
-        this.useIntake = useIntake;
+        this.useIntake = useBelts;
         this.useRollers = useRollers;
         addRequirements(intake);
     }
