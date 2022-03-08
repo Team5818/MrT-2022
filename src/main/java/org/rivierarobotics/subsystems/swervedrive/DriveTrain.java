@@ -332,6 +332,15 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
+    public void updateRobotPose(Pose2d pose2d) {
+        resetLock.lock();
+        try {
+            swerveDrivePoseEstimator.addVisionMeasurement(pose2d, Timer.getFPGATimestamp());
+        } finally {
+            resetLock.unlock();
+        }
+    }
+
     public ChassisSpeeds getChassisSpeeds() {
         return swerveDriveKinematics.toChassisSpeeds(
                 swerveModules[0].getState(),
