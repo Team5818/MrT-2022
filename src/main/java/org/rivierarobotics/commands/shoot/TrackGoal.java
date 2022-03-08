@@ -18,31 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.drive;
+package org.rivierarobotics.commands.shoot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.vision.Limelight;
+import org.rivierarobotics.util.Gyro;
 
-public class SetCameraCentric extends CommandBase {
-    private final DriveTrain driveTrain;
+public class TrackGoal extends CommandBase {
+    private final Floppas floppas;
+    private final DriveTrain drive;
+    private final Limelight lime;
+    private double storedTx;
+    private Gyro gyro;
 
-    public SetCameraCentric() {
-        this.driveTrain = DriveTrain.getInstance();
+    public TrackGoal() {
+        this.floppas = Floppas.getInstance();
+        this.drive = DriveTrain.getInstance();
+        this.lime = Limelight.getInstance();
+        this.gyro = Gyro.getInstance();
+        addRequirements(floppas);
     }
 
     @Override
     public void execute() {
-        driveTrain.setFieldCentric(false);
+        if (lime.getDetected()) {
+            this.storedTx = lime.getTx();
+            SmartDashboard.putNumber("storedtx", storedTx);
+            drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
+        }
     }
 
-    //@Override
-    //public boolean isFinished() {
-    //    driveTrain.setFieldCentric(true);
-    //    return super.isFinished();
-    //}
-
-    @Override
-    public void end(boolean interrupted) {
-        driveTrain.setFieldCentric(interrupted);
-    }
 }

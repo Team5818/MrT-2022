@@ -24,14 +24,14 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
+import org.rivierarobotics.commands.shoot.ShooterControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
@@ -68,6 +68,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        Shuffleboard.update();
+        var sb = Logging.robotShuffleboard;
+        var limeLight = sb.getTab("LL");
+        limeLight.setEntry("Hood Angle", Floppas.getInstance().getAngle());
+
         //Logging.aiFieldDisplay.update();
 
         //iterates through button frames
@@ -94,7 +99,6 @@ public class Robot extends TimedRobot {
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
-        var limeLight = sb.getTab("LL");
         var collect = sb.getTab("collect");
         var ML = sb.getTab("ML");
 
@@ -116,7 +120,6 @@ public class Robot extends TimedRobot {
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
         drive.setEntry("Gyro Angle raw", Gyro.getInstance().getAngle());
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
-
         climb.setEntry("Climb Ticks", cl.getRawTicks());
         climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
         climb.setEntry("Switch mid", cl.isSwitchSet(Climb.Position.MID));
@@ -177,6 +180,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
+        CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
     }
 
     private void initializeCustomLoops() {

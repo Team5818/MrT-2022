@@ -32,8 +32,6 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
-import java.util.EnumMap;
-
 public class Climb extends SubsystemBase {
 
     public static Climb getInstance() {
@@ -57,9 +55,9 @@ public class Climb extends SubsystemBase {
     private static final double GEARING = 1 / 450.0;
 
     public enum Position {
-        LOW(LOW_RADIANS, new Piston(2), new DigitalInput(2)),
-        MID(MID_RADIANS, new Piston(1), new DigitalInput(1)),
-        HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(0));
+        LOW(LOW_RADIANS, new Piston(2), new DigitalInput(9)),
+        MID(MID_RADIANS, new Piston(1), new DigitalInput(8)),
+        HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(7));
 
         public final double locationRadians;
         public final Piston piston;
@@ -72,8 +70,7 @@ public class Climb extends SubsystemBase {
         }
     }
 
-    private final WPI_TalonFX climbMotor;
-    private final WPI_TalonFX climbMotor2;
+    private final WPI_TalonFX climbMotorA;
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
@@ -92,15 +89,13 @@ public class Climb extends SubsystemBase {
                 11
         );
 
-        this.climbMotor = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
-        this.climbMotor2 = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
-        climbMotor.configForwardSoftLimitEnable(false);
-        climbMotor.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
-        climbMotor.configReverseSoftLimitEnable(false);
-        climbMotor.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
+        this.climbMotorA = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
+        climbMotorA.configForwardSoftLimitEnable(false);
+        climbMotorA.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
+        climbMotorA.configReverseSoftLimitEnable(false);
+        climbMotorA.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
 
-        climbMotor.setNeutralMode(NeutralMode.Coast);
-        climbMotor2.setNeutralMode(NeutralMode.Coast);
+        climbMotorA.setNeutralMode(NeutralMode.Brake);
         this.encoder = new DutyCycleEncoder(6);
         this.encoder.setDistancePerRotation(2 * Math.PI);
 
@@ -119,9 +114,9 @@ public class Climb extends SubsystemBase {
 
     public void setCoast(boolean coast) {
         if (coast) {
-            climbMotor.setNeutralMode(NeutralMode.Coast);
+            climbMotorA.setNeutralMode(NeutralMode.Coast);
         } else {
-            climbMotor.setNeutralMode(NeutralMode.Brake);
+            climbMotorA.setNeutralMode(NeutralMode.Brake);
         }
 
     }
@@ -144,10 +139,10 @@ public class Climb extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         if (Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle())) {
-            climbMotor.setVoltage(0);
+            climbMotorA.setVoltage(0);
             return;
         }
-        climbMotor.setVoltage(voltage);
+        climbMotorA.setVoltage(voltage);
     }
 
     public double getAngle() {
@@ -155,7 +150,7 @@ public class Climb extends SubsystemBase {
     }
 
     public double getRawTicks() {
-        return climbMotor.getSelectedSensorPosition();
+        return climbMotorA.getSelectedSensorPosition();
     }
 
     public void followStateSpace() {
