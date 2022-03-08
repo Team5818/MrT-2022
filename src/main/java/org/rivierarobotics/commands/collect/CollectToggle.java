@@ -5,7 +5,7 @@ import org.rivierarobotics.subsystems.intake.Intake;
 
 public class CollectToggle extends CommandBase {
     private final Intake intake;
-    private final double collectVoltage = 7.0;
+    private final double collectVoltage = 8.0;
     private final boolean targetPositive;
     private final boolean useIntake;
     private final boolean useRollers;
@@ -24,10 +24,16 @@ public class CollectToggle extends CommandBase {
     }
 
     @Override
+    public boolean isFinished() {
+        return !intake.canCollect();
+    }
+
+    @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            intake.setVoltages(0,0);
+            //intake.setVoltages(0,0);
             return;
         }
+        intake.setVoltages(0,0);
     }
 }

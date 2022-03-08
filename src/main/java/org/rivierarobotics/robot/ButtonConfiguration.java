@@ -32,6 +32,7 @@ import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.collect.CollectToggle;
+import org.rivierarobotics.commands.collect.CollectVisionTest;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
@@ -56,7 +57,7 @@ public class ButtonConfiguration {
 
 
         //DRIVER BUTTONS
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new CollectVisionTest());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3).whenPressed(new SetWheelbaseAngle(0).withTimeout(2));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 4).whenPressed(new SetWheelbaseAngle(-90).withTimeout(2));

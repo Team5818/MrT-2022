@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -32,6 +33,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.ml.MLCore;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -92,9 +94,12 @@ public class Robot extends TimedRobot {
         var climb = sb.getTab("Climb");
         var limeLight = sb.getTab("LL");
         var collect = sb.getTab("collect");
+        var ML = sb.getTab("ML");
+
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
         var col = Intake.getInstance();
+        var MLcore = MLCore.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -121,6 +126,17 @@ public class Robot extends TimedRobot {
         collect.setEntry("ispositive", col.getIsPositive());
         collect.setEntry("belt voltage", col.getBeltVoltage());
         collect.setEntry("roller voltage", col.getIntakeVoltage());
+        collect.setEntry("color sensor proximity", col.getColorSensorV3().getProximity());
+        collect.setEntry("color sensor red", col.getColorSensorV3().getColor().red * 255);
+        collect.setEntry("color sensor green", col.getColorSensorV3().getColor().green * 255);
+        collect.setEntry("Color sensor Blue", col.getColorSensorV3().getColor().blue * 255);
+        collect.setEntry("can collect", col.canCollect());
+        collect.setEntry("color sensor occupied", col.colorSensorHasBall());
+        collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
+        collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
+
+
+        //ML.setEntry("closest ballx", )
     }
 
     @Override

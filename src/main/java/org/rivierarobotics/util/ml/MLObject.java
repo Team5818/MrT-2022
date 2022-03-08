@@ -22,7 +22,7 @@ package org.rivierarobotics.util.ml;
 
 public class MLObject {
     public static final double BALL_RADIUS = 2*0.12;
-    public static final double CAMERA_OFFSET = 0.775 - BALL_RADIUS;
+    public static final double CAMERA_OFFSET = 0.671 - BALL_RADIUS;
 
     public final String label;
     public final BoundingBox boundingBox;

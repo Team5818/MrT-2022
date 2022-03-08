@@ -31,7 +31,6 @@ public class CollectVisionTest extends CommandBase {
         try {
             ball = core.getDetectedObjects().get("red").get(0);
         } catch (NullPointerException nullPointerException){
-            return;
         }
 
         Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationY);
