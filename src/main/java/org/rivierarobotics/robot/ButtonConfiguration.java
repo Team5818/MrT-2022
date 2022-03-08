@@ -24,23 +24,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.auto.SimpleAuto;
-import org.rivierarobotics.commands.auto.TestCollectAuto;
 import org.rivierarobotics.commands.auto.TestPathGeneration;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
-import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
-import org.rivierarobotics.commands.drive.SetDriveAngle;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
-import org.rivierarobotics.commands.limelight.SetFlywheelSpeed;
+import org.rivierarobotics.commands.shoot.SetFlywheelSpeed;
+import org.rivierarobotics.commands.shoot.SetShooterVoltage;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Hood;
-
-import javax.naming.ldap.Control;
+import org.rivierarobotics.subsystems.vision.Floppas;
 
 public class ButtonConfiguration {
     public void initTeleop() {
@@ -87,14 +81,12 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
 
         //CO-DRIVER BUTTONS
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new InstantCommand(() -> {
-            Hood.getInstance().setActuatorVoltage(1.5);
-        }));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new InstantCommand(() -> {
-            Hood.getInstance().setActuatorVoltage(-1.5);
-        }));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whenPressed(new InstantCommand(() -> {
-            Hood.getInstance().setActuatorVoltage(0);
-        }));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new SetShooterVoltage(2).withTimeout(3));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new SetShooterVoltage(0.0).withTimeout(3));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whenPressed(new SetShooterVoltage(-2).withTimeout(3));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> Floppas.getInstance().setAngle(1)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> Floppas.getInstance().setAngle(2)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new InstantCommand(() -> Floppas.getInstance().setAngle(0)));
+
     }
 }

@@ -26,49 +26,50 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
 
-public class Hood extends SubsystemBase {
+public class Floppas extends SubsystemBase {
 
-    public static Hood getInstance() {
-        if (hood == null) {
-            hood = new Hood();
+    public static Floppas getInstance() {
+        if (floppas == null) {
+            floppas = new Floppas();
         }
-        return hood;
+        return floppas;
     }
 
-    private static Hood hood;
+    private static Floppas floppas;
     private double angle;
     private double speed = 0;
     private final WPI_TalonFX leftFlywheel;
     private final WPI_TalonFX rightFlywheel;
-    private final CANSparkMax elevation;
-    private final DutyCycleEncoder encoder;
+    private final CANSparkMax flopperMotor;
+    private final DutyCycleEncoder floppaEncoder;
     private final double fireMaxVoltage = 5;
-    private final double aimMaxVoltage = 5;
-    private final double AIM_DOWNWARD_LIMIT = 0.56 * Math.PI * 2;
-    private final double AIM_UPWARD_LIMIT = 0.3 * Math.PI * 2;
+    private final double aimMaxVoltage = 9;
+    private final double AIM_DOWNWARD_LIMIT = -3.24;
+    private final double AIM_UPWARD_LIMIT = -2.05;
+    private final double ZERO_ANGLE = -3.24;
 
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
-    private SystemIdentification aimSysId = new SystemIdentification(0.01, 0.01, 0.01);
+    private SystemIdentification aimSysId = new SystemIdentification(0.0, 2, 0.04);
     private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898, 0.00084794);
     private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898, 0.00084794);
 
-    public Hood() {
-        this.elevation = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
-        elevation.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    public Floppas() {
+        this.flopperMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        flopperMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
-        this.encoder = new DutyCycleEncoder(0);
-        this.encoder.setDistancePerRotation(2 * Math.PI);
+        this.floppaEncoder = new DutyCycleEncoder(0);
+        this.floppaEncoder.setDistancePerRotation(-2 * Math.PI);
         this.angle = getAngle();
         //TODO: all of this sysid
         this.rightSS = new VelocityStateSpaceModel(
@@ -91,25 +92,25 @@ public class Hood extends SubsystemBase {
         );
         this.aimStateSpace = new PositionStateSpaceModel(
                 aimSysId,
+                0.05,
+                0.2,
                 0.01,
                 0.01,
                 0.01,
-                0.01,
-                0.01,
-                0.01,
+                4,
                 aimMaxVoltage
 
         );
+        flopperMotor.setInverted(true);
         leftFlywheel.setInverted(true);
         leftFlywheel.setStatusFramePeriod(10, 20);
         leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         rightFlywheel.setStatusFramePeriod(10, 20);
         rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-
     }
 
     public double getAngle() {
-        return encoder.getAbsolutePosition();
+        return floppaEncoder.getDistance();
     }
 
     public void setSpeed(double speed) {
@@ -119,16 +120,19 @@ public class Hood extends SubsystemBase {
     }
 
     public void setActuatorVoltage(double voltage) {
-        if (encoder.getDistance() > AIM_DOWNWARD_LIMIT && voltage > 0) {
-            voltage = -1;
-        } else if (encoder.getDistance() < AIM_UPWARD_LIMIT && voltage < 0) {
-            voltage = 1;
+        if(floppaEncoder.getDistance() <= AIM_DOWNWARD_LIMIT && voltage < 0 || floppaEncoder.getDistance() >= AIM_UPWARD_LIMIT && voltage > 0) {
+            flopperMotor.setVoltage(0);
+            return;
         }
-        elevation.setVoltage(voltage);
+
+        flopperMotor.setVoltage(voltage);
     }
 
     public void setAngle(double radians) {
-        aimStateSpace.setPosition(radians);
+        var sb = Logging.robotShuffleboard;
+        var limeLight = sb.getTab("LL");
+        limeLight.setEntry("Hood Target", radians + ZERO_ANGLE);
+        aimStateSpace.setPosition(radians + ZERO_ANGLE);
     }
 
     @Override
@@ -136,9 +140,9 @@ public class Hood extends SubsystemBase {
         double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
         double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
         double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
-        elevation.setVoltage(aimVoltage);
-        rightFlywheel.setVoltage(Math.abs(rightVoltage));
-        leftFlywheel.setVoltage(Math.abs(rightVoltage));
+        setActuatorVoltage(aimVoltage);
+        //rightFlywheel.setVoltage(Math.abs(rightVoltage));
+        //leftFlywheel.setVoltage(Math.abs(rightVoltage));
         SmartDashboard.putNumber("hood angle", getAngle());
     }
 }

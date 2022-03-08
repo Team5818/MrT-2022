@@ -1,24 +1,24 @@
-package org.rivierarobotics.commands.limelight;
+package org.rivierarobotics.commands.shoot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.vision.Hood;
+import org.rivierarobotics.subsystems.vision.Floppas;
 
 public class SetFlywheelSpeed extends InstantCommand {
-    private final Hood hood;
+    private final Floppas floppas;
     private final double speed;
 
     public SetFlywheelSpeed(double speed) {
-        this.hood = Hood.getInstance();
+        this.floppas = Floppas.getInstance();
         this.speed = speed;
     }
 
     @Override
     public void initialize() {
-        hood.setSpeed(speed);
+        floppas.setSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        hood.setSpeed(0);
+        floppas.setSpeed(0);
     }
 }
