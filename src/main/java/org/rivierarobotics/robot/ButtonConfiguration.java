@@ -53,12 +53,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new PathGeneration(1,0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1).
-<<<<<<< HEAD
-                toggleWhenPressed(new SetFlywheelSpeed(0));
-=======
                 toggleWhenPressed(new IntakeDeployToggle());
->>>>>>> ball descender implimented
-
         //CO-DRIVER JOYSTICK BUTTONS
 
 

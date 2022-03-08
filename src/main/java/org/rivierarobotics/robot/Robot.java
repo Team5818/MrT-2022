@@ -180,12 +180,8 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-<<<<<<< HEAD
         CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
-=======
-        //CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
->>>>>>> ball descender implimented
     }
 
     private void initializeCustomLoops() {

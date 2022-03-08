@@ -246,11 +246,7 @@ public class DriveTrain extends SubsystemBase {
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
-<<<<<<< HEAD
-            //swerveModules[i].setDesiredState(swerveModuleStates[i]);
-=======
 //            swerveModules[i].setDesiredState(swerveModuleStates[i]);
->>>>>>> ball descender implimented
         }
     }
 
