@@ -42,7 +42,7 @@ public class Gyro {
 //        navX.reset();
     }
 
-    public double getAngle() {
+    private double getAngle() {
         return navX.getAngle();
     }
 

@@ -53,7 +53,6 @@ public class MLCore {
 
     public double closestBallTX = 0;
     public double closestBallTY = 0;
-    public double clo
 
     private static class MLResponseDeserializer implements JsonDeserializer<MLResponse> {
         public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)

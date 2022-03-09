@@ -49,8 +49,8 @@ public class DriveToClosest extends SequentialCommandGroup {
         Logging.robotShuffleboard.getTab("ML").setEntry("TX", ball.ty);
         Logging.robotShuffleboard.getTab("ML").setEntry("TY", ball.tx);
 
-        var targetX = currentX + Math.cos(Gyro.getInstance().getAngle() + ball.tx) * ball.relativeLocationDistance;
-        var targety = currentY + Math.sin(Gyro.getInstance().getAngle() + ball.tx) * ball.relativeLocationDistance;
+        var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + ball.tx) * ball.relativeLocationDistance;
+        var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + ball.tx) * ball.relativeLocationDistance;
 
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentX", currentX);
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentY", currentY);

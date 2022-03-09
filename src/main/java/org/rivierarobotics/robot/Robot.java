@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -93,7 +94,7 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
         Climb.getInstance().setOffset();
         Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().updateOdometry();
+        DriveTrain.getInstance().updateRobotPose(new Pose2d(25, 25, Gyro.getInstance().getRotation2d()));
 
     }
 
@@ -120,7 +121,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("is field centric", dt.getFieldCentric());
 
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
-        drive.setEntry("Gyro Angle raw", Gyro.getInstance().getAngle());
+        drive.setEntry("Gyro Angle raw", Gyro.getInstance().getRotation2d().getRadians());
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
         climb.setEntry("Climb Ticks", cl.getRawTicks());
         climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
