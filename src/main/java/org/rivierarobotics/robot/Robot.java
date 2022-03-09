@@ -104,11 +104,13 @@ public class Robot extends TimedRobot {
         var climb = sb.getTab("Climb");
         var collect = sb.getTab("collect");
         var ML = sb.getTab("ML");
+        var shoot = sb.getTab("shoot");
 
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
         var col = Intake.getInstance();
         var MLcore = MLCore.getInstance();
+        var flopp = Floppas.getInstance();
         field2d.setRobotPose(dt.getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -158,6 +160,10 @@ public class Robot extends TimedRobot {
         ML.setEntry("Red Ball Distance", ball.relativeLocationDistance);
         ML.setEntry("Red TX", ball.ty);
         ML.setEntry("Red TY", ball.tx);
+
+        shoot.setEntry("flywheel v", flopp.getSpeed());
+        shoot.setEntry("actuator angle", flopp.getAngle());
+
     }
 
     @Override

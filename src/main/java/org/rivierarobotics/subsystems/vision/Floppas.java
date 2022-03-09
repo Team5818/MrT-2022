@@ -139,6 +139,10 @@ public class Floppas extends SubsystemBase {
         this.leftSS.setVelocity(speed);
     }
 
+    public double getSpeed(){
+        return rightFlywheel.getSensorCollection().getIntegratedSensorVelocity();
+    }
+
     public void setActuatorVoltage(double voltage) {
         if(floppaEncoder.getDistance() <= AIM_DOWNWARD_LIMIT && voltage < 0 || floppaEncoder.getDistance() >= AIM_UPWARD_LIMIT && voltage > 0) {
             flopperMotor.setVoltage(0);

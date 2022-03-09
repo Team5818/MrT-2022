@@ -36,6 +36,7 @@ import org.rivierarobotics.commands.drive.SetCameraCentric;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.commands.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.commands.shoot.SetShooterVoltage;
+import org.rivierarobotics.commands.shoot.Shoot;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -51,9 +52,9 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(new CollectToggle(false, true, true));
 
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new PathGeneration(1,0));
-        new JoystickButton(ControlMap.DRIVER_LEFT, 1).
-                toggleWhenPressed(new DriveToClosest());
+                .whenPressed(new Shoot(10));
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
+        .whenPressed(new Shoot(20));
         //CO-DRIVER JOYSTICK BUTTONS
 
 
