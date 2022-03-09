@@ -1,6 +1,6 @@
 FIELD_WIDTH(m)
-50.0
+20.0
 FIELD_HEIGHT(m)
-50.0
+20.0
 AI_Resolution(cm)
-5.0
+7.0

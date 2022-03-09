@@ -28,6 +28,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.apache.commons.math3.analysis.function.Log;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
@@ -51,18 +52,19 @@ public class Floppas extends SubsystemBase {
     private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax flopperMotor;
     private final DutyCycleEncoder floppaEncoder;
-    private final double fireMaxVoltage = 5;
+    private final double fireMaxVoltage = 12;
     private final double aimMaxVoltage = 9;
     private final double AIM_DOWNWARD_LIMIT = -3.24;
     private final double AIM_UPWARD_LIMIT = -2.05;
     private final double ZERO_ANGLE = -3.24;
+    private final double VEL_TO_RADS = (2 * Math.PI / 4096) * 10;
 
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
     private SystemIdentification aimSysId = new SystemIdentification(0.0, 2, 0.04);
-    private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898, 0.00084794);
-    private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898, 0.00084794);
+    private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
+    private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private InterpolationTable intTable = new InterpolationTable();
 
     public Floppas() {
@@ -79,7 +81,7 @@ public class Floppas extends SubsystemBase {
                 2,
                 0.01,
                 0.01,
-                0.1,
+                0.9,
                 fireMaxVoltage
 
         );
@@ -88,7 +90,7 @@ public class Floppas extends SubsystemBase {
                 2,
                 0.01,
                 0.01,
-                0.1,
+                0.9,
                 fireMaxVoltage
 
         );
@@ -103,8 +105,10 @@ public class Floppas extends SubsystemBase {
                 aimMaxVoltage
 
         );
+        leftSS.setVelocity(0);
+        rightSS.setVelocity(0);
         flopperMotor.setInverted(true);
-        leftFlywheel.setInverted(true);
+        leftFlywheel.setInverted(false);
         leftFlywheel.setStatusFramePeriod(10, 20);
         leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         rightFlywheel.setStatusFramePeriod(10, 20);
@@ -115,7 +119,7 @@ public class Floppas extends SubsystemBase {
         LAUNCHPAD_A(0,0,0),
         LAUNCHPAD_B(1,1,1),
         LOW_GOAL(2,2,2),
-        DUMP_SHOT(3,3,3);
+        FENDER(110,-2.42,3);
 
         public final double flyWheelSpeed;
         public final double floppaAngle;
@@ -139,8 +143,20 @@ public class Floppas extends SubsystemBase {
         this.leftSS.setVelocity(speed);
     }
 
-    public double getSpeed(){
-        return rightFlywheel.getSensorCollection().getIntegratedSensorVelocity();
+    public double getRightSpeed(){
+        return rightFlywheel.getSensorCollection().getIntegratedSensorVelocity() * VEL_TO_RADS;
+    }
+
+    public double getLeftSpeed(){
+        return leftFlywheel.getSensorCollection().getIntegratedSensorVelocity() * VEL_TO_RADS;
+    }
+
+    public double getTarget(boolean left) {
+        if (left) {
+            return leftSS.getTargetVelocity();
+        } else {
+            return rightSS.getTargetVelocity();
+        }
     }
 
     public void setActuatorVoltage(double voltage) {
@@ -161,13 +177,21 @@ public class Floppas extends SubsystemBase {
 
     @Override
     public void periodic() {
-        double rightVoltage = rightSS.getAppliedVoltage(rightFlywheel.getSensorCollection().getIntegratedSensorVelocity());
-        double leftVoltage = leftSS.getAppliedVoltage(leftFlywheel.getSensorCollection().getIntegratedSensorVelocity());
+        double rightVoltage = rightSS.getAppliedVoltage(getRightSpeed());
+        double leftVoltage = leftSS.getAppliedVoltage(-getLeftSpeed());
         double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
-        setActuatorVoltage(aimVoltage);
-        //rightFlywheel.setVoltage(Math.abs(rightVoltage));
-        //leftFlywheel.setVoltage(Math.abs(rightVoltage));
+//        setActuatorVoltage(aimVoltage);
+        rightFlywheel.setVoltage(rightVoltage < 0 ? 0 : rightVoltage);
+        leftFlywheel.setVoltage(leftVoltage < 0 ? 0 : -leftVoltage);
+        var limeLight = Logging.robotShuffleboard.getTab("LL");
+        limeLight.setEntry("rightV", rightVoltage);
+        limeLight.setEntry("leftV", leftVoltage);
+
+
+
         SmartDashboard.putNumber("hood angle", getAngle());
+        SmartDashboard.putNumber("right SS", rightSS.getTargetVelocity());
+        SmartDashboard.putNumber("left SS", leftSS.getTargetVelocity());
     }
     public double getValueFromTable(double key){
         return intTable.getValue(key);

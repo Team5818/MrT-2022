@@ -13,6 +13,6 @@ public class SetShooterVoltage extends CommandBase {
 
     @Override
     public void execute() {
-        Floppas.getInstance().setActuatorVoltage(v);
+//        Floppas.getInstance().setActuatorVoltage(v);
     }
 }

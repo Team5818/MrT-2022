@@ -21,7 +21,6 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -161,8 +160,11 @@ public class Robot extends TimedRobot {
         ML.setEntry("Red TX", ball.ty);
         ML.setEntry("Red TY", ball.tx);
 
-        shoot.setEntry("flywheel v", flopp.getSpeed());
+        shoot.setEntry("flywheel right v", flopp.getRightSpeed());
+        shoot.setEntry("flywheel left v", -flopp.getLeftSpeed());
         shoot.setEntry("actuator angle", flopp.getAngle());
+        shoot.setEntry("right target", flopp.getTarget(false));
+        shoot.setEntry("left target", flopp.getTarget(true));
 
     }
 
@@ -199,7 +201,7 @@ public class Robot extends TimedRobot {
         }, DriveTrain.STATE_SPACE_LOOP_TIME, 0.0);
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
-        }, 0.5, 0.0);
+        }, 0.1, 0.0);
         addPeriodic(this::shuffleboardLogging, 0.5, 0.0);
     }
 

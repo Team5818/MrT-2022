@@ -1,8 +1,10 @@
 package org.rivierarobotics.commands.shoot;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.collect.CollectToggle;
+import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.vision.Floppas;
 
 public class Shoot extends SequentialCommandGroup {
@@ -11,9 +13,10 @@ public class Shoot extends SequentialCommandGroup {
         addCommands(
                 new SetFlywheelSpeed(speed),
                 new WaitCommand(1),
-                new CollectToggle(false, true,false),
-                new WaitCommand(1),
-                new SetFlywheelSpeed(0)
+                new CollectToggle(false, true,false).deadlineWith(new WaitCommand(2)),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
+
         );
     }
 

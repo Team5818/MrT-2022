@@ -52,9 +52,9 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(new CollectToggle(false, true, true));
 
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whenPressed(new Shoot(10));
+                .whenPressed(new Shoot(1));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-        .whenPressed(new Shoot(20));
+        .whenPressed(new Shoot(3));
         //CO-DRIVER JOYSTICK BUTTONS
 
 
@@ -92,6 +92,9 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> Floppas.getInstance().setAngle(1)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> Floppas.getInstance().setAngle(2)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new InstantCommand(() -> Floppas.getInstance().setAngle(0)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7).whenPressed(new InstantCommand(() -> Floppas.getInstance().setSpeed(110)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whenPressed(new InstantCommand(() -> Floppas.getInstance().setSpeed(0)));
+
 
     }
 }
