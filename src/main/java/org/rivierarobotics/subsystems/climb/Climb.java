@@ -44,20 +44,22 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -2.37;
+    private static final double LOW_RADIANS = -4.17;
     private static final double MID_RADIANS = 2.64;
-    private static final double HIGH_RADIANS = -4.88;
+    private static final double HIGH_RADIANS = -1.4;
+    public static final double MAX_RADS = 4.17;
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
     //TODO: Find Value using new climb once robot is built, these values are for the prototype.
     private static final int ENCODER_RESOLUTION = 2048;
     private static final double MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     private static final double GEARING = 1 / 450.0;
+    public static final double ZERO_RADS = 6.3;
 
     public enum Position {
-        LOW(LOW_RADIANS, new Piston(2), new DigitalInput(4), new DigitalInput(5)),
-        MID(MID_RADIANS, new Piston(1), new DigitalInput(6), new DigitalInput(7)),
-        HIGH(HIGH_RADIANS, new Piston(0), new DigitalInput(8), new DigitalInput(9));
+        LOW(LOW_RADIANS, new Piston(5), new DigitalInput(1), new DigitalInput(2)),
+        MID(MID_RADIANS, new Piston(4), new DigitalInput(3), new DigitalInput(4)),
+        HIGH(HIGH_RADIANS, new Piston(3), new DigitalInput(5), new DigitalInput(6));
 
         public final double locationRadians;
         public final Piston piston;
@@ -91,17 +93,18 @@ public class Climb extends SubsystemBase {
                 0.01,
                 0.01,
                 0.3,
-                11
+                9
         );
 
         this.climbMotorA = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
         this.climbMotorB = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
         climbMotorA.setNeutralMode(NeutralMode.Brake);
         climbMotorB.setNeutralMode(NeutralMode.Brake);
-        this.encoder = new DutyCycleEncoder(6);
+        climbMotorB.follow(climbMotorA);
+        climbMotorA.setInverted(true);
+        climbMotorB.setInverted(true);
+        this.encoder = new DutyCycleEncoder(7);
         this.encoder.setDistancePerRotation(2 * Math.PI);
-
-        setCoast(false);
     }
 
     public void setPiston(Position climbModule, boolean isEngaged) {
@@ -139,17 +142,19 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        if (Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle())) {
+        if (Math.abs(getAngle()) > MAX_RADS && Math.signum(-voltage) == Math.signum(getAngle())) {
             climbMotorA.setVoltage(0);
-            climbMotorB.setVoltage(0);
             return;
         }
         climbMotorA.setVoltage(voltage);
-        climbMotorB.setVoltage(voltage);
+    }
+
+    public void setOffset() {
+        encoder.reset();
     }
 
     public double getAngle() {
-        return encoder.getDistance() - zeroRadians;
+        return encoder.getDistance();
     }
 
     public double getRawTicks() {

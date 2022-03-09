@@ -65,14 +65,14 @@ public class Robot extends TimedRobot {
         //Logging.aiFieldDisplay.update();
 
         //iterates through button frames
-        tick++;
-        if (tick > 20) {
-            for (int i = 1; i <= 6; i++) {
-                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
-            }
-            this.frame = frame >= states.length ? 0 : frame + 1;
-            this.tick = 0;
-        }
+//        tick++;
+//        if (tick > 20) {
+//            for (int i = 1; i <= 6; i++) {
+//                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
+//            }
+//            this.frame = frame >= states.length ? 0 : frame + 1;
+//            this.tick = 0;
+//        }
     }
 
     @Override
@@ -81,6 +81,8 @@ public class Robot extends TimedRobot {
         initializeAllSubsystems();
         initializeDefaultCommands();
         Climb.getInstance().setOffset();
+        DriveTrain.getInstance().setTargetRotationAngle(0);
+        Gyro.getInstance().resetGyro();
     }
 
     private void shuffleboardLogging() {
@@ -104,7 +106,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
-        climb.setEntry("Climb Ticks", cl.getRawTicks());
+        climb.setEntry("Climb Position", cl.getAngle());
         climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
         climb.setEntry("Switch mid", cl.isSwitchSet(Climb.Position.MID));
         climb.setEntry("Switch high", cl.isSwitchSet(Climb.Position.HIGH));
