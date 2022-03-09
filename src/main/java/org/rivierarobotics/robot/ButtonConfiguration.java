@@ -53,7 +53,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whileHeld(new PathGeneration(1,0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 1).
-                toggleWhenPressed(new IntakeDeployToggle());
+                toggleWhenPressed(new DriveToClosest());
         //CO-DRIVER JOYSTICK BUTTONS
 
 

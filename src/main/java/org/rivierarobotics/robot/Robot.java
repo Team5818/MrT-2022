@@ -93,6 +93,8 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
         Climb.getInstance().setOffset();
         Gyro.getInstance().resetGyro();
+        DriveTrain.getInstance().updateOdometry();
+
     }
 
     private void shuffleboardLogging() {

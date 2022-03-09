@@ -49,6 +49,11 @@ public class MLCore {
     public static final double ANGLE_PER_PIXEL_Y = 1 / 6.0;
     public static final int CAMERA_WIDTH = 640;
     public static final int CAMERA_HEIGHT = 480;
+    public static final String TARGET_COLOR = "red";
+
+    public double closestBallTX = 0;
+    public double closestBallTY = 0;
+    public double clo
 
     private static class MLResponseDeserializer implements JsonDeserializer<MLResponse> {
         public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -106,4 +111,5 @@ public class MLCore {
         }
         return new MLResponse();
     }
+
 }

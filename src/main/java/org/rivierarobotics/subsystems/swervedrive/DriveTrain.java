@@ -97,6 +97,7 @@ public class DriveTrain extends SubsystemBase {
     private double startTime = Timer.getFPGATimestamp();
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
+    private boolean isCollectMode = false;
     public double targetRotationAngle;
 
 
@@ -107,10 +108,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -810, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1018, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -713, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3995, false, true);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -803 + 2048, false, true);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1036 + 2048, false, true);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -674 + 2048, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1078 + 2048, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -246,7 +247,7 @@ public class DriveTrain extends SubsystemBase {
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
         for (int i = 0; i < swerveModuleStates.length; i++) {
-//            swerveModules[i].setDesiredState(swerveModuleStates[i]);
+            swerveModules[i].setDesiredState(swerveModuleStates[i]);
         }
     }
 
@@ -302,7 +303,7 @@ public class DriveTrain extends SubsystemBase {
         resetLock.lock();
         try {
             var pose2d = swerveDrivePoseEstimator.update(
-                gyro.getRotation2d(),
+                    gyro.getRotation2d(),
                 swerveModules[0].getState(),
                 swerveModules[1].getState(),
                 swerveModules[2].getState(),

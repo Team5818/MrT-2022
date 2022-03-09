@@ -16,16 +16,20 @@ import org.rivierarobotics.util.ml.MLObject;
 public class DriveToClosest extends SequentialCommandGroup {
     private final BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
     private final DriveTrain driveTrain;
+    private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
 
 
     public DriveToClosest() {
         this.driveTrain = DriveTrain.getInstance();
         this.aiFieldMesh = FieldMesh.getInstance();
+        this.gyro = Gyro.getInstance();
     }
 
     @Override
     public void initialize() {
+        gyro.resetGyro();
+
         var currentX = driveTrain.getRobotPose().getX();
         var currentY = driveTrain.getRobotPose().getY();
 
@@ -45,7 +49,7 @@ public class DriveToClosest extends SequentialCommandGroup {
         Logging.robotShuffleboard.getTab("ML").setEntry("TX", ball.ty);
         Logging.robotShuffleboard.getTab("ML").setEntry("TY", ball.tx);
 
-        var targetX = currentX - Math.cos(Gyro.getInstance().getAngle() + ball.tx) * ball.relativeLocationDistance;
+        var targetX = currentX + Math.cos(Gyro.getInstance().getAngle() + ball.tx) * ball.relativeLocationDistance;
         var targety = currentY + Math.sin(Gyro.getInstance().getAngle() + ball.tx) * ball.relativeLocationDistance;
 
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentX", currentX);
@@ -55,14 +59,14 @@ public class DriveToClosest extends SequentialCommandGroup {
 
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX, targety, true, 0, driveTrain.getSwerveDriveKinematics());
 
-//        Logging.aiFieldDisplay.updatePath(trajectory);
-//        if (trajectory != null) {
-//            driveTrain.drivePath(trajectory);
-//        }
+        Logging.aiFieldDisplay.updatePath(trajectory);
+        if (trajectory != null) {
+            driveTrain.drivePath(trajectory);
+        }
     }
 
-//    @Override
-//    public boolean isFinished() {
-//        return !driveTrain.followHolonomicController();
-//    }
+    @Override
+    public boolean isFinished() {
+        return !driveTrain.followHolonomicController();
+    }
 }
