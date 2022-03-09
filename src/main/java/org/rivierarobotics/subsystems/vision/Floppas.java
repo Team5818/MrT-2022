@@ -109,6 +109,24 @@ public class Floppas extends SubsystemBase {
         rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
+    public enum ShooterLocations{
+        LAUNCHPAD_A(0,0,0),
+        LAUNCHPAD_B(1,1,1),
+        LOW_GOAL(2,2,2),
+        DUMP_SHOT(3,3,3);
+
+        public final double flyWheelSpeed;
+        public final double floppaAngle;
+        public final double driveAngle;
+
+        ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle){
+            this.flyWheelSpeed = flyWheelSpeed;
+            this.floppaAngle = floppaAngle;
+            this.driveAngle = driveAngle;
+        }
+    }
+
+
     public double getAngle() {
         return floppaEncoder.getDistance();
     }
