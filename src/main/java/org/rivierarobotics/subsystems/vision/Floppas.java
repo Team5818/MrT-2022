@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
+import org.rivierarobotics.util.InterpolationTable;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
@@ -62,6 +63,7 @@ public class Floppas extends SubsystemBase {
     private SystemIdentification aimSysId = new SystemIdentification(0.0, 2, 0.04);
     private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898, 0.00084794);
     private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898, 0.00084794);
+    private InterpolationTable intTable = new InterpolationTable();
 
     public Floppas() {
         this.flopperMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -162,5 +164,8 @@ public class Floppas extends SubsystemBase {
         //rightFlywheel.setVoltage(Math.abs(rightVoltage));
         //leftFlywheel.setVoltage(Math.abs(rightVoltage));
         SmartDashboard.putNumber("hood angle", getAngle());
+    }
+    public double getValueFromTable(double key){
+        return intTable.getValue(key);
     }
 }
