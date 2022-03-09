@@ -44,7 +44,7 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -4.17;
+    private static final double LOW_RADIANS = -4.23;
     private static final double MID_RADIANS = 2.64;
     private static final double HIGH_RADIANS = -1.4;
     public static final double MAX_RADS = 4.17;

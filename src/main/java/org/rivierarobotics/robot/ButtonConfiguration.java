@@ -80,10 +80,10 @@ public class ButtonConfiguration {
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new InstantCommand(() -> Climb.getInstance().setPlay(false)));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new InstantCommand(() -> Climb.getInstance().setPlay(true)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.LOW, true)));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.LOW, false)));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.MID, true)));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.MID, false)));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.HIGH, true)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.MID, true)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.HIGH, true)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.LOW, false)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.MID, false)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new InstantCommand(() -> Climb.getInstance().setPiston(Climb.Position.HIGH, false)));
 
     }
