@@ -31,6 +31,9 @@ import org.rivierarobotics.util.ml.MLCore;
 public class SwerveControl extends CommandBase {
     //this finds the max turn speed based on the "wheel" ratio, then converts from radians to degrees
     private static final double MAX_TURN_SPEED = Math.PI * (1.4 / 24) * (100 / (2 * Math.PI));
+    public static double MIN_ROT = 0.0;
+    public static double TURN_SPEED = 0.3;
+    public static double MAX_SPEED = 5;
 
     private final DriveTrain driveTrain;
     private final MLCore mlCore;
@@ -42,13 +45,12 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 2.5)) {
+        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 0.2)) {
             return 0.0;
         }
-        double vel = (0.1 * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
-
-
-        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_TURN_SPEED);
+        double vel = (TURN_SPEED * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
+        if(Math.abs(vel) < MIN_ROT) return Math.signum(vel) * MIN_ROT;
+        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_SPEED);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class SwerveControl extends CommandBase {
         SmartDashboard.putNumber("rot", rot);
 
         if (rot == 0) {
-            driveTrain.drive(xSpeed, ySpeed, 0, driveTrain.getFieldCentric());
+            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
             SmartDashboard.putNumber("error",driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees());
             SmartDashboard.putNumber("targetspeed", getRotationSpeed());
         } else {

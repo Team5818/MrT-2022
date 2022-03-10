@@ -31,6 +31,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -69,10 +70,10 @@ public class DriveTrain extends SubsystemBase {
 
 
     //Drive Speed Constants
-    public static final double MAX_SPEED = 1.25; // m/s
+    public static final double MAX_SPEED = 2; // m/s
     public static final double MAX_CHANGE_IN_VELOCITY = 0.5; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 1.4 / 3; // rad/s
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 0.7 / 3; // rad/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 2; // rad/s
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 2; // rad/s
     //Module Mappings / Measurements
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
     private static final double WHEEL_DIST_TO_CENTER = 0.254; //m
@@ -108,10 +109,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -803 + 2048, false, true);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -819 + 2048, false, true);
         swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1036 + 2048, false, true);
         swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -674 + 2048, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1078 + 2048, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3279, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -132,7 +133,7 @@ public class DriveTrain extends SubsystemBase {
                 //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
                 //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01), //Vision Measurement stdev
-                .02
+                .05
         );
 
         this.holonomicDriveController = new HolonomicDriveController(
@@ -151,13 +152,13 @@ public class DriveTrain extends SubsystemBase {
         loggingTables[3] = new RSTable("BR", tab, new RSTileOptions(3, 4, 9, 0));
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
+        e.scheduleAtFixedRate(this::updateOdometry, 0, 50, TimeUnit.MILLISECONDS);
         this.targetRotationAngle = 0;
     }
 
     public void setSwerveModuleAngle(double angle) {
         for (var m : swerveModules) {
-            m.setSteeringMotorAngle(angle);
+            m.setDesiredState(new SwerveModuleState(0,new Rotation2d(angle)));
         }
     }
 

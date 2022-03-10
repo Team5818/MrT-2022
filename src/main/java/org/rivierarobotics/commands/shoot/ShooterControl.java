@@ -20,6 +20,6 @@ public class ShooterControl extends CommandBase {
     @Override
     public void execute() {
         var voltage = MathUtil.fitDeadband(joystick.getY()) * MaxVoltage;
-        floppas.setActuatorVoltage(voltage);
+        //floppas.setActuatorVoltage(voltage);
     }
 }

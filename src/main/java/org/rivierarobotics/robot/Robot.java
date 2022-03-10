@@ -120,6 +120,9 @@ public class Robot extends TimedRobot {
         drive.setEntry("y pose", dt.getRobotPose().getY());
         drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
+        drive.setEntry("minrot", SwerveControl.MIN_ROT);
+        drive.setEntry("turnspeed", SwerveControl.TURN_SPEED);
+        drive.setEntry("maxspeed", SwerveControl.MAX_SPEED);
 
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
         drive.setEntry("Gyro Angle raw", Gyro.getInstance().getRotation2d().getRadians());
@@ -201,7 +204,7 @@ public class Robot extends TimedRobot {
         }, DriveTrain.STATE_SPACE_LOOP_TIME, 0.0);
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
-        }, 0.1, 0.0);
+        }, 0.5, 0.0);
         addPeriodic(this::shuffleboardLogging, 0.5, 0.0);
     }
 

@@ -29,10 +29,13 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
@@ -50,13 +53,13 @@ public class SwerveModule extends SubsystemBase {
 
     private final double MAX_TURN_ACCELERATION = 30000; //Rad/s
     private final double MAX_TURN_VELOCITY = 30000; //Rad/s
-    private final int timeoutMs = 30;
+    private final int timeoutMs = 60;
 
     private CANSparkMax driveMotor;
     private WPI_TalonFX driveMotor2;
     private final boolean isNew;
     private final VelocityStateSpaceModel driveController;
-    private final SystemIdentification dmSID = new SystemIdentification(0.12859, 5.0379, 0.03951);
+    private final SystemIdentification dmSID = new SystemIdentification(0.25859, 1.4593, 0.13211);
     private final WPI_TalonSRX steeringMotor;
     private boolean setDriveEnabled = false;
 
@@ -103,12 +106,12 @@ public class SwerveModule extends SubsystemBase {
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
-                0.1, 4, 12, DriveTrain.STATE_SPACE_LOOP_TIME
+                0.1, 5.1, 7, DriveTrain.STATE_SPACE_LOOP_TIME
         );
         this.driveController.setKsTolerance(0.05);
 
-        this.steeringMotor.configContinuousCurrentLimit(40);
-        this.steeringMotor.configPeakCurrentLimit(40);
+        this.steeringMotor.configContinuousCurrentLimit(30);
+        this.steeringMotor.configPeakCurrentLimit(30);
     }
 
     private void configureMotionMagic() {
@@ -125,14 +128,14 @@ public class SwerveModule extends SubsystemBase {
         steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
         steeringMotor.configMotionAcceleration(MAX_TURN_ACCELERATION, timeoutMs);
         steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
-        steeringMotor.configMotionSCurveStrength(2, timeoutMs);
+        steeringMotor.configMotionSCurveStrength(1, timeoutMs);
 
-        steeringMotor.config_kP(0, 1, timeoutMs);
-        steeringMotor.config_kI(0, 0.0, timeoutMs);
+        steeringMotor.config_kP(0, 1.05, timeoutMs);
+        steeringMotor.config_kI(0, 0.00001, timeoutMs);
         steeringMotor.config_kD(0, 0.0, timeoutMs);
         steeringMotor.config_kF(0, 0.1, timeoutMs);
 
-        steeringMotor.config_IntegralZone(0, 100, timeoutMs);
+        steeringMotor.config_IntegralZone(0, 50, timeoutMs);
         steeringMotor.setSelectedSensorPosition(steeringMotor.getSelectedSensorPosition(), 0, timeoutMs);
 
     }
@@ -150,8 +153,20 @@ public class SwerveModule extends SubsystemBase {
         return clampAngle(getAngle());
     }
 
+    private double prevAngle = 0.0;
+    private double timeoutSeconds = 0.0;
     public double getAngle() {
-        return (steeringMotor.getSelectedSensorPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
+        timeoutSeconds += Timer.getFPGATimestamp() - timeoutSeconds;
+        var currAngle = (steeringMotor.getSelectedSensorPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
+        if(prevAngle == 0) prevAngle = currAngle;
+        if(timeoutSeconds <= 1 && Math.abs(prevAngle - currAngle) >= 12 * Math.PI) {
+            return prevAngle;
+        }
+        if(timeoutSeconds > 1) {
+            timeoutSeconds = 0;
+        }
+        prevAngle = currAngle;
+        return currAngle;
     }
 
     public double convertAngleToTick(double angleInRads) {
@@ -263,6 +278,7 @@ public class SwerveModule extends SubsystemBase {
         this.targetVelocity = targetSpeed;
 
         setDriveMotorVelocity(targetSpeed);
+//        if(convertAngleToTick(targetAng) <= 10000) setSteeringMotorAngle(convertAngleToTick(targetAng));
         setSteeringMotorAngle(convertAngleToTick(targetAng));
         setDriveEnabled = true;
     }
@@ -284,8 +300,12 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void followControllers() {
+        var dt = Logging.robotShuffleboard.getTab("testdt");
         if(!setDriveEnabled) return;
         var driveVoltage = driveController.getAppliedVoltage(getVelocity());
+        dt.setEntry("dv " + driveMotor2.getDeviceID(), driveVoltage);
+        dt.setEntry("tg "+ driveMotor2.getDeviceID(), driveController.getTargetVelocity());
+        dt.setEntry("cv "+ driveMotor2.getDeviceID(), getVelocity());
         setDriveMotorVoltage(driveVoltage);
     }
 }

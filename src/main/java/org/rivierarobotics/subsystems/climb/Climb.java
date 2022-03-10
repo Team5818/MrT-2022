@@ -74,18 +74,18 @@ public class Climb extends SubsystemBase {
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
-    private final SystemIdentification sysId = new SystemIdentification(0.0, 7.7154, 0.19185);
+    private final SystemIdentification sysId = new SystemIdentification(0.0, 8.7154, 0.19185);
     private double zeroRadians = 0.0;
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
                 sysId,
                 0.1,
+                0.1,
                 0.01,
-                0.05,
                 0.01,
                 0.01,
-                0.3,
+                0.6,
                 11
         );
 
