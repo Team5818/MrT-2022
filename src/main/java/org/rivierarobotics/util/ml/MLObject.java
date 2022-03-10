@@ -40,14 +40,14 @@ public class MLObject {
         this.boundingBox = boundingBox;
 
         double avgX = (boundingBox.ymax + boundingBox.ymin) / 2.0;
-        this.tx = ( MLCore.CAMERA_HEIGHT / 2.0 - avgX) * MLCore.ANGLE_PER_PIXEL_Y;
+        this.tx = (MLCore.CAMERA_HEIGHT / 2.0 - avgX) * MLCore.ANGLE_PER_PIXEL_Y;
         this.relativeLocationX = Math.tan((90 - Math.abs(tx)) * Math.PI / 180) * CAMERA_OFFSET;
 
         double avgY = (boundingBox.xmax + boundingBox.xmin) / 2.0;
-        this.ty = (avgY - MLCore.CAMERA_WIDTH / 2.0) * MLCore.ANGLE_PER_PIXEL_X;
-        this.relativeLocationY = -relativeLocationX * Math.tan(ty * Math.PI / 180);
+        this.ty = (MLCore.CAMERA_WIDTH / 2.0 - avgY) * MLCore.ANGLE_PER_PIXEL_X;
+        this.relativeLocationY = relativeLocationX * Math.tan(ty * Math.PI / 180);
 
-        this.relativeLocationDistance = Math.sqrt(relativeLocationY * relativeLocationY + relativeLocationX * relativeLocationX);
+        this.relativeLocationDistance = Math.sqrt(Math.pow(relativeLocationY, 2) + Math.pow(relativeLocationX, 2));
         this.confidence = confidence;
 
 //        yAngle.put(464., 36.87);

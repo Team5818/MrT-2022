@@ -43,21 +43,21 @@ public class DriveToClosest extends SequentialCommandGroup {
             return;
         }
 
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationY);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationX);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationY);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationX);
         Logging.robotShuffleboard.getTab("ML").setEntry("Target Ball Distance", ball.relativeLocationDistance);
-        Logging.robotShuffleboard.getTab("ML").setEntry("TX", ball.ty);
-        Logging.robotShuffleboard.getTab("ML").setEntry("TY", ball.tx);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target ty", ball.ty);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target tx", ball.tx);
 
-        var targetX = currentX - Math.cos(Gyro.getInstance().getRotation2d().getRadians() + ball.tx) * ball.relativeLocationDistance;
-        var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + ball.tx) * ball.relativeLocationDistance;
+        var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + ball.ty) * ball.relativeLocationDistance;
+        var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + ball.ty) * ball.relativeLocationDistance;
 
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentX", currentX);
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentY", currentY);
         Logging.robotShuffleboard.getTab("ML").setEntry("targetX", targetX);
         Logging.robotShuffleboard.getTab("ML").setEntry("targetY", targety);
 
-        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, ball.relativeLocationY + currentX,  ball.relativeLocationX + currentY, true, 0, driveTrain.getSwerveDriveKinematics());
+        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
 
         Logging.aiFieldDisplay.updatePath(trajectory);
         if (trajectory != null) {
