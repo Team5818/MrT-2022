@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.commands.auto.DrivePath;
+import org.rivierarobotics.commands.auto.PathGeneration;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
@@ -93,10 +95,6 @@ public class Robot extends TimedRobot {
         new ButtonConfiguration().initTeleop();
         initializeAllSubsystems();
         initializeDefaultCommands();
-        Climb.getInstance().setOffset();
-        Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
-
     }
 
     private void shuffleboardLogging() {
@@ -176,12 +174,19 @@ public class Robot extends TimedRobot {
         shoot.setEntry("actuator angle", flopp.getAngle());
         shoot.setEntry("right target", flopp.getTarget(false));
         shoot.setEntry("left target", flopp.getTarget(true));
-
     }
 
     @Override
     public void teleopPeriodic() {
         CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void autonomousInit() {
+        Climb.getInstance().setOffset();
+        Gyro.getInstance().resetGyro();
+        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        CommandScheduler.getInstance().schedule(new PathGeneration(-1,0));
     }
 
     @Override

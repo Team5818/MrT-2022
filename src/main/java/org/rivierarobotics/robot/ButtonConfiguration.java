@@ -51,8 +51,8 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .toggleWhenPressed(new CollectToggle(false, true, true));
 
-        new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 2)
-                .whenPressed(new Shoot(150));
+//        new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 2)
+//                .whenPressed(new Shoot(150));
         new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 1)
         .whenPressed(new Shoot(180));
 
@@ -114,43 +114,44 @@ public class ButtonConfiguration {
 
         // Player Buttons
 
-        //Driver Left
-        new JoystickButton(ControlMap.DRIVER_LEFT,1)
-                .whenPressed(new CollectToggle(true, true, true));
-//        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed()
-        //Driver Right
-        new JoystickButton(ControlMap.DRIVER_RIGHT,1)
-                .whenPressed(new CollectToggle(false, true,true));
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .whenPressed(new IntakeDeployToggle());
+//        //Driver Left
+//        new JoystickButton(ControlMap.DRIVER_LEFT,1)
+//                .whenPressed(new CollectToggle(true, true, true));
+////        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed()
+//        //Driver Right
+//        new JoystickButton(ControlMap.DRIVER_RIGHT,1)
+//                .whenPressed(new CollectToggle(false, true,true));
+//        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
+//                .whenPressed(new IntakeDeployToggle());
+//
+//        //Driver Buttons
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
+//                .whenPressed(new TrackBall());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
+//                .whenPressed(new AutoAimShoot());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
+//                .whenPressed(new WaitCommand(1));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 4)
+//                .whenPressed(new DriveToClosest());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 5)
+//                .whenPressed(new WaitCommand(1));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6)
+//                .whenPressed(new WaitCommand(1));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
+//                .whenPressed(new ClimbToggle());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+//                .whenPressed(new WaitCommand(1));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
+//                .whenPressed(new RunClimb(false));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10)
+//                .whenPressed(new WaitCommand(1));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
+//                .whenPressed(new RunClimb(true));
 
-        //Driver Buttons
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
-                .whenPressed(new TrackBall());
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
-                .whenPressed(new AutoAimShoot());
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
-                .whenPressed(new WaitCommand(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 4)
-                .whenPressed(new DriveToClosest());
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 5)
-                .whenPressed(new WaitCommand(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6)
-                .whenPressed(new WaitCommand(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
-                .whenPressed(new ClimbToggle());
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
-                .whenPressed(new WaitCommand(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
-                .whenPressed(new RunClimb(false));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10)
-                .whenPressed(new WaitCommand(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
-                .whenPressed(new RunClimb(true));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12)
-                .whenPressed(new WaitCommand(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).
-                whenPressed(new SetCameraCentric());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12)
+//                .whenPressed(new WaitCommand(1));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).
+//                whenPressed(new SetCameraCentric());
 
     }
 }
