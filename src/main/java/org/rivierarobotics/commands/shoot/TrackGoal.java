@@ -28,18 +28,15 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 public class TrackGoal extends CommandBase {
-    private final Floppas floppas;
     private final DriveTrain drive;
     private final Limelight lime;
     private double storedTx;
     private Gyro gyro;
 
     public TrackGoal() {
-        this.floppas = Floppas.getInstance();
         this.drive = DriveTrain.getInstance();
         this.lime = Limelight.getInstance();
         this.gyro = Gyro.getInstance();
-        addRequirements(floppas);
     }
 
     @Override

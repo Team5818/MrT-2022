@@ -28,6 +28,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
@@ -63,7 +64,7 @@ public class Floppas extends SubsystemBase {
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
-    private SystemIdentification aimSysId = new SystemIdentification(0.0, 2.1, 0.04);
+    private SystemIdentification aimSysId = new SystemIdentification(0.3, 2.1, 0.04);
     private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private InterpolationTable angleTable = new InterpolationTable();
@@ -132,6 +133,7 @@ public class Floppas extends SubsystemBase {
                 aimMaxVoltage
 
         );
+        this.aimStateSpace.setKsTolerance(0.1);
         leftSS.setVelocity(0);
         rightSS.setVelocity(0);
         flopperMotor.setInverted(true);
@@ -219,10 +221,15 @@ public class Floppas extends SubsystemBase {
         var sb = Logging.robotShuffleboard;
         var limeLight = sb.getTab("LL");
         limeLight.setEntry("tpose", aimStateSpace.getTargetPosition());
-        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
-        limeLight.setEntry("AV", aimVoltage);
+//        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
 
-        setActuatorVoltage(aimVoltage);
+        if(MathUtil.isWithinTolerance(getAngle(), aimStateSpace.getTargetPosition(), 0.1)) return;
+        double v = Math.min(Math.abs((aimStateSpace.getTargetPosition() - getAngle()) * (7 / 1.2)), 7);
+        setActuatorVoltage(Math.signum((aimStateSpace.getTargetPosition() - getAngle())) * v);
+
+        limeLight.setEntry("AV", v);
+
+//        setActuatorVoltage(aimVoltage);
     }
 
     @Override

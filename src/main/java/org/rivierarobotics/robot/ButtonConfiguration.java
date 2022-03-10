@@ -25,6 +25,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.PathGeneration;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
@@ -100,9 +101,9 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new Shoot());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7).whenPressed(new InstantCommand(() -> {Floppas.getInstance().setTargetV(Floppas.getInstance().getTargetV() + 5);}));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whenPressed(new InstantCommand(() -> {Floppas.getInstance().setTargetV(Floppas.getInstance().getTargetV() - 5);}));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9).whenPressed(new InstantCommand(() -> {
-            DriveTrain.getInstance().setTargetRotationAngle(0);
-        }));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9).whenPressed(new AutoAimShoot());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 10).whileHeld(new DriveToClosest());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 11).whileHeld(new PathGeneration(1,-1));
 
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 12).toggleWhenPressed(new IntakeDeployToggle());
 

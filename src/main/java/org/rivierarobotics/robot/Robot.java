@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
         Climb.getInstance().setOffset();
         Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().updateRobotPose(new Pose2d(25, 25, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
 
     }
 
@@ -168,8 +168,8 @@ public class Robot extends TimedRobot {
         ML.setEntry("Red BallX", ball.relativeLocationY);
         ML.setEntry("Red BallY", ball.relativeLocationX);
         ML.setEntry("Red Ball Distance", ball.relativeLocationDistance);
-        ML.setEntry("Red TX", ball.ty);
-        ML.setEntry("Red TY", ball.tx);
+        ML.setEntry("Red TX", ball.tx);
+        ML.setEntry("Red TY", ball.ty);
 
         shoot.setEntry("flywheel right v", flopp.getRightSpeed());
         shoot.setEntry("flywheel left v", -flopp.getLeftSpeed());

@@ -1,5 +1,7 @@
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.TreeMap;
 
 public class InterpolationTable {
@@ -25,9 +27,12 @@ public class InterpolationTable {
             double lowerKey = interpolationTable.get(interpolationTable.lowerKey(interpolationTable.lastKey()));
             return highestValue + ((highestValue - lowerKey) / (interpolationTable.lastKey() - interpolationTable.lowerKey(interpolationTable.lastKey())) * (key - interpolationTable.lastKey()));
         } else {
+            SmartDashboard.putNumber("I happened", key);
             double lowerValue = interpolationTable.get(interpolationTable.lowerKey(key));
             double higherValue = interpolationTable.get(interpolationTable.higherKey(key));
-            return lowerValue + ((higherValue - lowerValue) / (interpolationTable.lowerKey(key) - interpolationTable.higherKey(key))) * (key - interpolationTable.lowerKey(key));
+            lowerValue += ((higherValue - lowerValue) / (interpolationTable.lowerKey(key) - interpolationTable.higherKey(key))) * (key - interpolationTable.lowerKey(key));
+            SmartDashboard.putNumber("I happened" + key, lowerValue);
+            return lowerValue;
         }
     }
 
