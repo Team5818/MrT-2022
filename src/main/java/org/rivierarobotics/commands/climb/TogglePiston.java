@@ -25,10 +25,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
-public class SetPistonState extends SequentialCommandGroup {
+public class TogglePiston extends SequentialCommandGroup {
     private final Climb climb;
 
-    public SetPistonState(Climb.Position climbPosition, boolean isEngaged, double timeToWait) {
+    public TogglePiston(Climb.Position climbPosition, boolean isEngaged, double timeToWait) {
         super(
                 new InstantCommand(() -> {
                     Climb.getInstance().setPiston(climbPosition, isEngaged);

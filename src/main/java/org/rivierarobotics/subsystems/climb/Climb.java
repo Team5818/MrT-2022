@@ -44,62 +44,67 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -2.37;
+    private static final double LOW_RADIANS = -4.23;
     private static final double MID_RADIANS = 2.64;
-    private static final double HIGH_RADIANS = -4.88;
+    private static final double HIGH_RADIANS = -1.4;
+    public static final double MAX_RADS = 4.17;
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
     //TODO: Find Value using new climb once robot is built, these values are for the prototype.
     private static final int ENCODER_RESOLUTION = 2048;
     private static final double MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
     private static final double GEARING = 1 / 450.0;
+    public static final double ZERO_RADS = 6.3;
 
     public enum Position {
-        LOW(LOW_RADIANS, new Piston(3), new DigitalInput(3)),
-        MID(MID_RADIANS, new Piston(4), new DigitalInput(2)),
-        HIGH(HIGH_RADIANS, new Piston(5), new DigitalInput(1));
+        LOW(LOW_RADIANS, new Piston(5), new DigitalInput(1), new DigitalInput(2)),
+        MID(MID_RADIANS, new Piston(4), new DigitalInput(3), new DigitalInput(4)),
+        HIGH(HIGH_RADIANS, new Piston(3), new DigitalInput(5), new DigitalInput(6));
 
         public final double locationRadians;
         public final Piston piston;
-        public final DigitalInput input;
+        public final DigitalInput input1;
+        public final DigitalInput input2;
 
-        Position(double rads, Piston piston, DigitalInput input) {
+        Position(double rads, Piston piston, DigitalInput input1, DigitalInput input2) {
             this.locationRadians = rads;
             this.piston = piston;
-            this.input = input;
+            this.input1 = input1;
+            this.input2 = input2;
         }
     }
 
     private final WPI_TalonFX climbMotorA;
+    private final WPI_TalonFX climbMotorB;
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
-    private final SystemIdentification sysId = new SystemIdentification(0.0, 8.7154, 0.19185);
-    private double zeroRadians = 0.0;
+    private final SystemIdentification sysId = new SystemIdentification(0.0, 7.7154, 0.19185);
+    private final double zeroRadians = 0.0;
+    //TODO: Find this zero
+    private boolean play = true;
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
                 sysId,
                 0.1,
-                0.1,
+                0.01,
+                0.05,
                 0.01,
                 0.01,
-                0.01,
-                0.6,
-                11
+                0.3,
+                9
         );
 
         this.climbMotorA = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
-        climbMotorA.configForwardSoftLimitEnable(false);
-        climbMotorA.configForwardSoftLimitThreshold(MAX_FORWARD_LIMIT);
-        climbMotorA.configReverseSoftLimitEnable(false);
-        climbMotorA.configReverseSoftLimitThreshold(MAX_REVERSE_LIMIT);
-
+        this.climbMotorB = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
         climbMotorA.setNeutralMode(NeutralMode.Brake);
-        this.encoder = new DutyCycleEncoder(6);
+        climbMotorB.setNeutralMode(NeutralMode.Brake);
+        climbMotorB.follow(climbMotorA);
+        climbMotorA.setInverted(true);
+        climbMotorB.setInverted(true);
+        this.encoder = new DutyCycleEncoder(7);
         this.encoder.setDistancePerRotation(2 * Math.PI);
-
-        setCoast(false);
     }
 
     public void setPiston(Position climbModule, boolean isEngaged) {
@@ -115,18 +120,17 @@ public class Climb extends SubsystemBase {
     public void setCoast(boolean coast) {
         if (coast) {
             climbMotorA.setNeutralMode(NeutralMode.Coast);
+            climbMotorB.setNeutralMode(NeutralMode.Coast);
         } else {
             climbMotorA.setNeutralMode(NeutralMode.Brake);
+            climbMotorB.setNeutralMode(NeutralMode.Brake);
         }
 
     }
 
-    public void setOffset() {
-        this.zeroRadians = encoder.getDistance();
-    }
 
     public boolean isSwitchSet(Position climbModule) {
-        return !climbModule.input.get();
+        return !climbModule.input1.get() || !climbModule.input2.get();
     }
 
     public boolean isPistonSet(Position climbModule) {
@@ -138,19 +142,30 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        if (Math.abs(getAngle()) > 5.5 && Math.signum(-voltage) == Math.signum(getAngle())) {
+        if (Math.abs(getAngle()) > MAX_RADS && Math.signum(-voltage) == Math.signum(getAngle())) {
             climbMotorA.setVoltage(0);
             return;
         }
         climbMotorA.setVoltage(voltage);
     }
 
+    public void setOffset() {
+        encoder.reset();
+    }
+
     public double getAngle() {
-        return encoder.getDistance() - zeroRadians;
+        return encoder.getDistance();
     }
 
     public double getRawTicks() {
         return climbMotorA.getSelectedSensorPosition();
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
+    public boolean getPlay() {
+        return play;
     }
 
     public void followStateSpace() {

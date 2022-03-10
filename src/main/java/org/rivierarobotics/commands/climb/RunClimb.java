@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double voltage = 11;
+    private static final double voltage = 5;
 
     public RunClimb(boolean reversed) {
         final Climb.Position first;
@@ -38,11 +38,9 @@ public class RunClimb extends SequentialCommandGroup {
         if (reversed) {
             first = Climb.Position.HIGH;
             last = Climb.Position.LOW;
-            modifier = 1;
         } else {
             last = Climb.Position.HIGH;
             first = Climb.Position.LOW;
-            modifier = -1;
         }
         addCommands(
                 //new SetDriveAngle(90, 0.2),
@@ -51,25 +49,25 @@ public class RunClimb extends SequentialCommandGroup {
                         new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(first)),
                         new ClimbSetPosition(Climb.Position.LOW, reversed)
                 ),
-                new SetPistonState(first, true, 0),
+                new TogglePiston(first, true, 0),
                 new WaitCommand(0.2),
                 //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
+                        new InteruptableSetVoltage(reversed, voltage)),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
-                new SetPistonState(Climb.Position.MID, true, 0),
-                new WaitCommand(0.2),
+                new TogglePiston(Climb.Position.MID, true, 0),
+//                new WaitCommand(0.2),
                 new WaitPiston(Climb.Position.MID, 0.5, 1.5, reversed),
-                new SetPistonState(first, false, 0),
-                new WaitCommand(0.3),
+                new TogglePiston(first, false, 0),
+//                new WaitCommand(0.3),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
-                        new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * modifier))),
+                        new InteruptableSetVoltage(reversed, voltage)),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
-                new SetPistonState(last, true, 0),
+                new TogglePiston(last, true, 0),
                 new WaitCommand(0.3),
-                new WaitPiston(last, 1, 3, reversed),
-                new SetPistonState(Climb.Position.MID, false, 0),
-                new ClimbSetPosition(Climb.Position.HIGH, reversed)
+                new WaitPiston(last, 0.5, 1.5, reversed),
+                new TogglePiston(Climb.Position.MID, false, 2)
+//                new ClimbSetPosition(Climb.Position.HIGH, reversed)
         );
     }
 }
