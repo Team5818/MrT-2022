@@ -54,18 +54,32 @@ public class Floppas extends SubsystemBase {
     private final DutyCycleEncoder floppaEncoder;
     private final double fireMaxVoltage = 12;
     private final double aimMaxVoltage = 9;
-    private final double AIM_DOWNWARD_LIMIT = -3.24;
-    private final double AIM_UPWARD_LIMIT = -2.05;
+    private final double AIM_DOWNWARD_LIMIT = -3.71;
+    private final double AIM_UPWARD_LIMIT = -2.0;
     private final double ZERO_ANGLE = -3.24;
+    private boolean blockSS = false;
     private final double VEL_TO_RADS = (2 * Math.PI / 4096) * 10;
+    private double targetV = 100;
 
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
-    private SystemIdentification aimSysId = new SystemIdentification(0.0, 2, 0.04);
+    private SystemIdentification aimSysId = new SystemIdentification(0.0, 2.1, 0.04);
     private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private InterpolationTable intTable = new InterpolationTable();
+
+    public void setBlockSS(boolean blockSS) {
+        this.blockSS = blockSS;
+    }
+
+    public double getTargetV() {
+        return targetV;
+    }
+
+    public void setTargetV(double targetV) {
+        this.targetV = targetV;
+    }
 
     public Floppas() {
         this.flopperMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -101,7 +115,7 @@ public class Floppas extends SubsystemBase {
                 0.01,
                 0.01,
                 0.01,
-                4,
+                6,
                 aimMaxVoltage
 
         );
@@ -117,9 +131,9 @@ public class Floppas extends SubsystemBase {
 
     public enum ShooterLocations{
         LAUNCHPAD_A(0,0,0),
-        LAUNCHPAD_B(1,1,1),
-        LOW_GOAL(2,2,2),
-        FENDER(110,-2.42,3);
+        LAUNCHPAD_B(1,1,0),
+        LOW_GOAL(60,-3.927,0),
+        FENDER(110,-1.9,0);
 
         public final double flyWheelSpeed;
         public final double floppaAngle;
@@ -141,6 +155,11 @@ public class Floppas extends SubsystemBase {
         this.speed = speed;
         this.rightSS.setVelocity(speed);
         this.leftSS.setVelocity(speed);
+    }
+
+    public void setShooterVoltage(double v) {
+        rightFlywheel.setVoltage(v);
+        leftFlywheel.setVoltage(-v);
     }
 
     public double getRightSpeed(){
@@ -171,23 +190,30 @@ public class Floppas extends SubsystemBase {
     public void setAngle(double radians) {
         var sb = Logging.robotShuffleboard;
         var limeLight = sb.getTab("LL");
-        limeLight.setEntry("Hood Target", radians + ZERO_ANGLE);
-        aimStateSpace.setPosition(radians + ZERO_ANGLE);
+        limeLight.setEntry("Hood Target", radians);
+        aimStateSpace.setPosition(radians);
+    }
+
+    public void floppaStateSpaceControl() {
+        var sb = Logging.robotShuffleboard;
+        var limeLight = sb.getTab("LL");
+        limeLight.setEntry("tpose", aimStateSpace.getTargetPosition());
+        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
+        limeLight.setEntry("AV", aimVoltage);
+
+        setActuatorVoltage(aimVoltage);
     }
 
     @Override
     public void periodic() {
         double rightVoltage = rightSS.getAppliedVoltage(getRightSpeed());
         double leftVoltage = leftSS.getAppliedVoltage(-getLeftSpeed());
-        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
-//        setActuatorVoltage(aimVoltage);
+        if(blockSS) return;
         rightFlywheel.setVoltage(rightVoltage < 0 ? 0 : rightVoltage);
         leftFlywheel.setVoltage(leftVoltage < 0 ? 0 : -leftVoltage);
         var limeLight = Logging.robotShuffleboard.getTab("LL");
         limeLight.setEntry("rightV", rightVoltage);
         limeLight.setEntry("leftV", leftVoltage);
-
-
 
         SmartDashboard.putNumber("hood angle", getAngle());
         SmartDashboard.putNumber("right SS", rightSS.getTargetVelocity());

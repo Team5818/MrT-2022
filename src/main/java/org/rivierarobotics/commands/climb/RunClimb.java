@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double voltage = 5;
+    private static final double voltage = 9;
 
     public RunClimb(boolean reversed) {
         final Climb.Position first;
@@ -50,7 +50,7 @@ public class RunClimb extends SequentialCommandGroup {
                         new ClimbSetPosition(Climb.Position.LOW, reversed)
                 ),
                 new TogglePiston(first, true, 0),
-                new WaitCommand(0.2),
+                new WaitCommand(0.25),
                 //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
                         new InteruptableSetVoltage(reversed, voltage)),
@@ -66,8 +66,8 @@ public class RunClimb extends SequentialCommandGroup {
                 new TogglePiston(last, true, 0),
                 new WaitCommand(0.3),
                 new WaitPiston(last, 0.5, 1.5, reversed),
-                new TogglePiston(Climb.Position.MID, false, 2)
-//                new ClimbSetPosition(Climb.Position.HIGH, reversed)
+                new TogglePiston(Climb.Position.MID, false, 0),
+                new ClimbSetPosition(Climb.Position.HIGH, reversed)
         );
     }
 }

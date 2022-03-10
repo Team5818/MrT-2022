@@ -22,8 +22,8 @@ public class IntakeDeployToggle extends CommandBase {
 //        return !intake.canCollect();
 //    }
 
-//    @Override
-//    public void end(boolean interrupted) {
-//        intake.setIntakeState(interrupted);
-//    }
+    @Override
+    public void end(boolean interrupted) {
+        intake.setIntakeState(false);
+    }
 }

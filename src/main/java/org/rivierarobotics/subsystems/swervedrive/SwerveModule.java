@@ -59,7 +59,7 @@ public class SwerveModule extends SubsystemBase {
     private WPI_TalonFX driveMotor2;
     private final boolean isNew;
     private final VelocityStateSpaceModel driveController;
-    private final SystemIdentification dmSID = new SystemIdentification(0.25859, 1.4593, 0.13211);
+    private final SystemIdentification dmSID = new SystemIdentification(0.25859, 1.4593 * 1.44, 0.13211);
     private final WPI_TalonSRX steeringMotor;
     private boolean setDriveEnabled = false;
 
@@ -106,7 +106,7 @@ public class SwerveModule extends SubsystemBase {
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
-                0.1, 5.1, 7, DriveTrain.STATE_SPACE_LOOP_TIME
+                0.1, 5.1, 8, DriveTrain.STATE_SPACE_LOOP_TIME
         );
         this.driveController.setKsTolerance(0.05);
 

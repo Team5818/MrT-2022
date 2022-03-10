@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
@@ -44,9 +45,9 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -4.23;
+    private static final double LOW_RADIANS = -4.075;
     private static final double MID_RADIANS = 2.64;
-    private static final double HIGH_RADIANS = -1.4;
+    private static final double HIGH_RADIANS = -1.53;
     public static final double MAX_RADS = 4.17;
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
@@ -79,7 +80,7 @@ public class Climb extends SubsystemBase {
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
     //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
-    private final SystemIdentification sysId = new SystemIdentification(0.0, 7.7154, 0.19185);
+    private final SystemIdentification sysId = new SystemIdentification(0.0, 10, 0.02);
     private final double zeroRadians = 0.0;
     //TODO: Find this zero
     private boolean play = true;
@@ -87,13 +88,13 @@ public class Climb extends SubsystemBase {
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(
                 sysId,
-                0.1,
-                0.01,
-                0.05,
                 0.01,
                 0.01,
-                0.3,
-                9
+                0.01,
+                0.01,
+                0.01,
+                6,
+                12
         );
 
         this.climbMotorA = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
@@ -169,8 +170,13 @@ public class Climb extends SubsystemBase {
     }
 
     public void followStateSpace() {
-        var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
-        setVoltage(-climbVoltage);
+        //var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
+
+        if(MathUtil.isWithinTolerance(getAngle(), climbStateSpace.getTargetPosition(), 0.1)) return;
+        double v = Math.min(Math.abs((climbStateSpace.getTargetPosition() - getAngle()) * (12 / 0.2)), 12);
+        setVoltage(-Math.signum((climbStateSpace.getTargetPosition() - getAngle())) * v);
+
+        //setVoltage(-climbVoltage);
     }
 
     @Override

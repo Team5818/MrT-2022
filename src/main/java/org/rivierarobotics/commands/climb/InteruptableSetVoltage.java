@@ -3,7 +3,8 @@ package org.rivierarobotics.commands.climb;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.climb.Climb;
 
-public class InteruptableSetVoltage extends CommandBase {
+public class
+InteruptableSetVoltage extends CommandBase {
 
     private final double modifier;
     private final double voltage;

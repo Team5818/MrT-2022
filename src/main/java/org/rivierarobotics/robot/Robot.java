@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.ShooterControl;
@@ -32,6 +33,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
@@ -103,6 +105,7 @@ public class Robot extends TimedRobot {
         var climb = sb.getTab("Climb");
         var collect = sb.getTab("collect");
         var ML = sb.getTab("ML");
+        var limeLight = sb.getTab("LL");
         var shoot = sb.getTab("shoot");
 
         var dt = DriveTrain.getInstance();
@@ -149,6 +152,9 @@ public class Robot extends TimedRobot {
         collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
         collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
         collect.setEntry("Is Full", col.getIsFull());
+        limeLight.setEntry("shooter speed", Floppas.getInstance().getTargetV());
+        limeLight.setEntry("distance", Limelight.getInstance().getDistance());
+
 
         BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
 
@@ -195,8 +201,8 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-        CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+//        CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
     }
 

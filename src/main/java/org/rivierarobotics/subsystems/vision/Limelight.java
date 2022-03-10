@@ -37,8 +37,8 @@ public class Limelight extends SubsystemBase {
     }
 
     private static Limelight limelight;
-    private static double llAngle = 50;
-    private static double robotHeight = 1;
+    private static double llAngle = 30;
+    private static double robotHeight = 1.092;
     private static double goalHeight = 2.6416;
     private final PhotonCamera camera;
 

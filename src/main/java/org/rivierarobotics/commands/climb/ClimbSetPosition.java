@@ -45,7 +45,12 @@ public class ClimbSetPosition extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        climb.setVoltage(0);
+    }
+
+    @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(3));
+        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(1));
     }
 }

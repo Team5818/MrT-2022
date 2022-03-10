@@ -11,22 +11,39 @@ public class Shoot extends SequentialCommandGroup {
 
     public Shoot(double speed){
         addCommands(
-                new SetFlywheelSpeed(speed),
-                new WaitCommand(1),
-                new CollectToggle(false, true,false).deadlineWith(new WaitCommand(2)),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(speed)),
+                new WaitCommand(0.35),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
+                new WaitCommand(2),
                 new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
+        );
+    }
 
+    public Shoot(){
+        addCommands(
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(Floppas.getInstance().getTargetV())),
+                new WaitCommand(0.35),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
+                new WaitCommand(2),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
         );
     }
 
     public Shoot(Floppas.ShooterLocations locations){
+        this(locations.flyWheelSpeed, locations.floppaAngle);
+    }
+
+    public Shoot(double speed, double flywheelAngle) {
         addCommands(
-                new SetFlywheelSpeed(locations.flyWheelSpeed),
-                new WaitCommand(0.5),
-                new CollectToggle(false, true,false),
-                new WaitCommand(0.5),
-                new SetFlywheelSpeed(0)
+                new SetFloppaPosition(flywheelAngle).withTimeout(2),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(speed)),
+                new WaitCommand(0.35),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
+                new WaitCommand(2),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
         );
     }
 

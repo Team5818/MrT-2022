@@ -45,7 +45,7 @@ public class SwerveControl extends CommandBase {
     }
 
     private double getRotationSpeed() {
-        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 0.2)) {
+        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 2)) {
             return 0.0;
         }
         double vel = (TURN_SPEED * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));

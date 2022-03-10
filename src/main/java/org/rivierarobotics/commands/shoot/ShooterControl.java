@@ -13,13 +13,13 @@ public class ShooterControl extends CommandBase {
 
     public ShooterControl(){
         this.floppas = Floppas.getInstance();
-        this.joystick = ControlMap.DRIVER_RIGHT;
+        this.joystick = ControlMap.CO_DRIVER_RIGHT;
         addRequirements(floppas);
     }
 
     @Override
     public void execute() {
         var voltage = MathUtil.fitDeadband(joystick.getY()) * MaxVoltage;
-        //floppas.setActuatorVoltage(voltage);
+        floppas.setActuatorVoltage(voltage);
     }
 }
