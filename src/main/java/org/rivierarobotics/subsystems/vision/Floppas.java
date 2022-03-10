@@ -28,7 +28,6 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.apache.commons.math3.analysis.function.Log;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
@@ -67,7 +66,8 @@ public class Floppas extends SubsystemBase {
     private SystemIdentification aimSysId = new SystemIdentification(0.0, 2.1, 0.04);
     private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
-    private InterpolationTable intTable = new InterpolationTable();
+    private InterpolationTable angleTable = new InterpolationTable();
+    private InterpolationTable speedTable = new InterpolationTable();
 
     public void setBlockSS(boolean blockSS) {
         this.blockSS = blockSS;
@@ -82,6 +82,19 @@ public class Floppas extends SubsystemBase {
     }
 
     public Floppas() {
+
+        angleTable.addValue(1.5, -2.86);
+        angleTable.addValue(1.77, -2.94);
+        angleTable.addValue(2.03, -2.92);
+        angleTable.addValue(2.324, -3.028);
+        angleTable.addValue(2.69, -3.022);
+
+        speedTable.addValue(1.5, 115);
+        speedTable.addValue(1.77, 120);
+        speedTable.addValue(2.03, 120);
+        speedTable.addValue(2.324, 130);
+        speedTable.addValue(2.69, 135);
+
         this.flopperMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
         flopperMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
@@ -144,6 +157,14 @@ public class Floppas extends SubsystemBase {
             this.floppaAngle = floppaAngle;
             this.driveAngle = driveAngle;
         }
+    }
+
+    public double getEstimatedAngle(double distance){
+        return angleTable.getValue(distance);
+    }
+
+    public double getEstimatedSpeed(double distance){
+        return speedTable.getValue(distance);
     }
 
 
@@ -220,6 +241,6 @@ public class Floppas extends SubsystemBase {
         SmartDashboard.putNumber("left SS", leftSS.getTargetVelocity());
     }
     public double getValueFromTable(double key){
-        return intTable.getValue(key);
+        return angleTable.getValue(key);
     }
 }
