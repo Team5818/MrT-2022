@@ -42,7 +42,7 @@ public class TrackGoal extends CommandBase {
     @Override
     public void execute() {
         if (lime.getDetected()) {
-            this.storedTx = lime.getTx();
+            this.storedTx = lime.getAdjustedTx();
             SmartDashboard.putNumber("storedtx", storedTx);
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }

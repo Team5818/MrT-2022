@@ -41,6 +41,7 @@ public class Limelight extends SubsystemBase {
     private static double robotHeight = 1.092;
     private static double goalHeight = 2.6416;
     private final PhotonCamera camera;
+    private static final double llOffset = 0.1;
 
     public Limelight() {
         this.camera = new PhotonCamera("gloworm");
@@ -76,5 +77,11 @@ public class Limelight extends SubsystemBase {
     public void periodic() {
     }
 
+    public double getAdjustedDistance () {
+         return Math.sqrt(getDistance() * getDistance() + llOffset * llOffset - getDistance() * llOffset * Math.cos(getTx()));
+    }
+    public double getAdjustedTx() {
+        return Math.acos(getDistance() * Math.cos(getTx()) / getAdjustedDistance());
+    }
 
 }
