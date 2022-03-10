@@ -52,11 +52,13 @@ public class Floppas extends SubsystemBase {
     private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax flopperMotor;
     private final DutyCycleEncoder floppaEncoder;
-    private final double fireMaxVoltage = 12;
-    private final double aimMaxVoltage = 9;
-    private final double AIM_DOWNWARD_LIMIT = -3.71;
-    private final double AIM_UPWARD_LIMIT = -2.0;
-    private final double ZERO_ANGLE = -3.24;
+    private static final double FIRE_MAX_VOLTAGE = 12;
+    private static final double AIM_MAX_VOLTAGE = 9;
+    private static final double ZERO_ANGLE = -3.24;
+    private static final double AIM_DOWNWARD_LIMIT = ZERO_ANGLE - 1.25;
+    private static final double AIM_UPWARD_LIMIT = ZERO_ANGLE + 0.615;
+    private static final double ADJUST_FROM_SLIPPAGE = -0.78;
+
     private boolean blockSS = false;
     private final double VEL_TO_RADS = (2 * Math.PI / 4096) * 10;
     private double targetV = 100;
@@ -83,12 +85,11 @@ public class Floppas extends SubsystemBase {
     }
 
     public Floppas() {
-
-        angleTable.addValue(1.5, -2.86);
-        angleTable.addValue(1.77, -2.94);
-        angleTable.addValue(2.03, -2.92);
-        angleTable.addValue(2.324, -3.028);
-        angleTable.addValue(2.69, -3.022);
+        angleTable.addValue(1.5, -2.86 + ADJUST_FROM_SLIPPAGE);
+        angleTable.addValue(1.77, -2.94 + ADJUST_FROM_SLIPPAGE);
+        angleTable.addValue(2.03, -2.92 + ADJUST_FROM_SLIPPAGE);
+        angleTable.addValue(2.324, -3.028 + ADJUST_FROM_SLIPPAGE);
+        angleTable.addValue(2.69, -3.022 + ADJUST_FROM_SLIPPAGE);
 
         speedTable.addValue(1.5, 115);
         speedTable.addValue(1.77, 120);
@@ -110,7 +111,7 @@ public class Floppas extends SubsystemBase {
                 0.01,
                 0.01,
                 0.9,
-                fireMaxVoltage
+                FIRE_MAX_VOLTAGE
 
         );
         this.leftSS = new VelocityStateSpaceModel(
@@ -119,7 +120,7 @@ public class Floppas extends SubsystemBase {
                 0.01,
                 0.01,
                 0.9,
-                fireMaxVoltage
+                FIRE_MAX_VOLTAGE
 
         );
         this.aimStateSpace = new PositionStateSpaceModel(
@@ -130,7 +131,7 @@ public class Floppas extends SubsystemBase {
                 0.01,
                 0.01,
                 6,
-                aimMaxVoltage
+                AIM_MAX_VOLTAGE
 
         );
         this.aimStateSpace.setKsTolerance(0.1);
@@ -145,10 +146,10 @@ public class Floppas extends SubsystemBase {
     }
 
     public enum ShooterLocations{
-        LAUNCHPAD_A(0,0,0),
-        LAUNCHPAD_B(1,1,0),
-        LOW_GOAL(60,-3.927,0),
-        FENDER(110,-1.9,0);
+        LAUNCHPAD_A(0,ZERO_ANGLE + 0.47,0),
+        LAUNCHPAD_B(1,ZERO_ANGLE + 0,0),
+        LOW_GOAL(60,AIM_DOWNWARD_LIMIT,0),
+        FENDER(120, AIM_UPWARD_LIMIT,0);
 
         public final double flyWheelSpeed;
         public final double floppaAngle;
@@ -156,6 +157,9 @@ public class Floppas extends SubsystemBase {
 
         ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle){
             this.flyWheelSpeed = flyWheelSpeed;
+            if(!(AIM_DOWNWARD_LIMIT <= floppaAngle && floppaAngle <= AIM_UPWARD_LIMIT)){
+                throw new RuntimeException( "floppa Angle out of bounds");
+            }
             this.floppaAngle = floppaAngle;
             this.driveAngle = driveAngle;
         }
@@ -202,7 +206,7 @@ public class Floppas extends SubsystemBase {
     }
 
     public void setActuatorVoltage(double voltage) {
-        if(floppaEncoder.getDistance() <= AIM_DOWNWARD_LIMIT && voltage < 0 || floppaEncoder.getDistance() >= AIM_UPWARD_LIMIT && voltage > 0) {
+        if((floppaEncoder.getDistance() <= AIM_DOWNWARD_LIMIT && voltage < 0) || (floppaEncoder.getDistance() >= AIM_UPWARD_LIMIT && voltage > 0)) {
             flopperMotor.setVoltage(0);
             return;
         }

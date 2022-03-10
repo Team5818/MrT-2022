@@ -156,18 +156,20 @@ public class Robot extends TimedRobot {
 
         BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
 
-        MLObject ball = new MLObject("red", defaultBallBox, 1);
 
-        try {
-            ball = MLcore.getDetectedObjects().get("red").get(0);
-        } catch (NullPointerException nullPointerException){
+        var redBalls = MLcore.getDetectedObjects().get("red");
+        if(redBalls != null && redBalls.size() > 0) {
+            var ball = redBalls.get(0);
+            if(ball != null)  {
+                ML.setEntry("Red BallY", ball.relativeLocationY);
+                ML.setEntry("Red BallX", ball.relativeLocationX);
+                ML.setEntry("Red Ball Distance", ball.relativeLocationDistance);
+                ML.setEntry("Red TX", ball.tx);
+                ML.setEntry("Red TY", ball.ty);
+            }
         }
 
-        ML.setEntry("Red BallX", ball.relativeLocationY);
-        ML.setEntry("Red BallY", ball.relativeLocationX);
-        ML.setEntry("Red Ball Distance", ball.relativeLocationDistance);
-        ML.setEntry("Red TX", ball.tx);
-        ML.setEntry("Red TY", ball.ty);
+
 
         shoot.setEntry("flywheel right v", flopp.getRightSpeed());
         shoot.setEntry("flywheel left v", -flopp.getLeftSpeed());

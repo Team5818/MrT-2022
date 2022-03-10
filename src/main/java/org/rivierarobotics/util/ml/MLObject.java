@@ -38,7 +38,7 @@ public class MLObject {
     public MLObject(String label, BoundingBox boundingBox, double confidence) {
         this.label = label;
         this.boundingBox = boundingBox;
-
+        // Use the bounding box Y value to compute our field X value
         double avgX = (boundingBox.ymax + boundingBox.ymin) / 2.0;
         this.tx = (MLCore.CAMERA_HEIGHT / 2.0 - avgX) * MLCore.ANGLE_PER_PIXEL_Y;
         this.relativeLocationX = Math.tan((90 - Math.abs(tx)) * Math.PI / 180) * CAMERA_OFFSET;

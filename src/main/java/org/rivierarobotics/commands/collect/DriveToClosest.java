@@ -1,5 +1,6 @@
 package org.rivierarobotics.commands.collect;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -12,6 +13,8 @@ import org.rivierarobotics.util.aifield.FieldNode;
 import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
 import org.rivierarobotics.util.ml.MLObject;
+
+import java.util.Comparator;
 
 public class DriveToClosest extends SequentialCommandGroup {
     private final BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
@@ -35,13 +38,14 @@ public class DriveToClosest extends SequentialCommandGroup {
 
 
         MLCore core = MLCore.getInstance();
-        MLObject ball = new MLObject("red", defaultBallBox, 1);
-
-        try {
-            ball = core.getDetectedObjects().get("red").get(0);
-        } catch (NullPointerException nullPointerException){
+        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+        var redBalls = MLCore.getInstance().getDetectedObjects().get("red");
+        if(redBalls == null || redBalls.isEmpty()) {
             return;
         }
+
+        redBalls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
+        var ball = redBalls.get(0);
 
         Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationY);
         Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationX);
@@ -49,8 +53,8 @@ public class DriveToClosest extends SequentialCommandGroup {
         Logging.robotShuffleboard.getTab("ML").setEntry("Target ty", ball.ty);
         Logging.robotShuffleboard.getTab("ML").setEntry("Target tx", ball.tx);
 
-        var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + ball.ty) * ball.relativeLocationDistance;
-        var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + ball.ty) * ball.relativeLocationDistance;
+        var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
+        var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
 
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentX", currentX);
         Logging.robotShuffleboard.getTab("ML").setEntry("CurrentY", currentY);
@@ -60,13 +64,14 @@ public class DriveToClosest extends SequentialCommandGroup {
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
 
         Logging.aiFieldDisplay.updatePath(trajectory);
-        if (trajectory != null) {
-            driveTrain.drivePath(trajectory);
-        }
+//        if (trajectory != null) {
+//            driveTrain.drivePath(trajectory);
+//        }
     }
 
     @Override
     public boolean isFinished() {
-        return !driveTrain.followHolonomicController();
+        return true;
+        //return !driveTrain.followHolonomicController();
     }
 }

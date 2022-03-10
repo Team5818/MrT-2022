@@ -9,17 +9,6 @@ import org.rivierarobotics.subsystems.vision.Floppas;
 
 public class Shoot extends SequentialCommandGroup {
 
-    public Shoot(double speed){
-        addCommands(
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(speed)),
-                new WaitCommand(0.35),
-                new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
-                new WaitCommand(2),
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
-                new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
-        );
-    }
-
     public Shoot(){
         addCommands(
                 new InstantCommand(() -> Floppas.getInstance().setSpeed(Floppas.getInstance().getTargetV())),
@@ -38,10 +27,15 @@ public class Shoot extends SequentialCommandGroup {
     public Shoot(double speed, double flywheelAngle) {
         addCommands(
                 new SetFloppaPosition(flywheelAngle).withTimeout(2),
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(speed)),
-                new WaitCommand(0.35),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(speed))
+                        .until(() -> Floppas.getInstance().getLeftSpeed() >= speed)
+                        .withTimeout(1),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
-                new WaitCommand(2),
+                new WaitCommand(0.2),
+                new InstantCommand( ()-> Intake.getInstance().setVoltages(0,0)),
+                new WaitCommand(0.2),
+                new InstantCommand(()-> Intake.getInstance().setVoltages(-11,0)),
+                new WaitCommand(0.5),
                 new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
         );

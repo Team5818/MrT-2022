@@ -60,11 +60,12 @@ public class RunClimb extends SequentialCommandGroup {
                 new WaitPiston(Climb.Position.MID, 0.5, 1.5, reversed),
                 new TogglePiston(first, false, 0),
 //                new WaitCommand(0.3),
+//                new InteruptableSetVoltage(reversed, voltage).withTimeout(0.9),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
                         new InteruptableSetVoltage(reversed, voltage)),
                 new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new TogglePiston(last, true, 0),
-                new WaitCommand(0.3),
+//                new WaitCommand(0.3),
                 new WaitPiston(last, 0.5, 1.5, reversed),
                 new TogglePiston(Climb.Position.MID, false, 0),
                 new ClimbSetPosition(Climb.Position.HIGH, reversed)
