@@ -83,7 +83,7 @@ public class Climb extends SubsystemBase {
     private final SystemIdentification sysId = new SystemIdentification(0.0, 10, 0.02);
     private final double zeroRadians = 0.0;
     //TODO: Find this zero
-    private boolean play = true;
+    private boolean play = false;
 
     private Climb() {
         this.climbStateSpace = new PositionStateSpaceModel(

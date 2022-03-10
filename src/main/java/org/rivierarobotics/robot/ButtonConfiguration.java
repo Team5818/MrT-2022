@@ -29,6 +29,7 @@ import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.PathGeneration;
 import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.climb.ClimbSetAngle;
+import org.rivierarobotics.commands.climb.ClimbToggle;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.climb.WaitPiston;
 import org.rivierarobotics.commands.collect.*;
@@ -110,5 +111,46 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 13).whileHeld(new TrackGoal());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15).whenPressed(new InstantCommand(() -> Climb.getInstance().setPlay(true)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15).whenReleased(new InstantCommand(() -> Climb.getInstance().setPlay(false)));
+
+        // Player Buttons
+
+        //Driver Left
+        new JoystickButton(ControlMap.DRIVER_LEFT,1)
+                .whenPressed(new CollectToggle(true, true, true));
+//        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed()
+        //Driver Right
+        new JoystickButton(ControlMap.DRIVER_RIGHT,1)
+                .whenPressed(new CollectToggle(false, true,true));
+        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
+                .whenPressed(new IntakeDeployToggle());
+
+        //Driver Buttons
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
+                .whenPressed(new TrackBall());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
+                .whenPressed(new AutoAimShoot());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
+                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 4)
+                .whenPressed(new DriveToClosest());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 5)
+                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6)
+                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
+                .whenPressed(new ClimbToggle());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
+                .whenPressed(new RunClimb(false));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10)
+                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
+                .whenPressed(new RunClimb(true));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12)
+                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).
+                whenPressed(new SetCameraCentric());
+
     }
 }
