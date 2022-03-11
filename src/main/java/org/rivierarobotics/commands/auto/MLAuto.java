@@ -17,20 +17,20 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 public class MLAuto extends SequentialCommandGroup {
     public MLAuto() {
         addCommands(
-                new SetDriveTargetAngle(90),
+                new SetDriveTargetAngle(-180),
                 new SetIntakeState(true),
                 new ParallelDeadlineGroup(
                         new DrivePath("mlauto/mlstart").andThen(new WaitCommand(1)),
                         new CollectToggle(false,true,true)
                 ),
-                new SetDriveAngle(30).withTimeout(1.5),
+                new SetDriveAngle(-70).withTimeout(1.5),
                 new AutoAimShoot(),
-                new SetDriveTargetAngle(90),
+                new SetDriveTargetAngle(-180),
                 new ParallelDeadlineGroup(
                         new DrivePath("mlauto/mlend").andThen(new WaitCommand(1)),
                         new CollectToggle(false,true,true)
                 ),
-                new SetDriveAngle(10).withTimeout(1.5),
+                new SetDriveAngle(-50).withTimeout(1.5),
                 new AutoAimShoot(),
                 new ParallelDeadlineGroup(
                         new DriveToClosest().alongWith(new WaitCommand(1)),
