@@ -7,20 +7,35 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.collect.DriveToClosest;
 import org.rivierarobotics.commands.collect.IntakeDeployToggle;
+import org.rivierarobotics.commands.collect.SetIntakeState;
+import org.rivierarobotics.commands.drive.SetDriveAngle;
+import org.rivierarobotics.commands.drive.SetDriveTargetAngle;
 import org.rivierarobotics.commands.shoot.AutoAimShoot;
 import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class MLAuto extends SequentialCommandGroup {
     public MLAuto() {
         addCommands(
-                new InstantCommand(() -> {
-                    Intake.getInstance().setIntakeState(true);
-                }),
+                new SetDriveTargetAngle(90),
+                new SetIntakeState(true),
                 new ParallelDeadlineGroup(
-                        new DriveToClosest().alongWith(new WaitCommand(4)),
-                        new CollectToggle(true, true, true)
+                        new DrivePath("mlauto/mlstart").andThen(new WaitCommand(1)),
+                        new CollectToggle(false,true,true)
                 ),
-                new DriveToPoint(10, 10, true, 0),
+                new SetDriveAngle(30).withTimeout(1.5),
+                new AutoAimShoot(),
+                new SetDriveTargetAngle(90),
+                new ParallelDeadlineGroup(
+                        new DrivePath("mlauto/mlend").andThen(new WaitCommand(1)),
+                        new CollectToggle(false,true,true)
+                ),
+                new SetDriveAngle(10).withTimeout(1.5),
+                new AutoAimShoot(),
+                new ParallelDeadlineGroup(
+                        new DriveToClosest().alongWith(new WaitCommand(1)),
+                        new CollectToggle(false,true,true)
+                ),
                 new AutoAimShoot()
         );
     }

@@ -17,7 +17,6 @@ import org.rivierarobotics.util.ml.MLObject;
 import java.util.Comparator;
 
 public class DriveToClosest extends SequentialCommandGroup {
-    private final BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
     private final DriveTrain driveTrain;
     private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
@@ -39,39 +38,26 @@ public class DriveToClosest extends SequentialCommandGroup {
 
         MLCore core = MLCore.getInstance();
         var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-        var redBalls = MLCore.getInstance().getDetectedObjects().get("red");
-        if(redBalls == null || redBalls.isEmpty()) {
+        var balls = core.getDetectedObjects().get(ballColor);
+        if(balls == null || balls.isEmpty()) {
             return;
         }
 
-        redBalls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
-        var ball = redBalls.get(0);
-
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationY);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationX);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target Ball Distance", ball.relativeLocationDistance);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target ty", ball.ty);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target tx", ball.tx);
-
+        balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
+        var ball = balls.get(0);
         var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
         var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
 
-        Logging.robotShuffleboard.getTab("ML").setEntry("CurrentX", currentX);
-        Logging.robotShuffleboard.getTab("ML").setEntry("CurrentY", currentY);
-        Logging.robotShuffleboard.getTab("ML").setEntry("targetX", targetX);
-        Logging.robotShuffleboard.getTab("ML").setEntry("targetY", targety);
-
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
-
         Logging.aiFieldDisplay.updatePath(trajectory);
-//        if (trajectory != null) {
-//            driveTrain.drivePath(trajectory);
-//        }
+
+        if (trajectory != null) {
+            driveTrain.drivePath(trajectory);
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return true;
-        //return !driveTrain.followHolonomicController();
+        return !driveTrain.followHolonomicController();
     }
 }

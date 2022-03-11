@@ -5,7 +5,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class DrivePath extends CommandBase {
     private final String path;
-    private DriveTrain driveTrain;
+    private final DriveTrain driveTrain;
 
     public DrivePath (String path){
         this.path = path;
