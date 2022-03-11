@@ -40,6 +40,11 @@ public class TrackGoal extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        drive.setUseDriverAssist(true);
+    }
+
+    @Override
     public void execute() {
         if (lime.getDetected()) {
             this.storedTx = lime.getAdjustedTx();
@@ -48,4 +53,8 @@ public class TrackGoal extends CommandBase {
         }
     }
 
+    @Override
+    public void end(boolean interrupted) {
+        drive.setUseDriverAssist(false);
+    }
 }

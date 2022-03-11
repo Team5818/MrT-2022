@@ -69,7 +69,7 @@ public class SwerveControl extends CommandBase {
         var rot = MathUtil.fitDeadband(-rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
         SmartDashboard.putNumber("rot", rot);
 
-        if (rot == 0) {
+        if (rot == 0 && driveTrain.useDriverAssist()) {
             driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
         } else {
             driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());

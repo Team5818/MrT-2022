@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.commands.drive.SetDriverAssist;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -12,6 +13,7 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 public class AutoAimShoot extends SequentialCommandGroup {
     public AutoAimShoot() {
         addCommands(
+                new SetDriverAssist(true),
                 new ConditionalCommand(
                         new ParallelDeadlineGroup(
                                 new SequentialCommandGroup(
@@ -23,7 +25,11 @@ public class AutoAimShoot extends SequentialCommandGroup {
                         new Shoot(135, Floppas.ZERO_ANGLE - 0.562),
                         () -> Limelight.getInstance().getDetected()
                 )
-
         );
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        DriveTrain.getInstance().setUseDriverAssist(false);
     }
 }

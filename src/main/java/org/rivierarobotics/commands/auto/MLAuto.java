@@ -32,6 +32,7 @@ public class MLAuto extends SequentialCommandGroup {
                 ),
                 new SetDriveAngle(-50).withTimeout(1.5),
                 new AutoAimShoot(),
+                new SetDriveAngle(-180),
                 new ParallelDeadlineGroup(
                         new DriveToClosest().alongWith(new WaitCommand(1)),
                         new CollectToggle(false,true,true)

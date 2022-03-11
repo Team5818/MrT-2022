@@ -32,6 +32,7 @@ import org.rivierarobotics.commands.auto.SimpleAuto;
 import org.rivierarobotics.commands.climb.*;
 import org.rivierarobotics.commands.collect.*;
 import org.rivierarobotics.commands.drive.SetCameraCentric;
+import org.rivierarobotics.commands.drive.SetDriverAssist;
 import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.*;
@@ -166,6 +167,10 @@ public class ButtonConfiguration {
                 .whenPressed(new RunClimb(true));
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 12)
 //                .whenPressed(new WaitCommand(1));
+
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whileHeld(new SetDriverAssist(true));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whenReleased(new SetDriverAssist(false));
+
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).
                 whenPressed(new SetCameraCentric());
 

@@ -73,7 +73,7 @@ public class DriveTrain extends SubsystemBase {
     //Drive Speed Constants
     public static final double MAX_SPEED = 10; // m/s
     public static final double MAX_CHANGE_IN_VELOCITY = 0.5; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 3 * 0.7; // rad/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 3 * 0.8; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 3; // rad/s
     //Module Mappings / Measurements
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
@@ -99,7 +99,7 @@ public class DriveTrain extends SubsystemBase {
     private double startTime = Timer.getFPGATimestamp();
     private Trajectory trajectory = new Trajectory();
     private boolean isFieldCentric = true;
-    private boolean isCollectMode = false;
+    private boolean useDriverAssist = false;
     public double targetRotationAngle;
 
 
@@ -167,6 +167,14 @@ public class DriveTrain extends SubsystemBase {
         for (var m : swerveModules) {
             m.setDriveMotorVelocity(vel);
         }
+    }
+
+    public boolean useDriverAssist() {
+        return useDriverAssist;
+    }
+
+    public void setUseDriverAssist(boolean useDriverAssist) {
+        this.useDriverAssist = useDriverAssist;
     }
 
     public void setFieldCentric(boolean fieldCentric) {
