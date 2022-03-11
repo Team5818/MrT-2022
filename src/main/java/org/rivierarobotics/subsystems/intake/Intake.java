@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.subsystems.climb.Piston;
+import org.rivierarobotics.util.StatusFrameDemolisher;
 
 import java.awt.*;
 
@@ -66,6 +67,7 @@ public class Intake extends SubsystemBase {
         this.distanceSensor = new AnalogInput(3);
         csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
         tsrx = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+        StatusFrameDemolisher.demolishStatusFrames(tsrx, false);
     }
 
     public void setIntakeState(boolean deploy) {

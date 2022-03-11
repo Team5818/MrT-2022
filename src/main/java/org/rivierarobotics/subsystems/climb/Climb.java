@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
+import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
@@ -104,6 +105,8 @@ public class Climb extends SubsystemBase {
         climbMotorB.follow(climbMotorA);
         climbMotorA.setInverted(true);
         climbMotorB.setInverted(true);
+        StatusFrameDemolisher.demolishStatusFrames(climbMotorA, false);
+        StatusFrameDemolisher.demolishStatusFrames(climbMotorB, true);
         this.encoder = new DutyCycleEncoder(7);
         this.encoder.setDistancePerRotation(2 * Math.PI);
     }

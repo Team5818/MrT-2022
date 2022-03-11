@@ -32,6 +32,7 @@ import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
+import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
@@ -101,6 +102,9 @@ public class Floppas extends SubsystemBase {
         flopperMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
+        StatusFrameDemolisher.demolishStatusFrames(leftFlywheel, false);
+        StatusFrameDemolisher.demolishStatusFrames(rightFlywheel, false);
+
         this.floppaEncoder = new DutyCycleEncoder(0);
         this.floppaEncoder.setDistancePerRotation(-2 * Math.PI);
         this.angle = getAngle();

@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
@@ -92,6 +93,7 @@ public class SwerveModule extends SubsystemBase {
             driveMotor2.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
             driveMotor2.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
             driveMotor2.setNeutralMode(NeutralMode.Brake);
+            StatusFrameDemolisher.demolishStatusFrames(driveMotor2, false);
             steeringMotor.setInverted(true);
         } else {
             this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -101,8 +103,9 @@ public class SwerveModule extends SubsystemBase {
             driveMotor.setInverted(driveInverted);
         }
 
-
         configureMotionMagic();
+        StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
+
 
         this.driveController = new VelocityStateSpaceModel(
                 dmSID, 0.1, 0.01,
