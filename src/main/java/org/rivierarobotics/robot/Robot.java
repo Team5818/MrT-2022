@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.auto.DrivePath;
@@ -35,6 +36,7 @@ import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.ShooterControl;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
@@ -42,6 +44,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.InterpolationTable;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
@@ -251,9 +254,18 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-        //var traj = FieldMesh.getInstance().getTrajectory(5,5,10,10,true,0,DriveTrain.getInstance().getSwerveDriveKinematics());
-        //Logging.aiFieldDisplay.updatePath(traj);
-        DriveTrain.getInstance().drivePath("simplediag");
+        for(int i = 0; i < 10; i++) {
+            SmartDashboard.putNumber("estang " + i, Floppas.getInstance().getEstimatedAngle(i));
+            SmartDashboard.putNumber("estv " + i, Floppas.getInstance().getEstimatedSpeed(i));
+        }
+    }
+    private final InterpolationTable table = new InterpolationTable();
+    @Override
+    public void simulationInit() {
+        table.addValue(5,10);
+        table.addValue(10,50);
+        table.addValue(15,90);
+        table.addValue(20,111);
     }
 }
 
