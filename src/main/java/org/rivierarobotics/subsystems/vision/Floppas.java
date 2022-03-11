@@ -54,7 +54,7 @@ public class Floppas extends SubsystemBase {
     private final DutyCycleEncoder floppaEncoder;
     private static final double FIRE_MAX_VOLTAGE = 12;
     private static final double AIM_MAX_VOLTAGE = 9;
-    private static final double ZERO_ANGLE = -3.24;
+    public static final double ZERO_ANGLE = -3.24;
     private static final double AIM_DOWNWARD_LIMIT = ZERO_ANGLE - 1.25;
     private static final double AIM_UPWARD_LIMIT = ZERO_ANGLE + 0.615;
     private static final double ADJUST_FROM_SLIPPAGE = -0.78;
@@ -145,31 +145,31 @@ public class Floppas extends SubsystemBase {
         rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
-    public enum ShooterLocations{
-        LAUNCHPAD_A(0,ZERO_ANGLE + 0.47,0),
-        LAUNCHPAD_B(1,ZERO_ANGLE + 0,0),
-        LOW_GOAL(60,AIM_DOWNWARD_LIMIT,0),
-        FENDER(120, AIM_UPWARD_LIMIT,0);
+    public enum ShooterLocations {
+        LAUNCHPAD_A(0, ZERO_ANGLE + 0.47, 0),
+        LAUNCHPAD_B(1, ZERO_ANGLE + 0, 0),
+        LOW_GOAL(60, AIM_DOWNWARD_LIMIT, 0),
+        FENDER(110, AIM_UPWARD_LIMIT - 0.15, 0);
 
         public final double flyWheelSpeed;
         public final double floppaAngle;
         public final double driveAngle;
 
-        ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle){
+        ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle) {
             this.flyWheelSpeed = flyWheelSpeed;
-            if(!(AIM_DOWNWARD_LIMIT <= floppaAngle && floppaAngle <= AIM_UPWARD_LIMIT)){
-                throw new RuntimeException( "floppa Angle out of bounds");
+            if (!(AIM_DOWNWARD_LIMIT <= floppaAngle && floppaAngle <= AIM_UPWARD_LIMIT)) {
+                throw new RuntimeException("floppa Angle out of bounds");
             }
             this.floppaAngle = floppaAngle;
             this.driveAngle = driveAngle;
         }
     }
 
-    public double getEstimatedAngle(double distance){
+    public double getEstimatedAngle(double distance) {
         return angleTable.getValue(distance);
     }
 
-    public double getEstimatedSpeed(double distance){
+    public double getEstimatedSpeed(double distance) {
         return speedTable.getValue(distance);
     }
 
@@ -189,11 +189,11 @@ public class Floppas extends SubsystemBase {
         leftFlywheel.setVoltage(-v);
     }
 
-    public double getRightSpeed(){
+    public double getRightSpeed() {
         return rightFlywheel.getSensorCollection().getIntegratedSensorVelocity() * VEL_TO_RADS;
     }
 
-    public double getLeftSpeed(){
+    public double getLeftSpeed() {
         return leftFlywheel.getSensorCollection().getIntegratedSensorVelocity() * VEL_TO_RADS;
     }
 
@@ -206,7 +206,7 @@ public class Floppas extends SubsystemBase {
     }
 
     public void setActuatorVoltage(double voltage) {
-        if((floppaEncoder.getDistance() <= AIM_DOWNWARD_LIMIT && voltage < 0) || (floppaEncoder.getDistance() >= AIM_UPWARD_LIMIT && voltage > 0)) {
+        if ((floppaEncoder.getDistance() <= AIM_DOWNWARD_LIMIT && voltage < 0) || (floppaEncoder.getDistance() >= AIM_UPWARD_LIMIT && voltage > 0)) {
             flopperMotor.setVoltage(0);
             return;
         }
@@ -227,7 +227,7 @@ public class Floppas extends SubsystemBase {
         limeLight.setEntry("tpose", aimStateSpace.getTargetPosition());
 //        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
 
-        if(MathUtil.isWithinTolerance(getAngle(), aimStateSpace.getTargetPosition(), 0.1)) return;
+        if (MathUtil.isWithinTolerance(getAngle(), aimStateSpace.getTargetPosition(), 0.1)) return;
         double v = Math.min(Math.abs((aimStateSpace.getTargetPosition() - getAngle()) * (7 / 1.2)), 7);
         setActuatorVoltage(Math.signum((aimStateSpace.getTargetPosition() - getAngle())) * v);
 
@@ -240,7 +240,7 @@ public class Floppas extends SubsystemBase {
     public void periodic() {
         double rightVoltage = rightSS.getAppliedVoltage(getRightSpeed());
         double leftVoltage = leftSS.getAppliedVoltage(-getLeftSpeed());
-        if(blockSS) return;
+        if (blockSS) return;
         rightFlywheel.setVoltage(rightVoltage < 0 ? 0 : rightVoltage);
         leftFlywheel.setVoltage(leftVoltage < 0 ? 0 : -leftVoltage);
         var limeLight = Logging.robotShuffleboard.getTab("LL");
@@ -251,7 +251,8 @@ public class Floppas extends SubsystemBase {
         SmartDashboard.putNumber("right SS", rightSS.getTargetVelocity());
         SmartDashboard.putNumber("left SS", leftSS.getTargetVelocity());
     }
-    public double getValueFromTable(double key){
+
+    public double getValueFromTable(double key) {
         return angleTable.getValue(key);
     }
 }

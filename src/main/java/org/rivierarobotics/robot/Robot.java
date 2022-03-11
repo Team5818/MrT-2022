@@ -24,19 +24,24 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.auto.DrivePath;
+import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
 import org.rivierarobotics.commands.auto.PathGeneration;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.ShooterControl;
+import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
 import org.rivierarobotics.util.ml.MLObject;
@@ -51,6 +56,8 @@ public class Robot extends TimedRobot {
             {false, false, false, false, true, true},
             {true, true, false, false, false, false}
     };
+    private SendableChooser<Command> chooser;
+
 
     @Override
     public void robotInit() {
@@ -68,6 +75,15 @@ public class Robot extends TimedRobot {
         initializeCustomLoops();
 
         Climb.getInstance().setOffset();
+
+        chooser = new SendableChooser<>();
+        chooser.addOption("Drive backwards", new PathGeneration(-2,0));
+        chooser.addOption("RShootAndCollect2", new OneBallSimpleAuto(true));
+        chooser.addOption("LShootAndCollect2", new OneBallSimpleAuto(false));
+        chooser.addOption("No Auto", null);
+        chooser.setDefaultOption("Drive backwards", new PathGeneration(-2,0));
+
+        Shuffleboard.getTab("Autos").add(chooser);
     }
 
     @Override
@@ -95,6 +111,11 @@ public class Robot extends TimedRobot {
         new ButtonConfiguration().initTeleop();
         initializeAllSubsystems();
         initializeDefaultCommands();
+
+        //only for testing
+//        Gyro.getInstance().resetGyro();
+        Climb.getInstance().setOffset();
+//        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
 
     private void shuffleboardLogging() {
@@ -185,10 +206,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        initializeDefaultCommands();
         Climb.getInstance().setOffset();
         Gyro.getInstance().resetGyro();
         DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
-        CommandScheduler.getInstance().schedule(new PathGeneration(-1,0));
+        try {
+            var command = chooser.getSelected();
+            if(command != null) {
+                CommandScheduler.getInstance().schedule(command);
+            }
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -225,7 +253,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-        Logging.aiFieldDisplay.update();
+        //var traj = FieldMesh.getInstance().getTrajectory(5,5,10,10,true,0,DriveTrain.getInstance().getSwerveDriveKinematics());
+        //Logging.aiFieldDisplay.updatePath(traj);
+        DriveTrain.getInstance().drivePath("simplediag");
     }
 }
 

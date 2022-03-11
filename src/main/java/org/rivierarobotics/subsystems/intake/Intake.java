@@ -106,6 +106,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean canCollect() {
+        //return !distanceSensorHasBall();
         return !colorSensorHasBall() || !distanceSensorHasBall();
     }
 

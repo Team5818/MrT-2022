@@ -23,12 +23,10 @@ package org.rivierarobotics.util.aifield;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
+import edu.wpi.first.wpilibj.DriverStation;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 import java.util.ArrayList;
@@ -66,8 +64,7 @@ public class AIFieldDisplay {
         outputStream.setResolution(480, 480);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
-
-        startFieldThread(updateRate);
+        if (!DriverStation.isFMSAttached()) startFieldThread(updateRate);
     }
 
     private void startFieldThread(int updateRate) {
@@ -76,7 +73,8 @@ public class AIFieldDisplay {
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
             Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
-            outputStream.putFrame(resizeFrame);
+            if (!Robot.isReal()) outputStream.putFrame(image);
+            else outputStream.putFrame(resizeFrame);
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 
@@ -95,11 +93,11 @@ public class AIFieldDisplay {
                 var pose2 = trajectory.sample(i + 0.1);
 
                 Imgproc.arrowedLine(
-                    newRenderFrame,
-                    new Point(pose1.poseMeters.getX() * 100 * scalingRatio, pose1.poseMeters.getY() * 100 * scalingRatio),
-                    new Point(pose2.poseMeters.getX() * 100 * scalingRatio, pose2.poseMeters.getY() * 100 * scalingRatio),
-                    new Scalar(0, 0, 255 * (trajectory.sample(i).velocityMetersPerSecond) / 2),
-                    10
+                        newRenderFrame,
+                        new Point(pose1.poseMeters.getX() * 100 * scalingRatio, pose1.poseMeters.getY() * 100 * scalingRatio),
+                        new Point(pose2.poseMeters.getX() * 100 * scalingRatio, pose2.poseMeters.getY() * 100 * scalingRatio),
+                        new Scalar(0, 0, 255 * (trajectory.sample(i).velocityMetersPerSecond) / 2),
+                        10
                 );
             }
             renderFrame.setOpaque(newRenderFrame);
@@ -148,11 +146,11 @@ public class AIFieldDisplay {
         var weightedAreas = fieldMesh.getAreaWeights();
         for (var aw : weightedAreas) {
             Imgproc.rectangle(
-                field,
-                new Point(aw.x1 * scalingRatio, aw.y1 * scalingRatio),
-                new Point(aw.x2 * scalingRatio, aw.y2 * scalingRatio),
-                new Scalar(0, 0, 255 * (aw.weight / 20.0)),
-                3);
+                    field,
+                    new Point(aw.x1 * scalingRatio, aw.y1 * scalingRatio),
+                    new Point(aw.x2 * scalingRatio, aw.y2 * scalingRatio),
+                    new Scalar(0, 0, 255 * (aw.weight / 20.0)),
+                    3);
         }
     }
 

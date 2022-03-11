@@ -26,7 +26,7 @@ public class CollectToggle extends CommandBase {
     @Override
     public void initialize() {
         floppas.setBlockSS(true);
-        floppas.setAngle(-2.4);
+        floppas.setAngle(Floppas.ZERO_ANGLE);
     }
 
     @Override

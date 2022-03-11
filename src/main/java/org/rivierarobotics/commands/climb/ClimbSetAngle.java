@@ -46,6 +46,6 @@ public class ClimbSetAngle extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.01);
+        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.3);
     }
 }

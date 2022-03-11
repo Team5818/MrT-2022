@@ -70,10 +70,10 @@ public class DriveTrain extends SubsystemBase {
 
 
     //Drive Speed Constants
-    public static final double MAX_SPEED = 2; // m/s
+    public static final double MAX_SPEED = 10; // m/s
     public static final double MAX_CHANGE_IN_VELOCITY = 0.5; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 2; // rad/s
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 2; // rad/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 3 * 0.7; // rad/s
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 3; // rad/s
     //Module Mappings / Measurements
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
     private static final double WHEEL_DIST_TO_CENTER = 0.254; //m
@@ -109,10 +109,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -819 + 2048, false, true);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1036 + 2048, false, true);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -674 + 2048, false, true);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3279, false, true);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -407 + 2048, false, true);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -1533+ 2048, false, true);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -652+ 2048, false, true);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3806+ 2048, false, true);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -257,6 +257,8 @@ public class DriveTrain extends SubsystemBase {
             String trajectoryJSON = "paths/" + path + ".wpilib.json";
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            updateRobotPose(trajectory.getInitialPose());
+            Logging.aiFieldDisplay.updatePath(trajectory);
             //This will be needed later for automated pathing
             //swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
             this.startTime = Timer.getFPGATimestamp();
@@ -287,12 +289,12 @@ public class DriveTrain extends SubsystemBase {
             state,
             //It is possible to use custom angles here that do not correspond to pathweaver's rotation target
             //TODO: Test setting rotation2D to a target rotation angle and tune - remember Holonomic rotation PID acts similarly to the feedforward we have in Drive Control
-            //new Rotation2d(Math.toRadians(targetRotationAngle))
-            new Rotation2d(targetRotationAngle)
+            new Rotation2d(Math.toRadians(targetRotationAngle))
+//            new Rotation2d(targetRotationAngle)
         );
         tab.setEntry("Pose Rot", getRobotPose().getRotation().getDegrees());
         tab.setEntry("TARGET ROT", controls.omegaRadiansPerSecond);
-        drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, 0, true);
+        drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, controls.omegaRadiansPerSecond, true);
         return true;
     }
 

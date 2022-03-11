@@ -39,6 +39,7 @@ public class PathGeneration extends CommandBase {
         this.aiFieldMesh = FieldMesh.getInstance();
         this.relativeX = relativeX;
         this.relativeY = relativeY;
+        addRequirements(driveTrain);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class PathGeneration extends CommandBase {
 
         Logging.robotShuffleboard.getTab("Drive").setEntry("target position X", currentX + relativeX);
         Logging.robotShuffleboard.getTab("Drive").setEntry("target position Y", currentY + relativeY);
-        Logging.aiFieldDisplay.updatePath(trajectory);
+        //Logging.aiFieldDisplay.updatePath(trajectory);
         if (trajectory != null) {
             driveTrain.drivePath(trajectory);
         }
