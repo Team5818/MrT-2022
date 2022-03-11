@@ -20,6 +20,20 @@ public class Shoot extends SequentialCommandGroup {
         );
     }
 
+    public Shoot(boolean useFloppas) {
+        addCommands(
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(Floppas.getInstance().getTargetV())).andThen(new WaitCommand(2)),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
+                new WaitCommand(0.2),
+                new InstantCommand( ()-> Intake.getInstance().setVoltages(0,0)),
+                new WaitCommand(0.2),
+                new InstantCommand(()-> Intake.getInstance().setVoltages(-11,0)),
+                new WaitCommand(0.5),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(0,0))
+        );
+    }
+
     public Shoot(Floppas.ShooterLocations locations){
         this(locations.flyWheelSpeed, locations.floppaAngle);
     }

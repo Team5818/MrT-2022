@@ -38,8 +38,6 @@ public class Gyro {
 
     private Gyro() {
         this.navX = new AHRS(SPI.Port.kMXP);
-//        navX.setAngleAdjustment(180);
-//        navX.reset();
     }
 
     private double getAngle() {

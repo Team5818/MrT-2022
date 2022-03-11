@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -125,11 +126,11 @@ public class ButtonConfiguration {
         // Player Buttons
 
         //Driver Left
-        new JoystickButton(ControlMap.DRIVER_LEFT,1)
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
                 .toggleWhenPressed(new CollectToggle(true, true, true));
 //        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed()
         //Driver Right
-        new JoystickButton(ControlMap.DRIVER_RIGHT,1)
+        new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .toggleWhenPressed(new IntakeDeployToggle());
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
                 .toggleWhenPressed(new CollectToggle(false, true, true));
@@ -149,8 +150,14 @@ public class ButtonConfiguration {
 //                .whenPressed(new WaitCommand(1));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
                 .whenPressed(new ClimbToggle());
-//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
-//                .whenPressed(new WaitCommand(1));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+                .whenPressed(new InstantCommand(() -> {
+                    try {
+                        CommandScheduler.getInstance().cancel(CommandScheduler.getInstance().requiring(Climb.getInstance()));
+                    } catch (Exception e) {
+                    }
+                    Climb.getInstance().setVoltage(0);
+                }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
                 .whenPressed(new RunClimb(false));
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10)
@@ -179,6 +186,14 @@ public class ButtonConfiguration {
             DriveTrain.getInstance().setTargetRotationAngle(0);
             Gyro.getInstance().resetGyro();
         }));
+
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
+            Floppas.getInstance().setTargetV(Floppas.getInstance().getTargetV() + 5);
+        }));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
+            Floppas.getInstance().setTargetV(Floppas.getInstance().getTargetV() - 5);
+        }));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 12).whenPressed(new Shoot(true));
 
 
     }

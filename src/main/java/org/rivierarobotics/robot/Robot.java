@@ -21,6 +21,7 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -48,6 +49,7 @@ import org.rivierarobotics.util.ml.MLObject;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
+    private boolean autoFlag = false;
 
     private int tick = 0;
     private int frame = 0;
@@ -77,48 +79,36 @@ public class Robot extends TimedRobot {
         Climb.getInstance().setOffset();
 
         chooser = new SendableChooser<>();
-        chooser.addOption("Drive backwards", new PathGeneration(-2,0));
+        chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
         chooser.addOption("RShootAndCollect2", new OneBallSimpleAuto(true));
         chooser.addOption("LShootAndCollect2", new OneBallSimpleAuto(false));
         chooser.addOption("No Auto", null);
-        chooser.setDefaultOption("Drive backwards", new PathGeneration(-2,0));
+        chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
 
         Shuffleboard.getTab("Autos").add(chooser);
     }
 
     @Override
     public void robotPeriodic() {
-        Shuffleboard.update();
         var sb = Logging.robotShuffleboard;
-        var limeLight = sb.getTab("LL");
-        limeLight.setEntry("Hood Angle", Floppas.getInstance().getAngle());
-
-        //Logging.aiFieldDisplay.update();
-
-        //iterates through button frames
-//        tick++;
-//        if (tick > 20) {
-//            for (int i = 1; i <= 6; i++) {
-//                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
-//            }
-//            this.frame = frame >= states.length ? 0 : frame + 1;
-//            this.tick = 0;
-//        }
     }
 
     @Override
     public void teleopInit() {
+        CommandScheduler.getInstance().cancelAll();
         new ButtonConfiguration().initTeleop();
         initializeAllSubsystems();
         initializeDefaultCommands();
 
-        //only for testing
-//        Gyro.getInstance().resetGyro();
+        if (!autoFlag) {
+            resetRobotPoseAndGyro();
+        }
+        autoFlag = false;
         Climb.getInstance().setOffset();
-//        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
 
     private void shuffleboardLogging() {
+        if (DriverStation.isFMSAttached()) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -174,14 +164,10 @@ public class Robot extends TimedRobot {
         limeLight.setEntry("shooter speed", Floppas.getInstance().getTargetV());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());
 
-
-        BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
-
-
         var redBalls = MLcore.getDetectedObjects().get("red");
-        if(redBalls != null && redBalls.size() > 0) {
+        if (redBalls != null && redBalls.size() > 0) {
             var ball = redBalls.get(0);
-            if(ball != null)  {
+            if (ball != null) {
                 ML.setEntry("Red BallY", ball.relativeLocationY);
                 ML.setEntry("Red BallX", ball.relativeLocationX);
                 ML.setEntry("Red Ball Distance", ball.relativeLocationDistance);
@@ -190,13 +176,20 @@ public class Robot extends TimedRobot {
             }
         }
 
-
-
         shoot.setEntry("flywheel right v", flopp.getRightSpeed());
         shoot.setEntry("flywheel left v", -flopp.getLeftSpeed());
         shoot.setEntry("actuator angle", flopp.getAngle());
         shoot.setEntry("right target", flopp.getTarget(false));
         shoot.setEntry("left target", flopp.getTarget(true));
+
+        limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
+        limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
+        limeLight.setEntry("LL TX", Limelight.getInstance().getTx());
+        limeLight.setEntry("flop tuning", flopp.getTargetV());
+
+
+        limeLight = sb.getTab("LL");
+        limeLight.setEntry("Hood Angle", Floppas.getInstance().getAngle());
     }
 
     @Override
@@ -206,16 +199,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        autoFlag = true;
         initializeDefaultCommands();
         Climb.getInstance().setOffset();
-        Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        resetRobotPoseAndGyro();
         try {
             var command = chooser.getSelected();
-            if(command != null) {
+            if (command != null) {
                 CommandScheduler.getInstance().schedule(command);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -232,6 +225,11 @@ public class Robot extends TimedRobot {
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
         Climb.getInstance();
+    }
+
+    private void resetRobotPoseAndGyro() {
+        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        Gyro.getInstance().resetGyro();
     }
 
     private void initializeDefaultCommands() {

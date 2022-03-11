@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.drive;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
@@ -73,7 +74,6 @@ public class SwerveControl extends CommandBase {
             SmartDashboard.putNumber("error",driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees());
             SmartDashboard.putNumber("targetspeed", getRotationSpeed());
         } else {
-            driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees());
             driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
         }
         //driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());

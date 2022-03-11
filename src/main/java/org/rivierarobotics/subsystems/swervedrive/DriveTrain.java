@@ -35,6 +35,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -258,7 +259,6 @@ public class DriveTrain extends SubsystemBase {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             this.trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             updateRobotPose(trajectory.getInitialPose());
-            Logging.aiFieldDisplay.updatePath(trajectory);
             //This will be needed later for automated pathing
             //swerveDrivePoseEstimator.resetPosition(trajectory.getInitialPose(), gyro.getRotation2d());
             this.startTime = Timer.getFPGATimestamp();
@@ -363,6 +363,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicLogging() {
+        if(DriverStation.isFMSAttached()) return;
         for (int i = 0; i < swerveModules.length; i++) {
             loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Velocity", swerveModules[i].getVelocity());
             loggingTables[i].setEntry(DRIVE_IDS[i] + " Swerve Angle", swerveModules[i].getAbsoluteAngle());

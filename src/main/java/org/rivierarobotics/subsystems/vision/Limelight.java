@@ -41,7 +41,7 @@ public class Limelight extends SubsystemBase {
     private static double robotHeight = 1.092;
     private static double goalHeight = 2.6416;
     private final PhotonCamera camera;
-    private static final double llOffset = 0.1;
+    private static final double llOffset = 0.2286;
 
     public Limelight() {
         this.camera = new PhotonCamera("gloworm");
@@ -78,10 +78,12 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getAdjustedDistance () {
-         return Math.sqrt(getDistance() * getDistance() + llOffset * llOffset - getDistance() * llOffset * Math.cos(getTx()));
-    }
-    public double getAdjustedTx() {
-        return Math.acos(getDistance() * Math.cos(getTx()) / getAdjustedDistance());
+         return Math.sqrt(getDistance() * getDistance() + llOffset * llOffset - getDistance() * llOffset * Math.cos(Math.toRadians(getTx())));
     }
 
+    public double getAdjustedTx() {
+        SmartDashboard.putNumber("adjtx", Math.acos(getDistance() * Math.cos(Math.toRadians(getTx())) / getAdjustedDistance()));
+        SmartDashboard.putNumber("innercos", getDistance() * Math.cos(Math.toRadians(getTx())) / getAdjustedDistance());
+        return Math.acos(getDistance() * Math.cos(Math.toRadians(getTx())) / getAdjustedDistance());
+    }
 }
