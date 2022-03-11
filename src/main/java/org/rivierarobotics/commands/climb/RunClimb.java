@@ -44,7 +44,6 @@ public class RunClimb extends SequentialCommandGroup {
             first = Climb.Position.LOW;
         }
         addCommands(
-                //new SetDriveAngle(90, 0.2),
                 //opens in preparation
                 new OpenAllPistons(),
                 //begin waiting for the first switch to be set and set to low position

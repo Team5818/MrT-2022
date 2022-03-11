@@ -71,8 +71,6 @@ public class SwerveControl extends CommandBase {
 
         if (rot == 0) {
             driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
-            SmartDashboard.putNumber("error",driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees());
-            SmartDashboard.putNumber("targetspeed", getRotationSpeed());
         } else {
             driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
         }

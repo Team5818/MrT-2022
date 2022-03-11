@@ -8,8 +8,8 @@ import org.rivierarobotics.subsystems.vision.Floppas;
 public class CollectToggle extends CommandBase {
     private final Intake intake;
     private final Floppas floppas;
-    private final double beltVoltage = 8;
-    private final double intakeVoltage = 12;
+    public static final double BELT_VOLTAGE = 8;
+    public static final double INTAKE_VOLTAGE = 12;
     private final boolean targetPositive;
     private final boolean useIntake;
     private final boolean useRollers;
@@ -33,7 +33,8 @@ public class CollectToggle extends CommandBase {
     public void execute() {
         floppas.setShooterVoltage(-1);
         floppas.floppaStateSpaceControl();
-        intake.setVoltages(useIntake ? (targetPositive ? intakeVoltage : -intakeVoltage) : 0, useRollers ? (targetPositive ? beltVoltage : -beltVoltage) : 0);
+        intake.setVoltages(useIntake ? (targetPositive ? INTAKE_VOLTAGE : -INTAKE_VOLTAGE)
+                : 0, useRollers ? (targetPositive ? BELT_VOLTAGE : -BELT_VOLTAGE) : 0);
     }
 
     @Override
@@ -55,7 +56,5 @@ public class CollectToggle extends CommandBase {
         }
         intake.setVoltages(0, 0);
         intake.setIsFull(false);
-
-        //intake.setVoltages(0,0);
     }
 }

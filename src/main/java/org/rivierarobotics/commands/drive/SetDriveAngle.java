@@ -30,12 +30,10 @@ import org.rivierarobotics.util.ml.MLCore;
 public class SetDriveAngle extends CommandBase {
     private final DriveTrain dt;
     private final Gyro gyro;
-    private final double angle;
 
     public SetDriveAngle(double angle) {
         this.dt = DriveTrain.getInstance();
         this.gyro = Gyro.getInstance();
-        this.angle = angle;
         dt.setTargetRotationAngle(angle);
         addRequirements(this.dt);
     }

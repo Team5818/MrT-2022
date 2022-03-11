@@ -7,7 +7,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import java.util.TreeMap;
 
 public class InterpolationTable {
-    private TreeMap<Double, Double> interpolationTable;
+    private final TreeMap<Double, Double> interpolationTable;
 
     public InterpolationTable() {
         interpolationTable = new TreeMap<Double, Double>();
