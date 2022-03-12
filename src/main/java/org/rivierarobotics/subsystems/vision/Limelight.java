@@ -20,12 +20,11 @@
 
 package org.rivierarobotics.subsystems.vision;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class Limelight extends SubsystemBase {
 
@@ -42,6 +41,9 @@ public class Limelight extends SubsystemBase {
     private static double goalHeight = 2.6416;
     private final PhotonCamera camera;
     private static final double llOffset = 0.2286;
+
+    //TODO: figure out correct implementation
+    private Pose2d limelightTargetPose = new Pose2d();
 
     public Limelight() {
         this.camera = new PhotonCamera("gloworm");
@@ -78,12 +80,24 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getAdjustedDistance () {
-         return Math.sqrt(getDistance() * getDistance() + llOffset * llOffset - getDistance() * llOffset * Math.cos(Math.toRadians(getTx())));
+        var adjustedDistance =  Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance() * llOffset * Math.cos(Math.toRadians(90 - getTx())));
+        return adjustedDistance;
     }
 
+    // returns new Tx in Radians
     public double getAdjustedTx() {
-        SmartDashboard.putNumber("adjtx", Math.acos(getDistance() * Math.cos(Math.toRadians(getTx() + 90)) / getAdjustedDistance()));
-        SmartDashboard.putNumber("innercos", getDistance() * Math.cos(Math.toRadians(getTx())) / getAdjustedDistance());
-        return Math.acos(getDistance() * Math.cos(Math.toRadians(getTx() + 90)) / getAdjustedDistance());
+        var adjustedAngle =  Math.asin(getAdjustedDistance() / (Math.sin(90 - getTx()) * getDistance()) % 1);
+        return adjustedAngle;
+    }
+
+    public double getShootingAssistAngle() {
+        var robotX = DriveTrain.getInstance().getRobotPose().getX();
+        var robotY = DriveTrain.getInstance().getRobotPose().getY();
+
+        var targetX = limelightTargetPose.getX();
+        var targetY = limelightTargetPose.getY();
+
+        var targetAngle = Math.atan((targetX - robotX) / (targetY - robotY));
+        return targetAngle;
     }
 }
