@@ -11,21 +11,24 @@ import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
 public class AutoAimShoot extends SequentialCommandGroup {
-    public AutoAimShoot() {
+    public AutoAimShoot(boolean isAuto) {
         addCommands(
-                new SetDriverAssist(true),
                 new ConditionalCommand(
                         new ParallelDeadlineGroup(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(0.5),
-                                        new Shoot(Floppas.getInstance().getEstimatedSpeed(Limelight.getInstance().getDistance()), Floppas.getInstance().getEstimatedAngle(Limelight.getInstance().getDistance()))
-                                ),
-                                new TrackGoal()
+                                new WaitCommand(0.5),
+                                new Shoot(Floppas.getInstance().getEstimatedSpeed(Limelight.getInstance().getDistance()), Floppas.getInstance().getEstimatedAngle(Limelight.getInstance().getDistance()))
+                        ),
+                                new TrackGoal(isAuto)
                         ),
                         new Shoot(135, Floppas.ZERO_ANGLE - 0.562),
                         () -> Limelight.getInstance().getDetected()
                 )
         );
+    }
+
+    public AutoAimShoot() {
+        this(false);
     }
 
     @Override

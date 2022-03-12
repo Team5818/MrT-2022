@@ -29,12 +29,11 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double voltage = 9;
+    private static final double voltage = 4.5;
 
     public RunClimb(boolean reversed) {
         final Climb.Position first;
         final Climb.Position last;
-        //properly sets the reversal
         final double modifier;
         if (reversed) {
             first = Climb.Position.HIGH;
@@ -44,47 +43,32 @@ public class RunClimb extends SequentialCommandGroup {
             first = Climb.Position.LOW;
         }
         addCommands(
-                //opens in preparation
+                //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
-                //begin waiting for the first switch to be set and set to low position
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(first)),
                         new ClimbSetPosition(Climb.Position.LOW, reversed)
                 ),
-                //sets piston after the switches are engaged
                 new TogglePiston(first, true, 0),
-//                new WaitCommand(0.25),
+                new WaitCommand(0.25),
                 //new SetDriveVelocity(0,0,0),
-                //runs motor until next hook engaged
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(Climb.Position.MID)),
                         new InteruptableSetVoltage(reversed, voltage)),
-                //switches piston closed
+                new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
                 new TogglePiston(Climb.Position.MID, true, 0),
-                //sets a lower voltage for windup while waiting for the confirmation/wait
-                new ParallelDeadlineGroup(
-                        new SequentialCommandGroup(
 //                new WaitCommand(0.2),
-                            new WaitPiston(Climb.Position.MID, 0.5, 1.5, reversed),
-                            new TogglePiston(first, false, 0)),
-                        new InteruptableSetVoltage(reversed, voltage - 2)
-                ),
-//                new WaitCommand(0.3),
-                //runs the climb at full voltage until highest switch is set
+                new WaitPiston(Climb.Position.MID, 0.5, 1, reversed),
+                new TogglePiston(first, false, 0),
+                new WaitCommand(0.15),
+//                new InteruptableSetVoltage(reversed, voltage).withTimeout(0.9),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> Climb.getInstance().isSwitchSet(last)),
-                        new InteruptableSetVoltage(reversed, voltage)),
-                //don't set voltage to zero it's just bad
-                //new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
-                //set last piston closed
+                        new InteruptableSetVoltage(reversed, voltage * 1.15)),
+                new InstantCommand(() -> Climb.getInstance().setVoltage(voltage * 0.5)),
                 new TogglePiston(last, true, 0),
-                //finish off by moving while checking the last voltage, and then open mid
-                new ParallelDeadlineGroup(
-                        new SequentialCommandGroup(
 //                new WaitCommand(0.3),
-                            new WaitPiston(last, 0.5, 1.5, reversed),
-                            new TogglePiston(Climb.Position.MID, false, 0)),
-                        new InteruptableSetVoltage(reversed, 3)
-                ),
-                //reach a resting position
+                new WaitPiston(last, 0.5, 1.0, reversed),
+                new InstantCommand(() -> Climb.getInstance().setVoltage(0)),
+                new TogglePiston(Climb.Position.MID, false, 0),
                 new ClimbSetPosition(Climb.Position.HIGH, reversed)
         );
     }

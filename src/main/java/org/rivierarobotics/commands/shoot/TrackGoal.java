@@ -22,6 +22,7 @@ package org.rivierarobotics.commands.shoot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -32,11 +33,18 @@ public class TrackGoal extends CommandBase {
     private final Limelight lime;
     private double storedTx;
     private Gyro gyro;
+    private final boolean isAuto;
 
     public TrackGoal() {
+        this(false);
+    }
+
+    public TrackGoal(boolean isAuto) {
+        this.isAuto = isAuto;
         this.drive = DriveTrain.getInstance();
         this.lime = Limelight.getInstance();
         this.gyro = Gyro.getInstance();
+        if(isAuto) addRequirements(drive);
     }
 
     @Override
@@ -44,17 +52,40 @@ public class TrackGoal extends CommandBase {
         drive.setUseDriverAssist(true);
     }
 
+    public static double MIN_ROT = 0.0;
+    public static double TURN_SPEED = 0.15;
+    public static double MAX_SPEED = 5;
+
     @Override
     public void execute() {
         if (lime.getDetected()) {
-            this.storedTx = lime.getAdjustedTx();
+            if(isAuto) {
+                drive.drive(0, 0, getRotationSpeed(), true);
+            }
+            this.storedTx = lime.getTx();
+            this.storedTx = lime.getTx() + (11 / lime.getDistance());
             SmartDashboard.putNumber("storedtx", storedTx);
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }
     }
 
+    private double getRotationSpeed() {
+        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), drive.getTargetRotationAngle(), 2)) {
+            return 0.0;
+        }
+        double vel = (TURN_SPEED * (drive.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
+        if (Math.abs(vel) < MIN_ROT) return Math.signum(vel) * MIN_ROT;
+        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_SPEED);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
     @Override
     public void end(boolean interrupted) {
         drive.setUseDriverAssist(false);
+        if(isAuto) drive.drive(0,0,0,true);
     }
 }

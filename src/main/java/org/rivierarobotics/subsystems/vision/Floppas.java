@@ -55,10 +55,11 @@ public class Floppas extends SubsystemBase {
     private final DutyCycleEncoder floppaEncoder;
     private static final double FIRE_MAX_VOLTAGE = 12;
     private static final double AIM_MAX_VOLTAGE = 9;
-    public static final double ZERO_ANGLE = -3.24;
+//    public static final double ZERO_ANGLE = -3.24;
+    public static final double ZERO_ANGLE = -2.81;
     private static final double AIM_DOWNWARD_LIMIT = ZERO_ANGLE - 1.25;
     private static final double AIM_UPWARD_LIMIT = ZERO_ANGLE + 0.615;
-    private static final double ADJUST_FROM_SLIPPAGE = -0.78;
+    private static final double ADJUST_FROM_SLIPPAGE = -0.78 + (-2.81 + 3.24);
 
     private boolean blockSS = false;
     private final double VEL_TO_RADS = (2 * Math.PI / 4096) * 10;

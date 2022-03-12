@@ -55,4 +55,8 @@ public class Shoot extends SequentialCommandGroup {
         );
     }
 
+    @Override
+    public void end(boolean interrupted) {
+        Intake.getInstance().setVoltages(0,0);
+    }
 }

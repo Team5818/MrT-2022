@@ -21,6 +21,7 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,10 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.commands.auto.DrivePath;
-import org.rivierarobotics.commands.auto.MLAuto;
-import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
-import org.rivierarobotics.commands.auto.PathGeneration;
+import org.rivierarobotics.commands.auto.*;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.collect.CollectControl;
 import org.rivierarobotics.commands.drive.SwerveControl;
@@ -88,6 +86,8 @@ public class Robot extends TimedRobot {
         chooser.addOption("LShootAndCollect2", new OneBallSimpleAuto(false));
         chooser.addOption("MLAUTO", new MLAuto());
         chooser.addOption("No Auto", null);
+        chooser.addOption("SimpleShootR", new DriveShoot(true));
+        chooser.addOption("SimpleShootL", new DriveShoot(false));
         chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
 
         Shuffleboard.getTab("Autos").add(chooser);
@@ -135,6 +135,8 @@ public class Robot extends TimedRobot {
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
         drive.setEntry("x pose", dt.getRobotPose().getX());
         drive.setEntry("y pose", dt.getRobotPose().getY());
+        drive.setEntry("pose angle", dt.getRobotPose().getRotation().getDegrees());
+
         drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
         drive.setEntry("minrot", SwerveControl.MIN_ROT);
@@ -205,7 +207,9 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         autoFlag = true;
+        initializeAllSubsystems();
         initializeDefaultCommands();
+
         Climb.getInstance().setOffset();
         resetRobotPoseAndGyro();
         try {
@@ -229,6 +233,9 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+        Floppas.getInstance();
+        Limelight.getInstance();
+        Intake.getInstance();
         Climb.getInstance();
     }
 
@@ -256,7 +263,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationInit() {
-        CommandScheduler.getInstance().schedule(new MLAuto());
+        //DriveTrain.getInstance().resetPose(new Pose2d(20,20, new Rotation2d(50)));
     }
 }
 

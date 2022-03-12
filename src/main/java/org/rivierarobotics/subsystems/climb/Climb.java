@@ -46,7 +46,7 @@ public class Climb extends SubsystemBase {
     private static Climb climb;
     private static final double MAX_FORWARD_LIMIT = 924412;
     private static final double MAX_REVERSE_LIMIT = -927054;
-    private static final double LOW_RADIANS = -4.075;
+    private static final double LOW_RADIANS = -4.05;
     private static final double MID_RADIANS = 2.64;
     private static final double HIGH_RADIANS = -1.53;
     public static final double MAX_RADS = 4.17;
@@ -176,7 +176,7 @@ public class Climb extends SubsystemBase {
         //var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
 
         if(MathUtil.isWithinTolerance(getAngle(), climbStateSpace.getTargetPosition(), 0.1)) return;
-        double v = Math.min(Math.abs((climbStateSpace.getTargetPosition() - getAngle()) * (12 / 0.2)), 12);
+        double v = Math.min(Math.abs((climbStateSpace.getTargetPosition() - getAngle()) * (12 / 0.5)), 12);
         setVoltage(-Math.signum((climbStateSpace.getTargetPosition() - getAngle())) * v);
 
         //setVoltage(-climbVoltage);

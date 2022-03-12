@@ -16,7 +16,7 @@ public class OneBallSimpleAuto extends SequentialCommandGroup {
     public OneBallSimpleAuto(boolean rightSide) {
         if(!rightSide) {
             addCommands(
-                    new SetDriveAngle(-135).withTimeout(2),
+                    new SetDriveAngle(-135).withTimeout(3),
                     new AutoAimShoot().withTimeout(5),
                     new SetDriveAngle(-255).withTimeout(2),
                     new ParallelDeadlineGroup(
@@ -29,7 +29,7 @@ public class OneBallSimpleAuto extends SequentialCommandGroup {
             );
         } else {
             addCommands(
-                    new SetDriveAngle(-45).withTimeout(2),
+                    new SetDriveAngle(-45).withTimeout(3),
                     new AutoAimShoot().withTimeout(5),
                     new SetDriveAngle(-205).withTimeout(2),
                     new ParallelDeadlineGroup(

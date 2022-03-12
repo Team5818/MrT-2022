@@ -49,6 +49,7 @@ public class Intake extends SubsystemBase {
     private final WPI_TalonSRX tsrx;
     private final ColorSensorV3 colorSensorV3;
     private final AnalogInput distanceSensor;
+    private final AnalogInput distanceSensor2;
     private final boolean setDriveEnabled = false;
 
     private double intakeVoltage = 0;
@@ -65,6 +66,7 @@ public class Intake extends SubsystemBase {
         p2 = new Piston(2);
         this.colorSensorV3 = new ColorSensorV3(I2C.Port.kOnboard);
         this.distanceSensor = new AnalogInput(3);
+        this.distanceSensor2 = new AnalogInput(0);
         csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
         tsrx = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
         StatusFrameDemolisher.demolishStatusFrames(tsrx, false);
@@ -104,7 +106,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean distanceSensorHasBall(){
-        return Math.abs(distanceSensor.getValue()) < 2000;
+        return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
     }
 
     public boolean canCollect() {

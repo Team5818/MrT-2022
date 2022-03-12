@@ -63,9 +63,9 @@ public class WaitPiston extends CommandBase {
             }
             if (climb.getPlay()) {
                 if (reversed) {
-                    climb.setVoltage(3);
+                    climb.setVoltage(4.5);
                 } else {
-                    climb.setVoltage(-3);
+                    climb.setVoltage(-4.5);
                 }
             } else {
                 climb.setVoltage(0);
