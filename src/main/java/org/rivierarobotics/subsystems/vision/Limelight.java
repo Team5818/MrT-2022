@@ -78,12 +78,13 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getAdjustedDistance () {
-         return Math.sqrt(getDistance() * getDistance() + llOffset * llOffset - getDistance() * llOffset * Math.cos(Math.toRadians(getTx())));
+        var adjustedDistance =  Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance() * llOffset * Math.cos(Math.toRadians(90 - Tx)));
+        return adjustedDistance;
     }
 
+    // returns new Tx in Radians
     public double getAdjustedTx() {
-        SmartDashboard.putNumber("adjtx", Math.acos(getDistance() * Math.cos(Math.toRadians(getTx() + 90)) / getAdjustedDistance()));
-        SmartDashboard.putNumber("innercos", getDistance() * Math.cos(Math.toRadians(getTx())) / getAdjustedDistance());
-        return Math.acos(getDistance() * Math.cos(Math.toRadians(getTx() + 90)) / getAdjustedDistance());
+        var adjustedAngle =  Math.asin(getAdjustedDistance() / (Math.sin(90 - getTx()) * getDistance()) % 1);
+        return adjustedAngle;
     }
 }
