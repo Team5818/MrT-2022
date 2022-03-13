@@ -50,12 +50,7 @@ public class SwerveModule {
     private static final double MAX_TURN_ACCELERATION = 30000; //Rad/s
     private static final double MAX_TURN_VELOCITY = 30000; //Rad/s
     private static final int TIMEOUT_MS = 60;
-
-
-
     private final double zeroTicks;
-
-
 
     //Turn Motor Motion Magic
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(

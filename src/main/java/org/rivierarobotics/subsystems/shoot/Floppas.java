@@ -56,7 +56,6 @@ public class Floppas extends SubsystemBase {
     private static final double AIM_MAX_VOLTAGE = 9;
     public static final double ZERO_ANGLE = -5.02;
 
-
     private static final double AIM_DOWNWARD_LIMIT = ZERO_ANGLE - 1.25;
     private static final double AIM_UPWARD_LIMIT = ZERO_ANGLE + 0.615;
     private static final double ADJUST_FROM_SLIPPAGE = -4.22 + 2.81 + (-5.32+4.36);

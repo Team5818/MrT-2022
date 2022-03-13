@@ -47,7 +47,6 @@ public class DriveToClosest extends SequentialCommandGroup {
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
 
-
         trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
     }
 

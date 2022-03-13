@@ -50,7 +50,7 @@ public class PoseEstimator {
         );
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 0, 50, TimeUnit.MILLISECONDS);
+        e.scheduleAtFixedRate(this::updateOdometry, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public Pose2d getRobotPose() {
