@@ -3,7 +3,7 @@ package org.rivierarobotics.commands.collect;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.intake.Intake;
-import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
 public class CollectToggle extends CommandBase {
     private final Intake intake;

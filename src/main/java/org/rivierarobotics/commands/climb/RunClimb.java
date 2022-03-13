@@ -26,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import org.rivierarobotics.commands.subsystems.climb.ClimbSetPosition;
+import org.rivierarobotics.commands.subsystems.climb.OpenAllPistons;
+import org.rivierarobotics.commands.subsystems.climb.TogglePiston;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class RunClimb extends SequentialCommandGroup {

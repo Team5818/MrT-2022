@@ -1,4 +1,4 @@
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;

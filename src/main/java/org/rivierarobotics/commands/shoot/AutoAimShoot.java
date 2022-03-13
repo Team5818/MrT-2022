@@ -1,13 +1,12 @@
 package org.rivierarobotics.commands.shoot;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.drive.SetDriverAssist;
+import org.rivierarobotics.commands.subsystems.drivetrain.SetDriverAssist;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
 public class AutoAimShoot extends SequentialCommandGroup {

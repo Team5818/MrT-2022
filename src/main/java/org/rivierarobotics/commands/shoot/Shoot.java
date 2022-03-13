@@ -3,9 +3,9 @@ package org.rivierarobotics.commands.shoot;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.collect.CollectToggle;
+import org.rivierarobotics.commands.subsystems.floppas.SetFloppaPosition;
 import org.rivierarobotics.subsystems.intake.Intake;
-import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
 public class Shoot extends SequentialCommandGroup {
 

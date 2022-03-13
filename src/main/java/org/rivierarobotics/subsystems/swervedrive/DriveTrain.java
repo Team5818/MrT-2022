@@ -77,9 +77,9 @@ public class DriveTrain extends SubsystemBase {
 
 
     //Drive Speed Constants
-    public static final double MAX_SPEED = 8.5; // m/s
+    public static final double MAX_SPEED = 10; // m/s
     public static final double MAX_CHANGE_IN_VELOCITY = 0.5; // m/s
-    public static final double MAX_ANGULAR_SPEED = Math.PI * 3 * 1.1; // rad/s
+    public static final double MAX_ANGULAR_SPEED = Math.PI * 3 * 0.8; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 3; // rad/s
     //Module Mappings / Measurements
     public static final double STATE_SPACE_LOOP_TIME = 0.02; // s
@@ -165,7 +165,7 @@ public class DriveTrain extends SubsystemBase {
 
     public void setSwerveModuleAngle(double angle) {
         for (var m : swerveModules) {
-            m.setDesiredState(new SwerveModuleState(0, new Rotation2d(angle)));
+            m.setDesiredState(new SwerveModuleState(0,new Rotation2d(angle)));
         }
     }
 
@@ -198,7 +198,7 @@ public class DriveTrain extends SubsystemBase {
     private double[] limitSpeeds(double xSpeed, double ySpeed) {
         var cs = getChassisSpeeds();
         var currentSpeed = Math.sqrt(Math.pow(cs.vxMetersPerSecond, 2) + Math.pow(cs.vyMetersPerSecond, 2));
-        var targetSpeed = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+        var targetSpeed = Math.sqrt(Math.pow(xSpeed,2) + Math.pow(ySpeed,2));
 
         var anglediff = Math.atan((ySpeed - cs.vyMetersPerSecond) / (xSpeed - cs.vxMetersPerSecond));
         var maxChangeInXSpeed = Math.cos(anglediff) * MAX_CHANGE_IN_VELOCITY;
@@ -210,6 +210,7 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("Chassis y speed", cs.vyMetersPerSecond);
 
 
+
 //        if (Math.abs(targetSpeed - currentSpeed) > MAX_CHANGE_IN_VELOCITY) {
 //            if (targetSpeed - currentSpeed > 0) {
 //                speeds[0] = targetSpeed > MAX_SPEED ? Math.cos(anglediff) * MAX_SPEED  : cs.vxMetersPerSecond + maxChangeInXSpeed;
@@ -219,8 +220,8 @@ public class DriveTrain extends SubsystemBase {
 //                speeds[1] = targetSpeed < -MAX_SPEED ? Math.sin(anglediff) * -MAX_SPEED  : cs.vyMetersPerSecond - maxChangeInXSpeed;
 //            }
 //        } else {
-        speeds[0] = cs.vxMetersPerSecond;
-        speeds[1] = cs.vyMetersPerSecond;
+            speeds[0] = cs.vxMetersPerSecond;
+            speeds[1] = cs.vyMetersPerSecond;
 //        }
 // (xSpeed - cs.vxMetersPerSecond > 0 ? cs.vxMetersPerSecond + 0.1 : cs.vxMetersPerSecond - 0.1
 
@@ -251,7 +252,7 @@ public class DriveTrain extends SubsystemBase {
 //        for (int i = 0; i < swerveModuleStates.length; i++) {
 //            swerveModules[i].setDesiredState(swerveModuleStates[i]);
 //        }
-        SmartDashboard.putNumber("xspeed", xSpeed);
+        SmartDashboard.putNumber( "xspeed", xSpeed);
         SmartDashboard.putNumber("chassisx", getChassisSpeeds().vxMetersPerSecond);
         SmartDashboard.putNumber("yspeed", ySpeed);
         SmartDashboard.putNumber("chassisy", getChassisSpeeds().vyMetersPerSecond);
@@ -261,7 +262,7 @@ public class DriveTrain extends SubsystemBase {
                         : new ChassisSpeeds(xSpeed, ySpeed, rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
-        if (Math.abs(xSpeed) <= 0.05 && Math.abs(ySpeed) <= 0.05 && rot == 0) {
+        if(xSpeed <= 0.05 && ySpeed <= 0.05 && rot == 0) {
             for (int i = 0; i < swerveModuleStates.length; i++) {
                 swerveModules[i].setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
             }
@@ -330,10 +331,10 @@ public class DriveTrain extends SubsystemBase {
         try {
             var pose2d = swerveDrivePoseEstimator.update(
                     gyro.getRotation2d(),
-                    swerveModules[0].getState(),
-                    swerveModules[1].getState(),
-                    swerveModules[2].getState(),
-                    swerveModules[3].getState()
+                swerveModules[0].getState(),
+                swerveModules[1].getState(),
+                swerveModules[2].getState(),
+                swerveModules[3].getState()
             );
             robotPose.set(pose2d);
         } finally {

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
-import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
 public class ShooterControl extends CommandBase {
     private final Floppas floppas;

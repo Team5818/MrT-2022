@@ -1,4 +1,4 @@
-package org.rivierarobotics.commands.collect;
+package org.rivierarobotics.commands.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.intake.Intake;

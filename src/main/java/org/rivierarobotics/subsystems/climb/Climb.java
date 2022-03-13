@@ -80,13 +80,12 @@ public class Climb extends SubsystemBase {
     private final WPI_TalonFX climbMotorB;
     private final DutyCycleEncoder encoder;
     private final PositionStateSpaceModel climbStateSpace;
-    //TODO: SysID The climb using the middle bar of the climb once new climb is built, this works on cyclone
     private final SystemIdentification sysId = new SystemIdentification(0.0, 10, 0.02);
     private final double zeroRadians = 0.0;
-    //TODO: Find this zero
     private boolean play = true;
 
     private Climb() {
+        //TODO: Use motion magic on the climb, remove absolute encoders
         this.climbStateSpace = new PositionStateSpaceModel(
                 sysId,
                 0.01,

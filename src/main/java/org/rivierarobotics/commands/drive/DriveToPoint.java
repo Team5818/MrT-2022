@@ -1,4 +1,4 @@
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.drive;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems.vision;
+package org.rivierarobotics.subsystems.shoot;
 
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -116,7 +116,7 @@ public class Floppas extends SubsystemBase {
         this.floppaEncoder = new DutyCycleEncoder(0);
         this.floppaEncoder.setDistancePerRotation(-2 * Math.PI);
         this.angle = getAngle();
-        //TODO: all of this sysid
+
         this.rightSS = new VelocityStateSpaceModel(
                 rightSysId,
                 2,

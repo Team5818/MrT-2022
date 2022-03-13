@@ -18,30 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.drive;
+package org.rivierarobotics.commands.subsystems.drivetrain;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-public class SetWheelbaseAngle extends CommandBase {
-    private final DriveTrain dt;
-    private final double angle;
+public class SetDriveVelocity extends CommandBase {
+    private final DriveTrain driveTrain;
+    private final double velocityX;
+    private final double velocityY;
+    private final double rotationVel;
 
-    public SetWheelbaseAngle(double angle) {
-        this.angle = Math.toRadians(angle);
-        this.dt = DriveTrain.getInstance();
-        addRequirements(this.dt);
+    public SetDriveVelocity(double velocityX, double velocityY, double rotationVel) {
+        this.driveTrain = DriveTrain.getInstance();
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+        this.rotationVel = rotationVel;
+        addRequirements(driveTrain);
     }
 
     @Override
-    public void initialize() {
-        Logging.robotShuffleboard.getTab("Drive").setEntry("check", angle);
-        dt.setSwerveModuleAngle(angle);
+    public void execute() {
+        driveTrain.drive(velocityX, velocityY, rotationVel, true);
     }
 
     @Override
-    public boolean isFinished() {
-        return false;
+    public void end(boolean interrupted) {
+        driveTrain.setSwerveModuleVelocity(0);
     }
 }

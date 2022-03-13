@@ -18,21 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.climb;
+package org.rivierarobotics.commands.subsystems.climb;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
-public class ClimbZero extends CommandBase {
-    private Climb climb;
+public class OpenAllPistons extends InstantCommand {
+    private final Climb climb;
 
-    public ClimbZero() {
+    public OpenAllPistons() {
         this.climb = Climb.getInstance();
-        this.addRequirements(climb);
+        addRequirements(climb);
     }
 
     @Override
     public void initialize() {
-        climb.setOffset();
+        climb.openAllPistons();
     }
 }

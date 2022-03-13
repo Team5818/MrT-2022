@@ -29,7 +29,8 @@ import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
-public class Limelight extends SubsystemBase {
+// do not make this a subsystem please thank you
+public class Limelight {
 
     public static Limelight getInstance() {
         if (limelight == null) {
@@ -76,10 +77,6 @@ public class Limelight extends SubsystemBase {
 
     public double getDistance() {
         return PhotonUtils.calculateDistanceToTargetMeters(robotHeight, goalHeight, Math.toRadians(llAngle), Math.toRadians(getTy()));
-    }
-
-    @Override
-    public void periodic() {
     }
 
     public double getAdjustedDistance () {

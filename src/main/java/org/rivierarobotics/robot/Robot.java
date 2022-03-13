@@ -21,33 +21,25 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.commands.auto.*;
 import org.rivierarobotics.commands.climb.ClimbControl;
-import org.rivierarobotics.commands.collect.CollectControl;
+import org.rivierarobotics.commands.drive.PathGeneration;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.ShooterControl;
-import org.rivierarobotics.lib.PIDConfig;
-import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Floppas;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.InterpolationTable;
-import org.rivierarobotics.util.aifield.FieldMesh;
-import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
-import org.rivierarobotics.util.ml.MLObject;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();

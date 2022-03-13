@@ -1,8 +1,8 @@
-package org.rivierarobotics.commands.shoot;
+package org.rivierarobotics.commands.subsystems.floppas;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
 public class SetFloppaPosition extends CommandBase {
     private final double flywheelRads;

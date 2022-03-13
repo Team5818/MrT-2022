@@ -1,7 +1,7 @@
-package org.rivierarobotics.commands.shoot;
+package org.rivierarobotics.commands.subsystems.floppas;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
 public class SetFlywheelSpeed extends InstantCommand {
     private final Floppas floppas;
@@ -18,7 +18,14 @@ public class SetFlywheelSpeed extends InstantCommand {
     }
 
     @Override
+    public void execute() {
+        floppas.floppaStateSpaceControl();
+    }
+
+    @Override
     public void end(boolean interrupted) {
-        floppas.setSpeed(0);
+        if(interrupted) {
+            floppas.setSpeed(0);
+        }
     }
 }

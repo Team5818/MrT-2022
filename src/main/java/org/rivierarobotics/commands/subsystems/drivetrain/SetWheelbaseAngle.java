@@ -18,23 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.climb;
+package org.rivierarobotics.commands.subsystems.drivetrain;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
-public class IdleMode extends CommandBase {
-    private Climb climb;
-    private boolean coast;
+public class SetWheelbaseAngle extends CommandBase {
+    private final DriveTrain dt;
+    private final double angle;
 
-    public IdleMode(boolean coast) {
-        this.climb = Climb.getInstance();
-        this.coast = coast;
-        this.addRequirements(climb);
+    public SetWheelbaseAngle(double angle) {
+        this.angle = Math.toRadians(angle);
+        this.dt = DriveTrain.getInstance();
+        addRequirements(this.dt);
     }
 
     @Override
     public void initialize() {
-        climb.setCoast(coast);
+        Logging.robotShuffleboard.getTab("Drive").setEntry("check", angle);
+        dt.setSwerveModuleAngle(angle);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

@@ -18,32 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.drive;
+package org.rivierarobotics.commands.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class SetDriveVelocity extends CommandBase {
-    private final DriveTrain driveTrain;
-    private final double velocityX;
-    private final double velocityY;
-    private final double rotationVel;
+public class ClimbSetAngle extends CommandBase {
+    private final Climb climb;
+    private final double angle;
 
-    public SetDriveVelocity(double velocityX, double velocityY, double rotationVel) {
-        this.driveTrain = DriveTrain.getInstance();
-        this.velocityX = velocityX;
-        this.velocityY = velocityY;
-        this.rotationVel = rotationVel;
-        addRequirements(driveTrain);
+    public ClimbSetAngle(double angle) {
+        this.climb = Climb.getInstance();
+        this.angle = angle;
+        addRequirements(this.climb);
+    }
+
+    @Override
+    public void initialize() {
+        climb.setPosition(angle);
     }
 
     @Override
     public void execute() {
-        driveTrain.drive(velocityX, velocityY, rotationVel, true);
+        climb.followStateSpace();
     }
 
     @Override
-    public void end(boolean interrupted) {
-        driveTrain.setSwerveModuleVelocity(0);
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.3);
     }
 }
