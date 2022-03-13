@@ -43,22 +43,9 @@ public class SetDriveAngle extends CommandBase {
         dt.setTargetRotationAngle(angle);
     }
 
-    public static double MIN_ROT = 0.0;
-    public static double TURN_SPEED = 0.15;
-    public static double MAX_SPEED = 5;
-
-    private double getRotationSpeed() {
-        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), dt.getTargetRotationAngle(), 2)) {
-            return 0.0;
-        }
-        double vel = (TURN_SPEED * (dt.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
-        if (Math.abs(vel) < MIN_ROT) return Math.signum(vel) * MIN_ROT;
-        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_SPEED);
-    }
-
     @Override
     public void execute() {
-        dt.drive(0, 0, getRotationSpeed(), true);
+        dt.drive(0, 0, dt.getRotationSpeed(), true);
     }
 
     @Override

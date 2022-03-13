@@ -125,9 +125,6 @@ public class Robot extends TimedRobot {
 
         drive.setEntry("Robot Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
-        drive.setEntry("minrot", SwerveControl.MIN_ROT);
-        drive.setEntry("turnspeed", SwerveControl.TURN_SPEED);
-        drive.setEntry("maxspeed", SwerveControl.MAX_SPEED);
 
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
         drive.setEntry("Gyro Angle raw", Gyro.getInstance().getRotation2d().getRadians());

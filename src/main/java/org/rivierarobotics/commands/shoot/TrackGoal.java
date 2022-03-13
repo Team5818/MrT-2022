@@ -50,29 +50,15 @@ public class TrackGoal extends CommandBase {
         drive.setUseDriverAssist(true);
     }
 
-    public static double MIN_ROT = 0.0;
-    public static double TURN_SPEED = 0.15;
-    public static double MAX_SPEED = 5;
-
     @Override
     public void execute() {
         if (lime.getDetected()) {
             if(isAuto) {
-                drive.drive(0, 0, getRotationSpeed(), true);
+                drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
-            //this.storedTx = lime.getTx();
             this.storedTx = lime.getTx() + (13 / lime.getDistance());
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }
-    }
-
-    private double getRotationSpeed() {
-        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), drive.getTargetRotationAngle(), 2)) {
-            return 0.0;
-        }
-        double vel = (TURN_SPEED * (drive.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
-        if (Math.abs(vel) < MIN_ROT) return Math.signum(vel) * MIN_ROT;
-        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_SPEED);
     }
 
     @Override

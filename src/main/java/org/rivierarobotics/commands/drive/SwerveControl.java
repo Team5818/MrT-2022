@@ -28,50 +28,34 @@ import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.ml.MLCore;
 
 public class SwerveControl extends CommandBase {
-    //this finds the max turn speed based on the "wheel" ratio, then converts from radians to degrees
-    private static final double MAX_TURN_SPEED = Math.PI * (1.4 / 24) * (100 / (2 * Math.PI));
-    public static double MIN_ROT = 0.0;
-    public static double TURN_SPEED = 0.24;
-    public static double MAX_SPEED = 5;
-
     private final DriveTrain driveTrain;
-    private final MLCore mlCore;
+    private final Gyro gyro;
 
     public SwerveControl() {
         this.driveTrain = DriveTrain.getInstance();
-        this.mlCore = MLCore.getInstance();
+        this.gyro = Gyro.getInstance();
         addRequirements(this.driveTrain);
-    }
-
-    private double getRotationSpeed() {
-        if (MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), driveTrain.getTargetRotationAngle(), 2)) {
-            return 0.0;
-        }
-        double vel = (TURN_SPEED * (driveTrain.getTargetRotationAngle() - Gyro.getInstance().getRotation2d().getDegrees()));
-        if(Math.abs(vel) < MIN_ROT) return Math.signum(vel) * MIN_ROT;
-        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_SPEED);
     }
 
     @Override
     public void initialize() {
-        driveTrain.targetRotationAngle = Gyro.getInstance().getRotation2d().getRadians();
+        driveTrain.setTargetRotationAngle(gyro.getRotation2d().getDegrees());
     }
 
     @Override
     public void execute() {
         var leftJoystick = ControlMap.DRIVER_LEFT;
         var rightJoystick = ControlMap.DRIVER_RIGHT;
-        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_SPEED;
-        var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
+        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * DriveTrain.MAX_TURN_SPEED;
+        var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_TURN_SPEED;
 
         var rot = MathUtil.fitDeadband(-rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
 
         if (rot == 0 && driveTrain.useDriverAssist()) {
-            driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());
+            driveTrain.drive(xSpeed, ySpeed, driveTrain.getRotationSpeed(), driveTrain.getFieldCentric());
         } else {
             driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
+            driveTrain.setTargetRotationAngle(gyro.getRotation2d().getDegrees());
         }
-        //driveTrain.drive(xSpeed, ySpeed, rot, driveTrain.getFieldCentric());
-
     }
 }
