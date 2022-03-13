@@ -21,13 +21,13 @@
 package org.rivierarobotics.commands.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class ClimbZero extends CommandBase {
-    private Climb climb;
+    private ClimbDepreciated climb;
 
     public ClimbZero() {
-        this.climb = Climb.getInstance();
+        this.climb = ClimbDepreciated.getInstance();
         this.addRequirements(climb);
     }
 

@@ -36,7 +36,7 @@ import org.rivierarobotics.commands.subsystems.climb.ClimbToggle;
 import org.rivierarobotics.commands.subsystems.drivetrain.SetCameraCentric;
 import org.rivierarobotics.commands.subsystems.drivetrain.SetDriverAssist;
 import org.rivierarobotics.commands.subsystems.floppas.SetFloppaPosition;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -73,10 +73,10 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
                 .whenPressed(new InstantCommand(() -> {
                     try {
-                        CommandScheduler.getInstance().cancel(CommandScheduler.getInstance().requiring(Climb.getInstance()));
+                        CommandScheduler.getInstance().cancel(CommandScheduler.getInstance().requiring(ClimbDepreciated.getInstance()));
                     } catch (Exception e) {
                     }
-                    Climb.getInstance().setVoltage(0);
+                    ClimbDepreciated.getInstance().setVoltage(0);
                 }));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
                 .whenPressed(new RunClimb(false));

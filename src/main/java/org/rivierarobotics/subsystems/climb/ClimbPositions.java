@@ -3,7 +3,7 @@ package org.rivierarobotics.subsystems.climb;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import static org.rivierarobotics.subsystems.MotorIDs.*;
-import static org.rivierarobotics.subsystems.climb.ClimbValues.*;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.*;
 
 public enum ClimbPositions {
 

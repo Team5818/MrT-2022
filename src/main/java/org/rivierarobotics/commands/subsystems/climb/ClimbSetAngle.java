@@ -22,14 +22,14 @@ package org.rivierarobotics.commands.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class ClimbSetAngle extends CommandBase {
-    private final Climb climb;
+    private final ClimbDepreciated climb;
     private final double angle;
 
     public ClimbSetAngle(double angle) {
-        this.climb = Climb.getInstance();
+        this.climb = ClimbDepreciated.getInstance();
         this.angle = angle;
         addRequirements(this.climb);
     }

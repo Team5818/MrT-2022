@@ -22,14 +22,14 @@ package org.rivierarobotics.commands.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class ClimbSetPosition extends CommandBase {
-    private final Climb climb;
+    private final ClimbDepreciated climb;
     private final double target;
 
-    public ClimbSetPosition(Climb.Position climbModule, boolean reversed) {
-        this.climb = Climb.getInstance();
+    public ClimbSetPosition(ClimbDepreciated.Position climbModule, boolean reversed) {
+        this.climb = ClimbDepreciated.getInstance();
         this.target = climbModule.locationRadians * (reversed ? -1 : 1);
         this.addRequirements(this.climb);
     }

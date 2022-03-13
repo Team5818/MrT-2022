@@ -23,11 +23,11 @@ package org.rivierarobotics.commands.climb;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class WaitPiston extends CommandBase {
-    private final Climb climb;
-    private final Climb.Position climbModule;
+    private final ClimbDepreciated climb;
+    private final ClimbDepreciated.Position climbModule;
     private double switchTime;
     private double retryTimeout;
     private double endTime;
@@ -36,8 +36,8 @@ public class WaitPiston extends CommandBase {
     private final boolean reversed;
 
 
-    public WaitPiston(Climb.Position climbModule, double endTime, double timeout, boolean reversed) {
-        this.climb = Climb.getInstance();
+    public WaitPiston(ClimbDepreciated.Position climbModule, double endTime, double timeout, boolean reversed) {
+        this.climb = ClimbDepreciated.getInstance();
         this.climbModule = climbModule;
         this.endTime = endTime;
         this.timeout = timeout;

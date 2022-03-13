@@ -1,13 +1,13 @@
 package org.rivierarobotics.commands.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class ClimbToggle extends InstantCommand {
-    private final Climb climb;
+    private final ClimbDepreciated climb;
 
     public ClimbToggle(){
-        this.climb = Climb.getInstance();
+        this.climb = ClimbDepreciated.getInstance();
     }
 
     @Override

@@ -23,20 +23,20 @@ package org.rivierarobotics.commands.subsystems.climb;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class TogglePiston extends SequentialCommandGroup {
-    private final Climb climb;
+    private final ClimbDepreciated climb;
 
-    public TogglePiston(Climb.Position climbPosition, boolean isEngaged, double timeToWait) {
+    public TogglePiston(ClimbDepreciated.Position climbPosition, boolean isEngaged, double timeToWait) {
         super(
                 new InstantCommand(() -> {
-                    Climb.getInstance().setPiston(climbPosition, isEngaged);
+                    ClimbDepreciated.getInstance().setPiston(climbPosition, isEngaged);
                 }),
                 new WaitCommand(timeToWait)
         );
 
-        this.climb = Climb.getInstance();
+        this.climb = ClimbDepreciated.getInstance();
         addRequirements(climb);
     }
 }

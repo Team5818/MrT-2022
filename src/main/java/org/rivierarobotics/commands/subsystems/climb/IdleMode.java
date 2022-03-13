@@ -21,14 +21,14 @@
 package org.rivierarobotics.commands.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 
 public class IdleMode extends CommandBase {
-    private Climb climb;
+    private ClimbDepreciated climb;
     private boolean coast;
 
     public IdleMode(boolean coast) {
-        this.climb = Climb.getInstance();
+        this.climb = ClimbDepreciated.getInstance();
         this.coast = coast;
         this.addRequirements(climb);
     }

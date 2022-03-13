@@ -36,7 +36,7 @@ import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.drive.PathGeneration;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.ShooterControl;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
         initializeCustomLoops();
 
-        Climb.getInstance().setOffset();
+        ClimbDepreciated.getInstance().setOffset();
 
         chooser = new SendableChooser<>();
         chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
             resetRobotPoseAndGyro();
         }
         autoFlag = false;
-        Climb.getInstance().setOffset();
+        ClimbDepreciated.getInstance().setOffset();
     }
 
     private void shuffleboardLogging() {
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
         var shoot = sb.getTab("shoot");
 
         var dt = DriveTrain.getInstance();
-        var cl = Climb.getInstance();
+        var cl = ClimbDepreciated.getInstance();
         var col = Intake.getInstance();
         var MLcore = MLCore.getInstance();
         var flopp = Floppas.getInstance();
@@ -132,12 +132,12 @@ public class Robot extends TimedRobot {
 
         climb.setEntry("Climb Position", cl.getAngle());
         climb.setEntry("Climb Ticks", cl.getRawTicks());
-        climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
-        climb.setEntry("Switch mid", cl.isSwitchSet(Climb.Position.MID));
-        climb.setEntry("Switch high", cl.isSwitchSet(Climb.Position.HIGH));
-        climb.setEntry("Piston low", cl.isPistonSet(Climb.Position.LOW));
-        climb.setEntry("Piston mid", cl.isPistonSet(Climb.Position.MID));
-        climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
+        climb.setEntry("Switch low", cl.isSwitchSet(ClimbDepreciated.Position.LOW));
+        climb.setEntry("Switch mid", cl.isSwitchSet(ClimbDepreciated.Position.MID));
+        climb.setEntry("Switch high", cl.isSwitchSet(ClimbDepreciated.Position.HIGH));
+        climb.setEntry("Piston low", cl.isPistonSet(ClimbDepreciated.Position.LOW));
+        climb.setEntry("Piston mid", cl.isPistonSet(ClimbDepreciated.Position.MID));
+        climb.setEntry("Piston high", cl.isPistonSet(ClimbDepreciated.Position.HIGH));
 
         collect.setEntry("ispositive", col.getIsPositive());
         collect.setEntry("belt voltage", col.getBeltVoltage());
@@ -194,7 +194,7 @@ public class Robot extends TimedRobot {
         initializeAllSubsystems();
         initializeDefaultCommands();
 
-        Climb.getInstance().setOffset();
+        ClimbDepreciated.getInstance().setOffset();
         resetRobotPoseAndGyro();
         try {
             var command = chooser.getSelected();
@@ -220,7 +220,7 @@ public class Robot extends TimedRobot {
         Floppas.getInstance();
         Limelight.getInstance();
         Intake.getInstance();
-        Climb.getInstance();
+        ClimbDepreciated.getInstance();
     }
 
     private void resetRobotPoseAndGyro() {
@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(ClimbDepreciated.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
     }
 
