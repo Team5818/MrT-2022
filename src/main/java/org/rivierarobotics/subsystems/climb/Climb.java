@@ -22,14 +22,17 @@ public class Climb extends SubsystemBase {
         return climbMotors;
     }
 
-    private final WPI_TalonFX climbMotorA;
-    private final WPI_TalonFX climbMotorB;
+    private final WPI_TalonFX climbMaster;
+    private final WPI_TalonFX climbFollower;
     private final PositionStateSpaceModel climbStateSpace;
     private boolean play = true;
     private final SystemIdentification sysId = new SystemIdentification(0.0, 10, 0.02);
+    //TODO: Remove this encoder
     private final DutyCycleEncoder encoder;
 
     private Climb() {
+        //TODO: Move to motion magic. see SwerveModules if you need to see how that looks like.
+        // keep in mind you will need to convert angle to ticks and ticks to angle.
         this.climbStateSpace = new PositionStateSpaceModel(
                 sysId,
                 0.01,
@@ -41,14 +44,14 @@ public class Climb extends SubsystemBase {
                 12
         );
 
-        this.climbMotorA = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
-        this.climbMotorB = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
-        climbMotorB.follow(climbMotorA);
+        this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
+        this.climbFollower = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
+        climbFollower.follow(climbMaster);
         setCoast(false);
-        climbMotorA.setInverted(true);
-        climbMotorB.setInverted(true);
-        StatusFrameDemolisher.demolishStatusFrames(climbMotorA, false);
-        StatusFrameDemolisher.demolishStatusFrames(climbMotorB, true);
+        climbMaster.setInverted(true);
+        climbFollower.setInverted(true);
+        StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
+        StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
 
         this.encoder = new DutyCycleEncoder(CLIMB_ENCODER);
         this.encoder.setDistancePerRotation(2 * Math.PI);
@@ -56,14 +59,15 @@ public class Climb extends SubsystemBase {
 
     public void setCoast(boolean coast) {
         if (coast) {
-            climbMotorA.setNeutralMode(NeutralMode.Coast);
-            climbMotorB.setNeutralMode(NeutralMode.Coast);
+            climbMaster.setNeutralMode(NeutralMode.Coast);
+            climbFollower.setNeutralMode(NeutralMode.Coast);
         } else {
-            climbMotorA.setNeutralMode(NeutralMode.Brake);
-            climbMotorB.setNeutralMode(NeutralMode.Brake);
+            climbMaster.setNeutralMode(NeutralMode.Brake);
+            climbFollower.setNeutralMode(NeutralMode.Brake);
         }
     }
 
+    //TODO: Make set position take an angle in radians, convert to ticks, and set on climbMaster. (gearing & ticks)
     public void setPosition(double radians) {
         climbStateSpace.setPosition(radians);
     }
@@ -76,6 +80,7 @@ public class Climb extends SubsystemBase {
         return play;
     }
 
+    //TODO: Remove
     public void followStateSpace() {
         //var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
         double angle = getAngle();
@@ -87,20 +92,13 @@ public class Climb extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         if (Math.abs(getAngle()) > MAX_RADS && Math.signum(-voltage) == Math.signum(getAngle())) {
-            climbMotorA.setVoltage(0);
+            climbMaster.setVoltage(0);
             return;
         }
-        climbMotorA.setVoltage(voltage);
+        climbMaster.setVoltage(voltage);
     }
 
-    public void setOffset() {
-        encoder.reset();
-    }
-
-    public double getRawTicks() {
-        return climbMotorA.getSelectedSensorPosition();
-    }
-
+    //TODO: convert motor encoder to angle via gearing & encoder resolution
     public double getAngle() {
         return encoder.getDistance();
     }
