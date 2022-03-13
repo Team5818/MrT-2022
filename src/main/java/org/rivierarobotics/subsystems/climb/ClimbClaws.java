@@ -22,6 +22,7 @@ public class ClimbClaws extends SubsystemBase {
         climbModule.piston.set(isEngaged);
     }
 
+    //TODO: Combine with closeAllPistons and rename to setAllPistons(boolean open)
     public void openAllPistons() {
         ClimbPositions.LOW.piston.set(false);
         ClimbPositions.MID.piston.set(false);

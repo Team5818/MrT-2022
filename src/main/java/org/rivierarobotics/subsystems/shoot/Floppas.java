@@ -30,10 +30,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
 import org.rivierarobotics.util.StatusFrameDemolisher;
+import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
+import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
@@ -52,6 +55,10 @@ public class Floppas extends SubsystemBase {
     private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax flopperMotor;
     private final DutyCycleEncoder floppaEncoder;
+    private static final PIDConfig FLOPPER_PID = new PIDConfig(1,0,0,1);
+    private static final SparkMotionConfig FLOPPER_SM_CONFIG = new SparkMotionConfig(true,0.0,0.0,0,0,0,0);
+
+    private final SparkSmartMotion flopperController;
     private static final double FIRE_MAX_VOLTAGE = 12;
     private static final double AIM_MAX_VOLTAGE = 9;
     public static final double ZERO_ANGLE = -5.02;
@@ -67,25 +74,13 @@ public class Floppas extends SubsystemBase {
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;
     private VelocityStateSpaceModel leftSS;
-    private SystemIdentification aimSysId = new SystemIdentification(0.3, 2.1, 0.04);
     private SystemIdentification leftSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private SystemIdentification rightSysId = new SystemIdentification(0, 0.017898 * 2.1, 0.000084794);
     private InterpolationTable angleTable = new InterpolationTable();
     private InterpolationTable speedTable = new InterpolationTable();
 
-    private final ProfiledPIDController profiledPIDController = new ProfiledPIDController(60,0.001,0, new TrapezoidProfile.Constraints(60,60));
 
-    public void setBlockSS(boolean blockSS) {
-        this.blockSS = blockSS;
-    }
 
-    public double getTargetV() {
-        return targetV;
-    }
-
-    public void setTargetV(double targetV) {
-        this.targetV = targetV;
-    }
 
     public Floppas() {
         angleTable.addValue(3.35, -3.15 + ADJUST_FROM_SLIPPAGE);
@@ -95,8 +90,11 @@ public class Floppas extends SubsystemBase {
         speedTable.addValue(3.35, 180);
         speedTable.addValue(2.27, 140);
 
+        var tuningTab = Logging.robotShuffleboard.getTab("Flopper Tuning");
         this.flopperMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.flopperController = new SparkSmartMotion(flopperMotor, FLOPPER_PID, FLOPPER_SM_CONFIG, tuningTab);
         flopperMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
         StatusFrameDemolisher.demolishStatusFrames(leftFlywheel, false);
@@ -123,18 +121,7 @@ public class Floppas extends SubsystemBase {
                 FIRE_MAX_VOLTAGE
 
         );
-        this.aimStateSpace = new PositionStateSpaceModel(
-                aimSysId,
-                0.05,
-                0.2,
-                0.01,
-                0.01,
-                0.01,
-                6,
-                AIM_MAX_VOLTAGE
 
-        );
-        this.aimStateSpace.setKsTolerance(0.1);
         leftSS.setVelocity(0);
         rightSS.setVelocity(0);
         flopperMotor.setInverted(true);
@@ -173,6 +160,17 @@ public class Floppas extends SubsystemBase {
         return speedTable.getValue(distance);
     }
 
+    public void setBlockSS(boolean blockSS) {
+        this.blockSS = blockSS;
+    }
+
+    public double getTargetV() {
+        return targetV;
+    }
+
+    public void setTargetV(double targetV) {
+        this.targetV = targetV;
+    }
 
     public double getAngle() {
         return floppaEncoder.getDistance();
@@ -217,10 +215,6 @@ public class Floppas extends SubsystemBase {
         var sb = Logging.robotShuffleboard;
         var limeLight = sb.getTab("LL");
         limeLight.setEntry("Hood Target", radians);
-        aimStateSpace.setPosition(radians);
-        profiledPIDController.reset(getAngle());
-        profiledPIDController.setGoal(radians);
-        profiledPIDController.setIntegratorRange(0.2, 0.001);
     }
 
     public void floppaStateSpaceControl() {
@@ -249,6 +243,8 @@ public class Floppas extends SubsystemBase {
         var limeLight = Logging.robotShuffleboard.getTab("LL");
         limeLight.setEntry("rightV", rightVoltage);
         limeLight.setEntry("leftV", leftVoltage);
+
+        flopperController.checkForPIDChanges();
     }
 
     public double getValueFromTable(double key) {
