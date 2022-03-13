@@ -21,7 +21,7 @@ public class TrackBall extends CommandBase {
         MLObject ball = new MLObject(MLCore.TARGET_COLOR, new BoundingBox(0,0,0,0), 10);
         try {
             ball = mlCore.getDetectedObjects().get(MLCore.TARGET_COLOR).get(0);
-            driveTrain.setTargetRotationAngle(ball.tx + driveTrain.getRobotPose().getRotation().getRadians());
+            driveTrain.setTargetRotationAngle(ball.tx + driveTrain.getPoseEstimator().getRobotPose().getRotation().getRadians());
         } catch (Exception e) {
             return;
         }

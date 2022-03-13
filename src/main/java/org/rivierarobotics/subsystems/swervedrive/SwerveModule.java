@@ -23,150 +23,102 @@ package org.rivierarobotics.subsystems.swervedrive;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.lib.MotionMagicConfig;
+import org.rivierarobotics.lib.MotorUtil;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.util.StatusFrameDemolisher;
-import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
-import org.rivierarobotics.util.statespace.SystemIdentification;
-import org.rivierarobotics.util.statespace.VelocityStateSpaceModel;
+import org.rivierarobotics.util.swerve.SwerveUtil;
+
+import java.util.ArrayList;
 
 public class SwerveModule {
+    //Physical Constants
     private static final double WHEEL_RADIUS = 0.03915;
     private static final int ENCODER_RESOLUTION = 4096;
-    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION;
+    private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION; // radians
     private static final double GEARING = 11.0 / 40.0;
+    private static final double DRIVE_MOTOR_TICK_TO_SPEED = 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048; // m/s
 
     private final double zeroTicks;
-    private double currDriveVoltage = 0;
-    private double currSteerVoltage = 0;
-    private double targetVelocity = 0;
 
-    private final double MAX_TURN_ACCELERATION = 30000; //Rad/s
-    private final double MAX_TURN_VELOCITY = 30000; //Rad/s
-    private final int timeoutMs = 60;
+    private static final double MAX_TURN_ACCELERATION = 30000; //Rad/s
+    private static final double MAX_TURN_VELOCITY = 30000; //Rad/s
+    private static final int TIMEOUT_MS = 60;
 
-    private CANSparkMax driveMotor;
-    private WPI_TalonFX driveMotor2;
-    private final boolean isNew;
-    private final VelocityStateSpaceModel driveController;
-    private final SystemIdentification dmSID = new SystemIdentification(0.25859, 1.4593 * 1.44, 0.13211);
+
+    //Turn Motor Motion Magic
+    private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
+            new ArrayList<>(), true,
+            MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION,
+            100, 2,
+            TIMEOUT_MS, 10
+    );
+    private static final PIDConfig TM_MM_PID = new PIDConfig(0.7, 0, 0, 0.1);
+    //Drive Motor Motion Magic
+    private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
+            new ArrayList<>(), true,
+            DriveTrain.MAX_SPEED, DriveTrain.MAX_ACCELERATION,
+            100, 2,
+            TIMEOUT_MS, 10
+    );
+    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0, 0, 0, 0.1);
+
+
+    private final WPI_TalonFX driveMotor;
     private final WPI_TalonSRX steeringMotor;
-    private boolean setDriveEnabled = false;
-
-    private Rotation2d targetRotation = new Rotation2d(0);
-    private Rotation2d targetRotationClamped = new Rotation2d(0);
 
 
+
+    private double prevAngle = 0.0;
+    private double timeoutSeconds = 0.0;
     /**
      * Constructs a SwerveModule.
      *
      * @param driveMotorChannel    ID for the drive motor.
      * @param steeringMotorChannel ID for the turning motor.
-     * @param zeroTicks           ticks when angle = 0
+     * @param zeroTicks            ticks when angle = 0
      */
-    public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks, boolean driveInverted, boolean isNew) {
-
-        this.isNew = isNew;
-
+    public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks) {
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
 
-        steeringMotor.configFactoryDefault(timeoutMs);
-        steeringMotor.configFeedbackNotContinuous(true, timeoutMs);
-
-        steeringMotor.setSensorPhase(!isNew);
-        steeringMotor.setInverted(false);
-
-        if (isNew) {
-            this.driveMotor2 = new WPI_TalonFX(driveMotorChannel);
-            driveMotor2.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-            driveMotor2.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
-            driveMotor2.setNeutralMode(NeutralMode.Brake);
-            StatusFrameDemolisher.demolishStatusFrames(driveMotor2, false);
-            this.driveMotor2.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30,0.05));
-            steeringMotor.setInverted(true);
-        } else {
-            this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);
-            driveMotor.getEncoder().setPositionConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS));
-            driveMotor.getEncoder().setVelocityConversionFactor(GEARING * (2 * Math.PI * WHEEL_RADIUS) / 60.0);
-            driveMotor.getEncoder().setPosition(0);
-            driveMotor.setInverted(driveInverted);
-        }
-
-        configureMotionMagic();
+        //Steer Motor
+        steeringMotor.configFactoryDefault(TIMEOUT_MS);
+        steeringMotor.configFeedbackNotContinuous(true, TIMEOUT_MS);
+        steeringMotor.setSensorPhase(false);
+        steeringMotor.setInverted(true);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, DM_MM_CONFIG, steeringMotor);
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
 
+        //Drive Motor
+        this.driveMotor = new WPI_TalonFX(driveMotorChannel);
+        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
+        driveMotor.setNeutralMode(NeutralMode.Brake);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, steeringMotor);
+        StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 
-        this.driveController = new VelocityStateSpaceModel(
-                dmSID, 0.1, 0.01,
-                0.1, 5.1, 8, DriveTrain.STATE_SPACE_LOOP_TIME
-        );
-        this.driveController.setKsTolerance(0.05);
-
+        //Current Limits
+        this.driveMotor.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.05));
         this.steeringMotor.configContinuousCurrentLimit(30);
         this.steeringMotor.configPeakCurrentLimit(30);
     }
 
-    private void configureMotionMagic() {
-        steeringMotor.selectProfileSlot(0, 0);
-        steeringMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, timeoutMs);
-        steeringMotor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, timeoutMs);
-        steeringMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 10, timeoutMs);
-
-        steeringMotor.configNominalOutputForward(0, timeoutMs);
-        steeringMotor.configNominalOutputReverse(0, timeoutMs);
-        steeringMotor.configPeakOutputForward(1, timeoutMs);
-        steeringMotor.configPeakOutputReverse(-1, timeoutMs);
-
-        steeringMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, timeoutMs);
-        steeringMotor.configMotionAcceleration(MAX_TURN_ACCELERATION, timeoutMs);
-        steeringMotor.configMotionCruiseVelocity(MAX_TURN_VELOCITY, timeoutMs);
-        steeringMotor.configMotionSCurveStrength(1, timeoutMs);
-
-        steeringMotor.config_kP(0, 1.05, timeoutMs);
-        steeringMotor.config_kI(0, 0.00001, timeoutMs);
-        steeringMotor.config_kD(0, 0.0, timeoutMs);
-        steeringMotor.config_kF(0, 0.1, timeoutMs);
-
-        steeringMotor.config_IntegralZone(0, 50, timeoutMs);
-        steeringMotor.setSelectedSensorPosition(steeringMotor.getSelectedSensorPosition(), 0, timeoutMs);
-
-    }
-
-    private double clampAngle(double angle) {
-        double high = Math.PI;
-        angle = MathUtil.wrapToCircle(angle, 2 * Math.PI);
-        if (angle > high) {
-            angle -= 2 * Math.PI;
-        }
-        return angle;
-    }
-
     public double getAbsoluteAngle() {
-        return clampAngle(getAngle());
+        return SwerveUtil.clampAngle(getAngle());
     }
 
-    private double prevAngle = 0.0;
-    private double timeoutSeconds = 0.0;
     public double getAngle() {
         timeoutSeconds += Timer.getFPGATimestamp() - timeoutSeconds;
         var currAngle = (steeringMotor.getSelectedSensorPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
-        if(prevAngle == 0) prevAngle = currAngle;
-        if(timeoutSeconds <= 1 && Math.abs(prevAngle - currAngle) >= 12 * Math.PI) {
+        if (prevAngle == 0) prevAngle = currAngle;
+        if (timeoutSeconds <= 1 && Math.abs(prevAngle - currAngle) >= 12 * Math.PI) {
             return prevAngle;
         }
-        if(timeoutSeconds > 1) {
+        if (timeoutSeconds > 1) {
             timeoutSeconds = 0;
         }
         prevAngle = currAngle;
@@ -177,8 +129,8 @@ public class SwerveModule {
         return (angleInRads / STEER_MOTOR_TICK_TO_ANGLE) + zeroTicks;
     }
 
-    public double getSteeringMotorSpeed() {
-        return (steeringMotor.getSelectedSensorVelocity() * 10) * STEER_MOTOR_TICK_TO_ANGLE;
+    public double convertVelocityToTicksPer100ms(double velocity) {
+        return velocity / DRIVE_MOTOR_TICK_TO_SPEED;
     }
 
     public double getPosTicks() {
@@ -186,62 +138,23 @@ public class SwerveModule {
     }
 
     public double getDriveTicks() {
-        if (isNew) {
-            return driveMotor2.getSelectedSensorPosition();
-        }
-        return driveMotor.getEncoder().getPosition();
-    }
-
-    public double getDriveVoltage() {
-        return currDriveVoltage;
-    }
-
-    public double getSteerVoltage() {
-        return currSteerVoltage;
+        return driveMotor.getSelectedSensorPosition();
     }
 
     public double getVelocity() {
-        if (isNew){
-            return driveMotor2.getSensorCollection().getIntegratedSensorVelocity() * 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048;
-        }
-        return driveMotor.getEncoder().getVelocity();
+        return driveMotor.getSensorCollection().getIntegratedSensorVelocity() * DRIVE_MOTOR_TICK_TO_SPEED;
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(getVelocity(), new Rotation2d(clampAngle(getAngle())));
+        return new SwerveModuleState(getVelocity(), new Rotation2d(SwerveUtil.clampAngle(getAngle())));
     }
 
     public void setDriveMotorVelocity(double metersPerSecond) {
-        driveController.setVelocity(metersPerSecond);
+        driveMotor.set(TalonFXControlMode.Velocity, convertVelocityToTicksPer100ms(metersPerSecond));
     }
 
     public void setSteeringMotorAngle(double angleInRad) {
         steeringMotor.set(ControlMode.MotionMagic, angleInRad);
-    }
-
-    public void setDriveMotorVoltage(double voltage) {
-        this.currDriveVoltage = voltage;
-
-        if (isNew) {
-            driveMotor2.setVoltage(voltage);
-        } else {
-            driveMotor.setVoltage(voltage);
-        }
-    }
-
-    public double getAngleDiff(double src, double target) {
-        double diff = target - src;
-        if (Math.abs(diff) <= Math.PI) {
-            return diff;
-        }
-
-        if (diff > 0) {
-            diff -= 2 * Math.PI;
-        } else {
-            diff += 2 * Math.PI;
-        }
-
-        return diff;
     }
 
     /**
@@ -250,66 +163,8 @@ public class SwerveModule {
      * @param state Desired state with speed and angle.
      */
     public void setDesiredState(SwerveModuleState state) {
-       // SmartDashboard.putNumber(driveMotor.getDeviceId() + "", state.speedMetersPerSecond);
-        //Update State-Space Controllers
-        double targetSpeed = state.speedMetersPerSecond;
-        double targetRotation = state.angle.getRadians();
-        double currAng = getAngle();
-        double clampedAng = clampAngle(getAngle());
-        double posTarget = targetRotation + Math.PI;
-        double negTarget = targetRotation - Math.PI;
-        double diff;
-
-        if (Math.abs(getAngleDiff(clampedAng, posTarget)) <= Math.abs(getAngleDiff(clampedAng, negTarget))) {
-            diff = getAngleDiff(clampedAng, posTarget);
-        } else {
-            diff = getAngleDiff(clampedAng, negTarget);
-        }
-
-        if (Math.abs(getAngleDiff(clampedAng, targetRotation)) <= Math.abs(diff)) {
-            diff = getAngleDiff(clampedAng, targetRotation);
-        }
-
-        double targetAng = currAng + diff;
-
-        targetSpeed = state.speedMetersPerSecond;
-        if (!MathUtil.isWithinTolerance(targetRotation, clampAngle(targetAng), 0.1)) {
-            targetSpeed *= -1;
-        }
-
-        this.targetRotation = new Rotation2d(targetAng);
-        this.targetRotationClamped = new Rotation2d(clampAngle(targetAng));
-        this.targetVelocity = targetSpeed;
-
-        setDriveMotorVelocity(targetSpeed);
-//        if(convertAngleToTick(targetAng) <= 10000) setSteeringMotorAngle(convertAngleToTick(targetAng));
-        setSteeringMotorAngle(convertAngleToTick(targetAng));
-        setDriveEnabled = true;
-    }
-
-    public Rotation2d getTargetRotation() {
-        return targetRotation;
-    }
-
-    public Rotation2d getTargetRotationClamped() {
-        return targetRotationClamped;
-    }
-
-    public double getTargetVelocity() {
-        return targetVelocity;
-    }
-
-    public double getSteerMotorVel() {
-        return getSteeringMotorSpeed();
-    }
-
-    public void followControllers() {
-        var dt = Logging.robotShuffleboard.getTab("testdt");
-        if(!setDriveEnabled) return;
-        var driveVoltage = driveController.getAppliedVoltage(getVelocity());
-        dt.setEntry("dv " + driveMotor2.getDeviceID(), driveVoltage);
-        dt.setEntry("tg "+ driveMotor2.getDeviceID(), driveController.getTargetVelocity());
-        dt.setEntry("cv "+ driveMotor2.getDeviceID(), getVelocity());
-        setDriveMotorVoltage(driveVoltage);
+        var optimizedAngle = SwerveUtil.optimizeSwerveStates(state, getAngle());
+        setDriveMotorVelocity(optimizedAngle.speedMetersPerSecond);
+        setSteeringMotorAngle(convertAngleToTick(optimizedAngle.angle.getRadians()));
     }
 }

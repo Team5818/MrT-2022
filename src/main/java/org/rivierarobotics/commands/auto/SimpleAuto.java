@@ -20,24 +20,35 @@
 
 package org.rivierarobotics.commands.auto;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.swerve.TrajectoryFollower;
+
+import java.io.IOException;
 
 public class SimpleAuto extends CommandBase {
-    private final DriveTrain dt;
+    private final DriveTrain driveTrain;
+    private TrajectoryFollower trajectoryFollower;
 
     public SimpleAuto() {
-        this.dt = DriveTrain.getInstance();
-        addRequirements(this.dt);
+        this.driveTrain = DriveTrain.getInstance();
+        addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
-        dt.drivePath("Straight");
+        this.trajectoryFollower = new TrajectoryFollower(TrajectoryFollower.getTrajectoryFromPathweaver("straight"), true, Gyro.getInstance(), DriveTrain.getInstance());
+    }
+
+    @Override
+    public void execute() {
+        trajectoryFollower.followController();
     }
 
     @Override
     public boolean isFinished() {
-        return !dt.followHolonomicController();
+        return trajectoryFollower.isFinished();
     }
 }

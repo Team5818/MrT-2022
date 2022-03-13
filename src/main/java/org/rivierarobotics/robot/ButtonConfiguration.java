@@ -45,6 +45,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
                 .toggleWhenPressed(new CollectToggle(true, true, true));
 //        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed()
+
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .toggleWhenPressed(new IntakeDeployToggle());
@@ -89,7 +90,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).
                 whenPressed(new SetCameraCentric());
 
-        //CO-DRIVER BUTTONS
+        //CO-DRIVER
 
         //CO-DRIVER JOYSTICK
 //        new JoystickButton(ControlMap.CO_DRIVER_LEFT,1).whenPressed()
@@ -107,7 +108,7 @@ public class ButtonConfiguration {
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whileHeld();
         //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whileHeld(new TrackGoal());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new InstantCommand(() -> {
-            DriveTrain.getInstance().resetPose(new Pose2d(Limelight.getInstance().getLLAbsPose(), Gyro.getInstance().getRotation2d()));
+            DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(Limelight.getInstance().getLLAbsPose(), Gyro.getInstance().getRotation2d()));
         }));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(0));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whileHeld(new SetDriveAngle(Limelight.getInstance().getShootingAssistAngle()));

@@ -7,6 +7,7 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
+import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
 public class DriveToPoint extends CommandBase {
     private final DriveTrain driveTrain;
@@ -16,6 +17,7 @@ public class DriveToPoint extends CommandBase {
     private final double targetX;
     private final boolean shouldStop;
     private final double initialVelocity;
+    private TrajectoryFollower trajectoryFollower;
 
     public DriveToPoint(double targetX, double targetY, boolean shouldStop, double initialVelocity) {
         this.driveTrain = DriveTrain.getInstance();
@@ -31,14 +33,19 @@ public class DriveToPoint extends CommandBase {
     //TODO: Surround all of this in a try/catch just in case a trajectory is invalid.
     @Override
     public void initialize() {
-        var dtPose = driveTrain.getRobotPose();
+        var dtPose = driveTrain.getPoseEstimator().getRobotPose();
         var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, DriveTrain.getInstance().getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
-        if(trajectory != null) driveTrain.drivePath(trajectory);
+        trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+    }
+
+    @Override
+    public void execute() {
+        trajectoryFollower.followController();
     }
 
     @Override
     public boolean isFinished() {
-        return !driveTrain.followHolonomicController();
+        return trajectoryFollower.isFinished();
     }
 }

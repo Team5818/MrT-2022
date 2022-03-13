@@ -13,6 +13,7 @@ import org.rivierarobotics.util.aifield.FieldNode;
 import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
 import org.rivierarobotics.util.ml.MLObject;
+import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
 import java.util.Comparator;
 
@@ -20,6 +21,7 @@ public class DriveToClosest extends SequentialCommandGroup {
     private final DriveTrain driveTrain;
     private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
+    private TrajectoryFollower trajectoryFollower;
 
 
     public DriveToClosest() {
@@ -32,8 +34,8 @@ public class DriveToClosest extends SequentialCommandGroup {
     public void initialize() {
         gyro.resetGyro();
 
-        var currentX = driveTrain.getRobotPose().getX();
-        var currentY = driveTrain.getRobotPose().getY();
+        var currentX = driveTrain.getPoseEstimator().getRobotPose().getX();
+        var currentY = driveTrain.getPoseEstimator().getRobotPose().getY();
 
 
         MLCore core = MLCore.getInstance();
@@ -51,13 +53,17 @@ public class DriveToClosest extends SequentialCommandGroup {
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
 
-        if (trajectory != null) {
-            driveTrain.drivePath(trajectory);
-        }
+
+        trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+    }
+
+    @Override
+    public void execute() {
+        trajectoryFollower.followController();
     }
 
     @Override
     public boolean isFinished() {
-        return !driveTrain.followHolonomicController();
+        return trajectoryFollower.isFinished();
     }
 }

@@ -26,13 +26,16 @@ import org.apache.commons.math3.analysis.function.Log;
 import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
+import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
 public class PathGeneration extends CommandBase {
     private final DriveTrain driveTrain;
     private final FieldMesh aiFieldMesh;
     private final double relativeX;
     private final double relativeY;
+    private TrajectoryFollower trajectoryFollower;
 
     public PathGeneration(double relativeX, double relativeY) {
         this.driveTrain = DriveTrain.getInstance();
@@ -44,20 +47,20 @@ public class PathGeneration extends CommandBase {
 
     @Override
     public void initialize() {
-        var currentX = driveTrain.getRobotPose().getX();
-        var currentY = driveTrain.getRobotPose().getY();
-        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, currentX + relativeX, currentY + relativeY, true, 0, driveTrain.getSwerveDriveKinematics());
+        var currentX = driveTrain.getPoseEstimator().getRobotPose().getX();
+        var currentY = driveTrain.getPoseEstimator().getRobotPose().getY();
+        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, currentX + relativeX,
+                currentY + relativeY, true, 0, driveTrain.getSwerveDriveKinematics());
+        trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+    }
 
-        Logging.robotShuffleboard.getTab("Drive").setEntry("target position X", currentX + relativeX);
-        Logging.robotShuffleboard.getTab("Drive").setEntry("target position Y", currentY + relativeY);
-        //Logging.aiFieldDisplay.updatePath(trajectory);
-        if (trajectory != null) {
-            driveTrain.drivePath(trajectory);
-        }
+    @Override
+    public void execute() {
+        trajectoryFollower.followController();
     }
 
     @Override
     public boolean isFinished() {
-        return !driveTrain.followHolonomicController();
+        return trajectoryFollower.isFinished();
     }
 }

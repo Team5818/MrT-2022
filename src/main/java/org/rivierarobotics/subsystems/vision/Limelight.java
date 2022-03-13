@@ -92,8 +92,8 @@ public class Limelight {
     }
 
     public double getShootingAssistAngle() {
-        var robotX = DriveTrain.getInstance().getRobotPose().getX();
-        var robotY = DriveTrain.getInstance().getRobotPose().getY();
+        var robotX = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getX();
+        var robotY = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getY();
 
         var targetX = limelightTargetPose.getX();
         var targetY = limelightTargetPose.getY();

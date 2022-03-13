@@ -39,6 +39,7 @@ import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
 
 public class Robot extends TimedRobot {
@@ -59,7 +60,6 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
-        DriveTrain.getInstance().resetPose();
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -84,11 +84,8 @@ public class Robot extends TimedRobot {
         chooser.setDefaultOption("Fender", new ShootFender());
 
         Shuffleboard.getTab("Autos").add(chooser);
-    }
 
-    @Override
-    public void robotPeriodic() {
-        var sb = Logging.robotShuffleboard;
+        FieldMesh.getInstance();
     }
 
     @Override
@@ -120,17 +117,17 @@ public class Robot extends TimedRobot {
         var col = Intake.getInstance();
         var MLcore = MLCore.getInstance();
         var flopp = Floppas.getInstance();
-        field2d.setRobotPose(dt.getRobotPose());
+        field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
-        drive.setEntry("x pose", dt.getRobotPose().getX());
-        drive.setEntry("y pose", dt.getRobotPose().getY());
-        drive.setEntry("pose angle", dt.getRobotPose().getRotation().getDegrees());
+        drive.setEntry("x pose", dt.getPoseEstimator().getRobotPose().getX());
+        drive.setEntry("y pose", dt.getPoseEstimator().getRobotPose().getY());
+        drive.setEntry("pose angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
 
-        drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
+        drive.setEntry("Robot Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
         drive.setEntry("minrot", SwerveControl.MIN_ROT);
         drive.setEntry("turnspeed", SwerveControl.TURN_SPEED);
@@ -234,7 +231,7 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
-        DriveTrain.getInstance().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().getPoseEstimator().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
         Gyro.getInstance().resetGyro();
     }
 
@@ -246,9 +243,6 @@ public class Robot extends TimedRobot {
     }
 
     private void initializeCustomLoops() {
-        addPeriodic(() -> {
-            DriveTrain.getInstance().periodicStateSpaceControl();
-        }, DriveTrain.STATE_SPACE_LOOP_TIME, 0.0);
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
         }, 0.5, 0.0);
