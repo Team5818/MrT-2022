@@ -86,23 +86,22 @@ public class SwerveModule {
      * @param zeroTicks            ticks when angle = 0
      */
     public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks) {
-        this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         this.zeroTicks = zeroTicks;
 
         //Steer Motor
-        steeringMotor.configFactoryDefault(TIMEOUT_MS);
+        this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, DM_MM_CONFIG, steeringMotor);
         steeringMotor.configFeedbackNotContinuous(true, TIMEOUT_MS);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, DM_MM_CONFIG, steeringMotor);
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
 
         //Drive Motor
         this.driveMotor = new WPI_TalonFX(driveMotorChannel);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, steeringMotor);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
         driveMotor.setNeutralMode(NeutralMode.Brake);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, steeringMotor);
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 
         //Current Limits

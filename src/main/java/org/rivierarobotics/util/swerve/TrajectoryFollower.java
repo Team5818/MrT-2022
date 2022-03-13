@@ -83,7 +83,6 @@ public class TrajectoryFollower {
 
     /**
      * Call this method periodically to follow a trajectory.
-     * returns false when path is done.
      */
     public void followController() {
         if(trajectory == null && pathPlannerTrajectory == null) {
