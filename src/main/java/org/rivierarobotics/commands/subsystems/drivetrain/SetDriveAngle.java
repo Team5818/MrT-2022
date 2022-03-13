@@ -20,12 +20,10 @@
 
 package org.rivierarobotics.commands.subsystems.drivetrain;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.ml.MLCore;
 
 
 public class SetDriveAngle extends CommandBase {
@@ -65,7 +63,6 @@ public class SetDriveAngle extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        SmartDashboard.putBoolean("DRIVE ANGLE",MathUtil.isWithinTolerance(dt.getTargetRotationAngle(), gyro.getRotation2d().getDegrees(), 1) );
         return MathUtil.isWithinTolerance(dt.getTargetRotationAngle(), gyro.getRotation2d().getDegrees(), 1);
     }
 

@@ -18,12 +18,10 @@ import org.rivierarobotics.util.Gyro;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 public class PoseEstimator {
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
@@ -86,15 +84,14 @@ public class PoseEstimator {
     public void resetPose(Pose2d pose2d) {
         resetLock.lock();
         try {
-            Field m_observerField = SwerveDrivePoseEstimator.class
-                    .getDeclaredField("m_observer");
+            Field m_observerField = SwerveDrivePoseEstimator.class.getDeclaredField("m_observer");
             Field m_latencyCompensatorField = SwerveDrivePoseEstimator.class.getDeclaredField("m_latencyCompensator");
             m_observerField.setAccessible(true);
             m_latencyCompensatorField.setAccessible(true);
             @SuppressWarnings("unchecked")
             var m_observer = (UnscentedKalmanFilter<N3, N3, N1>) m_observerField.get(swerveDrivePoseEstimator);
-            @SuppressWarnings("unchecked"
-            ) var m_latencyCompensator = (KalmanFilterLatencyCompensator<N3, N3, N1>) m_latencyCompensatorField.get(swerveDrivePoseEstimator);
+            @SuppressWarnings("unchecked")
+            var m_latencyCompensator = (KalmanFilterLatencyCompensator<N3, N3, N1>) m_latencyCompensatorField.get(swerveDrivePoseEstimator);
             m_observer.reset();
             m_latencyCompensator.reset();
 

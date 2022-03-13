@@ -25,14 +25,11 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
@@ -51,19 +48,12 @@ public class Floppas extends SubsystemBase {
     }
 
     private static Floppas floppas;
-    private double angle;
-    private double speed = 0;
     private final WPI_TalonFX leftFlywheel;
     private final WPI_TalonFX rightFlywheel;
     private final CANSparkMax flopperMotor;
     private final DutyCycleEncoder floppaEncoder;
     private static final double FIRE_MAX_VOLTAGE = 12;
     private static final double AIM_MAX_VOLTAGE = 9;
-//    public static final double ZERO_ANGLE = -3.24;
-//    public static final double ZERO_ANGLE = -2.81;
-//    public static final double ZERO_ANGLE = -4.22;
-//public static final double ZERO_ANGLE = -4.36;
-//        public static final double ZERO_ANGLE = -5.32;
     public static final double ZERO_ANGLE = -5.02;
 
 
@@ -115,7 +105,6 @@ public class Floppas extends SubsystemBase {
 
         this.floppaEncoder = new DutyCycleEncoder(0);
         this.floppaEncoder.setDistancePerRotation(-2 * Math.PI);
-        this.angle = getAngle();
 
         this.rightSS = new VelocityStateSpaceModel(
                 rightSysId,
@@ -191,7 +180,6 @@ public class Floppas extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        this.speed = speed;
         this.rightSS.setVelocity(speed);
         this.leftSS.setVelocity(speed);
     }
@@ -262,10 +250,6 @@ public class Floppas extends SubsystemBase {
         var limeLight = Logging.robotShuffleboard.getTab("LL");
         limeLight.setEntry("rightV", rightVoltage);
         limeLight.setEntry("leftV", leftVoltage);
-
-        SmartDashboard.putNumber("hood angle", getAngle());
-        SmartDashboard.putNumber("right SS", rightSS.getTargetVelocity());
-        SmartDashboard.putNumber("left SS", leftSS.getTargetVelocity());
     }
 
     public double getValueFromTable(double key) {

@@ -20,8 +20,6 @@
 
 package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
@@ -67,7 +65,6 @@ public class SwerveControl extends CommandBase {
         var ySpeed = MathUtil.fitDeadband(-leftJoystick.getX()) * DriveTrain.MAX_SPEED;
 
         var rot = MathUtil.fitDeadband(-rightJoystick.getX()) * DriveTrain.MAX_ANGULAR_SPEED;
-        SmartDashboard.putNumber("rot", rot);
 
         if (rot == 0 && driveTrain.useDriverAssist()) {
             driveTrain.drive(xSpeed, ySpeed, getRotationSpeed(), driveTrain.getFieldCentric());

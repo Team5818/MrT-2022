@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.shoot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -63,8 +62,6 @@ public class TrackGoal extends CommandBase {
             }
             //this.storedTx = lime.getTx();
             this.storedTx = lime.getTx() + (13 / lime.getDistance());
-            SmartDashboard.putNumber("limelight tx", lime.getTx());
-            SmartDashboard.putNumber("storedtx", storedTx);
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }
     }

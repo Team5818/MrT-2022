@@ -28,7 +28,10 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.commands.auto.*;
+import org.rivierarobotics.commands.auto.DriveShoot;
+import org.rivierarobotics.commands.auto.MLAuto;
+import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
+import org.rivierarobotics.commands.auto.ShootFender;
 import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.drive.PathGeneration;
 import org.rivierarobotics.commands.drive.SwerveControl;
@@ -46,13 +49,6 @@ public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
     private boolean autoFlag = false;
 
-    private int tick = 0;
-    private int frame = 0;
-    private boolean[][] states = {
-            {false, false, true, true, false, false},
-            {false, false, false, false, true, true},
-            {true, true, false, false, false, false}
-    };
     private SendableChooser<Command> chooser;
 
 
@@ -231,14 +227,13 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
-        DriveTrain.getInstance().getPoseEstimator().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
         Gyro.getInstance().resetGyro();
+        DriveTrain.getInstance().getPoseEstimator().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-//        CommandScheduler.getInstance().setDefaultCommand(Intake.getInstance(), new CollectControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
     }
 

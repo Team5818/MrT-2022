@@ -44,8 +44,6 @@ public class MotorIDs {
     public static final int SHOOTER_ANGLE = 16;
     public static final int SHOOTER_RIGHT = 17;
 
-
-
     private MotorIDs() {
     }
 

@@ -20,13 +20,10 @@
 
 package org.rivierarobotics.commands.auto;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.swerve.TrajectoryFollower;
-
-import java.io.IOException;
 
 public class SimpleAuto extends CommandBase {
     private final DriveTrain driveTrain;

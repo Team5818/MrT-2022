@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.rivierarobotics.lib.MathUtil;
@@ -40,9 +39,9 @@ public class Limelight {
     }
 
     private static Limelight limelight;
-    private static double llAngle = 30;
-    private static double robotHeight = 1.092;
-    private static double goalHeight = 2.6416;
+    private static final double LL_ANGLE = 30; // deg
+    private static final double ROBOT_HEIGHT = 1.092; // m;
+    private static final double GOAL_HEIGHT = 2.6416; // m
     private final PhotonCamera camera;
     private static final double llOffset = 0.2286;
 
@@ -76,19 +75,17 @@ public class Limelight {
     }
 
     public double getDistance() {
-        return PhotonUtils.calculateDistanceToTargetMeters(robotHeight, goalHeight, Math.toRadians(llAngle), Math.toRadians(getTy()));
+        return PhotonUtils.calculateDistanceToTargetMeters(ROBOT_HEIGHT, GOAL_HEIGHT, Math.toRadians(LL_ANGLE), Math.toRadians(getTy()));
     }
 
     public double getAdjustedDistance () {
-        var adjustedDistance =  Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance()
+        return Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance()
                 * llOffset * Math.cos(Math.toRadians(90 + getTx())));
-        return adjustedDistance;
     }
 
     // returns new Tx in Radians
     public double getAdjustedTx() {
-        var adjustedAngle =  Math.asin(getDistance() * (Math.sin(Math.toRadians(90 + getTx()))) / getDistance() % 1) * (180 / Math.PI) - 90;
-        return adjustedAngle;
+        return Math.asin(getDistance() * (Math.sin(Math.toRadians(90 + getTx()))) / getDistance() % 1) * (180 / Math.PI) - 90;
     }
 
     public double getShootingAssistAngle() {

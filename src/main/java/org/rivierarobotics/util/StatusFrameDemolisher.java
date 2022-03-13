@@ -1,9 +1,7 @@
 package org.rivierarobotics.util;
 
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class StatusFrameDemolisher {
     public static void demolishStatusFrames(BaseTalon motor, boolean isFollower) {

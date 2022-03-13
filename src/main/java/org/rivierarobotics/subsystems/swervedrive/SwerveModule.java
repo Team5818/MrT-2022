@@ -20,7 +20,12 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,12 +46,15 @@ public class SwerveModule {
     private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION; // radians
     private static final double GEARING = 11.0 / 40.0;
     private static final double DRIVE_MOTOR_TICK_TO_SPEED = 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048; // m/s
-
-    private final double zeroTicks;
-
+    //Controller Constants
     private static final double MAX_TURN_ACCELERATION = 30000; //Rad/s
     private static final double MAX_TURN_VELOCITY = 30000; //Rad/s
     private static final int TIMEOUT_MS = 60;
+
+
+
+    private final double zeroTicks;
+
 
 
     //Turn Motor Motion Magic
@@ -57,6 +65,7 @@ public class SwerveModule {
             TIMEOUT_MS, 10
     );
     private static final PIDConfig TM_MM_PID = new PIDConfig(0.7, 0, 0, 0.1);
+
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
@@ -66,14 +75,14 @@ public class SwerveModule {
     );
     private static final PIDConfig DM_MM_PID = new PIDConfig(0.0, 0, 0, 0.1);
 
-
+    //Motors
     private final WPI_TalonFX driveMotor;
     private final WPI_TalonSRX steeringMotor;
 
-
-
+    //Angle Values to ensure the CAN Bus doesn't return a 0 out of nowhere
     private double prevAngle = 0.0;
     private double timeoutSeconds = 0.0;
+
     /**
      * Constructs a SwerveModule.
      *

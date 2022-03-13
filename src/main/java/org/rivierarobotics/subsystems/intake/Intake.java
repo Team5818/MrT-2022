@@ -31,8 +31,6 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.subsystems.climb.Piston;
 import org.rivierarobotics.util.StatusFrameDemolisher;
 
-import java.awt.*;
-
 public class Intake extends SubsystemBase {
     private static Intake intake;
 

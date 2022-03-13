@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.drive.DrivePath;
-import org.rivierarobotics.commands.subsystems.intake.SetIntakeState;
-import org.rivierarobotics.commands.subsystems.drivetrain.SetDriveAngle;
 import org.rivierarobotics.commands.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.subsystems.drivetrain.SetDriveAngle;
+import org.rivierarobotics.commands.subsystems.intake.SetIntakeState;
 
 public class OneBallSimpleAuto extends SequentialCommandGroup {
     public OneBallSimpleAuto(boolean rightSide) {

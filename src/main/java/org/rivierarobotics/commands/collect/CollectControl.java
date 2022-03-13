@@ -1,7 +1,6 @@
 package org.rivierarobotics.commands.collect;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
@@ -22,7 +21,6 @@ public class CollectControl extends CommandBase {
     public void execute() {
         var voltage = MathUtil.fitDeadband(rightJoystick.getY()) * 10;
         //intake.setIntakeState(false);
-        SmartDashboard.putNumber("beltvoltage", voltage);
         intake.setVoltages(voltage, voltage);
     }
 }
