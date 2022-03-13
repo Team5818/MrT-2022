@@ -8,7 +8,7 @@ public class DriveShoot extends SequentialCommandGroup {
     public DriveShoot(boolean isRight) {
         addCommands(
                 new DrivePath("back"),
-                new SetDriveAngle(isRight ? 50 : -90).withTimeout(3),
+                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
                 new AutoAimShoot(true)
         );
     }

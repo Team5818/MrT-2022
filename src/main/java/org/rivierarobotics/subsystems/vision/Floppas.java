@@ -25,10 +25,14 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.InterpolationTable;
@@ -56,10 +60,16 @@ public class Floppas extends SubsystemBase {
     private static final double FIRE_MAX_VOLTAGE = 12;
     private static final double AIM_MAX_VOLTAGE = 9;
 //    public static final double ZERO_ANGLE = -3.24;
-    public static final double ZERO_ANGLE = -2.81;
+//    public static final double ZERO_ANGLE = -2.81;
+//    public static final double ZERO_ANGLE = -4.22;
+//public static final double ZERO_ANGLE = -4.36;
+//        public static final double ZERO_ANGLE = -5.32;
+    public static final double ZERO_ANGLE = -5.02;
+
+
     private static final double AIM_DOWNWARD_LIMIT = ZERO_ANGLE - 1.25;
     private static final double AIM_UPWARD_LIMIT = ZERO_ANGLE + 0.615;
-    private static final double ADJUST_FROM_SLIPPAGE = -0.78 + (-2.81 + 3.24);
+    private static final double ADJUST_FROM_SLIPPAGE = -4.22 + 2.81 + (-5.32+4.36);
 
     private boolean blockSS = false;
     private final double VEL_TO_RADS = (2 * Math.PI / 4096) * 10;
@@ -74,6 +84,8 @@ public class Floppas extends SubsystemBase {
     private InterpolationTable angleTable = new InterpolationTable();
     private InterpolationTable speedTable = new InterpolationTable();
 
+    private final ProfiledPIDController profiledPIDController = new ProfiledPIDController(60,0.001,0, new TrapezoidProfile.Constraints(60,60));
+
     public void setBlockSS(boolean blockSS) {
         this.blockSS = blockSS;
     }
@@ -87,17 +99,12 @@ public class Floppas extends SubsystemBase {
     }
 
     public Floppas() {
-        angleTable.addValue(1.5, -2.86 + ADJUST_FROM_SLIPPAGE);
-        angleTable.addValue(1.77, -2.94 + ADJUST_FROM_SLIPPAGE);
-        angleTable.addValue(2.03, -2.92 + ADJUST_FROM_SLIPPAGE);
-        angleTable.addValue(2.324, -3.028 + ADJUST_FROM_SLIPPAGE);
-        angleTable.addValue(2.69, -3.022 + ADJUST_FROM_SLIPPAGE);
+        angleTable.addValue(3.35, -3.15 + ADJUST_FROM_SLIPPAGE);
+        angleTable.addValue(2.27, -3.15 + ADJUST_FROM_SLIPPAGE);
 
-        speedTable.addValue(1.5, 115);
-        speedTable.addValue(1.77, 120);
-        speedTable.addValue(2.03, 120);
-        speedTable.addValue(2.324, 130);
-        speedTable.addValue(2.69, 135);
+
+        speedTable.addValue(3.35, 180);
+        speedTable.addValue(2.27, 140);
 
         this.flopperMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
         flopperMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -151,7 +158,7 @@ public class Floppas extends SubsystemBase {
     }
 
     public enum ShooterLocations {
-        LAUNCHPAD_A(0, ZERO_ANGLE + 0.47, 0),
+        LAUNCHPAD_A(0, ZERO_ANGLE + 0, 0),
         LAUNCHPAD_B(1, ZERO_ANGLE + 0, 0),
         LOW_GOAL(60, AIM_DOWNWARD_LIMIT, 0),
         FENDER(110, AIM_UPWARD_LIMIT - 0.15, 0);
@@ -216,7 +223,7 @@ public class Floppas extends SubsystemBase {
             return;
         }
 
-        flopperMotor.setVoltage(voltage);
+        //flopperMotor.setVoltage(Math.abs(voltage) >= 2.5 ? Math.signum(voltage) * 2.5 : voltage);
     }
 
     public void setAngle(double radians) {
@@ -224,21 +231,25 @@ public class Floppas extends SubsystemBase {
         var limeLight = sb.getTab("LL");
         limeLight.setEntry("Hood Target", radians);
         aimStateSpace.setPosition(radians);
+        profiledPIDController.reset(getAngle());
+        profiledPIDController.setGoal(radians);
+        profiledPIDController.setIntegratorRange(0.2, 0.001);
     }
 
     public void floppaStateSpaceControl() {
         var sb = Logging.robotShuffleboard;
         var limeLight = sb.getTab("LL");
         limeLight.setEntry("tpose", aimStateSpace.getTargetPosition());
-//        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
+       double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
+//       var v = profiledPIDController.calculate(getAngle());
 
         if (MathUtil.isWithinTolerance(getAngle(), aimStateSpace.getTargetPosition(), 0.1)) return;
-        double v = Math.min(Math.abs((aimStateSpace.getTargetPosition() - getAngle()) * (7 / 1.2)), 7);
-        setActuatorVoltage(Math.signum((aimStateSpace.getTargetPosition() - getAngle())) * v);
+        double v = Math.min(Math.abs((aimStateSpace.getTargetPosition() - getAngle()) * (6.5 / 1.2)), 7);
+//        setActuatorVoltage(Math.signum((aimStateSpace.getTargetPosition() - getAngle())) * v);
+//
+//        limeLight.setEntry("AV", v);
 
-        limeLight.setEntry("AV", v);
-
-//        setActuatorVoltage(aimVoltage);
+        setActuatorVoltage(v);
     }
 
     @Override

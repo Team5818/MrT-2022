@@ -10,6 +10,7 @@ public class SetFloppaPosition extends CommandBase {
     public SetFloppaPosition(double flywheelRads) {
         this.flywheelRads = flywheelRads;
         this.floppas = Floppas.getInstance();
+        addRequirements(floppas);
     }
 
     public SetFloppaPosition(Floppas.ShooterLocations preset) {
@@ -28,6 +29,6 @@ public class SetFloppaPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(floppas.getAngle(), flywheelRads, 0.1);
+        return MathUtil.isWithinTolerance(floppas.getAngle(), flywheelRads, 0.15);
     }
 }

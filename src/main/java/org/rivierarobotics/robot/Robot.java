@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("SimpleShootR", new DriveShoot(true));
         chooser.addOption("SimpleShootL", new DriveShoot(false));
         chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
+        chooser.setDefaultOption("Fender", new ShootFender());
 
         Shuffleboard.getTab("Autos").add(chooser);
     }
@@ -193,7 +194,8 @@ public class Robot extends TimedRobot {
         limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
         limeLight.setEntry("LL TX", Limelight.getInstance().getTx());
         limeLight.setEntry("flop tuning", flopp.getTargetV());
-
+        limeLight.setEntry("LL Assist Angle", Limelight.getInstance().getShootingAssistAngle());
+        limeLight.setEntry("Correct Position", Limelight.getInstance().getLLAbsPose().toString());
 
         limeLight = sb.getTab("LL");
         limeLight.setEntry("Hood Angle", Floppas.getInstance().getAngle());

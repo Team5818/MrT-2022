@@ -94,6 +94,7 @@ public class SwerveModule {
             driveMotor2.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
             driveMotor2.setNeutralMode(NeutralMode.Brake);
             StatusFrameDemolisher.demolishStatusFrames(driveMotor2, false);
+            this.driveMotor2.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30,0.05));
             steeringMotor.setInverted(true);
         } else {
             this.driveMotor = new CANSparkMax(driveMotorChannel, CANSparkMaxLowLevel.MotorType.kBrushless);

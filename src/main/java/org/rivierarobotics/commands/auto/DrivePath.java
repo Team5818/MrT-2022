@@ -7,7 +7,7 @@ public class DrivePath extends CommandBase {
     private final String path;
     private final DriveTrain driveTrain;
 
-    public DrivePath (String path){
+    public DrivePath (String path) {
         this.path = path;
         this.driveTrain = DriveTrain.getInstance();
     }

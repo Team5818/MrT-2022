@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -35,6 +36,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Floppas;
+import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 public class ButtonConfiguration {
@@ -181,17 +183,17 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new EjectOne());
 
 
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new SetDriveAngle(90));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new SetDriveAngle(-90));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whileHeld(new SetFloppaPosition(-6.1));
+        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new SetFloppaPosition(-90));
 
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whileHeld();
-//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
-//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
+        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whileHeld(new TrackGoal());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new InstantCommand(() -> {
+            DriveTrain.getInstance().resetPose(new Pose2d(Limelight.getInstance().getLLAbsPose(), Gyro.getInstance().getRotation2d()));
+        }));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(0));
-//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whileHeld(new DrivePath("simplediag"));
-
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whileHeld(new PathGeneration(-1,0));
-
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whileHeld(new SetDriveAngle(Limelight.getInstance().getShootingAssistAngle()));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whileHeld(new PathGeneration(0,-2));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9).whenPressed(new InstantCommand(() -> {
             DriveTrain.getInstance().setTargetRotationAngle(0);
             Gyro.getInstance().resetGyro();

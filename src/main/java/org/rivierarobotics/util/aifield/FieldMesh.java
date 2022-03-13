@@ -63,7 +63,7 @@ public class FieldMesh {
     }
 
     private static FieldMesh fieldMesh;
-    public static final double MAX_VELOCITY = 3;
+    public static final double MAX_VELOCITY = 5;
     public static final double MAX_ACCELERATION = 0.5;
     public static final double DEFAULT_NODE_WEIGHT = 0;
     private double totalTimePassed = 0;

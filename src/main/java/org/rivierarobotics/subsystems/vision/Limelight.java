@@ -21,10 +21,13 @@
 package org.rivierarobotics.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.Gyro;
 
 public class Limelight extends SubsystemBase {
 
@@ -80,13 +83,14 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getAdjustedDistance () {
-        var adjustedDistance =  Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance() * llOffset * Math.cos(Math.toRadians(90 - getTx())));
+        var adjustedDistance =  Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance()
+                * llOffset * Math.cos(Math.toRadians(90 + getTx())));
         return adjustedDistance;
     }
 
     // returns new Tx in Radians
     public double getAdjustedTx() {
-        var adjustedAngle =  Math.asin(getAdjustedDistance() / (Math.sin(90 - getTx()) * getDistance()) % 1);
+        var adjustedAngle =  Math.asin(getDistance() * (Math.sin(Math.toRadians(90 + getTx()))) / getDistance() % 1) * (180 / Math.PI) - 90;
         return adjustedAngle;
     }
 
@@ -98,6 +102,12 @@ public class Limelight extends SubsystemBase {
         var targetY = limelightTargetPose.getY();
 
         var targetAngle = Math.atan((targetX - robotX) / (targetY - robotY));
-        return targetAngle;
+        return Gyro.getInstance().getRotation2d().getDegrees() + (targetAngle - MathUtil.wrapToCircle(Gyro.getInstance().getRotation2d().getDegrees()));
+    }
+
+    public Translation2d getLLAbsPose() {
+        double xpose = Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(getTx())) * getDistance();
+        double ypose = Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(getTx())) * getDistance();
+        return new Translation2d(xpose, ypose);
     }
 }

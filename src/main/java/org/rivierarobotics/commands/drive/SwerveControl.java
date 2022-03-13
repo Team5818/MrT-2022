@@ -33,7 +33,7 @@ public class SwerveControl extends CommandBase {
     //this finds the max turn speed based on the "wheel" ratio, then converts from radians to degrees
     private static final double MAX_TURN_SPEED = Math.PI * (1.4 / 24) * (100 / (2 * Math.PI));
     public static double MIN_ROT = 0.0;
-    public static double TURN_SPEED = 0.2;
+    public static double TURN_SPEED = 0.24;
     public static double MAX_SPEED = 5;
 
     private final DriveTrain driveTrain;

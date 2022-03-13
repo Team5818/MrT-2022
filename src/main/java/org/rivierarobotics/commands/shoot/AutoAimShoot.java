@@ -18,8 +18,8 @@ public class AutoAimShoot extends SequentialCommandGroup {
                                 new SequentialCommandGroup(
                                 new WaitCommand(0.5),
                                 new Shoot(Floppas.getInstance().getEstimatedSpeed(Limelight.getInstance().getDistance()), Floppas.getInstance().getEstimatedAngle(Limelight.getInstance().getDistance()))
-                        ),
-                                new TrackGoal(isAuto)
+                                ),
+                        new TrackGoal(isAuto)
                         ),
                         new Shoot(135, Floppas.ZERO_ANGLE - 0.562),
                         () -> Limelight.getInstance().getDetected()
