@@ -21,58 +21,56 @@
 package org.rivierarobotics.commands.climb;
 
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import org.rivierarobotics.commands.subsystems.climb.ClimbSetPosition;
-import org.rivierarobotics.commands.subsystems.climb.OpenAllPistons;
-import org.rivierarobotics.commands.subsystems.climb.TogglePiston;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
+
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.*;
 
 public class RunClimb extends SequentialCommandGroup {
     private static final double voltage = 9;
 
     public RunClimb(boolean reversed) {
-        final ClimbDepreciated.Position first;
-        final ClimbDepreciated.Position last;
-        final double modifier;
+        final ClimbPositions first;
+        final ClimbPositions last;
         if (reversed) {
-            first = ClimbDepreciated.Position.HIGH;
-            last = ClimbDepreciated.Position.LOW;
+            first = HIGH;
+            last = LOW;
         } else {
-            last = ClimbDepreciated.Position.HIGH;
-            first = ClimbDepreciated.Position.LOW;
+            last = HIGH;
+            first = LOW;
         }
         addCommands(
                 //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
-                        new WaitUntilCommand(() -> ClimbDepreciated.getInstance().isSwitchSet(first)),
-                        new ClimbSetPosition(ClimbDepreciated.Position.LOW, reversed)
+                        new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(first)),
+                        new ClimbSetPosition(LOW, reversed)
                 ),
                 new TogglePiston(first, true, 0),
                 new WaitCommand(0.25),
                 //new SetDriveVelocity(0,0,0),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbDepreciated.getInstance().isSwitchSet(ClimbDepreciated.Position.MID)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(MID)),
                         new InteruptableSetVoltage(reversed, voltage)),
-                new InstantCommand(() -> ClimbDepreciated.getInstance().setVoltage(0)),
-                new TogglePiston(ClimbDepreciated.Position.MID, true, 0),
+                new ClimbSetVoltage(reversed, 0),
+                new TogglePiston(MID, true, 0),
 //                new WaitCommand(0.2),
-                new WaitPiston(ClimbDepreciated.Position.MID, 0.5, 1, reversed),
+                new WaitPiston(MID, 0.5, 1, reversed),
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
 //                new InteruptableSetVoltage(reversed, voltage).withTimeout(0.9),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbDepreciated.getInstance().isSwitchSet(last)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
                         new InteruptableSetVoltage(reversed, voltage * 1.15)),
-                new InstantCommand(() -> ClimbDepreciated.getInstance().setVoltage(voltage * 0.5)),
+                new ClimbSetVoltage(reversed, voltage * 0.5),
                 new TogglePiston(last, true, 0),
 //                new WaitCommand(0.3),
                 new WaitPiston(last, 0.5, 1.0, reversed),
-                new InstantCommand(() -> ClimbDepreciated.getInstance().setVoltage(0)),
-                new TogglePiston(ClimbDepreciated.Position.MID, false, 0),
-                new ClimbSetPosition(ClimbDepreciated.Position.HIGH, reversed)
+                new ClimbSetVoltage(reversed, 0),
+                new TogglePiston(MID, false, 0),
+                new ClimbSetPosition(HIGH, reversed)
         );
     }
 }

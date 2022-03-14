@@ -18,25 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.climb;
+package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class TogglePiston extends SequentialCommandGroup {
-    private final ClimbDepreciated climb;
+public class ClimbSetVoltage extends InstantCommand {
 
-    public TogglePiston(ClimbDepreciated.Position climbPosition, boolean isEngaged, double timeToWait) {
-        super(
-                new InstantCommand(() -> {
-                    ClimbDepreciated.getInstance().setPiston(climbPosition, isEngaged);
-                }),
-                new WaitCommand(timeToWait)
-        );
+    private Climb climb;
+    private double voltage;
+    public ClimbSetVoltage(boolean reversed, double voltage) {
+        this.climb = Climb.getInstance();
+        this.voltage = reversed ? voltage : -voltage;
+    }
 
-        this.climb = ClimbDepreciated.getInstance();
-        addRequirements(climb);
+    @Override
+    public void initialize() {
+        climb.setVoltage(voltage);
     }
 }

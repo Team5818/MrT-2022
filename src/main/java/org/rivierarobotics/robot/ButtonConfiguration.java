@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.climb.RunClimb;
 import org.rivierarobotics.commands.collect.CollectToggle;
 import org.rivierarobotics.commands.collect.IntakeDeployToggle;
@@ -31,12 +32,12 @@ import org.rivierarobotics.commands.drive.PathGeneration;
 import org.rivierarobotics.commands.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.shoot.EjectOne;
 import org.rivierarobotics.commands.shoot.Shoot;
-import org.rivierarobotics.commands.subsystems.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.subsystems.climb.ClimbToggle;
+import org.rivierarobotics.commands.climb.ClimbSetAngle;
+import org.rivierarobotics.commands.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.subsystems.drivetrain.SetCameraCentric;
 import org.rivierarobotics.commands.subsystems.drivetrain.SetDriverAssist;
 import org.rivierarobotics.commands.subsystems.floppas.SetFloppaPosition;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -69,15 +70,18 @@ public class ButtonConfiguration {
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6)
 //                .whenPressed(new WaitCommand(1));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
-                .whenPressed(new ClimbToggle());
+                .whenPressed(new ClimbInterruptToggle());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+//                .whenPressed(new InstantCommand(() -> {
+//                    try {
+//                        CommandScheduler.getInstance().cancel(CommandScheduler.getInstance().requiring(Climb.getInstance()));
+//                    } catch (Exception e) {
+//                    }
+//                    Climb.getInstance().setVoltage(0);
+//                }));
+        //
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
-                .whenPressed(new InstantCommand(() -> {
-                    try {
-                        CommandScheduler.getInstance().cancel(CommandScheduler.getInstance().requiring(ClimbDepreciated.getInstance()));
-                    } catch (Exception e) {
-                    }
-                    ClimbDepreciated.getInstance().setVoltage(0);
-                }));
+                .whenPressed(new ClimbSetVoltage(false, 0));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
                 .whenPressed(new RunClimb(false));
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10)

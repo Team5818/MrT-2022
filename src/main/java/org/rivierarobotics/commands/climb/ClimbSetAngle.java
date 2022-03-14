@@ -18,19 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.intake;
+package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.intake.Intake;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class SetIntakeState extends InstantCommand {
-    private final boolean isOpen;
-    public SetIntakeState(boolean isOpen) {
-        this.isOpen = isOpen;
+public class ClimbSetAngle extends CommandBase {
+    private final Climb climb;
+    private final double angle;
+
+    public ClimbSetAngle(double angle) {
+        this.climb = Climb.getInstance();
+        this.angle = angle;
+        addRequirements(this.climb);
     }
 
     @Override
     public void initialize() {
-        Intake.getInstance().setIntakeState(isOpen);
+        climb.setPosition(angle);
+    }
+
+    @Override
+    public void execute() {
+        climb.followStateSpace();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.3);
     }
 }

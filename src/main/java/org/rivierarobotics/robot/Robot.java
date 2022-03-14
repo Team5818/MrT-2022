@@ -36,7 +36,8 @@ import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.drive.PathGeneration;
 import org.rivierarobotics.commands.drive.SwerveControl;
 import org.rivierarobotics.commands.shoot.ShooterControl;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -44,6 +45,8 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
+
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.*;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -65,8 +68,6 @@ public class Robot extends TimedRobot {
                 .withWidget("Field");
 
         initializeCustomLoops();
-
-        ClimbDepreciated.getInstance().setOffset();
 
         chooser = new SendableChooser<>();
         chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
@@ -95,7 +96,6 @@ public class Robot extends TimedRobot {
             resetRobotPoseAndGyro();
         }
         autoFlag = false;
-        ClimbDepreciated.getInstance().setOffset();
     }
 
     private void shuffleboardLogging() {
@@ -109,7 +109,8 @@ public class Robot extends TimedRobot {
         var shoot = sb.getTab("shoot");
 
         var dt = DriveTrain.getInstance();
-        var cl = ClimbDepreciated.getInstance();
+        var cl = Climb.getInstance();
+        var clc = ClimbClaws.getInstance();
         var col = Intake.getInstance();
         var MLcore = MLCore.getInstance();
         var flopp = Floppas.getInstance();
@@ -131,13 +132,12 @@ public class Robot extends TimedRobot {
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Position", cl.getAngle());
-        climb.setEntry("Climb Ticks", cl.getRawTicks());
-        climb.setEntry("Switch low", cl.isSwitchSet(ClimbDepreciated.Position.LOW));
-        climb.setEntry("Switch mid", cl.isSwitchSet(ClimbDepreciated.Position.MID));
-        climb.setEntry("Switch high", cl.isSwitchSet(ClimbDepreciated.Position.HIGH));
-        climb.setEntry("Piston low", cl.isPistonSet(ClimbDepreciated.Position.LOW));
-        climb.setEntry("Piston mid", cl.isPistonSet(ClimbDepreciated.Position.MID));
-        climb.setEntry("Piston high", cl.isPistonSet(ClimbDepreciated.Position.HIGH));
+        climb.setEntry("Switch low", clc.isSwitchSet(LOW));
+        climb.setEntry("Switch mid", clc.isSwitchSet(MID));
+        climb.setEntry("Switch high", clc.isSwitchSet(HIGH));
+        climb.setEntry("Piston low", clc.isPistonSet(LOW));
+        climb.setEntry("Piston mid", clc.isPistonSet(MID));
+        climb.setEntry("Piston high", clc.isPistonSet(HIGH));
 
         collect.setEntry("ispositive", col.getIsPositive());
         collect.setEntry("belt voltage", col.getBeltVoltage());
@@ -194,7 +194,6 @@ public class Robot extends TimedRobot {
         initializeAllSubsystems();
         initializeDefaultCommands();
 
-        ClimbDepreciated.getInstance().setOffset();
         resetRobotPoseAndGyro();
         try {
             var command = chooser.getSelected();
@@ -220,7 +219,8 @@ public class Robot extends TimedRobot {
         Floppas.getInstance();
         Limelight.getInstance();
         Intake.getInstance();
-        ClimbDepreciated.getInstance();
+        Climb.getInstance();
+        ClimbClaws.getInstance();
     }
 
     private void resetRobotPoseAndGyro() {
@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        CommandScheduler.getInstance().setDefaultCommand(ClimbDepreciated.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
     }
 

@@ -18,25 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.climb;
+package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-public class ClimbSetAngle extends CommandBase {
-    private final ClimbDepreciated climb;
-    private final double angle;
+public class ClimbSetPosition extends CommandBase {
+    private final Climb climb;
+    private final double target;
 
-    public ClimbSetAngle(double angle) {
-        this.climb = ClimbDepreciated.getInstance();
-        this.angle = angle;
-        addRequirements(this.climb);
+    public ClimbSetPosition(ClimbPositions climbModule, boolean reversed) {
+        this.climb = Climb.getInstance();
+        this.target = climbModule.locationRadians * (reversed ? -1 : 1);
+        this.addRequirements(this.climb);
     }
 
     @Override
     public void initialize() {
-        climb.setPosition(angle);
+        climb.setPosition(target);
     }
 
     @Override
@@ -45,7 +46,12 @@ public class ClimbSetAngle extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        climb.setVoltage(0);
+    }
+
+    @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.3);
+        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(1));
     }
 }

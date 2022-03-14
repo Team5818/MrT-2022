@@ -18,39 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.climb;
+package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-public class ClimbSetPosition extends CommandBase {
-    private final ClimbDepreciated climb;
-    private final double target;
+public class SetPiston extends InstantCommand {
+    private ClimbClaws climbClaws;
+    private ClimbPositions climbPosition;
+    private boolean isEngaged;
 
-    public ClimbSetPosition(ClimbDepreciated.Position climbModule, boolean reversed) {
-        this.climb = ClimbDepreciated.getInstance();
-        this.target = climbModule.locationRadians * (reversed ? -1 : 1);
-        this.addRequirements(this.climb);
+    public SetPiston(ClimbPositions climbPosition, boolean isEngaged) {
+        this.climbClaws = ClimbClaws.getInstance();
+        this.isEngaged = isEngaged;
+        this.climbPosition = climbPosition;
+        addRequirements(climbClaws);
     }
 
     @Override
     public void initialize() {
-        climb.setPosition(target);
-    }
-
-    @Override
-    public void execute() {
-        climb.followStateSpace();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        climb.setVoltage(0);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), target, Math.toRadians(1));
+        climbClaws.setPiston(climbPosition, isEngaged);
     }
 }

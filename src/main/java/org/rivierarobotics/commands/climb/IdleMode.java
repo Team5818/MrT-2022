@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.climb;
+package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
 
 public class IdleMode extends CommandBase {
-    private ClimbDepreciated climb;
+    private Climb climb;
     private boolean coast;
 
     public IdleMode(boolean coast) {
-        this.climb = ClimbDepreciated.getInstance();
+        this.climb = Climb.getInstance();
         this.coast = coast;
         this.addRequirements(climb);
     }

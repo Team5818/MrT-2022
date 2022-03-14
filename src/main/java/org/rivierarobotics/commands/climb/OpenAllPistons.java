@@ -18,19 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.intake;
+package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
 
-public class SetIntakeState extends InstantCommand {
-    private final boolean isOpen;
-    public SetIntakeState(boolean isOpen) {
-        this.isOpen = isOpen;
+public class OpenAllPistons extends InstantCommand {
+    private final ClimbClaws climb;
+
+    public OpenAllPistons() {
+        this.climb = ClimbClaws.getInstance();
+        addRequirements(climb);
     }
 
     @Override
     public void initialize() {
-        Intake.getInstance().setIntakeState(isOpen);
+        climb.openAllPistons();
     }
 }

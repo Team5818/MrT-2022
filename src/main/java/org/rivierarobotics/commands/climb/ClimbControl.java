@@ -24,23 +24,17 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
 
 public class ClimbControl extends CommandBase {
-    private final ClimbDepreciated climb;
+    private final Climb climb;
     private final Joystick leftJoystick;
 
     public ClimbControl() {
-        this.climb = ClimbDepreciated.getInstance();
+        this.climb = Climb.getInstance();
         this.leftJoystick = ControlMap.CO_DRIVER_LEFT;
         addRequirements(this.climb);
-    }
-
-    @Override
-    public void initialize() {
-        climb.setPiston(ClimbDepreciated.Position.LOW, true);
-        climb.setPiston(ClimbDepreciated.Position.MID, true);
-        climb.setPiston(ClimbDepreciated.Position.HIGH, true);
     }
 
     @Override

@@ -18,21 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.subsystems.climb;
+package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-public class ClimbZero extends CommandBase {
-    private ClimbDepreciated climb;
-
-    public ClimbZero() {
-        this.climb = ClimbDepreciated.getInstance();
-        this.addRequirements(climb);
-    }
-
-    @Override
-    public void initialize() {
-        climb.setOffset();
+public class TogglePiston extends SequentialCommandGroup {
+    public TogglePiston(ClimbPositions climbPosition, boolean isEngaged, double timeToWait) {
+        super(
+                new SetPiston(climbPosition, isEngaged),
+                new WaitCommand(timeToWait)
+        );
     }
 }

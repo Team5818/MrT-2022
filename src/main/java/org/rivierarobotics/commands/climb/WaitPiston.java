@@ -23,11 +23,14 @@ package org.rivierarobotics.commands.climb;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.subsystems.climb.ClimbDepreciated;
+import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class WaitPiston extends CommandBase {
-    private final ClimbDepreciated climb;
-    private final ClimbDepreciated.Position climbModule;
+    private final Climb climb;
+    private final ClimbClaws climbClaws;
+    private final ClimbPositions climbModule;
     private double switchTime;
     private double retryTimeout;
     private double endTime;
@@ -36,13 +39,14 @@ public class WaitPiston extends CommandBase {
     private final boolean reversed;
 
 
-    public WaitPiston(ClimbDepreciated.Position climbModule, double endTime, double timeout, boolean reversed) {
-        this.climb = ClimbDepreciated.getInstance();
+    public WaitPiston(ClimbPositions climbModule, double endTime, double timeout, boolean reversed) {
+        this.climb = Climb.getInstance();
+        this.climbClaws = ClimbClaws.getInstance();
         this.climbModule = climbModule;
         this.endTime = endTime;
         this.timeout = timeout;
         this.reversed = reversed;
-        this.addRequirements(this.climb);
+        this.addRequirements(this.climb, this.climbClaws);
     }
 
     @Override
@@ -55,8 +59,8 @@ public class WaitPiston extends CommandBase {
     @Override
     public void execute() {
         if (retryMode) {
-            if (climb.isSwitchSet(climbModule)) {
-                climb.setPiston(climbModule, true);
+            if (climbClaws.isSwitchSet(climbModule)) {
+                climbClaws.setPiston(climbModule, true);
                 this.retryMode = false;
                 this.retryTimeout = Timer.getFPGATimestamp();
                 this.switchTime = Timer.getFPGATimestamp();
@@ -73,12 +77,12 @@ public class WaitPiston extends CommandBase {
         } else {
             climb.setVoltage(0);
             if (Timer.getFPGATimestamp() <= retryTimeout + timeout) {
-                if (!climb.isSwitchSet(climbModule)) {
+                if (!climbClaws.isSwitchSet(climbModule)) {
                     this.switchTime = Timer.getFPGATimestamp();
                 }
                 Logging.robotShuffleboard.getTab("Climb").setEntry("Switch time", switchTime);
             } else {
-                climb.setPiston(climbModule, false);
+                climbClaws.setPiston(climbModule, false);
                 this.retryMode = true;
             }
         }
@@ -86,6 +90,6 @@ public class WaitPiston extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return climb.isPistonSet(climbModule) && Timer.getFPGATimestamp() >= switchTime + endTime;
+        return climbClaws.isPistonSet(climbModule) && Timer.getFPGATimestamp() >= switchTime + endTime;
     }
 }
