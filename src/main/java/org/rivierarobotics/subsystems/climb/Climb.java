@@ -20,17 +20,27 @@
 
 package org.rivierarobotics.subsystems.climb;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.lib.MotionMagicConfig;
+import org.rivierarobotics.lib.MotorUtil;
+import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.MAX_RADS;
+import java.util.ArrayList;
+
+import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ROTATE_A;
+import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ROTATE_B;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.*;
 
 public class Climb extends SubsystemBase {
     private static Climb climbMotors;
@@ -43,37 +53,31 @@ public class Climb extends SubsystemBase {
 
     private final WPI_TalonFX climbMaster;
     private final WPI_TalonFX climbFollower;
-    private final PositionStateSpaceModel climbStateSpace;
+
+    //all of these values are bs change them later
+    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(
+            new ArrayList<>(), true,
+            MAX_CLIMB_VELOCITY, MAX_CLIMB_ACCELERATION,
+            100, 2,
+            TIMEOUT_MS, 10
+    );
+    private static final PIDConfig CM_MM_PID = new PIDConfig(0.8, 0, 0, 0.1);
     private boolean play = true;
-    private final SystemIdentification sysId = new SystemIdentification(0.0, 10, 0.02);
-    //TODO: Remove this encoder
-    private final DutyCycleEncoder encoder;
 
     private Climb() {
-        //TODO: Move to motion magic. see SwerveModules if you need to see how that looks like.
-        // keep in mind you will need to convert angle to ticks and ticks to angle.
-        this.climbStateSpace = new PositionStateSpaceModel(
-                sysId,
-                0.01,
-                0.01,
-                0.01,
-                0.01,
-                0.01,
-                6,
-                12
-        );
-
-        this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A);
-        this.climbFollower = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B);
+        this.climbMaster = new WPI_TalonFX(CLIMB_ROTATE_A);
+        this.climbFollower = new WPI_TalonFX(CLIMB_ROTATE_B);
         climbFollower.follow(climbMaster);
         setCoast(false);
         climbMaster.setInverted(true);
         climbFollower.setInverted(true);
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
-
-        this.encoder = new DutyCycleEncoder(MotorIDs.CLIMB_ENCODER);
-        this.encoder.setDistancePerRotation(2 * Math.PI);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, CM_MM_PID, CM_MM_CONFIG, climbMaster);
+        climbMaster.configFeedbackNotContinuous(true, TIMEOUT_MS);
+        climbMaster.setSensorPhase(false);
+        climbFollower.configFeedbackNotContinuous(true, TIMEOUT_MS);
+        climbFollower.setSensorPhase(false);
     }
 
     public void setCoast(boolean coast) {
@@ -86,9 +90,8 @@ public class Climb extends SubsystemBase {
         }
     }
 
-    //TODO: Make set position take an angle in radians, convert to ticks, and set on climbMaster. (gearing & ticks)
     public void setPosition(double radians) {
-        climbStateSpace.setPosition(radians);
+        climbMaster.set(ControlMode.MotionMagic, radians * MOTOR_ANGLE_TO_TICK);
     }
 
     public void setPlay(boolean play) {
@@ -99,16 +102,6 @@ public class Climb extends SubsystemBase {
         return play;
     }
 
-    //TODO: Remove
-    public void followStateSpace() {
-        //var climbVoltage = climbStateSpace.getAppliedVoltage(getAngle());
-        double angle = getAngle();
-        if(MathUtil.isWithinTolerance(angle, climbStateSpace.getTargetPosition(), 0.1)) return;
-        double v = Math.min(Math.abs((climbStateSpace.getTargetPosition() - angle) * (12 / 0.5)), 12);
-        setVoltage(-Math.signum((climbStateSpace.getTargetPosition() - angle)) * v);
-        //setVoltage(-climbVoltage);
-    }
-
     public void setVoltage(double voltage) {
         if (Math.abs(getAngle()) > MAX_RADS && Math.signum(-voltage) == Math.signum(getAngle())) {
             climbMaster.setVoltage(0);
@@ -117,8 +110,7 @@ public class Climb extends SubsystemBase {
         climbMaster.setVoltage(voltage);
     }
 
-    //TODO: convert motor encoder to angle via gearing & encoder resolution
     public double getAngle() {
-        return encoder.getDistance();
+        return climbMaster.getSelectedSensorPosition() * MOTOR_ANGLE_TO_TICK;
     }
 }
