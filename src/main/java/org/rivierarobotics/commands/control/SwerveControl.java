@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.advanced.drive;
+package org.rivierarobotics.commands.control;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
