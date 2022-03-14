@@ -18,17 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.basic.shoot;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.advanced.shoot.Shoot;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.shoot.Floppas;
 
-public class ShootFender extends SequentialCommandGroup {
-    public ShootFender() {
-        addCommands(
-                new Shoot(Floppas.ShooterLocations.FENDER),
-                new Sideways(3)
-        );
+public class SetFloppaPosition extends CommandBase {
+    private final double flywheelRads;
+    private final Floppas floppas;
+    public SetFloppaPosition(double flywheelRads) {
+        this.flywheelRads = flywheelRads;
+        this.floppas = Floppas.getInstance();
+        addRequirements(floppas);
+    }
+
+    public SetFloppaPosition(Floppas.ShooterLocations preset) {
+        this(preset.floppaAngle);
+    }
+
+    @Override
+    public void initialize() {
+        this.floppas.setAngle(flywheelRads);
+    }
+
+    @Override
+    public void execute() {
+        this.floppas.floppaStateSpaceControl();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(floppas.getAngle(), flywheelRads, 0.15);
     }
 }

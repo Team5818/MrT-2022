@@ -18,19 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.basic.climb;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.advanced.drive.DrivePath;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.climb.Climb;
 
-public class DriveShoot extends SequentialCommandGroup {
-    public DriveShoot(boolean isRight) {
-        addCommands(
-                new DrivePath("back"),
-                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
-                new AutoAimShoot(true)
-        );
+public class IdleMode extends CommandBase {
+    private Climb climb;
+    private boolean coast;
+
+    public IdleMode(boolean coast) {
+        this.climb = Climb.getInstance();
+        this.coast = coast;
+        this.addRequirements(climb);
+    }
+
+    @Override
+    public void initialize() {
+        climb.setCoast(coast);
     }
 }

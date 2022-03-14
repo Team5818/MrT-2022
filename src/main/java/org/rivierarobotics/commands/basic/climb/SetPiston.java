@@ -18,19 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.basic.climb;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.advanced.drive.DrivePath;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-public class DriveShoot extends SequentialCommandGroup {
-    public DriveShoot(boolean isRight) {
-        addCommands(
-                new DrivePath("back"),
-                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
-                new AutoAimShoot(true)
-        );
+public class SetPiston extends InstantCommand {
+    private ClimbClaws climbClaws;
+    private ClimbPositions climbPosition;
+    private boolean isEngaged;
+
+    public SetPiston(ClimbPositions climbPosition, boolean isEngaged) {
+        this.climbClaws = ClimbClaws.getInstance();
+        this.isEngaged = isEngaged;
+        this.climbPosition = climbPosition;
+        addRequirements(climbClaws);
+    }
+
+    @Override
+    public void initialize() {
+        climbClaws.setPiston(climbPosition, isEngaged);
     }
 }

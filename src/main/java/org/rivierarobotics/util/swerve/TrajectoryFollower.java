@@ -36,14 +36,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class TrajectoryFollower {
-    private final HolonomicDriveController holonomicDriveController;
-    private final PathPlannerTrajectory pathPlannerTrajectory;
-    private final double startTime;
-    private final PoseEstimator estimator;
-    private final Trajectory trajectory;
-    private final Gyro gyro;
-    private final DriveTrain driveTrain;
-
     public static Trajectory getTrajectoryFromPathweaver(String path) {
         String trajectoryJSON = "paths/" + path + ".wpilib.json";
         Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -55,16 +47,24 @@ public class TrajectoryFollower {
         return null;
     }
 
+    private final HolonomicDriveController holonomicDriveController;
+    private final PathPlannerTrajectory pathPlannerTrajectory;
+    private final double startTime;
+    private final PoseEstimator estimator;
+    private final Trajectory trajectory;
+    private final Gyro gyro;
+    private final DriveTrain driveTrain;
+
     public TrajectoryFollower(Trajectory trajectory, boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
-       this(trajectory, null, resetPose, gyro, driveTrain);
+        this(trajectory, null, resetPose, gyro, driveTrain);
     }
 
     public TrajectoryFollower(PathPlannerTrajectory trajectory, boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
-        this(null,trajectory,resetPose,gyro,driveTrain);
+        this(null, trajectory, resetPose, gyro, driveTrain);
     }
 
     private TrajectoryFollower(Trajectory trajectory, PathPlannerTrajectory pathPlannerTrajectory,
-                               boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
+        boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
         this.holonomicDriveController = driveTrain.getHolonomicDriveController();
         this.pathPlannerTrajectory = pathPlannerTrajectory;
         this.startTime = Timer.getFPGATimestamp();
@@ -72,17 +72,17 @@ public class TrajectoryFollower {
         this.driveTrain = driveTrain;
         this.estimator = driveTrain.getPoseEstimator();
         this.trajectory = trajectory;
-        if(trajectory == null && pathPlannerTrajectory == null) {
+        if (trajectory == null && pathPlannerTrajectory == null) {
             DriverStation.reportError("Trying to drive null path", false);
             return;
         }
-        if(resetPose) {
+        if (resetPose) {
             estimator.resetPose(getPathTrajectory());
         }
     }
 
     private Pose2d getPathTrajectory() {
-        if(trajectory != null) {
+        if (trajectory != null) {
             return new Pose2d(trajectory.getInitialPose().getTranslation(), gyro.getRotation2d());
         } else {
             return new Pose2d(pathPlannerTrajectory.getInitialPose().getTranslation(), gyro.getRotation2d());
@@ -90,7 +90,7 @@ public class TrajectoryFollower {
     }
 
     private Trajectory.State sample(double t) {
-        if(trajectory != null) {
+        if (trajectory != null) {
             return trajectory.sample(t);
         } else {
             return pathPlannerTrajectory.sample(t);
@@ -105,7 +105,7 @@ public class TrajectoryFollower {
      * Call this method periodically to follow a trajectory.
      */
     public void followController() {
-        if(trajectory == null && pathPlannerTrajectory == null) {
+        if (trajectory == null && pathPlannerTrajectory == null) {
             return;
         }
 
@@ -114,7 +114,7 @@ public class TrajectoryFollower {
         var state = sample(timePassed);
         var controls = holonomicDriveController.calculate(
                 new Pose2d(estimator.getRobotPose().getTranslation(), new Rotation2d(0)),
-                state,
+            state,
                 new Rotation2d(0)
         );
 

@@ -108,37 +108,37 @@ public class SparkSmartMotion {
         }
         if (iz != kIz) {
             pidController.setIZone(iz);
-            kIz = iz;
+            this.kIz = iz;
         }
         if (ff != kFF) {
             pidController.setFF(ff);
-            kFF = ff;
+            this.kFF = ff;
         }
         if ((max != kMaxOutput) || (min != kMinOutput)) {
             pidController.setOutputRange(min, max);
-            kMinOutput = min;
-            kMaxOutput = max;
+            this.kMinOutput = min;
+            this.kMaxOutput = max;
         }
         if (maxV != maxVel) {
             pidController.setSmartMotionMaxVelocity(maxV, 0);
-            maxVel = maxV;
+            this.maxVel = maxV;
         }
         if (minV != minVel) {
             pidController.setSmartMotionMinOutputVelocity(minV, 0);
-            minVel = minV;
+            this.minVel = minV;
         }
         if (maxA != maxAcc) {
             pidController.setSmartMotionMaxAccel(maxA, 0);
-            maxAcc = maxA;
+            this.maxAcc = maxA;
         }
         if (allE != allowedErr) {
             pidController.setSmartMotionAllowedClosedLoopError(allE, 0);
-            allowedErr = allE;
+            this.allowedErr = allE;
         }
     }
 
     /**
-     * Configures a SparkMax motor to use Smart Motion
+     * Configures a SparkMax motor to use Smart Motion.
      *
      * @param motor motor to configure
      * @param pidConfig pid config
@@ -147,19 +147,19 @@ public class SparkSmartMotion {
      */
     public static SparkMaxPIDController setupSmartMotion(CANSparkMax motor, PIDConfig pidConfig, SparkMotionConfig sparkMotionConfig) {
         motor.restoreFactoryDefaults();
-        var m_pidController = motor.getPIDController();
+        var mPidController = motor.getPIDController();
 
-        m_pidController.setP(pidConfig.getP());
-        m_pidController.setI(pidConfig.getI());
-        m_pidController.setD(pidConfig.getD());
-        m_pidController.setIZone(sparkMotionConfig.getIntegralZone());
-        m_pidController.setFF(pidConfig.getF());
-        m_pidController.setOutputRange(-pidConfig.getRange(), pidConfig.getRange());
+        mPidController.setP(pidConfig.getP());
+        mPidController.setI(pidConfig.getI());
+        mPidController.setD(pidConfig.getD());
+        mPidController.setIZone(sparkMotionConfig.getIntegralZone());
+        mPidController.setFF(pidConfig.getF());
+        mPidController.setOutputRange(-pidConfig.getRange(), pidConfig.getRange());
 
-        m_pidController.setSmartMotionMaxVelocity(sparkMotionConfig.getMaxVel(), 0);
-        m_pidController.setSmartMotionMinOutputVelocity(sparkMotionConfig.getMinVel(), 0);
-        m_pidController.setSmartMotionMaxAccel(sparkMotionConfig.getMaxAccel(), 0);
-        m_pidController.setSmartMotionAllowedClosedLoopError(pidConfig.getTolerance(), 0);
-        return m_pidController;
+        mPidController.setSmartMotionMaxVelocity(sparkMotionConfig.getMaxVel(), 0);
+        mPidController.setSmartMotionMinOutputVelocity(sparkMotionConfig.getMinVel(), 0);
+        mPidController.setSmartMotionMaxAccel(sparkMotionConfig.getMaxAccel(), 0);
+        mPidController.setSmartMotionAllowedClosedLoopError(pidConfig.getTolerance(), 0);
+        return mPidController;
     }
 }

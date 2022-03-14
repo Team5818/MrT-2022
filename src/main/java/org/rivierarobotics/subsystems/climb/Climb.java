@@ -30,7 +30,6 @@ import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
 import org.rivierarobotics.util.statespace.SystemIdentification;
 
-import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ENCODER;
 import static org.rivierarobotics.subsystems.climb.ClimbConstants.MAX_RADS;
 
 public class Climb extends SubsystemBase {
@@ -73,7 +72,7 @@ public class Climb extends SubsystemBase {
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
 
-        this.encoder = new DutyCycleEncoder(CLIMB_ENCODER);
+        this.encoder = new DutyCycleEncoder(MotorIDs.CLIMB_ENCODER);
         this.encoder.setDistancePerRotation(2 * Math.PI);
     }
 

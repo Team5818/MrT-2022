@@ -18,19 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.basic.shoot;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.advanced.drive.DrivePath;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
-public class DriveShoot extends SequentialCommandGroup {
-    public DriveShoot(boolean isRight) {
-        addCommands(
-                new DrivePath("back"),
-                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
-                new AutoAimShoot(true)
-        );
+public class SetFlywheelSpeed extends InstantCommand {
+    private final Floppas floppas;
+    private final double speed;
+
+    public SetFlywheelSpeed(double speed) {
+        this.floppas = Floppas.getInstance();
+        this.speed = speed;
+    }
+
+    @Override
+    public void initialize() {
+        floppas.setSpeed(speed);
+    }
+
+    @Override
+    public void execute() {
+        floppas.floppaStateSpaceControl();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if(interrupted) {
+            floppas.setSpeed(0);
+        }
     }
 }

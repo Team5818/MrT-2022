@@ -23,12 +23,12 @@ package org.rivierarobotics.commands.auto;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.collect.CollectToggle;
-import org.rivierarobotics.commands.drive.DrivePath;
-import org.rivierarobotics.commands.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.subsystems.drivetrain.SetDriveAngle;
-import org.rivierarobotics.commands.subsystems.drivetrain.SetDriveTargetAngle;
-import org.rivierarobotics.commands.subsystems.intake.SetIntakeState;
+import org.rivierarobotics.commands.advanced.collect.CollectToggle;
+import org.rivierarobotics.commands.advanced.drive.DrivePath;
+import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import org.rivierarobotics.commands.basic.drive.SetDriveTargetAngle;
+import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 
 public class MLAuto extends SequentialCommandGroup {
     public MLAuto() {

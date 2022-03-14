@@ -50,13 +50,9 @@ public class Floppas extends SubsystemBase {
         return floppas;
     }
 
-    private static Floppas floppas;
-    private final WPI_TalonFX leftFlywheel;
-    private final WPI_TalonFX rightFlywheel;
-    private final CANSparkMax flopperMotor;
-    private final DutyCycleEncoder floppaEncoder;
-    private static final PIDConfig FLOPPER_PID = new PIDConfig(1,0,0,1);
-    private static final SparkMotionConfig FLOPPER_SM_CONFIG = new SparkMotionConfig(true,0.0,0.0,0,0,0,0);
+
+    private static final PIDConfig FLOPPER_PID = new PIDConfig(1, 0, 0, 1);
+    private static final SparkMotionConfig FLOPPER_SM_CONFIG = new SparkMotionConfig(true, 0.0, 0.0, 0, 0, 0, 0);
 
     private final SparkSmartMotion flopperController;
     private static final double FIRE_MAX_VOLTAGE = 12;
@@ -70,6 +66,11 @@ public class Floppas extends SubsystemBase {
     private boolean blockSS = false;
     private final double VEL_TO_RADS = (2 * Math.PI / 4096) * 10;
     private double targetV = 100;
+    private static Floppas floppas;
+    private final WPI_TalonFX leftFlywheel;
+    private final WPI_TalonFX rightFlywheel;
+    private final CANSparkMax flopperMotor;
+    private final DutyCycleEncoder floppaEncoder;
 
     private PositionStateSpaceModel aimStateSpace;
     private VelocityStateSpaceModel rightSS;

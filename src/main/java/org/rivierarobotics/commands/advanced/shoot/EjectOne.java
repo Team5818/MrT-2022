@@ -18,19 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.advanced.shoot;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.advanced.drive.DrivePath;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
-public class DriveShoot extends SequentialCommandGroup {
-    public DriveShoot(boolean isRight) {
+public class EjectOne extends SequentialCommandGroup {
+    public EjectOne() {
         addCommands(
-                new DrivePath("back"),
-                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
-                new AutoAimShoot(true)
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(Floppas.getInstance().getTargetV())).andThen(new WaitCommand(2)),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
+                new WaitCommand(0.15),
+                new InstantCommand(() -> Intake.getInstance().setVoltages(0, 0)),
+                new InstantCommand(() -> Floppas.getInstance().setSpeed(0))
         );
     }
+
 }

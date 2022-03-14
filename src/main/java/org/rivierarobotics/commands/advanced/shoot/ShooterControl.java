@@ -18,19 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.advanced.shoot;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.advanced.drive.DrivePath;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
+import org.rivierarobotics.robot.ControlMap;
+import org.rivierarobotics.subsystems.shoot.Floppas;
 
-public class DriveShoot extends SequentialCommandGroup {
-    public DriveShoot(boolean isRight) {
-        addCommands(
-                new DrivePath("back"),
-                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
-                new AutoAimShoot(true)
-        );
+public class ShooterControl extends CommandBase {
+    private final Floppas floppas;
+    private final Joystick joystick;
+    private final double MaxVoltage = 10;
+
+    public ShooterControl(){
+        this.floppas = Floppas.getInstance();
+        this.joystick = ControlMap.CO_DRIVER_RIGHT;
+        addRequirements(floppas);
+    }
+
+    @Override
+    public void execute() {
+        var voltage = MathUtil.fitDeadband(joystick.getY()) * MaxVoltage;
+        floppas.setActuatorVoltage(voltage);
     }
 }
