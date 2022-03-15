@@ -38,6 +38,7 @@ import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
+import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -51,13 +52,13 @@ public class ButtonConfiguration {
         //Driver Left
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
                 .toggleWhenPressed(new IdleMode(true));
-        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed(new ClimbSetPosition(MID, false));
+        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed(new InstantCommand(() -> Intake.getInstance().setVoltages(-8, -12)));
 
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .toggleWhenPressed(new IntakeDeployToggle());
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .toggleWhenPressed(new CollectToggle(false, true, true));
+                .toggleWhenPressed(new ClimbSetPosition(MID, false));
 
         //Driver Buttons
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)

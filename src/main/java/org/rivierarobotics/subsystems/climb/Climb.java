@@ -61,7 +61,7 @@ public class Climb extends SubsystemBase {
             100, 2,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig CM_MM_PID = new PIDConfig(1, 0, 0, 0.1);
+    private static final PIDConfig CM_MM_PID = new PIDConfig(4, 0, 0, 0.1);
     private boolean play = true;
 
     private Climb() {
@@ -69,11 +69,12 @@ public class Climb extends SubsystemBase {
         this.climbFollower = new WPI_TalonFX(CLIMB_ROTATE_B);
         climbFollower.follow(climbMaster);
         setCoast(false);
+        climbMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         climbMaster.setInverted(true);
         climbFollower.setInverted(true);
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, CM_MM_PID, CM_MM_CONFIG, climbMaster);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, CM_MM_PID, CM_MM_CONFIG, climbMaster);
         climbMaster.configFeedbackNotContinuous(true, TIMEOUT_MS);
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, TIMEOUT_MS);
@@ -91,7 +92,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void setPosition(double radians) {
-        climbMaster.set(ControlMode.MotionMagic, radians);
+        climbMaster.set(ControlMode.MotionMagic, radians * MOTOR_ANGLE_TO_TICK);
     }
 
     public void setPlay(boolean play) {
@@ -107,6 +108,6 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return  climbMaster.getSelectedSensorPosition();
+        return  climbMaster.getSelectedSensorPosition() * MOTOR_TICK_TO_ANGLE;
     }
 }

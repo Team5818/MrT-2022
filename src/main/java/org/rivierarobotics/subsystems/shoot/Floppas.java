@@ -221,7 +221,7 @@ public class Floppas extends SubsystemBase {
     public void floppaStateSpaceControl() {
         var sb = Logging.robotShuffleboard;
         var limeLight = sb.getTab("LL");
-        limeLight.setEntry("tpose", aimStateSpace.getTargetPosition());
+        //limeLight.setEntry("tpose", aimStateSpace.getTargetPosition());
        double aimVoltage = aimStateSpace.getAppliedVoltage(getAngle());
 //       var v = profiledPIDController.calculate(getAngle());
 

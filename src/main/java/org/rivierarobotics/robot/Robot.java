@@ -238,7 +238,7 @@ public class Robot extends TimedRobot {
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
         }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 0.5, 0.0);
+        addPeriodic(this::shuffleboardLogging, 0.05, 0.0);
     }
 
     @Override
