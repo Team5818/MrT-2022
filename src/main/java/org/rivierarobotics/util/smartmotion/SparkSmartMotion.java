@@ -137,6 +137,10 @@ public class SparkSmartMotion {
         }
     }
 
+    public SparkMaxPIDController getPidController(){
+        return pidController;
+    }
+
     /**
      * Configures a SparkMax motor to use Smart Motion.
      *
