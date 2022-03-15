@@ -21,10 +21,11 @@
 package org.rivierarobotics.commands.basic.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
 
-public class ClimbSetAngle extends CommandBase {
+public class ClimbSetAngle extends InstantCommand {
     private final Climb climb;
     private final double angle;
 
@@ -37,15 +38,5 @@ public class ClimbSetAngle extends CommandBase {
     @Override
     public void initialize() {
         climb.setPosition(angle);
-    }
-
-    @Override
-    public void execute() {
-        climb.followStateSpace();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(climb.getAngle(), angle, 0.3);
     }
 }

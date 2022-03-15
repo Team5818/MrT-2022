@@ -23,9 +23,11 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.basic.climb.ClimbSetPosition;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectToggle;
+import org.rivierarobotics.commands.basic.climb.IdleMode;
 import org.rivierarobotics.commands.basic.collect.IntakeDeployToggle;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
@@ -41,12 +43,15 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.LOW;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.MID;
+
 public class ButtonConfiguration {
     public void initTeleop() {
         //Driver Left
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .toggleWhenPressed(new CollectToggle(true, true, true));
-//        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed()
+                .toggleWhenPressed(new IdleMode(true));
+        new JoystickButton(ControlMap.DRIVER_LEFT,2).whenPressed(new ClimbSetPosition(MID, false));
 
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)

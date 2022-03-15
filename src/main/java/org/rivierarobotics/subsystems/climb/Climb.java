@@ -61,7 +61,7 @@ public class Climb extends SubsystemBase {
             100, 2,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig CM_MM_PID = new PIDConfig(0.8, 0, 0, 0.1);
+    private static final PIDConfig CM_MM_PID = new PIDConfig(1, 0, 0, 0.1);
     private boolean play = true;
 
     private Climb() {
@@ -91,7 +91,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void setPosition(double radians) {
-        climbMaster.set(ControlMode.MotionMagic, radians * MOTOR_ANGLE_TO_TICK);
+        climbMaster.set(ControlMode.MotionMagic, radians);
     }
 
     public void setPlay(boolean play) {
@@ -103,14 +103,10 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        if (Math.abs(getAngle()) > MAX_RADS && Math.signum(-voltage) == Math.signum(getAngle())) {
-            climbMaster.setVoltage(0);
-            return;
-        }
         climbMaster.setVoltage(voltage);
     }
 
     public double getAngle() {
-        return climbMaster.getSelectedSensorPosition() * MOTOR_ANGLE_TO_TICK;
+        return  climbMaster.getSelectedSensorPosition();
     }
 }
