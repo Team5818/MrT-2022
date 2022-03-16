@@ -2,7 +2,7 @@ package org.rivierarobotics.subsystems.shoot;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
@@ -11,7 +11,7 @@ import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
 import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
 
 
-public class FloppasActuator extends CommandBase {
+public class FloppasActuator extends SubsystemBase {
     public static FloppasActuator floppasActuator;
     public static FloppasActuator getInstance(){
         if (floppasActuator == null) {
@@ -40,14 +40,25 @@ public class FloppasActuator extends CommandBase {
 
         this.actuatorController = new SparkSmartMotion(actuatorMotor, actuatorConfig, sparkSmartMotionConfig, tunningTab);
 
+//        this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ShooterConstant.MAX_ACTUATOR_LIMIT * );
+//        this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ShooterConstant.MIN_ACTUATOR_LIMIT);
+
     }
 
+    //takes angle in radians setpoint should be in rotations and adjusted for gearing
+
     public void setFloppasAngle(double angle){
-        var setpoint = angle / 360;
+        var setpoint = angle / (2 * Math.PI) * ShooterConstant.ACTUATOR_GEARING;
         actuatorController.getPidController().setReference(setpoint, CANSparkMax.ControlType.kSmartMotion);
     }
 
+    //returns angle without gearing values possibly in rotations
+
     public double getFloppasAngle(){
-        return actuatorMotor.getEncoder().getPosition();
+        return actuatorMotor.getEncoder().getPosition() / ShooterConstant.ACTUATOR_GEARING;
+    }
+
+    public void setVoltage(double voltage){
+        this.actuatorMotor.setVoltage(voltage);
     }
 }

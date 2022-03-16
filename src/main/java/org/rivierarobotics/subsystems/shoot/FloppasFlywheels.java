@@ -36,7 +36,7 @@ public class FloppasFlywheels extends CommandBase {
     }
 
     public void setFlywheelSpeed(double speed){
-        leftFlywheel.set(ControlMode.MotionMagic, speed);
+        leftFlywheel.set(ControlMode.Velocity, speed);
     }
 
     public void getFlywheelSpeed() {

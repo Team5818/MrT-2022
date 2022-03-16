@@ -25,21 +25,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.shoot.Floppas;
+import org.rivierarobotics.subsystems.shoot.FloppasActuator;
 
 public class ShooterControl extends CommandBase {
-    private final Floppas floppas;
+    private final FloppasActuator floppasActuator;
     private final Joystick joystick;
     private final double MaxVoltage = 10;
 
     public ShooterControl(){
-        this.floppas = Floppas.getInstance();
+        this.floppasActuator = FloppasActuator.getInstance();
         this.joystick = ControlMap.CO_DRIVER_RIGHT;
-        addRequirements(floppas);
+        addRequirements(floppasActuator);
     }
 
     @Override
     public void execute() {
         var voltage = MathUtil.fitDeadband(joystick.getY()) * MaxVoltage;
-        floppas.setActuatorVoltage(voltage);
+        floppasActuator.setVoltage(voltage);
     }
 }

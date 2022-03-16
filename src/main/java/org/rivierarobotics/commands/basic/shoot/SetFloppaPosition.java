@@ -23,14 +23,15 @@ package org.rivierarobotics.commands.basic.shoot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.shoot.Floppas;
+import org.rivierarobotics.subsystems.shoot.FloppasActuator;
 
 public class SetFloppaPosition extends CommandBase {
     private final double flywheelRads;
-    private final Floppas floppas;
+    private final FloppasActuator floppasActuator;
     public SetFloppaPosition(double flywheelRads) {
         this.flywheelRads = flywheelRads;
-        this.floppas = Floppas.getInstance();
-        addRequirements(floppas);
+        this.floppasActuator = FloppasActuator.getInstance();
+        addRequirements(floppasActuator);
     }
 
     public SetFloppaPosition(Floppas.ShooterLocations preset) {
@@ -38,17 +39,12 @@ public class SetFloppaPosition extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-        this.floppas.setAngle(flywheelRads);
-    }
-
-    @Override
     public void execute() {
-        this.floppas.floppaStateSpaceControl();
+        this.floppasActuator.setFloppasAngle(flywheelRads);
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(floppas.getAngle(), flywheelRads, 0.15);
+        return MathUtil.isWithinTolerance(floppasActuator.getFloppasAngle(), flywheelRads, 0.15);
     }
 }
