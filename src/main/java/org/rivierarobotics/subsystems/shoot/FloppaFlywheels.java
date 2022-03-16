@@ -14,16 +14,20 @@ import java.util.ArrayList;
 
 public class FloppaFlywheels extends SubsystemBase {
     private static FloppaFlywheels floppaFlywheels;
+
+
+    private double targetVelocity = 1000;
+
     public static FloppaFlywheels getInstance() {
-        if(floppaFlywheels == null) {
+        if (floppaFlywheels == null) {
             floppaFlywheels = new FloppaFlywheels();
         }
         return floppaFlywheels;
     }
 
-    private static final PIDConfig FLYWHEEL_CONFIG = new PIDConfig(0.1,0,0,0);
+    private static final PIDConfig FLYWHEEL_CONFIG = new PIDConfig(0.1, 0, 0, 0);
     private static final MotionMagicConfig MOTION_MAGIC_CONFIG = new MotionMagicConfig(
-            new ArrayList<>(),true,
+            new ArrayList<>(), true,
             ShooterConstant.MAX_FLYWHEEL_VELOCITY, ShooterConstant.MAX_FLYWHEEL_ACCELERATION,
             100, 2, ShooterConstant.TIMEOUTMS, 10
     );
@@ -60,5 +64,13 @@ public class FloppaFlywheels extends SubsystemBase {
     public void setVoltage(double v) {
         leftFlywheel.setVoltage(v);
         rightFlywheel.setVoltage(v);
+    }
+
+    public double getTargetVelocity() {
+        return targetVelocity;
+    }
+
+    public void setTargetVelocity(double targetVelocity) {
+        this.targetVelocity = targetVelocity;
     }
 }

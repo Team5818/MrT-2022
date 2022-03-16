@@ -22,11 +22,12 @@ package org.rivierarobotics.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
+import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 public class ShootFender extends SequentialCommandGroup {
     public ShootFender() {
         addCommands(
-                new Shoot(DepricatedFloppa.ShooterLocations.FENDER),
+                new Shoot(ShooterLocations.FENDER),
                 new Sideways(3)
         );
     }

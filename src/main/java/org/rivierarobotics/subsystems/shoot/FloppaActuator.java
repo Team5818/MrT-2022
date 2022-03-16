@@ -57,11 +57,11 @@ public class FloppaActuator extends SubsystemBase {
 
     //returns angle without gearing values possibly in rotations
 
-    public double getFloppaAngle() {
+    public double getAngle() {
         return (actuatorMotor.getEncoder().getPosition() - ShooterConstant.ACTUATOR_ZERO_TICKS) / ShooterConstant.ACTUATOR_GEARING;
     }
 
-    public double getFloppaTicks(){
+    public double getTicks(){
         return actuatorMotor.getEncoder().getPosition() / ShooterConstant.ACTUATOR_GEARING;
     }
 

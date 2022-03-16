@@ -21,30 +21,26 @@
 package org.rivierarobotics.commands.basic.shoot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
 public class SetFlywheelSpeed extends InstantCommand {
-    private final DepricatedFloppa floppas;
+    private final FloppaFlywheels floppas;
     private final double speed;
 
     public SetFlywheelSpeed(double speed) {
-        this.floppas = DepricatedFloppa.getInstance();
+        this.floppas = FloppaFlywheels.getInstance();
         this.speed = speed;
     }
 
     @Override
     public void initialize() {
-        floppas.setSpeed(speed);
-    }
-
-    @Override
-    public void execute() {
-        floppas.floppaStateSpaceControl();
+        floppas.setFlywheelSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
         if(interrupted) {
-            floppas.setSpeed(0);
+            floppas.setTargetVelocity(0);
         }
     }
 }

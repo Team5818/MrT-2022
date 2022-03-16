@@ -28,7 +28,6 @@ import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.basic.climb.IdleMode;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.advanced.shoot.EjectOne;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
@@ -36,6 +35,8 @@ import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
@@ -101,9 +102,9 @@ public class ButtonConfiguration {
 
         //CO-DRIVER BUTTONS
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whileHeld(new AutoAimShoot());
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whileHeld(new Shoot(DepricatedFloppa.ShooterLocations.FENDER));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whileHeld(new Shoot(DepricatedFloppa.ShooterLocations.LOW_GOAL));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new EjectOne());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whileHeld(new Shoot(ShooterLocations.FENDER));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whileHeld(new Shoot(ShooterLocations.LOW_GOAL));
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new EjectOne());
 
 
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whileHeld(new SetFloppaPosition(-6.1));
@@ -123,10 +124,10 @@ public class ButtonConfiguration {
         }));
 
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
-            DepricatedFloppa.getInstance().setTargetV(DepricatedFloppa.getInstance().getTargetV() + 5);
+            FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 100);
         }));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
-            DepricatedFloppa.getInstance().setTargetV(DepricatedFloppa.getInstance().getTargetV() - 5);
+            FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() - 100);
         }));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 12).whenPressed(new Shoot(true));
     }

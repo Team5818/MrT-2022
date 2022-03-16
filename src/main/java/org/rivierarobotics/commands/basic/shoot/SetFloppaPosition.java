@@ -45,6 +45,6 @@ public class SetFloppaPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(floppasActuator.getFloppaAngle(), flywheelRads, 0.15);
+        return MathUtil.isWithinTolerance(floppasActuator.getAngle(), flywheelRads, 0.15);
     }
 }
