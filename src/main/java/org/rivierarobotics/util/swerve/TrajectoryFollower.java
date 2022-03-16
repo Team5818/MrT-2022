@@ -24,6 +24,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -77,23 +78,15 @@ public class TrajectoryFollower {
             return;
         }
         if (resetPose) {
-            estimator.resetPose(getPathTrajectory());
+            estimator.resetPose(getInitialPose());
         }
     }
 
-    private Pose2d getPathTrajectory() {
+    private Pose2d getInitialPose() {
         if (trajectory != null) {
             return new Pose2d(trajectory.getInitialPose().getTranslation(), gyro.getRotation2d());
         } else {
             return new Pose2d(pathPlannerTrajectory.getInitialPose().getTranslation(), gyro.getRotation2d());
-        }
-    }
-
-    private Trajectory.State sample(double t) {
-        if (trajectory != null) {
-            return trajectory.sample(t);
-        } else {
-            return pathPlannerTrajectory.sample(t);
         }
     }
 
@@ -111,13 +104,24 @@ public class TrajectoryFollower {
 
         double timePassed = Timer.getFPGATimestamp() - this.startTime;
 
-        var state = sample(timePassed);
-        var controls = holonomicDriveController.calculate(
-                new Pose2d(estimator.getRobotPose().getTranslation(), new Rotation2d(0)),
-            state,
-                new Rotation2d(0)
-        );
-
+        var controls = trajectory == null ? followPathPlannerTrajectory(timePassed) : followTrajectory(timePassed);
         driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, 0, true);
+    }
+
+    private ChassisSpeeds followPathPlannerTrajectory(double intTime) {
+        var plannerState = (PathPlannerTrajectory.PathPlannerState) pathPlannerTrajectory.sample(intTime);
+        return holonomicDriveController.calculate(
+                estimator.getRobotPose(),
+                plannerState,
+                plannerState.holonomicRotation
+        );
+    }
+
+    private ChassisSpeeds followTrajectory(double intTime) {
+        return holonomicDriveController.calculate(
+                estimator.getRobotPose(),
+                trajectory.sample(0),
+                estimator.getRobotPose().getRotation()
+        );
     }
 }
