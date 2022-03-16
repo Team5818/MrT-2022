@@ -22,29 +22,29 @@ package org.rivierarobotics.commands.basic.shoot;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.shoot.Floppas;
-import org.rivierarobotics.subsystems.shoot.FloppasActuator;
+import org.rivierarobotics.subsystems.shoot.FloppaActuator;
+import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 public class SetFloppaPosition extends CommandBase {
     private final double flywheelRads;
-    private final FloppasActuator floppasActuator;
+    private final FloppaActuator floppasActuator;
     public SetFloppaPosition(double flywheelRads) {
         this.flywheelRads = flywheelRads;
-        this.floppasActuator = FloppasActuator.getInstance();
+        this.floppasActuator = FloppaActuator.getInstance();
         addRequirements(floppasActuator);
     }
 
-    public SetFloppaPosition(Floppas.ShooterLocations preset) {
+    public SetFloppaPosition(ShooterLocations preset) {
         this(preset.floppaAngle);
     }
 
     @Override
     public void execute() {
-        this.floppasActuator.setFloppasAngle(flywheelRads);
+        this.floppasActuator.setFloppaAngle(flywheelRads);
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(floppasActuator.getFloppasAngle(), flywheelRads, 0.15);
+        return MathUtil.isWithinTolerance(floppasActuator.getFloppaAngle(), flywheelRads, 0.15);
     }
 }

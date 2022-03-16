@@ -25,47 +25,46 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.subsystems.intake.Intake;
-import org.rivierarobotics.subsystems.shoot.Floppas;
 
 public class Shoot extends SequentialCommandGroup {
 
     public Shoot(){
-        addRequirements(Floppas.getInstance(), Intake.getInstance());
+        addRequirements(DepricatedFloppa.getInstance(), Intake.getInstance());
         addCommands(
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(Floppas.getInstance().getTargetV())),
+                new InstantCommand(() -> DepricatedFloppa.getInstance().setSpeed(DepricatedFloppa.getInstance().getTargetV())),
                 new WaitCommand(0.35),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
                 new WaitCommand(2),
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> DepricatedFloppa.getInstance().setSpeed(0)),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(0, 0))
         );
     }
 
     public Shoot(boolean useFloppas) {
-        addRequirements(Floppas.getInstance(), Intake.getInstance());
+        addRequirements(DepricatedFloppa.getInstance(), Intake.getInstance());
         addCommands(
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(Floppas.getInstance().getTargetV())).andThen(new WaitCommand(2)),
+                new InstantCommand(() -> DepricatedFloppa.getInstance().setSpeed(DepricatedFloppa.getInstance().getTargetV())).andThen(new WaitCommand(2)),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
                 new WaitCommand(0.2),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(0, 0)),
                 new WaitCommand(0.2),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
                 new WaitCommand(0.5),
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> DepricatedFloppa.getInstance().setSpeed(0)),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(0, 0))
         );
     }
 
-    public Shoot(Floppas.ShooterLocations locations) {
+    public Shoot(DepricatedFloppa.ShooterLocations locations) {
         this(locations.flyWheelSpeed, locations.floppaAngle);
     }
 
     public Shoot(double speed, double flywheelAngle) {
-        addRequirements(Floppas.getInstance(), Intake.getInstance());
+        addRequirements(DepricatedFloppa.getInstance(), Intake.getInstance());
         addCommands(
                 new SetFloppaPosition(flywheelAngle).withTimeout(2),
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(speed))
-                    .until(() -> Floppas.getInstance().getLeftSpeed() >= speed)
+                new InstantCommand(() -> DepricatedFloppa.getInstance().setSpeed(speed))
+                    .until(() -> DepricatedFloppa.getInstance().getLeftSpeed() >= speed)
                     .withTimeout(1),
                 new WaitCommand(0.4),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
@@ -74,7 +73,7 @@ public class Shoot extends SequentialCommandGroup {
                 new WaitCommand(0.2),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(-11, 0)),
                 new WaitCommand(0.5),
-                new InstantCommand(() -> Floppas.getInstance().setSpeed(0)),
+                new InstantCommand(() -> DepricatedFloppa.getInstance().setSpeed(0)),
                 new InstantCommand(() -> Intake.getInstance().setVoltages(0, 0))
         );
     }
@@ -82,7 +81,7 @@ public class Shoot extends SequentialCommandGroup {
     @Override
     public void end(boolean interrupted) {
         Intake.getInstance().setVoltages(0, 0);
-        Floppas.getInstance().setSpeed(0);
-        Floppas.getInstance().setShooterVoltage(0);
+        DepricatedFloppa.getInstance().setSpeed(0);
+        DepricatedFloppa.getInstance().setShooterVoltage(0);
     }
 }

@@ -32,14 +32,12 @@ import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
 import org.rivierarobotics.commands.auto.ShootFender;
-import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.intake.Intake;
-import org.rivierarobotics.subsystems.shoot.Floppas;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
@@ -113,7 +111,7 @@ public class Robot extends TimedRobot {
         var clc = ClimbClaws.getInstance();
         var col = Intake.getInstance();
         var MLcore = MLCore.getInstance();
-        var flopp = Floppas.getInstance();
+        var flopp = DepricatedFloppa.getInstance();
         field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -153,7 +151,7 @@ public class Robot extends TimedRobot {
         collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
         collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
         collect.setEntry("Is Full", col.getIsFull());
-        limeLight.setEntry("shooter speed", Floppas.getInstance().getTargetV());
+        limeLight.setEntry("shooter speed", DepricatedFloppa.getInstance().getTargetV());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());
 
         var redBalls = MLcore.getDetectedObjects().get("red");
@@ -182,7 +180,7 @@ public class Robot extends TimedRobot {
         limeLight.setEntry("Correct Position", Limelight.getInstance().getLLAbsPose().toString());
 
         limeLight = sb.getTab("LL");
-        limeLight.setEntry("Hood Angle", Floppas.getInstance().getAngle());
+        limeLight.setEntry("Hood Angle", DepricatedFloppa.getInstance().getAngle());
     }
 
     @Override
@@ -218,7 +216,7 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
-        Floppas.getInstance();
+        DepricatedFloppa.getInstance();
         Limelight.getInstance();
         Intake.getInstance();
         Climb.getInstance();
@@ -233,7 +231,7 @@ public class Robot extends TimedRobot {
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-        CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
+        CommandScheduler.getInstance().setDefaultCommand(DepricatedFloppa.getInstance(), new ShooterControl());
     }
 
     private void initializeCustomLoops() {

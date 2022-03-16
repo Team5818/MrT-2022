@@ -22,12 +22,15 @@ package org.rivierarobotics.commands.advanced.collect;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.intake.Intake;
-import org.rivierarobotics.subsystems.shoot.Floppas;
+import org.rivierarobotics.subsystems.shoot.FloppaActuator;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
 public class CollectToggle extends CommandBase {
     private final Intake intake;
-    private final Floppas floppas;
+    private final FloppaActuator floppaActuator;
+    private final FloppaFlywheels floppaFlywheels;
     public static final double BELT_VOLTAGE = 8;
     public static final double INTAKE_VOLTAGE = 12;
     private final boolean targetPositive;
@@ -39,20 +42,19 @@ public class CollectToggle extends CommandBase {
         this.targetPositive = isPositive;
         this.useIntake = useBelts;
         this.useRollers = useRollers;
-        this.floppas = Floppas.getInstance();
-        addRequirements(intake, floppas);
+        this.floppaActuator = FloppaActuator.getInstance();
+        this.floppaFlywheels = FloppaFlywheels.getInstance();
+        addRequirements(intake, floppaActuator, floppaFlywheels);
     }
 
     @Override
     public void initialize() {
-        floppas.setBlockSS(true);
-        floppas.setAngle(Floppas.ZERO_ANGLE);
+        floppaActuator.setFloppaAngle(0);
     }
 
     @Override
     public void execute() {
-        floppas.setShooterVoltage(-1);
-        floppas.floppaStateSpaceControl();
+        floppaFlywheels.setVoltage(-1);
         intake.setVoltages(useIntake ? (targetPositive ? INTAKE_VOLTAGE : -INTAKE_VOLTAGE)
                 : 0, useRollers ? (targetPositive ? BELT_VOLTAGE : -BELT_VOLTAGE) : 0);
     }
@@ -67,8 +69,7 @@ public class CollectToggle extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        floppas.setBlockSS(false);
-        floppas.setActuatorVoltage(0);
+        floppaActuator.setVoltage(0);
         double start = Timer.getFPGATimestamp();
         double timeInterval = 0.25;
         while (Timer.getFPGATimestamp() < start + timeInterval) {

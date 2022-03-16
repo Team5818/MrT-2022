@@ -11,11 +11,11 @@ import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
 import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
 
 
-public class FloppasActuator extends SubsystemBase {
-    public static FloppasActuator floppasActuator;
-    public static FloppasActuator getInstance(){
+public class FloppaActuator extends SubsystemBase {
+    public static FloppaActuator floppasActuator;
+    public static FloppaActuator getInstance(){
         if (floppasActuator == null) {
-            floppasActuator = new FloppasActuator();
+            floppasActuator = new FloppaActuator();
         }
         return floppasActuator;
     }
@@ -24,10 +24,9 @@ public class FloppasActuator extends SubsystemBase {
     private final SparkMotionConfig sparkSmartMotionConfig;
     private final SparkSmartMotion actuatorController;
     private final RSTab tunningTab;
-
     private final CANSparkMax actuatorMotor;
 
-    public FloppasActuator() {
+    public FloppaActuator() {
         this.actuatorMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.actuatorConfig = new PIDConfig(0.1, 0, 0,0);
         this.sparkSmartMotionConfig = new SparkMotionConfig(
@@ -45,16 +44,24 @@ public class FloppasActuator extends SubsystemBase {
 
     }
 
+    public static double convertAngleToTicks(double angleInRads) {
+        return angleInRads * ShooterConstant.ACTUATOR_GEARING + ShooterConstant.ACTUATOR_ZERO_TICKS;
+    }
+
     //takes angle in radians setpoint should be in rotations and adjusted for gearing
 
-    public void setFloppasAngle(double angle){
+    public void setFloppaAngle(double angle){
         var setpoint = angle / (2 * Math.PI) * ShooterConstant.ACTUATOR_GEARING;
         actuatorController.getPidController().setReference(setpoint, CANSparkMax.ControlType.kSmartMotion);
     }
 
     //returns angle without gearing values possibly in rotations
 
-    public double getFloppasAngle(){
+    public double getFloppaAngle() {
+        return (actuatorMotor.getEncoder().getPosition() - ShooterConstant.ACTUATOR_ZERO_TICKS) / ShooterConstant.ACTUATOR_GEARING;
+    }
+
+    public double getFloppaTicks(){
         return actuatorMotor.getEncoder().getPosition() / ShooterConstant.ACTUATOR_GEARING;
     }
 
