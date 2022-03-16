@@ -26,7 +26,7 @@ public class ClimbConstants {
     public static final double HIGH_RADIANS = -1.53;
     public static final double MAX_RADS = 4.17;
     public static final double MAX_CLIMB_VELOCITY = 30000;
-    public static final double MAX_CLIMB_ACCELERATION = 30000;
+    public static final double MAX_CLIMB_ACCELERATION = 15000;
     public static final int TIMEOUT_MS = 60;
     public static final double GEAR_RATIO = 600;
     public static final double CLIMB_ENCODER_TICKS = 2048;

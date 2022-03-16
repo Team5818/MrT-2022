@@ -138,6 +138,8 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston low", clc.isPistonSet(LOW));
         climb.setEntry("Piston mid", clc.isPistonSet(MID));
         climb.setEntry("Piston high", clc.isPistonSet(HIGH));
+        climb.setEntry("Kp", cl.kp);
+        climb.setEntry("velocity", cl.getVelocity());
 
         collect.setEntry("ispositive", col.getIsPositive());
         collect.setEntry("belt voltage", col.getBeltVoltage());
@@ -230,7 +232,7 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(Floppas.getInstance(), new ShooterControl());
     }
 

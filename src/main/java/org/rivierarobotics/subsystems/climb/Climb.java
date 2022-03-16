@@ -26,7 +26,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
@@ -58,10 +60,11 @@ public class Climb extends SubsystemBase {
     private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             MAX_CLIMB_VELOCITY, MAX_CLIMB_ACCELERATION,
-            100, 2,
+            100, 0,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig CM_MM_PID = new PIDConfig(4, 0, 0, 0.1);
+    public static final double kp = 0.2;
+    private static final PIDConfig CM_MM_PID = new PIDConfig(kp, 0, 0, 0);
     private boolean play = true;
 
     private Climb() {
@@ -108,6 +111,11 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
+        var angle = climbMaster.getSensorCollection().getIntegratedSensorPosition();
         return  climbMaster.getSelectedSensorPosition() * MOTOR_TICK_TO_ANGLE;
+    }
+
+    public double getVelocity() {
+        return climbMaster.getSelectedSensorVelocity();
     }
 }

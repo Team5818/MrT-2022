@@ -56,9 +56,9 @@ public class ButtonConfiguration {
 
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
-                .toggleWhenPressed(new IntakeDeployToggle());
+                .toggleWhenPressed(new ClimbSetAngle(2));
         new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .toggleWhenPressed(new ClimbSetPosition(MID, false));
+                .toggleWhenPressed(new ClimbSetAngle(0));
 
         //Driver Buttons
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
