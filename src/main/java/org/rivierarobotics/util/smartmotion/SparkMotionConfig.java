@@ -39,15 +39,9 @@ package org.rivierarobotics.util.smartmotion;/*
  */
 
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import org.rivierarobotics.lib.MotionMagicConfig;
-import org.rivierarobotics.lib.MotorUtil;
-import org.rivierarobotics.lib.PIDConfig;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Stores a configuration of Spark Motion related constants

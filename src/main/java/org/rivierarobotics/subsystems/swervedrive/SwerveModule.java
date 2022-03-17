@@ -31,7 +31,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;

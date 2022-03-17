@@ -22,8 +22,18 @@ package org.rivierarobotics.subsystems.climb;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
-import static org.rivierarobotics.subsystems.MotorIDs.*;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.*;
+import static org.rivierarobotics.subsystems.MotorIDs.HIGH_SWITCH_A;
+import static org.rivierarobotics.subsystems.MotorIDs.HIGH_SWITCH_B;
+import static org.rivierarobotics.subsystems.MotorIDs.LOW_SWITCH_A;
+import static org.rivierarobotics.subsystems.MotorIDs.LOW_SWITCH_B;
+import static org.rivierarobotics.subsystems.MotorIDs.MID_SWITCH_A;
+import static org.rivierarobotics.subsystems.MotorIDs.MID_SWITCH_B;
+import static org.rivierarobotics.subsystems.MotorIDs.SOLENOID_HIGH;
+import static org.rivierarobotics.subsystems.MotorIDs.SOLENOID_LOW;
+import static org.rivierarobotics.subsystems.MotorIDs.SOLENOID_MID;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.HIGH_RADIANS;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.LOW_RADIANS;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.MID_RADIANS;
 
 public enum ClimbPositions {
 

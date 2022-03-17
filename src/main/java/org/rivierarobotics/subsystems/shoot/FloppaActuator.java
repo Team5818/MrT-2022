@@ -23,7 +23,6 @@ package org.rivierarobotics.subsystems.shoot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
@@ -48,14 +47,13 @@ public class FloppaActuator extends SubsystemBase {
     private final SparkSmartMotion actuatorController;
     private final RSTab tunningTab;
     private final CANSparkMax actuatorMotor;
+    private double targetAngle = 0.0;
 
     public FloppaActuator() {
         this.actuatorMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
-//        this.actuatorConfig = new PIDConfig(0.001, 0.000001, 0,0.0027);
         this.actuatorConfig = new PIDConfig(0.15, 0.0, 0, 0.0);
         actuatorConfig.setRange(1);
         actuatorConfig.setTolerance(0.0);
-        //actuatorConfig.setTolerance(1);
         actuatorMotor.restoreFactoryDefaults();
         this.sparkSmartMotionConfig = new SparkMotionConfig(
                 true,
@@ -66,26 +64,36 @@ public class FloppaActuator extends SubsystemBase {
         this.tunningTab = Logging.robotShuffleboard.getTab("actuator tuning");
         this.actuatorController = new SparkSmartMotion(actuatorMotor, actuatorConfig, sparkSmartMotionConfig, tunningTab);
         this.actuatorMotor.getEncoder().setPositionConversionFactor(1);
-//        this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ShooterConstant.MAX_ACTUATOR_TICKS);
-//        this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ShooterConstant.MIN_ACTUATOR_TICKS);
+        this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ShooterConstant.MAX_ACTUATOR_TICKS);
+        this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ShooterConstant.MIN_ACTUATOR_TICKS);
 
+        this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
+        this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 1000);
+        this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
+        this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 1000);
     }
 
     public static double convertAngleToTicks(double angleInRads) {
         return angleInRads * ShooterConstant.ACTUATOR_GEARING + ShooterConstant.ACTUATOR_ZERO_TICKS * 42;
     }
 
-    //takes angle in radians setpoint should be in rotations and adjusted for gearing
-
+    /**
+     * takes angle in radians setpoint should be in rotations and adjusted for gearing
+     */
     public void setFloppaAngle(double angle) {
         var setpoint = convertAngleToTicks(angle);
         setpoint = MathUtil.clamp(setpoint, ShooterConstant.MIN_ACTUATOR_TICKS, ShooterConstant.MAX_ACTUATOR_TICKS);
-        SmartDashboard.putNumber("SPPP", setpoint);
+        this.targetAngle = setpoint;
         actuatorController.getPidController().setReference(setpoint, CANSparkMax.ControlType.kPosition);
     }
 
-    //returns angle without gearing values possibly in rotations
+    public boolean floppasWithinTolerance(double tolerance) {
+        return org.rivierarobotics.lib.MathUtil.isWithinTolerance(getAngle(), this.targetAngle, tolerance);
+    }
 
+    /**
+     * returns angle without gearing values possibly in rotations
+     */
     public double getAngle() {
         return (actuatorMotor.getEncoder().getPosition() - ShooterConstant.ACTUATOR_ZERO_TICKS) / ShooterConstant.ACTUATOR_GEARING;
     }
@@ -100,12 +108,6 @@ public class FloppaActuator extends SubsystemBase {
                 currTicks <= ShooterConstant.MIN_ACTUATOR_TICKS && Math.signum(voltage) < 0) {
             voltage = 0;
         }
-
-        SmartDashboard.putNumber("VOl", voltage);
         this.actuatorMotor.setVoltage(voltage);
-    }
-
-    @Override
-    public void periodic() {
     }
 }

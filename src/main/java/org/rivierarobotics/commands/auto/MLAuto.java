@@ -23,12 +23,11 @@ package org.rivierarobotics.commands.auto;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.advanced.collect.CollectToggle;
 import org.rivierarobotics.commands.advanced.drive.DrivePath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 import org.rivierarobotics.commands.basic.drive.SetDriveTargetAngle;
-import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 
 public class MLAuto extends SequentialCommandGroup {
     public MLAuto() {
@@ -36,15 +35,13 @@ public class MLAuto extends SequentialCommandGroup {
                 new SetDriveTargetAngle(-180),
                 new SetIntakeState(true),
                 new ParallelDeadlineGroup(
-                        new DrivePath("mlauto/mlstart").andThen(new WaitCommand(1)),
-                        new CollectToggle(false,true,true)
+                        new DrivePath("mlauto/mlstart").andThen(new WaitCommand(1))
                 ),
                 new SetDriveAngle(-70).withTimeout(1.5),
                 new AutoAimShoot(),
                 new SetDriveTargetAngle(-180),
                 new ParallelDeadlineGroup(
-                        new DrivePath("mlauto/mlend").andThen(new WaitCommand(1)),
-                        new CollectToggle(false,true,true)
+                        new DrivePath("mlauto/mlend").andThen(new WaitCommand(1))
                 ),
                 new SetDriveAngle(-50).withTimeout(1.5),
                 new AutoAimShoot()

@@ -20,6 +20,10 @@
 
 package org.rivierarobotics.subsystems.intake;
 
+import com.revrobotics.ColorSensorV3;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.I2C;
+
 // do not make this a subsystem please thank you
 public class IntakeSensors {
     private static IntakeSensors intakeSensors;
@@ -28,5 +32,27 @@ public class IntakeSensors {
             intakeSensors = new IntakeSensors();
         }
         return intakeSensors;
+    }
+
+    private final ColorSensorV3 colorSensorV3;
+    private final AnalogInput distanceSensor;
+    private final AnalogInput distanceSensor2;
+    public IntakeSensors() {
+        this.colorSensorV3 = new ColorSensorV3(I2C.Port.kOnboard);
+        this.distanceSensor = new AnalogInput(3);
+        this.distanceSensor2 = new AnalogInput(0);
+    }
+
+    public boolean colorSensorHasBall(){
+        return Math.abs(colorSensorV3.getProximity()) > 170;
+    }
+
+    public boolean distanceSensorHasBall(){
+        return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
+    }
+
+    public boolean canCollect() {
+        //return !distanceSensorHasBall();
+        return !colorSensorHasBall() || !distanceSensorHasBall();
     }
 }

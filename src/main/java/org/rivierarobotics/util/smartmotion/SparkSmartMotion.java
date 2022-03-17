@@ -23,11 +23,8 @@ package org.rivierarobotics.util.smartmotion;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
-import org.rivierarobotics.robot.Logging;
 
 
 public class SparkSmartMotion {

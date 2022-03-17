@@ -23,7 +23,6 @@ package org.rivierarobotics.subsystems.shoot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.MotionMagicConfig;
@@ -34,11 +33,8 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import java.util.ArrayList;
 
 public class FloppaFlywheels extends SubsystemBase {
+
     private static FloppaFlywheels floppaFlywheels;
-
-
-    private double targetVelocity = 1000;
-
     public static FloppaFlywheels getInstance() {
         if (floppaFlywheels == null) {
             floppaFlywheels = new FloppaFlywheels();
@@ -46,10 +42,8 @@ public class FloppaFlywheels extends SubsystemBase {
         return floppaFlywheels;
     }
 
-//    private static final PIDConfig FLYWHEEL_CONFIG = new PIDConfig(0.019, 0.01, 0, 0.04);
     private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.002, 0.0, 0, 0.046);
     private static final PIDConfig FLYWHEEL_CONFIG_R = new PIDConfig(0.002, 0.0, 0, 0.047);
-
     private static final MotionMagicConfig MOTION_MAGIC_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             ShooterConstant.MAX_FLYWHEEL_VELOCITY, ShooterConstant.MAX_FLYWHEEL_ACCELERATION,
@@ -58,6 +52,8 @@ public class FloppaFlywheels extends SubsystemBase {
 
     private final WPI_TalonFX leftFlywheel;
     private final WPI_TalonFX rightFlywheel;
+
+    private double targetVelocity = 8000;
 
     public FloppaFlywheels() {
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
@@ -99,11 +95,5 @@ public class FloppaFlywheels extends SubsystemBase {
 
     public void setTargetVelocity(double targetVelocity) {
         this.targetVelocity = targetVelocity;
-    }
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("LEFTVEL", getLeftFlywheelSpeed());
-        SmartDashboard.putNumber("RIGHTVEL", getRightFlywheelSpeed());
     }
 }

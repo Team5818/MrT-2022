@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands.basic.collect;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.intake.Intake;
 import org.rivierarobotics.subsystems.intake.IntakePiston;
 
 public class SetIntakeState extends InstantCommand {

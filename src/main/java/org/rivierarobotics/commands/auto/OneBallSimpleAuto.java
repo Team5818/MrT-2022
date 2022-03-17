@@ -23,11 +23,10 @@ package org.rivierarobotics.commands.auto;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.advanced.collect.CollectToggle;
 import org.rivierarobotics.commands.advanced.drive.DrivePath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
+import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class OneBallSimpleAuto extends SequentialCommandGroup {
     public OneBallSimpleAuto(boolean rightSide) {
@@ -38,8 +37,7 @@ public class OneBallSimpleAuto extends SequentialCommandGroup {
                     new SetDriveAngle(-255).withTimeout(2),
                     new ParallelDeadlineGroup(
                             new DrivePath("simplediag").andThen(new WaitCommand(2)),
-                            new SetIntakeState(true),
-                            new CollectToggle(false, true, true)
+                            new SetIntakeState(true)
                     ),
                     new SetDriveAngle(-135).withTimeout(2),
                     new AutoAimShoot().withTimeout(5)
@@ -51,8 +49,7 @@ public class OneBallSimpleAuto extends SequentialCommandGroup {
                     new SetDriveAngle(-205).withTimeout(2),
                     new ParallelDeadlineGroup(
                             new DrivePath("simplediag2").andThen(new WaitCommand(2)),
-                            new SetIntakeState(true),
-                            new CollectToggle(false, true,true)
+                            new SetIntakeState(true)
                     ),
                     new SetDriveAngle(-35).withTimeout(2),
                     new AutoAimShoot().withTimeout(5)

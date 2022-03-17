@@ -25,7 +25,6 @@ import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.ml.MLCore;
 
 public class SwerveControl extends CommandBase {
     private final DriveTrain driveTrain;

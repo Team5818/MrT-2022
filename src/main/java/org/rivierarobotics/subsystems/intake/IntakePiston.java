@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.subsystems.intake;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.climb.Piston;
 
@@ -34,14 +36,22 @@ public class IntakePiston extends SubsystemBase {
 
     private final Piston p1;
     private final Piston p2;
+    private final Compressor compressor;
 
     public IntakePiston() {
         p1 = new Piston(1);
         p2 = new Piston(2);
+        compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     }
 
     public void setIntakeState(boolean deploy) {
         p1.set(!deploy);
         p2.set(!deploy);
     }
+
+    public boolean getIntakeState() {
+        return p1.getState();
+    }
+
+
 }

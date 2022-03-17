@@ -20,7 +20,30 @@
 
 package org.rivierarobotics.subsystems.intake;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.subsystems.MotorIDs;
 
 public class IntakeRollers extends SubsystemBase {
+    private static IntakeRollers intakeRollers;
+    public static IntakeRollers getInstance() {
+        if(intakeRollers == null) {
+            intakeRollers = new IntakeRollers();
+        }
+        return intakeRollers;
+    }
+
+    private final CANSparkMax rollerMotor;
+    public IntakeRollers() {
+        rollerMotor = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
+        rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 1000);
+        rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 1000);
+        rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 1000);
+    }
+
+    public void setRollerVoltage(double v) {
+        rollerMotor.setVoltage(v);
+    }
 }

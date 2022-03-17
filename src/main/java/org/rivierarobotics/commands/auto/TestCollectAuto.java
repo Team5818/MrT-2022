@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.auto;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.advanced.collect.CollectToggle;
 import org.rivierarobotics.commands.advanced.drive.DrivePath;
 
 public class TestCollectAuto extends SequentialCommandGroup {
@@ -31,7 +30,7 @@ public class TestCollectAuto extends SequentialCommandGroup {
     public TestCollectAuto() {
         addCommands(
                 // deploy intake
-                new ParallelDeadlineGroup(new CollectToggle(false, true, true), new DrivePath("straight")).deadlineWith(new WaitCommand(5))
+                //new ParallelDeadlineGroup(new CollectToggle(false, true, true), new DrivePath("straight")).deadlineWith(new WaitCommand(5))
                 // retract intake
         );
     }

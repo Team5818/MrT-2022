@@ -28,18 +28,20 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
 import org.rivierarobotics.commands.auto.ShootFender;
-import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.control.ClimbControl;
-import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.commands.control.ShooterControl;
+import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
-import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakePiston;
+import org.rivierarobotics.subsystems.intake.IntakeRollers;
+import org.rivierarobotics.subsystems.intake.IntakeSensors;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -48,7 +50,9 @@ import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
 
-import static org.rivierarobotics.subsystems.climb.ClimbPositions.*;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.HIGH;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.LOW;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.MID;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -113,7 +117,6 @@ public class Robot extends TimedRobot {
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
         var clc = ClimbClaws.getInstance();
-        var col = Intake.getInstance();
         var MLcore = MLCore.getInstance();
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
@@ -144,18 +147,18 @@ public class Robot extends TimedRobot {
         climb.setEntry("Kp", cl.kp);
         climb.setEntry("velocity", cl.getVelocity());
 
-        collect.setEntry("ispositive", col.getIsPositive());
-        collect.setEntry("belt voltage", col.getBeltVoltage());
-        collect.setEntry("roller voltage", col.getIntakeVoltage());
-        collect.setEntry("color sensor proximity", col.getColorSensorV3().getProximity());
-        collect.setEntry("color sensor red", col.getColorSensorV3().getColor().red * 255);
-        collect.setEntry("color sensor green", col.getColorSensorV3().getColor().green * 255);
-        collect.setEntry("Color sensor Blue", col.getColorSensorV3().getColor().blue * 255);
-        collect.setEntry("can collect", col.canCollect());
-        collect.setEntry("color sensor occupied", col.colorSensorHasBall());
-        collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
-        collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
-        collect.setEntry("Is Full", col.getIsFull());
+//        collect.setEntry("ispositive", col.getIsPositive());
+//        collect.setEntry("belt voltage", col.getBeltVoltage());
+//        collect.setEntry("roller voltage", col.getIntakeVoltage());
+//        collect.setEntry("color sensor proximity", col.getColorSensorV3().getProximity());
+//        collect.setEntry("color sensor red", col.getColorSensorV3().getColor().red * 255);
+//        collect.setEntry("color sensor green", col.getColorSensorV3().getColor().green * 255);
+//        collect.setEntry("Color sensor Blue", col.getColorSensorV3().getColor().blue * 255);
+//        collect.setEntry("can collect", col.canCollect());
+//        collect.setEntry("color sensor occupied", col.colorSensorHasBall());
+//        collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
+//        collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
+//        collect.setEntry("Is Full", col.getIsFull());
         limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());
 
@@ -224,7 +227,9 @@ public class Robot extends TimedRobot {
         FloppaActuator.getInstance();
         FloppaFlywheels.getInstance();
         Limelight.getInstance();
-        Intake.getInstance();
+        IntakeBelt.getInstance();
+        IntakeRollers.getInstance();
+        IntakeSensors.getInstance();
         Climb.getInstance();
         ClimbClaws.getInstance();
     }

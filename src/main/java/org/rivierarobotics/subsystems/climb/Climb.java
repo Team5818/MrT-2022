@@ -23,26 +23,22 @@ package org.rivierarobotics.subsystems.climb;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.appjack.Logging;
-import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
-import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StatusFrameDemolisher;
-import org.rivierarobotics.util.statespace.PositionStateSpaceModel;
-import org.rivierarobotics.util.statespace.SystemIdentification;
 
 import java.util.ArrayList;
 
 import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ROTATE_A;
 import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ROTATE_B;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.*;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.MAX_CLIMB_ACCELERATION;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.MAX_CLIMB_VELOCITY;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.MOTOR_ANGLE_TO_TICK;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.MOTOR_TICK_TO_ANGLE;
+import static org.rivierarobotics.subsystems.climb.ClimbConstants.TIMEOUT_MS;
 
 public class Climb extends SubsystemBase {
     private static Climb climbMotors;

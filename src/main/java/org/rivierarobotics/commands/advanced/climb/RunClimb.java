@@ -30,7 +30,9 @@ import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-import static org.rivierarobotics.subsystems.climb.ClimbPositions.*;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.HIGH;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.LOW;
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.MID;
 
 public class RunClimb extends SequentialCommandGroup {
     private static final double voltage = 9;

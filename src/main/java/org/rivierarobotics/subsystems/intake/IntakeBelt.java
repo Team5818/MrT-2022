@@ -20,7 +20,9 @@
 
 package org.rivierarobotics.subsystems.intake;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.subsystems.MotorIDs;
 
 public class IntakeBelt extends SubsystemBase {
     private static IntakeBelt intakeBelt;
@@ -31,6 +33,20 @@ public class IntakeBelt extends SubsystemBase {
         return intakeBelt;
     }
 
+    private final WPI_TalonSRX beltMotor;
+    private final WPI_TalonSRX miniWheelMotor;
 
+    public IntakeBelt() {
+        beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+        this.miniWheelMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+    }
+
+    public void setBeltVoltage(double v) {
+        beltMotor.setVoltage(v);
+    }
+
+    public void setMiniWheelMotorVoltage(double v) {
+        miniWheelMotor.setVoltage(v);
+    }
 
 }

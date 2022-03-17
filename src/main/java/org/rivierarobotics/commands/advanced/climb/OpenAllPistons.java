@@ -33,6 +33,6 @@ public class OpenAllPistons extends InstantCommand {
 
     @Override
     public void initialize() {
-        climb.openAllPistons();
+        climb.setAllPistons(true);
     }
 }

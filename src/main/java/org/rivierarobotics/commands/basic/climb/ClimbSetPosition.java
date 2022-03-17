@@ -20,9 +20,7 @@
 
 package org.rivierarobotics.commands.basic.climb;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
