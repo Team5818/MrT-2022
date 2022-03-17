@@ -25,7 +25,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.subsystems.climb.Piston;
@@ -41,8 +43,8 @@ public class Intake extends SubsystemBase {
         return intake;
     }
 
-    private final Piston p1;
-    private final Piston p2;
+//    private final Piston p1;
+//    private final Piston p2;
     private final CANSparkMax csm;
     private final WPI_TalonSRX tsrx;
     private final ColorSensorV3 colorSensorV3;
@@ -60,24 +62,27 @@ public class Intake extends SubsystemBase {
     //TODO: Extract ID's into MotorID's class
     public Intake() {
         // Figure out constants later
-        p1 = new Piston(1);
-        p2 = new Piston(2);
+//        p1 = new Piston(1);
+//        p2 = new Piston(2);
         this.colorSensorV3 = new ColorSensorV3(I2C.Port.kOnboard);
         this.distanceSensor = new AnalogInput(3);
         this.distanceSensor2 = new AnalogInput(0);
         csm = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
         tsrx = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+        Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        compressor.enabled();
         StatusFrameDemolisher.demolishStatusFrames(tsrx, false);
     }
 
     public void setIntakeState(boolean deploy) {
-        p1.set(!deploy);
-        p2.set(!deploy);
+//        p1.set(!deploy);
+//        p2.set(!deploy);
         this.isDeployed = deploy;
     }
 
     public boolean getIntakeState() {
-        return p1.getState();
+//        return p1.getState();
+        return false;
     }
 
     public double getIntakeVoltage() {

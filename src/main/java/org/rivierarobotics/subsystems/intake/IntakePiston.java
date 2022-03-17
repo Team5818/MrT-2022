@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.subsystems.climb.Piston;
 
 public class IntakePiston extends SubsystemBase {
     private static IntakePiston intakePiston;
@@ -31,5 +32,16 @@ public class IntakePiston extends SubsystemBase {
         return intakePiston;
     }
 
+    private final Piston p1;
+    private final Piston p2;
 
+    public IntakePiston() {
+        p1 = new Piston(1);
+        p2 = new Piston(2);
+    }
+
+    public void setIntakeState(boolean deploy) {
+        p1.set(!deploy);
+        p2.set(!deploy);
+    }
 }

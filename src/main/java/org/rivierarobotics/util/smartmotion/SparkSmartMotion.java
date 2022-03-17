@@ -164,6 +164,8 @@ public class SparkSmartMotion {
         mPidController.setSmartMotionMinOutputVelocity(sparkMotionConfig.getMinVel(), 0);
         mPidController.setSmartMotionMaxAccel(sparkMotionConfig.getMaxAccel(), 0);
         mPidController.setSmartMotionAllowedClosedLoopError(pidConfig.getTolerance(), 0);
+
+        motor.burnFlash();
         return mPidController;
     }
 }

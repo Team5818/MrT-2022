@@ -34,7 +34,7 @@ public class CollectControl extends CommandBase {
         this.intake = Intake.getInstance();
         this.rightJoystick = ControlMap.CO_DRIVER_RIGHT;
         intake.setIntakeState(false);
-        addRequirements(intake);
+        //addRequirements(intake);
     }
 
     @Override

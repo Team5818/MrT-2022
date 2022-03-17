@@ -22,15 +22,17 @@ package org.rivierarobotics.commands.basic.collect;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.intake.IntakePiston;
 
 public class SetIntakeState extends InstantCommand {
     private final boolean isOpen;
     public SetIntakeState(boolean isOpen) {
         this.isOpen = isOpen;
+        addRequirements(IntakePiston.getInstance());
     }
 
     @Override
     public void initialize() {
-        Intake.getInstance().setIntakeState(isOpen);
+        IntakePiston.getInstance().setIntakeState(isOpen);
     }
 }

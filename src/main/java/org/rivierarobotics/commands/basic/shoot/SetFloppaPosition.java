@@ -39,8 +39,13 @@ public class SetFloppaPosition extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         this.floppasActuator.setFloppaAngle(flywheelRads);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        floppasActuator.setVoltage(0);
     }
 
     @Override

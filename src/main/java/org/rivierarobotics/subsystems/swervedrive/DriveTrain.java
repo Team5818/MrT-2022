@@ -135,7 +135,7 @@ public class DriveTrain extends SubsystemBase {
                         : new ChassisSpeeds(xSpeed, ySpeed, rot)
         );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_TURN_SPEED);
-        if (xSpeed <= 0.05 && ySpeed <= 0.05 && rot == 0) {
+        if (Math.abs(xSpeed) <= 0.05 && Math.abs(ySpeed) <= 0.05 && rot == 0) {
             for (int i = 0; i < swerveModuleStates.length; i++) {
                 swerveModules[i].setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
             }

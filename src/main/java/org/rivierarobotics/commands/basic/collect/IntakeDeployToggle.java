@@ -44,6 +44,6 @@ public class IntakeDeployToggle extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        intake.setIntakeState(false);
+        //intake.setIntakeState(false);
     }
 }

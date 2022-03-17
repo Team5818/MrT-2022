@@ -31,6 +31,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
@@ -68,7 +69,7 @@ public class SwerveModule {
             100, 2,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0, 0, 0, 0.1);
+    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0, 0, 0, 0.05);
 
     //Motors
     private final WPI_TalonFX driveMotor;
@@ -90,7 +91,7 @@ public class SwerveModule {
 
         //Steer Motor
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, DM_MM_CONFIG, steeringMotor);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, TM_MM_CONFIG, steeringMotor);
         steeringMotor.configFeedbackNotContinuous(true, TIMEOUT_MS);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
@@ -98,7 +99,10 @@ public class SwerveModule {
 
         //Drive Motor
         this.driveMotor = new WPI_TalonFX(driveMotorChannel);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, steeringMotor);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, driveMotor);
+        driveMotor.configAllowableClosedloopError(0, 5);
+//        driveMotor.configNominalOutputReverse(0);
+//        driveMotor.configPeakOutputReverse(1);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
         driveMotor.setNeutralMode(NeutralMode.Brake);

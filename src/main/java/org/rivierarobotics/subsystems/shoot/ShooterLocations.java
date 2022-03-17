@@ -33,9 +33,9 @@ public enum ShooterLocations {
     ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle) {
         this.flyWheelSpeed = flyWheelSpeed;
         double floppaRaw = FloppaActuator.convertAngleToTicks(floppaAngle);
-        if (!(ShooterConstant.MIN_ACTUATOR_TICKS <= floppaRaw && floppaRaw <= ShooterConstant.MAX_ACTUATOR_TICKS)) {
-            throw new RuntimeException("floppa Angle out of bounds");
-        }
+//        if (!(ShooterConstant.MIN_ACTUATOR_TICKS <= floppaRaw && floppaRaw <= ShooterConstant.MAX_ACTUATOR_TICKS)) {
+//            throw new RuntimeException("floppa Angle out of bounds");
+//        }
         this.floppaAngle = floppaAngle;
         this.driveAngle = driveAngle;
     }

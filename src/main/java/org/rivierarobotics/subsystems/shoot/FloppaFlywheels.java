@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems.shoot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.MotionMagicConfig;
@@ -45,11 +46,14 @@ public class FloppaFlywheels extends SubsystemBase {
         return floppaFlywheels;
     }
 
-    private static final PIDConfig FLYWHEEL_CONFIG = new PIDConfig(0.1, 0, 0, 0);
+//    private static final PIDConfig FLYWHEEL_CONFIG = new PIDConfig(0.019, 0.01, 0, 0.04);
+    private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.002, 0.0, 0, 0.046);
+    private static final PIDConfig FLYWHEEL_CONFIG_R = new PIDConfig(0.002, 0.0, 0, 0.047);
+
     private static final MotionMagicConfig MOTION_MAGIC_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             ShooterConstant.MAX_FLYWHEEL_VELOCITY, ShooterConstant.MAX_FLYWHEEL_ACCELERATION,
-            100, 2, ShooterConstant.TIMEOUTMS, 10
+            1, 0, ShooterConstant.TIMEOUTMS, 10
     );
 
     private final WPI_TalonFX leftFlywheel;
@@ -58,12 +62,15 @@ public class FloppaFlywheels extends SubsystemBase {
     public FloppaFlywheels() {
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG, MOTION_MAGIC_CONFIG, leftFlywheel, rightFlywheel);
-        rightFlywheel.setInverted(true);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG_L, MOTION_MAGIC_CONFIG, leftFlywheel);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG_R, MOTION_MAGIC_CONFIG, rightFlywheel);
+        leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        rightFlywheel.setSensorPhase(true);
     }
 
     public void setFlywheelSpeed(double speed) {
-        leftFlywheel.set(ControlMode.Velocity, speed);
+        leftFlywheel.set(ControlMode.Velocity, -speed);
         rightFlywheel.set(ControlMode.Velocity, speed);
     }
 
@@ -74,11 +81,11 @@ public class FloppaFlywheels extends SubsystemBase {
     }
 
     public double getLeftFlywheelSpeed() {
-        return leftFlywheel.getSelectedSensorVelocity();
+        return leftFlywheel.getSensorCollection().getIntegratedSensorVelocity();
     }
 
     public double getRightFlywheelSpeed() {
-        return rightFlywheel.getSelectedSensorVelocity();
+        return rightFlywheel.getSensorCollection().getIntegratedSensorVelocity();
     }
 
     public void setVoltage(double v) {
@@ -92,5 +99,11 @@ public class FloppaFlywheels extends SubsystemBase {
 
     public void setTargetVelocity(double targetVelocity) {
         this.targetVelocity = targetVelocity;
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("LEFTVEL", getLeftFlywheelSpeed());
+        SmartDashboard.putNumber("RIGHTVEL", getRightFlywheelSpeed());
     }
 }

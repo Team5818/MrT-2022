@@ -22,6 +22,7 @@ package org.rivierarobotics.util.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.lib.MathUtil;
 
 public class SwerveUtil {

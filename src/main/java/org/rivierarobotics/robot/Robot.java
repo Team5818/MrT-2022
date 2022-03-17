@@ -33,11 +33,13 @@ import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
 import org.rivierarobotics.commands.auto.ShootFender;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
+import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.intake.Intake;
+import org.rivierarobotics.subsystems.intake.IntakePiston;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -99,7 +101,7 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-        if (DriverStation.isFMSAttached()) return;
+        if (DriverStation.isFMSAttached() || true) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -115,7 +117,7 @@ public class Robot extends TimedRobot {
         var MLcore = MLCore.getInstance();
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
-        field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
+        //field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
@@ -172,6 +174,7 @@ public class Robot extends TimedRobot {
         shoot.setEntry("flywheel right v", floppShooter.getRightFlywheelSpeed());
         shoot.setEntry("flywheel left v", -floppShooter.getLeftFlywheelSpeed());
         shoot.setEntry("actuator angle", floppActuator.getAngle());
+        shoot.setEntry("actuator tick raw", floppActuator.getTicks());
 
         limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
         limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
@@ -217,6 +220,7 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+        IntakePiston.getInstance();
         FloppaActuator.getInstance();
         FloppaFlywheels.getInstance();
         Limelight.getInstance();
@@ -232,7 +236,7 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
     }
 
@@ -240,7 +244,7 @@ public class Robot extends TimedRobot {
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
         }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 0.05, 0.0);
+        addPeriodic(this::shuffleboardLogging, 2, 0.101);
     }
 
     @Override
