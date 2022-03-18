@@ -21,6 +21,10 @@
 package org.rivierarobotics.subsystems;
 
 public class MotorIDs {
+    //Global Constans
+    public static final String CANFD_NAME = "can1";
+
+
     //Drive Train Motors
     public static final int FRONT_RIGHT_DRIVE = 1;
     public static final int FRONT_RIGHT_STEER = 2;

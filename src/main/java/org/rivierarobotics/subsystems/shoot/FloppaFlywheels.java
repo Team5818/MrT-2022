@@ -56,8 +56,8 @@ public class FloppaFlywheels extends SubsystemBase {
     private double targetVelocity = 8000;
 
     public FloppaFlywheels() {
-        this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT);
-        this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT);
+        this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT, MotorIDs.CANFD_NAME);
+        this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT, MotorIDs.CANFD_NAME);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG_L, MOTION_MAGIC_CONFIG, leftFlywheel);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG_R, MOTION_MAGIC_CONFIG, rightFlywheel);
         leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);

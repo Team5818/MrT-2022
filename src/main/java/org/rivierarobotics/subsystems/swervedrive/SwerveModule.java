@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.Timer;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
+import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.swerve.SwerveUtil;
 
@@ -97,11 +98,9 @@ public class SwerveModule {
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
 
         //Drive Motor
-        this.driveMotor = new WPI_TalonFX(driveMotorChannel);
+        this.driveMotor = new WPI_TalonFX(driveMotorChannel, MotorIDs.CANFD_NAME);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, driveMotor);
         driveMotor.configAllowableClosedloopError(0, 5);
-//        driveMotor.configNominalOutputReverse(0);
-//        driveMotor.configPeakOutputReverse(1);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
         driveMotor.setNeutralMode(NeutralMode.Brake);

@@ -31,7 +31,8 @@ public class CollectBalls extends SequentialCommandGroup {
                                 new SetBeltVoltageWithTimeout(-COLLECT_VOLTAGE, 0.2)
                         ),
                         new WaitCommand(0.1),
-                        () -> IntakeSensors.getInstance().canCollect())
+                        () -> IntakeSensors.getInstance().canCollect()
+                )
         );
     }
 

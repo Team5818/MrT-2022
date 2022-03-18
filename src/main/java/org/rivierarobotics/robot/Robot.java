@@ -147,18 +147,6 @@ public class Robot extends TimedRobot {
         climb.setEntry("Kp", cl.kp);
         climb.setEntry("velocity", cl.getVelocity());
 
-//        collect.setEntry("ispositive", col.getIsPositive());
-//        collect.setEntry("belt voltage", col.getBeltVoltage());
-//        collect.setEntry("roller voltage", col.getIntakeVoltage());
-//        collect.setEntry("color sensor proximity", col.getColorSensorV3().getProximity());
-//        collect.setEntry("color sensor red", col.getColorSensorV3().getColor().red * 255);
-//        collect.setEntry("color sensor green", col.getColorSensorV3().getColor().green * 255);
-//        collect.setEntry("Color sensor Blue", col.getColorSensorV3().getColor().blue * 255);
-//        collect.setEntry("can collect", col.canCollect());
-//        collect.setEntry("color sensor occupied", col.colorSensorHasBall());
-//        collect.setEntry("proximity sensor has ball", col.distanceSensorHasBall());
-//        collect.setEntry("analogsensor", col.getDistanceSensor().getValue());
-//        collect.setEntry("Is Full", col.getIsFull());
         limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());
 

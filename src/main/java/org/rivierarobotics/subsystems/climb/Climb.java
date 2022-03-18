@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
+import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StatusFrameDemolisher;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import static org.rivierarobotics.subsystems.climb.ClimbConstants.TIMEOUT_MS;
 
 public class Climb extends SubsystemBase {
     private static Climb climbMotors;
+
     public static Climb getInstance() {
         if (climbMotors == null) {
             climbMotors = new Climb();
@@ -53,19 +55,14 @@ public class Climb extends SubsystemBase {
     private final WPI_TalonFX climbFollower;
 
     //all of these values are bs change them later
-    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(
-            new ArrayList<>(), true,
-            MAX_CLIMB_VELOCITY, MAX_CLIMB_ACCELERATION,
-            100, 0,
-            TIMEOUT_MS, 10
-    );
+    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(new ArrayList<>(), true, MAX_CLIMB_VELOCITY, MAX_CLIMB_ACCELERATION, 100, 0, TIMEOUT_MS, 10);
     public static final double kp = 0.2;
     private static final PIDConfig CM_MM_PID = new PIDConfig(kp, 0, 0, 0);
     private boolean play = true;
 
     private Climb() {
-        this.climbMaster = new WPI_TalonFX(CLIMB_ROTATE_A);
-        this.climbFollower = new WPI_TalonFX(CLIMB_ROTATE_B);
+        this.climbMaster = new WPI_TalonFX(CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
+        this.climbFollower = new WPI_TalonFX(CLIMB_ROTATE_B, MotorIDs.CANFD_NAME);
         climbFollower.follow(climbMaster);
         setCoast(false);
         climbMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -108,7 +105,7 @@ public class Climb extends SubsystemBase {
 
     public double getAngle() {
         var angle = climbMaster.getSensorCollection().getIntegratedSensorPosition();
-        return  climbMaster.getSelectedSensorPosition() * MOTOR_TICK_TO_ANGLE;
+        return climbMaster.getSelectedSensorPosition() * MOTOR_TICK_TO_ANGLE;
     }
 
     public double getVelocity() {
