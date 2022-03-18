@@ -50,7 +50,7 @@ public class MotorIDs {
     //collect ids
     public static final int COLLECT_INTAKE = 13;
     public static final int COLLECT_BELTS = 12;
-    public static final int COLLECT_WHEEL = 33;
+    public static final int COLLECT_WHEEL = 14;
     //shooter ids
     public static final int SHOOTER_LEFT = 15;
     public static final int SHOOTER_ANGLE = 16;
