@@ -57,10 +57,10 @@ public class SwerveModule {
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION,
-            100, 2,
+            50, 0,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig TM_MM_PID = new PIDConfig(0.7, 0, 0, 0.1);
+    private static final PIDConfig TM_MM_PID = new PIDConfig(3.05, 0.0001, 0, 0);
 
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(

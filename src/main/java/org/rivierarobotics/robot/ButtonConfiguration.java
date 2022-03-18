@@ -30,7 +30,9 @@ import org.rivierarobotics.commands.basic.climb.IdleMode;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
+import org.rivierarobotics.commands.basic.drive.SetDriveVelocity;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
+import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 
@@ -38,8 +40,9 @@ public class ButtonConfiguration {
     public void initTeleop() {
         //Driver Left
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .toggleWhenPressed(new IdleMode(true));
-
+                .toggleWhenPressed(new SetWheelbaseAngle(0));
+        new JoystickButton(ControlMap.DRIVER_LEFT, 2)
+                .toggleWhenPressed(new SetWheelbaseAngle(90));
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .whenPressed(new ToggleIntakeState());
