@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-        if (DriverStation.isFMSAttached() || true) return;
+//        if (DriverStation.isFMSAttached() || true) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -164,6 +164,10 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston high", clc.isPistonSet(HIGH));
         climb.setEntry("Kp", cl.kp);
         climb.setEntry("velocity", cl.getVelocity());
+
+        collect.setEntry("RedValue", IntakeSensors.getInstance().getColorValue("red"));
+        collect.setEntry("GreenValue", IntakeSensors.getInstance().getColorValue("green"));
+        collect.setEntry("BlueValue", IntakeSensors.getInstance().getColorValue("blue"));
 
         limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());

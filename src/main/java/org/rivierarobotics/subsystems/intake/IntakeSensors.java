@@ -23,9 +23,13 @@ package org.rivierarobotics.subsystems.intake;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 
 // do not make this a subsystem please thank you
 public class IntakeSensors {
+
+    private final static double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
+
     private static IntakeSensors intakeSensors;
     public static IntakeSensors getInstance() {
         if(intakeSensors == null) {
@@ -49,6 +53,20 @@ public class IntakeSensors {
 
     public boolean distanceSensorHasBall(){
         return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
+    }
+
+
+    public double getColorValue(String whatColor) {
+        Color color = colorSensorV3.getColor();
+        if(whatColor.equalsIgnoreCase("red")) {
+            return color.red;
+        } else if(whatColor.equalsIgnoreCase("green")) {
+            return color.green;
+        } else if(whatColor.equalsIgnoreCase("blue")) {
+            return color.blue;
+        } else {
+            return -1; //For troubleshooting purposes, if you are getting -1 then something's wrong.
+        }
     }
 
     public boolean canCollect() {
