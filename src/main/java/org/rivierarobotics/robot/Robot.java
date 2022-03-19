@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -260,7 +261,13 @@ public class Robot extends TimedRobot {
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
         }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 2, 0.101);
+
+        addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
+
+        //DO NOT REMOVE - DEPENDENCY OF THE SWERVES
+        addPeriodic(() -> {
+            DriveTrain.getInstance().updateSwerveStates();
+        }, 0.02, 0.01);
     }
 
     @Override

@@ -30,6 +30,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
@@ -39,6 +40,11 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.swerve.PoseEstimator;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -229,6 +235,12 @@ public class DriveTrain extends SubsystemBase {
             loggingTables[i].setEntry("Swerve Full Angle", Math.toDegrees(swerveModules[i].getAngle()));
             loggingTables[i].setEntry("Swerve Pos Ticks", swerveModules[i].getPosTicks());
             loggingTables[i].setEntry("Swerve Pos Ticks Drive", swerveModules[i].getDriveTicks());
+        }
+    }
+
+    public void updateSwerveStates() {
+        for(var sm : swerveModules) {
+            sm.updateSwerveInformation();
         }
     }
 }

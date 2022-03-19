@@ -28,6 +28,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,6 +42,7 @@ import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.swerve.SwerveUtil;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SwerveModule {
     //Physical Constants
@@ -77,9 +79,9 @@ public class SwerveModule {
     private final WPI_TalonFX driveMotor;
     private final WPI_TalonSRX steeringMotor;
 
-    //Angle Values to ensure the CAN Bus doesn't return a 0 out of nowhere
-    private double prevAngle = 0.0;
-    private double timeoutSeconds = 0.0;
+    //Thread-Safe angles to reduce CAN usage
+    private AtomicReference<Double> swerveAngle = new AtomicReference<>(0.0);
+    private AtomicReference<Double> swerveSpeed = new AtomicReference<>(0.0);
 
     /**
      * Constructs a SwerveModule.
@@ -94,7 +96,6 @@ public class SwerveModule {
         //Steer Motor
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, TM_MM_CONFIG, steeringMotor);
-//        steeringMotor.configFeedbackNotContinuous(true, TIMEOUT_MS);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
@@ -119,17 +120,7 @@ public class SwerveModule {
     }
 
     public double getAngle() {
-        timeoutSeconds += Timer.getFPGATimestamp() - timeoutSeconds;
-        var currAngle = (steeringMotor.getSelectedSensorPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE;
-        if (prevAngle == 0) prevAngle = currAngle;
-        if (timeoutSeconds <= 1 && Math.abs(prevAngle - currAngle) >= 12 * Math.PI) {
-            return prevAngle;
-        }
-        if (timeoutSeconds > 1) {
-            timeoutSeconds = 0;
-        }
-        prevAngle = currAngle;
-        return currAngle;
+        return swerveAngle.get();
     }
 
     public double convertAngleToTick(double angleInRads) {
@@ -149,7 +140,7 @@ public class SwerveModule {
     }
 
     public double getVelocity() {
-        return driveMotor.getSensorCollection().getIntegratedSensorVelocity() * DRIVE_MOTOR_TICK_TO_SPEED;
+        return swerveSpeed.get();
     }
 
     public SwerveModuleState getState() {
@@ -164,6 +155,11 @@ public class SwerveModule {
     public void setSteeringMotorAngle(double angleInRad) {
         Logging.robotShuffleboard.getTab("Swerve").setEntry("target Angle" + driveMotor.getDeviceID(), angleInRad);
         steeringMotor.set(ControlMode.MotionMagic, angleInRad);
+    }
+
+    public void updateSwerveInformation() {
+        swerveAngle.set((steeringMotor.getSelectedSensorPosition() - zeroTicks) * STEER_MOTOR_TICK_TO_ANGLE);
+        swerveSpeed.set(driveMotor.getSensorCollection().getIntegratedSensorVelocity() * DRIVE_MOTOR_TICK_TO_SPEED);
     }
 
     /**
