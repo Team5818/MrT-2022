@@ -20,11 +20,14 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.advanced.shoot.Shoot;
+import org.rivierarobotics.commands.auto.TestPathPlanner;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.climb.IdleMode;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
@@ -35,6 +38,7 @@ import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
 import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
 public class ButtonConfiguration {
     public void initTeleop() {
@@ -70,14 +74,14 @@ public class ButtonConfiguration {
         //CO-DRIVER
 
         //CO-DRIVER JOYSTICK
-//        new JoystickButton(ControlMap.CO_DRIVER_LEFT,1).whenPressed()
+        new JoystickButton(ControlMap.CO_DRIVER_LEFT,1).whileHeld(new TestPathPlanner("forward90"));
 
         //CO-DRIVER BUTTONS
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new SetIntakeState(true));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new Shoot());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new SetIntakeState(false));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whileHeld(new SetFloppaPosition(0));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whileHeld(new SetFloppaPosition(0.146));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new SetFlywheelSpeed(0));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whileHeld(new SetFlywheelSpeed(0));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() - 200)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 200)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new SetFlywheelSpeed(8000));
     }
 }

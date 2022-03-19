@@ -31,6 +31,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import org.apache.commons.math3.analysis.function.Log;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
@@ -67,10 +68,10 @@ public class SwerveModule {
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             DriveTrain.MAX_TURN_SPEED, DriveTrain.MAX_ACCELERATION,
-            100, 2,
+            300, 2,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0, 0, 0, 0.05);
+    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0026, 0.0001, 0, 0.06);
 
     //Motors
     private final WPI_TalonFX driveMotor;
@@ -156,6 +157,7 @@ public class SwerveModule {
     }
 
     public void setDriveMotorVelocity(double metersPerSecond) {
+        Logging.robotShuffleboard.getTab("Swerve").setEntry("target velocity " + driveMotor.getDeviceID(),metersPerSecond);
         driveMotor.set(TalonFXControlMode.Velocity, convertVelocityToTicksPer100ms(metersPerSecond));
     }
 

@@ -35,25 +35,24 @@ import org.rivierarobotics.subsystems.intake.IntakeSensors;
 
 public class CollectBalls extends SequentialCommandGroup {
     private static final double COLLECT_VOLTAGE = -9;
-    private static final double INTAKE_VOLTAGE = 12;
-    private static final double MINIWHEEL_VOLTAGE = 7;
+    private static final double INTAKE_VOLTAGE = -12;
+    private static final double MINIWHEEL_VOLTAGE = -7;
 
     public CollectBalls() {
-//        addCommands(
-//                new ConditionalCommand(
-//                        new SequentialCommandGroup(
-//                                new ParallelDeadlineGroup(
-//                                        new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),
-//                                        new SetBeltAndMiniwheelVoltage(COLLECT_VOLTAGE, MINIWHEEL_VOLTAGE),
-//                                        new SetIntakeVoltage(INTAKE_VOLTAGE),
-//                                        new SetFloppaPosition(0)
-//                                ),
-//                                new SetBeltVoltageWithTimeout(-COLLECT_VOLTAGE, 0.2)
-//                        ),
-//                        new WaitCommand(0.1),
-//                        () -> IntakeSensors.getInstance().canCollect()
-//                )
-//        );
+        addCommands(
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                                new ParallelDeadlineGroup(
+                                        new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),
+                                        new SetBeltAndMiniwheelVoltage(COLLECT_VOLTAGE, MINIWHEEL_VOLTAGE),
+                                        new SetIntakeVoltage(INTAKE_VOLTAGE)
+                                ),
+                                new SetBeltVoltageWithTimeout(-COLLECT_VOLTAGE, 0.2)
+                        ),
+                        new WaitCommand(0.1),
+                        () -> IntakeSensors.getInstance().canCollect()
+                )
+        );
     }
 
     @Override

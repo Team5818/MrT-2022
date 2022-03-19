@@ -38,7 +38,7 @@ public class IntakeBelt extends SubsystemBase {
 
     public IntakeBelt() {
         beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
-        this.miniWheelMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+        this.miniWheelMotor = new WPI_TalonSRX(MotorIDs.COLLECT_WHEEL);
     }
 
     public void setBeltVoltage(double v) {

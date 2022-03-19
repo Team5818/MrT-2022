@@ -24,9 +24,9 @@ public class ShooterConstant {
     //FloppaActuator
     public static final double MAX_ACTUATOR_ACCELERATION = 1800;
     public static final double MAX_ACTUATOR_VELOCITY = 1800;
-    public static final double ACTUATOR_ZERO_TICKS = 0.0;
-    public static final float MAX_ACTUATOR_TICKS = 18.11f;
-    public static final float MIN_ACTUATOR_TICKS = -8.5238f;
+    public static final float ACTUATOR_ZERO_TICKS = -12.6f;
+    public static final float MAX_ACTUATOR_TICKS = 22.3f + ACTUATOR_ZERO_TICKS;
+    public static final float MIN_ACTUATOR_TICKS = -8.56f + ACTUATOR_ZERO_TICKS;
     public static final double ACTUATOR_GEARING = 125;
     //FloppaFlywheels
     public static final double MAX_FLYWHEEL_ACCELERATION = 0;

@@ -42,8 +42,8 @@ public class FloppaFlywheels extends SubsystemBase {
         return floppaFlywheels;
     }
 
-    private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.002, 0.0, 0, 0.046);
-    private static final PIDConfig FLYWHEEL_CONFIG_R = new PIDConfig(0.002, 0.0, 0, 0.047);
+    private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.1, 0.0, 0, 0.046);
+    private static final PIDConfig FLYWHEEL_CONFIG_R = new PIDConfig(0.1, 0.0, 0, 0.046);
     private static final MotionMagicConfig MOTION_MAGIC_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             ShooterConstant.MAX_FLYWHEEL_VELOCITY, ShooterConstant.MAX_FLYWHEEL_ACCELERATION,
@@ -58,11 +58,12 @@ public class FloppaFlywheels extends SubsystemBase {
     public FloppaFlywheels() {
         this.leftFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_LEFT, MotorIDs.CANFD_NAME);
         this.rightFlywheel = new WPI_TalonFX(MotorIDs.SHOOTER_RIGHT, MotorIDs.CANFD_NAME);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG_L, MOTION_MAGIC_CONFIG, leftFlywheel);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, FLYWHEEL_CONFIG_R, MOTION_MAGIC_CONFIG, rightFlywheel);
-        leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        rightFlywheel.setSensorPhase(true);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, FLYWHEEL_CONFIG_L, MOTION_MAGIC_CONFIG, leftFlywheel);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, FLYWHEEL_CONFIG_R, MOTION_MAGIC_CONFIG, rightFlywheel);
+
+        leftFlywheel.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        rightFlywheel.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        rightFlywheel.setSensorPhase(false);
     }
 
     public void setFlywheelSpeed(double speed) {

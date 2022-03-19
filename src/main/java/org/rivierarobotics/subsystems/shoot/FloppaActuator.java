@@ -74,7 +74,7 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     public static double convertAngleToTicks(double angleInRads) {
-        return angleInRads * ShooterConstant.ACTUATOR_GEARING + ShooterConstant.ACTUATOR_ZERO_TICKS * 42;
+        return angleInRads + ShooterConstant.ACTUATOR_ZERO_TICKS;
     }
 
     /**
@@ -95,7 +95,7 @@ public class FloppaActuator extends SubsystemBase {
      * returns angle without gearing values possibly in rotations
      */
     public double getAngle() {
-        return (actuatorMotor.getEncoder().getPosition() - ShooterConstant.ACTUATOR_ZERO_TICKS) / ShooterConstant.ACTUATOR_GEARING;
+        return (actuatorMotor.getEncoder().getPosition() - ShooterConstant.ACTUATOR_ZERO_TICKS);
     }
 
     public double getTicks() {

@@ -29,6 +29,8 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
@@ -90,7 +92,15 @@ public class TrajectoryFollower {
     }
 
     public boolean isFinished() {
-        return (trajectory == null && pathPlannerTrajectory == null) || (Timer.getFPGATimestamp() - this.startTime > this.trajectory.getTotalTimeSeconds());
+        if (trajectory == null && pathPlannerTrajectory == null) {
+            return true;
+        }
+
+        if (trajectory != null){
+            return Timer.getFPGATimestamp() - this.startTime > this.trajectory.getTotalTimeSeconds();
+        } else {
+            return Timer.getFPGATimestamp() - this.startTime > this.pathPlannerTrajectory.getTotalTimeSeconds();
+        }
     }
 
     /**
@@ -109,6 +119,7 @@ public class TrajectoryFollower {
 
     private ChassisSpeeds followPathPlannerTrajectory(double intTime) {
         var plannerState = (PathPlannerTrajectory.PathPlannerState) pathPlannerTrajectory.sample(intTime);
+        Logging.robotShuffleboard.getTab("Field").setEntry("target pos", plannerState.poseMeters.toString());
         return holonomicDriveController.calculate(
                 estimator.getRobotPose(),
                 plannerState,

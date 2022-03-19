@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-        if (DriverStation.isFMSAttached() || true) return;
+        if (DriverStation.isFMSAttached()) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -113,6 +113,7 @@ public class Robot extends TimedRobot {
         var ML = sb.getTab("ML");
         var limeLight = sb.getTab("LL");
         var shoot = sb.getTab("shoot");
+        var field = sb.getTab("Field");
 
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
@@ -164,6 +165,7 @@ public class Robot extends TimedRobot {
 
         shoot.setEntry("flywheel right v", floppShooter.getRightFlywheelSpeed());
         shoot.setEntry("flywheel left v", -floppShooter.getLeftFlywheelSpeed());
+        shoot.setEntry("target speed", floppShooter.getTargetVelocity());
         shoot.setEntry("actuator angle", floppActuator.getAngle());
         shoot.setEntry("actuator tick raw", floppActuator.getTicks());
 
@@ -176,6 +178,8 @@ public class Robot extends TimedRobot {
 
         limeLight = sb.getTab("LL");
         limeLight.setEntry("Hood Angle", floppActuator.getAngle());
+
+        field.setEntry("drive pos", dt.getPoseEstimator().getRobotPose().toString());
     }
 
     @Override

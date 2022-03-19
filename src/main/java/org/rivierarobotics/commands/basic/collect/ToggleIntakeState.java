@@ -33,6 +33,6 @@ public class ToggleIntakeState extends InstantCommand {
 
     @Override
     public void initialize() {
-        piston.setIntakeState(!piston.getIntakeState());
+        piston.setIntakeState(piston.getIntakeState());
     }
 }
