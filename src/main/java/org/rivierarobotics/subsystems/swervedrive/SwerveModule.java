@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.Timer;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StatusFrameDemolisher;
 import org.rivierarobotics.util.swerve.SwerveUtil;
@@ -48,8 +49,8 @@ public class SwerveModule {
     private static final double GEARING = 11.0 / 40.0;
     private static final double DRIVE_MOTOR_TICK_TO_SPEED = 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048; // m/s
     //Controller Constants
-    private static final double MAX_TURN_ACCELERATION = 30000; //Rad/s
-    private static final double MAX_TURN_VELOCITY = 30000; //Rad/s
+    private static final double MAX_TURN_ACCELERATION = 4800; //Rad/s
+    private static final double MAX_TURN_VELOCITY = 4800; //Rad/s
     private static final int TIMEOUT_MS = 60;
     private final double zeroTicks;
 
@@ -57,10 +58,10 @@ public class SwerveModule {
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION,
-            50, 0,
+            150, 0,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig TM_MM_PID = new PIDConfig(3.05, 0.0001, 0, 0);
+    private static final PIDConfig TM_MM_PID = new PIDConfig(3.5, 0.001, 0, 0);
 
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
@@ -92,7 +93,7 @@ public class SwerveModule {
         //Steer Motor
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, TM_MM_CONFIG, steeringMotor);
-        steeringMotor.configFeedbackNotContinuous(true, TIMEOUT_MS);
+//        steeringMotor.configFeedbackNotContinuous(true, TIMEOUT_MS);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
@@ -159,6 +160,7 @@ public class SwerveModule {
     }
 
     public void setSteeringMotorAngle(double angleInRad) {
+        Logging.robotShuffleboard.getTab("Swerve").setEntry("target Angle" + driveMotor.getDeviceID(), angleInRad);
         steeringMotor.set(ControlMode.MotionMagic, angleInRad);
     }
 
