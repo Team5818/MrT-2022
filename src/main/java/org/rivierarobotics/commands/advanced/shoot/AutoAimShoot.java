@@ -34,12 +34,12 @@ public class AutoAimShoot extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new ParallelDeadlineGroup(
                                 new SequentialCommandGroup(
-                                new WaitCommand(0.5),
-                                new Shoot(ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()), ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()))
+                                        new WaitCommand(1),
+                                        new Shoot(ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()), ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()))
                                 ),
-                        new TrackGoal(isAuto)
+                                new TrackGoal(isAuto)
                         ),
-                        new Shoot(135, 1),
+                        new WaitCommand(0.5),
                         () -> Limelight.getInstance().getDetected()
                 )
         );

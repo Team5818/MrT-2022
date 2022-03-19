@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
+import org.rivierarobotics.commands.basic.shoot.FlywheelTest;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
@@ -35,19 +36,19 @@ import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 public class Shoot extends SequentialCommandGroup {
-    private static final double SHOOT_BELT_VOLTAGE = -11;
+    private static final double SHOOT_BELT_VOLTAGE = -7;
     private static final double SHOOT_MINIWHEEL_VOLTAGE = 5;
 
     public Shoot(){
         addCommands(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
-                                new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(200)).withTimeout(2),
+//                                new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(800)).withTimeout(2),
                                 new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
                                 new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                                 new WaitCommand(1.5)
                         ),
-                        new SetFlywheelSpeed(FloppaFlywheels.getInstance().getTargetVelocity()).perpetually()
+                        new FlywheelTest()
                 )
         );
     }
@@ -60,10 +61,6 @@ public class Shoot extends SequentialCommandGroup {
         addCommands(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
-                                new ParallelCommandGroup(
-                                        new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(200)),
-                                        new WaitUntilCommand(() -> FloppaActuator.getInstance().floppasWithinTolerance(0.1))
-                                ),
                                 new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
                                 new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                                 new WaitCommand(1.5)

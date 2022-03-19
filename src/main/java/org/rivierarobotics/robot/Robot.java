@@ -28,11 +28,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
 import org.rivierarobotics.commands.auto.ShootFender;
+import org.rivierarobotics.commands.basic.collect.SetBeltVoltageWithTimeout;
 import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
@@ -44,6 +46,7 @@ import org.rivierarobotics.subsystems.intake.IntakeRollers;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
@@ -91,6 +94,19 @@ public class Robot extends TimedRobot {
         FieldMesh.getInstance();
     }
 
+    boolean ran = false;
+    @Override
+    public void robotPeriodic() {
+        var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
+        if(command == null && ran) {
+            CommandScheduler.getInstance().schedule(new SetBeltVoltageWithTimeout(-CollectBalls.COLLECT_VOLTAGE, 0.2));
+            ran = false;
+        }
+        if(command != null) {
+            ran = true;
+        }
+    }
+
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
@@ -105,7 +121,7 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-        if (DriverStation.isFMSAttached()) return;
+        if (DriverStation.isFMSAttached() || true) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -175,6 +191,9 @@ public class Robot extends TimedRobot {
         limeLight.setEntry("flop tuning", floppShooter.getTargetVelocity());
         limeLight.setEntry("LL Assist Angle", Limelight.getInstance().getShootingAssistAngle());
         limeLight.setEntry("Correct Position", Limelight.getInstance().getLLAbsPose().toString());
+        limeLight.setEntry("Target Ang", ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
+        limeLight.setEntry("Target Speed", ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
+
 
         limeLight = sb.getTab("LL");
         limeLight.setEntry("Hood Angle", floppActuator.getAngle());

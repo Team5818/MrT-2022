@@ -18,32 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems.shoot;
+package org.rivierarobotics.commands.basic.shoot;
 
-import org.rivierarobotics.util.InterpolationTable;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
-public class ShootingTables {
+public class FlywheelTest extends InstantCommand {
+    private final FloppaFlywheels floppas;
 
-    private ShootingTables() {
-
+    public FlywheelTest() {
+        this.floppas = FloppaFlywheels.getInstance();
+        addRequirements(floppas);
     }
 
-    public static InterpolationTable getFloppaAngleTable() {
-        var angleTable = new InterpolationTable();
-
-        angleTable.addValue(2.684, 12.6);
-        angleTable.addValue(1.2, 9.36);
-
-        return angleTable;
+    @Override
+    public void initialize() {
+        floppas.setFlywheelSpeed(floppas.getTargetVelocity());
     }
 
-    public static InterpolationTable getFloppaSpeedTable() {
-        var speedTable = new InterpolationTable();
-
-        speedTable.addValue(2.684, 7000);
-        speedTable.addValue(1.2, 6000);
-
-        return speedTable;
+    @Override
+    public void end(boolean interrupted) {
+        if(interrupted) {
+            floppas.setVoltage(0);
+        }
     }
-
 }
