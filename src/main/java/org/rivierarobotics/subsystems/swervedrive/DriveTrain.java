@@ -113,11 +113,11 @@ public class DriveTrain extends SubsystemBase {
 
         this.holonomicDriveController = new HolonomicDriveController(
                 //PID FOR X DISTANCE (kp of 1 = 1m/s extra velocity / m of error)
-                new PIDController(1, 0, 0),
+                new PIDController(0.6, 0.001, 0),
                 //PID FOR Y DISTANCE (kp of 1.2 = 1.2m/s extra velocity / m of error)
-                new PIDController(1, 0, 0),
+                new PIDController(1, 0.003, 0),
                 //PID FOR ROTATION (kp of 1 = 1rad/s extra velocity / rad of error)
-                new ProfiledPIDController(1, 0, 0,
+                new ProfiledPIDController(2, 0.001, 0,
                         new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED, MAX_ANGULAR_ACCELERATION))
         );
 
