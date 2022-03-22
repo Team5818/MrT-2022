@@ -82,9 +82,9 @@ public class FloppaActuator extends SubsystemBase {
      * Takes angle in radians setpoint should be in rotations and adjusted for gearing.
      */
     public void setFloppaAngle(double angle) {
+        this.targetAngle = angle;
         var setpoint = convertAngleToTicks(angle);
         setpoint = MathUtil.clamp(setpoint, ShooterConstant.MIN_ACTUATOR_TICKS, ShooterConstant.MAX_ACTUATOR_TICKS);
-        this.targetAngle = setpoint;
         actuatorController.getPidController().setReference(setpoint, CANSparkMax.ControlType.kPosition);
     }
 
