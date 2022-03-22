@@ -26,6 +26,7 @@ import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.advanced.shoot.Eject;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
 import org.rivierarobotics.commands.auto.TestPathPlanner;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
@@ -77,6 +78,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_LEFT,1).whileHeld(new TestPathPlanner("forward90"));
 
         //CO-DRIVER BUTTONS
+
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new Shoot());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new SetIntakeState(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whileHeld(new SetFlywheelSpeed(0));

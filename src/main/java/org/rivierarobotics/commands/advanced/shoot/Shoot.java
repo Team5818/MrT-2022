@@ -62,11 +62,9 @@ public class Shoot extends SequentialCommandGroup {
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
                                 new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
-                                new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                                 new WaitCommand(1.5)
                         ),
-                        new SetFlywheelSpeed(speed),
-                        new SetFloppaPosition(flywheelAngle)
+                        new Eject(flywheelAngle, SHOOT_MINIWHEEL_VOLTAGE, false, speed)
                 )
         );
     }
