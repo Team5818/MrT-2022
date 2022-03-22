@@ -66,6 +66,8 @@ public class FloppaActuator extends SubsystemBase {
         this.actuatorMotor.getEncoder().setPositionConversionFactor(1);
         this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ShooterConstant.MAX_ACTUATOR_TICKS);
         this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ShooterConstant.MIN_ACTUATOR_TICKS);
+        this.actuatorMotor.setSmartCurrentLimit(30);
+        this.actuatorMotor.setSecondaryCurrentLimit(30);
 
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 1000);
@@ -104,10 +106,10 @@ public class FloppaActuator extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         var currTicks = getTicks();
-        if ((currTicks >= ShooterConstant.MAX_ACTUATOR_TICKS && Math.signum(voltage) > 0) ||
-                currTicks <= ShooterConstant.MIN_ACTUATOR_TICKS && Math.signum(voltage) < 0) {
-            voltage = 0;
-        }
+//        if ((currTicks >= ShooterConstant.MAX_ACTUATOR_TICKS && Math.signum(voltage) > 0) ||
+//                currTicks <= ShooterConstant.MIN_ACTUATOR_TICKS && Math.signum(voltage) < 0) {
+//            voltage = 0;
+//        }
         this.actuatorMotor.setVoltage(voltage);
     }
 }

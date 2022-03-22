@@ -31,6 +31,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
@@ -68,11 +69,11 @@ public class DriveTrain extends SubsystemBase {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 3; // rad/s
     //Turn Constraints
     public static double MIN_ROT_SPEED = 0.0;
-    public static double TURN_SPEED_P = 0.24;
+    public static double TURN_SPEED_P = 0.19;
     public static double MAX_TURN_SPEED = 10;
     public static double TOLERANCE = 0.1;
     //Module Mappings / Measurements
-    private static final double WHEEL_DIST_TO_CENTER = 0.254; //m
+    private static final double WHEEL_DIST_TO_CENTER = 0.29; //m
 
     private final Gyro gyro;
     //Modules
@@ -98,10 +99,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, -4970);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -5531);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -2754);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -3485);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 1149 + 2048);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 613+ 2048);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 3407+ 2048);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 6800+ 2048);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -113,12 +114,12 @@ public class DriveTrain extends SubsystemBase {
 
         this.holonomicDriveController = new HolonomicDriveController(
                 //PID FOR X DISTANCE (kp of 1 = 1m/s extra velocity / m of error)
-                new PIDController(0.6, 0.001, 0),
+                new PIDController(0.8, 0.001, 0),
                 //PID FOR Y DISTANCE (kp of 1.2 = 1.2m/s extra velocity / m of error)
-                new PIDController(1, 0.003, 0),
+                new PIDController(0.8, 0.001, 0),
                 //PID FOR ROTATION (kp of 1 = 1rad/s extra velocity / rad of error)
-                new ProfiledPIDController(2, 0.001, 0,
-                        new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED, MAX_ANGULAR_ACCELERATION))
+                new ProfiledPIDController(0.1, 0.012, 0,
+                        new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED * 5, MAX_ANGULAR_ACCELERATION * 5))
         );
 
         loggingTables[0] = new RSTable("FL", tab, new RSTileOptions(3, 4, 0, 0));
@@ -163,7 +164,7 @@ public class DriveTrain extends SubsystemBase {
             return Math.signum(vel) * MIN_ROT_SPEED;
         }
 
-        return Math.signum(vel) * Math.min(Math.abs(vel), MAX_SPEED);
+        return Math.signum(vel) * (Math.min(Math.abs(vel), MAX_SPEED) + 0.2);
     }
 
     public void setSwerveModuleAngle(double angle) {

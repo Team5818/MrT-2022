@@ -85,5 +85,6 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() - 200)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 200)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new SetFlywheelSpeed(5000));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7).whenPressed(new TestPathPlanner("aDvAnCed"));
     }
 }

@@ -33,6 +33,7 @@ public class ShootingTables {
 
         angleTable.addValue(2.684, 12.6);
         angleTable.addValue(1.2, 9.36);
+        angleTable.addValue(4.62, 14.261);
 
         return angleTable;
     }
@@ -41,7 +42,9 @@ public class ShootingTables {
         var speedTable = new InterpolationTable();
 
         speedTable.addValue(2.684, 7000);
-        speedTable.addValue(1.2, 6000);
+        speedTable.addValue(4.62, 9400);
+        speedTable.addValue(1.2, 5700);
+        speedTable.addValue(1.2, 5600);
 
         return speedTable;
     }

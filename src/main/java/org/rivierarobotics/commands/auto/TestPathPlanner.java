@@ -23,13 +23,14 @@ public class TestPathPlanner extends CommandBase {
     @Override
     public void initialize() {
         this.trajectoryFollower = new TrajectoryFollower(
-                PathPlanner.loadPath(trajectoryJSON, 0.5, 0.25, false),
+                PathPlanner.loadPath(trajectoryJSON, 2, 0.75, false),
                 true, gyro, driveTrain
         );
     }
 
     @Override
     public void execute() {
+
         trajectoryFollower.followController();
     }
 

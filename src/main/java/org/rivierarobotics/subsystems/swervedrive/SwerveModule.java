@@ -80,8 +80,8 @@ public class SwerveModule {
     private final WPI_TalonSRX steeringMotor;
 
     //Thread-Safe angles to reduce CAN usage
-    private AtomicReference<Double> swerveAngle = new AtomicReference<>(0.0);
-    private AtomicReference<Double> swerveSpeed = new AtomicReference<>(0.0);
+    private final AtomicReference<Double> swerveAngle = new AtomicReference<>(0.0);
+    private final AtomicReference<Double> swerveSpeed = new AtomicReference<>(0.0);
 
     /**
      * Constructs a SwerveModule.

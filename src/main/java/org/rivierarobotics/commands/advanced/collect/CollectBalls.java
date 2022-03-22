@@ -47,7 +47,6 @@ public class CollectBalls extends SequentialCommandGroup {
                         new SequentialCommandGroup(
                                 new ParallelDeadlineGroup(
                                         new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),
-                                        new SetBeltVoltage(COLLECT_VOLTAGE),
                                         new SetIntakeVoltage(INTAKE_VOLTAGE),
                                         new Eject(FloppaActuator.getInstance().getAngle(), MINIWHEEL_VOLTAGE, true)
                                 )

@@ -23,33 +23,44 @@ package org.rivierarobotics.commands.basic.shoot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShooterLocations;
+import org.rivierarobotics.subsystems.shoot.ShootingTables;
+import org.rivierarobotics.subsystems.vision.Limelight;
 
-public class SetFloppaPosition extends CommandBase {
-    private final double flywheelRads;
+public class SetFloppaLimelight extends CommandBase {
     private final FloppaActuator floppasActuator;
-    public SetFloppaPosition(double flywheelRads) {
-        this.flywheelRads = flywheelRads;
+    private final FloppaFlywheels floppaFlywheels;
+    private final boolean isLimelight;
+    private final double ang;
+    private final double speed;
+    public SetFloppaLimelight(boolean isLimelight, double ang, double speed) {
         this.floppasActuator = FloppaActuator.getInstance();
-        addRequirements(floppasActuator);
+        this.floppaFlywheels = FloppaFlywheels.getInstance();
+        this.isLimelight = isLimelight;
+        this.ang = ang;
+        this.speed = speed;
+        addRequirements(floppasActuator, floppaFlywheels);
     }
 
-    public SetFloppaPosition(ShooterLocations preset) {
-        this(preset.floppaAngle);
+    public SetFloppaLimelight(boolean isLimelight) {
+        this(isLimelight, 0,0);
     }
 
     @Override
     public void initialize() {
-        this.floppasActuator.setFloppaAngle(flywheelRads);
+        if(isLimelight) {
+            this.floppasActuator.setFloppaAngle(ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
+            this.floppaFlywheels.setFlywheelSpeed(ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()));
+        } else {
+            this.floppasActuator.setFloppaAngle(ang);
+            this.floppaFlywheels.setFlywheelSpeed(speed);
+        }
+
     }
 
     @Override
     public void end(boolean interrupted) {
         //floppasActuator.setVoltage(0);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(floppasActuator.getAngle(), flywheelRads, 0.05);
     }
 }

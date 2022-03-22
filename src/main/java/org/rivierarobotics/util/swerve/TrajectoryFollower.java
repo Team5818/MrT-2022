@@ -36,6 +36,7 @@ import org.rivierarobotics.util.Gyro;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class TrajectoryFollower {
     public static Trajectory getTrajectoryFromPathweaver(String path) {
@@ -96,11 +97,7 @@ public class TrajectoryFollower {
             return true;
         }
 
-        if (trajectory != null){
-            return Timer.getFPGATimestamp() - this.startTime > this.trajectory.getTotalTimeSeconds();
-        } else {
-            return Timer.getFPGATimestamp() - this.startTime > this.pathPlannerTrajectory.getTotalTimeSeconds();
-        }
+        return Timer.getFPGATimestamp() - this.startTime > Objects.requireNonNullElse(trajectory, this.pathPlannerTrajectory).getTotalTimeSeconds();
     }
 
     /**
@@ -114,12 +111,14 @@ public class TrajectoryFollower {
         double timePassed = Timer.getFPGATimestamp() - this.startTime;
 
         var controls = trajectory == null ? followPathPlannerTrajectory(timePassed) : followTrajectory(timePassed);
-        driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, 0, true);
+
+        driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, DriveTrain.getInstance().getRotationSpeed(), false);
     }
 
     private ChassisSpeeds followPathPlannerTrajectory(double intTime) {
         var plannerState = (PathPlannerTrajectory.PathPlannerState) pathPlannerTrajectory.sample(intTime);
         Logging.robotShuffleboard.getTab("Field").setEntry("target pos", plannerState.poseMeters.toString());
+        DriveTrain.getInstance().setTargetRotationAngle(plannerState.holonomicRotation.getDegrees());
         return holonomicDriveController.calculate(
                 estimator.getRobotPose(),
                 plannerState,
@@ -130,7 +129,7 @@ public class TrajectoryFollower {
     private ChassisSpeeds followTrajectory(double intTime) {
         return holonomicDriveController.calculate(
                 estimator.getRobotPose(),
-                trajectory.sample(0),
+                trajectory.sample(intTime),
                 estimator.getRobotPose().getRotation()
         );
     }

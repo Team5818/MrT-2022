@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
+import java.util.Objects;
+
 // do not make this a subsystem please thank you
 public class IntakeSensors {
 
@@ -54,7 +56,8 @@ public class IntakeSensors {
     }
 
     public boolean distanceSensorHasBall(){
-        return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
+//        return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
+        return (Math.abs(distanceSensor.getValue()) < 2000);
     }
 
     public ColorSensorV3 getColorSensorV3(){
@@ -63,13 +66,13 @@ public class IntakeSensors {
 
     public boolean isTeamBall(){
 //        return this.testingAllianceColor == getBallColor();
-        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && getBallColor() == "blue") {
+        var bc = getBallColor();
+
+        if(bc.equals("no ball")) return true;
+
+        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && Objects.equals(bc, "blue")) {
             return true;
-        } else if (DriverStation.getAlliance() == DriverStation.Alliance.Red && getBallColor() == "red") {
-            return true;
-        } else {
-            return false;
-        }
+        } else return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
     }
 
     public String getBallColor() {

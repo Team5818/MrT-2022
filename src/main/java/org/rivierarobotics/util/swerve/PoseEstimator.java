@@ -66,11 +66,11 @@ public class PoseEstimator {
                 //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
                 //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01), //Vision Measurement stdev
-                .05
+                .01
         );
 
         var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleAtFixedRate(this::updateOdometry, 5, 100, TimeUnit.MILLISECONDS);
+        e.scheduleWithFixedDelay(this::updateOdometry, 5, 10, TimeUnit.MILLISECONDS);
     }
 
     public Pose2d getRobotPose() {

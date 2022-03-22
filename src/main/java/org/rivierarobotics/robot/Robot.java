@@ -54,6 +54,9 @@ import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import static org.rivierarobotics.subsystems.climb.ClimbPositions.HIGH;
 import static org.rivierarobotics.subsystems.climb.ClimbPositions.LOW;
 import static org.rivierarobotics.subsystems.climb.ClimbPositions.MID;
@@ -93,6 +96,12 @@ public class Robot extends TimedRobot {
         Shuffleboard.getTab("Autos").add(chooser);
 
         FieldMesh.getInstance();
+
+        var threader = Executors.newSingleThreadScheduledExecutor();
+        threader.scheduleAtFixedRate(new Thread(() -> {
+            DriveTrain.getInstance().updateSwerveStates();
+        }), 5,10, TimeUnit.MILLISECONDS);
+
     }
 
     boolean ran = false;
@@ -122,7 +131,8 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-//        if (DriverStation.isFMSAttached() || true) return;
+        Logging.robotShuffleboard.getTab("Field").setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
+        if (DriverStation.isFMSAttached() || true) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");
@@ -169,6 +179,12 @@ public class Robot extends TimedRobot {
         limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());
 
+        var cc = CommandScheduler.getInstance().requiring(FloppaActuator.getInstance());
+        if(cc != null) {
+            limeLight.setEntry("CC FLOP", cc.getName());
+        }
+
+
         var redBalls = MLcore.getDetectedObjects().get("red");
         if (redBalls != null && redBalls.size() > 0) {
             var ball = redBalls.get(0);
@@ -200,7 +216,7 @@ public class Robot extends TimedRobot {
         limeLight.setEntry("LL Assist Angle", Limelight.getInstance().getShootingAssistAngle());
         limeLight.setEntry("Correct Position", Limelight.getInstance().getLLAbsPose().toString());
         limeLight.setEntry("Target Ang", ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
-        limeLight.setEntry("Target Speed", ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
+        limeLight.setEntry("Target Speed", ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()));
 
 
         limeLight = sb.getTab("LL");
@@ -255,7 +271,7 @@ public class Robot extends TimedRobot {
 
     private void resetRobotPoseAndGyro() {
         Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().getPoseEstimator().updateRobotPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
 
     private void initializeDefaultCommands() {
@@ -265,16 +281,11 @@ public class Robot extends TimedRobot {
     }
 
     private void initializeCustomLoops() {
-        addPeriodic(() -> {
-            DriveTrain.getInstance().periodicLogging();
-        }, 0.5, 0.0);
+//        addPeriodic(() -> {
+//            DriveTrain.getInstance().periodicLogging();
+//        }, 0.5, 0.0);
 
         addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
-
-        //DO NOT REMOVE - DEPENDENCY OF THE SWERVES
-        addPeriodic(() -> {
-            DriveTrain.getInstance().updateSwerveStates();
-        }, 0.02, 0.01);
     }
 
     @Override

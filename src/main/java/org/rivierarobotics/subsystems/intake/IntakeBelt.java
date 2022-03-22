@@ -48,5 +48,4 @@ public class IntakeBelt extends SubsystemBase {
     public void setMiniWheelMotorVoltage(double v) {
         miniWheelMotor.setVoltage(v);
     }
-
 }

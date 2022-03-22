@@ -20,10 +20,13 @@
 
 package org.rivierarobotics.commands.advanced.shoot;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.FlywheelTest;
@@ -38,11 +41,14 @@ public class Eject extends CommandBase {
 
     double floppaPosition, miniwheelVoltage, flywheelSpeed;
     private boolean isEjectPos = true;
+    private boolean firstRun = false;
+    private boolean shootBadBall = false;
     boolean isCollect;
 
     FloppaActuator floppaActuator;
     FloppaFlywheels floppaFlywheels;
     IntakeBelt intakeBelt;
+    private double startTime = 0.0;
 
     public Eject(double floppaPosition, double miniwheelVoltage, boolean isCollect, double flywheelSpeed){
         floppaActuator = FloppaActuator.getInstance();
@@ -56,7 +62,8 @@ public class Eject extends CommandBase {
 
         addRequirements(
                 floppaActuator,
-                floppaFlywheels
+                floppaFlywheels,
+                intakeBelt
         );
     }
 
@@ -67,25 +74,62 @@ public class Eject extends CommandBase {
     @Override
     public void initialize() {
         floppaFlywheels.setFlywheelSpeed(flywheelSpeed);
+        isEjectPos = true;
+        firstRun = false;
+        shootBadBall = false;
     }
+
+    private void startTimer() {
+        startTime = Timer.getFPGATimestamp();
+    }
+
+    private boolean timerFinished(double waitTime) {
+        return Timer.getFPGATimestamp() - startTime >= waitTime;
+    }
+
+
 
     @Override
     public void execute(){
-        if(!IntakeSensors.getInstance().isTeamBall() && !isEjectPos){
-            floppaActuator.setFloppaAngle(0);
+        SmartDashboard.putBoolean("SHOULD DO THINGS", !IntakeSensors.getInstance().isTeamBall() && !isEjectPos);
+        SmartDashboard.putBoolean("BAD BALL", shootBadBall);
+
+        if(!IntakeSensors.getInstance().isTeamBall() && !isEjectPos) {
+            floppaActuator.setFloppaAngle(1);
             if(isCollect){
                 intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
-                floppaFlywheels.setVoltage(4);
+                floppaFlywheels.setVoltage(8);
+            } else {
+                shootBadBall = true;
+                intakeBelt.setBeltVoltage(0);
+                intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
+                floppaFlywheels.setVoltage(0);
+                startTimer();
             }
             isEjectPos = true;
+            startTimer();
         }
-        else if(isEjectPos){
+        else if(isEjectPos) {
+            if(!timerFinished(0.25) && !firstRun) return;
+            if((shootBadBall && !timerFinished(0.5)) && !firstRun) return;
+
             isEjectPos = false;
-            floppaActuator.setFloppaAngle(floppaPosition);
+            if(!shootBadBall) {
+                floppaActuator.setFloppaAngle(floppaPosition);
+            } else {
+                floppaFlywheels.setFlywheelSpeed(flywheelSpeed);
+            }
             intakeBelt.setMiniWheelMotorVoltage(miniwheelVoltage);
             if(isCollect){
+                floppaActuator.setFloppaAngle(0);
                 floppaFlywheels.setVoltage(0);
             }
+            if(!isCollect) {
+                intakeBelt.setBeltVoltage(-7);
+            } else {
+                intakeBelt.setBeltVoltage(CollectBalls.COLLECT_VOLTAGE);
+            }
+            firstRun = true;
         }
     }
 }

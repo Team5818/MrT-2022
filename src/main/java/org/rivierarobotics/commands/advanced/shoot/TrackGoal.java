@@ -55,7 +55,7 @@ public class TrackGoal extends CommandBase {
             if(isAuto) {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
-            this.storedTx = lime.getTx() + (13 / lime.getDistance());
+            this.storedTx = lime.getTx() - (16 / lime.getDistance());
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }
     }
