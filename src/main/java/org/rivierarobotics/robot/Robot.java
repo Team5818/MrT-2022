@@ -191,6 +191,7 @@ public class Robot extends TimedRobot {
         shoot.setEntry("Detected Blue", intakeSensors.getColorSensorV3().getColor().blue);
         shoot.setEntry("ball color", intakeSensors.getBallColor());
         shoot.setEntry("Is Alliance Ball", intakeSensors.isTeamBall());
+        shoot.setEntry("alliance color", DriverStation.getAlliance().toString());
 
         limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
         limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());

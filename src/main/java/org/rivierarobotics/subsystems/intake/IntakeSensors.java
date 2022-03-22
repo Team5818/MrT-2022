@@ -62,8 +62,14 @@ public class IntakeSensors {
     }
 
     public boolean isTeamBall(){
-        return this.testingAllianceColor == getBallColor();
-//        return (DriverStation.getAlliance() == DriverStation.Alliance.Blue && getBallColor() == "blue") || (DriverStation.getAlliance() == DriverStation.Alliance.Red && getBallColor() == "red");
+//        return this.testingAllianceColor == getBallColor();
+        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && getBallColor() == "blue") {
+            return true;
+        } else if (DriverStation.getAlliance() == DriverStation.Alliance.Red && getBallColor() == "red") {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public String getBallColor() {
