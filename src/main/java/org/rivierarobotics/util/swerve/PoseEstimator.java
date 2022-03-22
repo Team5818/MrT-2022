@@ -65,8 +65,7 @@ public class PoseEstimator {
                 new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.01),
                 //Standard deviations of the vision measurements. Increase these numbers to trust global measurements
                 //from vision less. This matrix is in the form [x, y, theta]^T, with units in meters and radians.
-                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01), //Vision Measurement stdev
-                .01
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01) //Vision Measurement stdev
         );
 
         var e = Executors.newSingleThreadScheduledExecutor();
@@ -82,7 +81,8 @@ public class PoseEstimator {
         resetLock.lock();
         SwerveModuleState[] swerveModuleStates = Arrays.stream(swerveModules).map(SwerveModule::getState).toArray(a -> new SwerveModuleState[swerveModules.length]);
         try {
-            var pose2d = swerveDrivePoseEstimator.update(
+            var pose2d = swerveDrivePoseEstimator.updateWithTime(
+                    Timer.getFPGATimestamp(),
                     gyro.getRotation2d(),
                     swerveModuleStates
             );
