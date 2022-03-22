@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.auto;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class TestCollectAuto extends SequentialCommandGroup {
-
     public TestCollectAuto() {
         addCommands(
                 // deploy intake

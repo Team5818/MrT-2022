@@ -28,8 +28,8 @@ import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
 public class EjectCollect extends CommandBase {
-
-    double miniwheelVoltage, beltVoltage;
+    private final double miniwheelVoltage;
+    private final double beltVoltage;
     private boolean isEjectPos = true;
     private boolean firstRun = false;
 
@@ -38,30 +38,30 @@ public class EjectCollect extends CommandBase {
     private final FloppaFlywheels floppaFlywheels;
     private double startTime = 0.0;
 
-    public EjectCollect(double beltVoltage, double miniwheelVoltage){
-        floppaActuator = FloppaActuator.getInstance();
-        floppaFlywheels = FloppaFlywheels.getInstance();
-        intakeBelt = IntakeBelt.getInstance();
+    public EjectCollect(double beltVoltage, double miniwheelVoltage) {
+        this.floppaActuator = FloppaActuator.getInstance();
+        this.floppaFlywheels = FloppaFlywheels.getInstance();
+        this.intakeBelt = IntakeBelt.getInstance();
 
         this.miniwheelVoltage = miniwheelVoltage;
         this.beltVoltage = beltVoltage;
 
         addRequirements(
-                floppaActuator,
-                floppaFlywheels,
-                intakeBelt
+            floppaActuator,
+            floppaFlywheels,
+            intakeBelt
         );
     }
 
     @Override
     public void initialize() {
         floppaActuator.setFloppaAngle(0);
-        isEjectPos = true;
-        firstRun = false;
+        this.isEjectPos = true;
+        this.firstRun = false;
     }
 
     private void startTimer() {
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     private boolean timerFinished(double waitTime) {
@@ -69,21 +69,22 @@ public class EjectCollect extends CommandBase {
     }
 
     @Override
-    public void execute(){
-        if(!IntakeSensors.getInstance().isTeamBall() && !isEjectPos) {
+    public void execute() {
+        if (!IntakeSensors.getInstance().isTeamBall() && !isEjectPos) {
             floppaActuator.setFloppaAngle(0);
             intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
             floppaFlywheels.setVoltage(8);
-            isEjectPos = true;
+            this.isEjectPos = true;
             startTimer();
-        }
-        else if(isEjectPos) {
-            if(!timerFinished(0.25) && !firstRun) return;
-            isEjectPos = false;
+        } else if (isEjectPos) {
+            if (!timerFinished(0.25) && !firstRun) {
+                return;
+            }
+            this.isEjectPos = false;
             floppaFlywheels.setVoltage(0);
             intakeBelt.setMiniWheelMotorVoltage(miniwheelVoltage);
             intakeBelt.setBeltVoltage(beltVoltage);
-            firstRun = true;
+            this.firstRun = true;
         }
     }
 }

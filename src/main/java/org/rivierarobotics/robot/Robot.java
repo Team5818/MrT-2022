@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
         var threader = Executors.newSingleThreadScheduledExecutor();
         threader.scheduleWithFixedDelay(new Thread(() -> {
             DriveTrain.getInstance().updateSwerveStates();
-        }), 7,10, TimeUnit.MILLISECONDS);
+        }), 7, 10, TimeUnit.MILLISECONDS);
     }
 
     @Override

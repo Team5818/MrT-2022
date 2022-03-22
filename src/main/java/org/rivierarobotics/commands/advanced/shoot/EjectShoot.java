@@ -30,7 +30,6 @@ import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
 public class EjectShoot extends CommandBase {
-
     private double floppaPosition;
     private double flywheelSpeed;
     private final double miniwheelVoltage;
@@ -39,15 +38,15 @@ public class EjectShoot extends CommandBase {
     private boolean useLimelight = false;
     private final double beltVoltage;
 
-    FloppaActuator floppaActuator;
-    FloppaFlywheels floppaFlywheels;
-    IntakeBelt intakeBelt;
+    private final FloppaActuator floppaActuator;
+    private final FloppaFlywheels floppaFlywheels;
+    private final IntakeBelt intakeBelt;
     private double startTime = 0.0;
 
     public EjectShoot(double floppaPosition, double miniwheelVoltage, double flywheelSpeed, double beltVoltage) {
-        floppaActuator = FloppaActuator.getInstance();
-        floppaFlywheels = FloppaFlywheels.getInstance();
-        intakeBelt = IntakeBelt.getInstance();
+        this.floppaActuator = FloppaActuator.getInstance();
+        this.floppaFlywheels = FloppaFlywheels.getInstance();
+        this.intakeBelt = IntakeBelt.getInstance();
 
         this.floppaPosition = floppaPosition;
         this.miniwheelVoltage = miniwheelVoltage;
@@ -55,23 +54,23 @@ public class EjectShoot extends CommandBase {
         this.beltVoltage = beltVoltage;
 
         addRequirements(
-                floppaActuator,
-                floppaFlywheels,
-                intakeBelt
+            floppaActuator,
+            floppaFlywheels,
+            intakeBelt
         );
     }
 
     public EjectShoot(double miniwheelVoltage, double beltVoltage) {
-        this(0,miniwheelVoltage, 0, beltVoltage);
-        useLimelight = true;
+        this(0, miniwheelVoltage, 0, beltVoltage);
+        this.useLimelight = true;
     }
 
     @Override
     public void initialize() {
-        isEjectPos = true;
-        firstRun = false;
+        this.isEjectPos = true;
+        this.firstRun = false;
 
-        if(useLimelight) {
+        if (useLimelight) {
             this.flywheelSpeed = ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance());
             this.floppaPosition = ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance());
         }
@@ -81,7 +80,7 @@ public class EjectShoot extends CommandBase {
     }
 
     private void startTimer() {
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     private boolean timerFinished(double waitTime) {
@@ -95,15 +94,17 @@ public class EjectShoot extends CommandBase {
             intakeBelt.setBeltVoltage(0);
             intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
             floppaFlywheels.setVoltage(0);
-            isEjectPos = true;
+            this.isEjectPos = true;
             startTimer();
         } else if (isEjectPos) {
-            if (!timerFinished(0.5) && !firstRun) return;
-            isEjectPos = false;
+            if (!timerFinished(0.5) && !firstRun) {
+                return;
+            }
+            this.isEjectPos = false;
             floppaFlywheels.setFlywheelSpeed(flywheelSpeed);
             intakeBelt.setMiniWheelMotorVoltage(miniwheelVoltage);
             intakeBelt.setBeltVoltage(beltVoltage);
-            firstRun = true;
+            this.firstRun = true;
         }
     }
 }

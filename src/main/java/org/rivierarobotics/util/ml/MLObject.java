@@ -87,9 +87,5 @@ public class MLObject {
 //        xAngle.put(38., 48.36);
 //        xAngle.put(24., 51.34);
 //        xAngle.put(7., 53.972);
-
     }
-
-
-
 }
