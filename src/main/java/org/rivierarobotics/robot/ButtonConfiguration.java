@@ -26,18 +26,14 @@ import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.advanced.shoot.Eject;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
 import org.rivierarobotics.commands.auto.TestPathPlanner;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
-import org.rivierarobotics.commands.basic.climb.IdleMode;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
-import org.rivierarobotics.commands.basic.drive.SetDriveVelocity;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
 import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
-import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 

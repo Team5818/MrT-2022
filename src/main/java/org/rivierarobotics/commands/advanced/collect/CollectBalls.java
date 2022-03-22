@@ -25,16 +25,11 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import org.rivierarobotics.commands.advanced.shoot.Eject;
-import org.rivierarobotics.commands.basic.collect.SetBeltAndMiniwheelVoltage;
-import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
-import org.rivierarobotics.commands.basic.collect.SetBeltVoltageWithTimeout;
+import org.rivierarobotics.commands.advanced.shoot.EjectCollect;
 import org.rivierarobotics.commands.basic.collect.SetIntakeVoltage;
-import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakeRollers;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
-import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 
 public class CollectBalls extends SequentialCommandGroup {
     public static final double COLLECT_VOLTAGE = -9;
@@ -48,7 +43,7 @@ public class CollectBalls extends SequentialCommandGroup {
                                 new ParallelDeadlineGroup(
                                         new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),
                                         new SetIntakeVoltage(INTAKE_VOLTAGE),
-                                        new Eject(FloppaActuator.getInstance().getAngle(), MINIWHEEL_VOLTAGE, true)
+                                        new EjectCollect(INTAKE_VOLTAGE, MINIWHEEL_VOLTAGE)
                                 )
                         ),
                         new WaitCommand(0.1),

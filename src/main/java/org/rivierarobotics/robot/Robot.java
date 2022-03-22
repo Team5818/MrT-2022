@@ -22,7 +22,6 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -98,10 +97,9 @@ public class Robot extends TimedRobot {
         FieldMesh.getInstance();
 
         var threader = Executors.newSingleThreadScheduledExecutor();
-        threader.scheduleAtFixedRate(new Thread(() -> {
+        threader.scheduleWithFixedDelay(new Thread(() -> {
             DriveTrain.getInstance().updateSwerveStates();
-        }), 5,10, TimeUnit.MILLISECONDS);
-
+        }), 7,10, TimeUnit.MILLISECONDS);
     }
 
     boolean ran = false;
@@ -132,7 +130,7 @@ public class Robot extends TimedRobot {
 
     private void shuffleboardLogging() {
         Logging.robotShuffleboard.getTab("Field").setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
-        if (DriverStation.isFMSAttached() || true) return;
+        if(ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) return;
         var sb = Logging.robotShuffleboard;
         var drive = sb.getTab("Drive");
         var climb = sb.getTab("Climb");

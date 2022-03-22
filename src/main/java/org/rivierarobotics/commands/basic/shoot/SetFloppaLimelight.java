@@ -21,10 +21,8 @@
 package org.rivierarobotics.commands.basic.shoot;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
-import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
