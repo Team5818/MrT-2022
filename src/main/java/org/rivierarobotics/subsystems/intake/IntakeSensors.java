@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems.intake;
 
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class IntakeSensors {
 
     private final static double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
+    private final String testingAllianceColor = "red";
 
     private static IntakeSensors intakeSensors;
     public static IntakeSensors getInstance() {
@@ -55,17 +57,23 @@ public class IntakeSensors {
         return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
     }
 
+    public ColorSensorV3 getColorSensorV3(){
+        return this.colorSensorV3;
+    }
 
-    public double getColorValue(String whatColor) {
+    public boolean isTeamBall(){
+        return this.testingAllianceColor == getBallColor();
+//        return (DriverStation.getAlliance() == DriverStation.Alliance.Blue && getBallColor() == "blue") || (DriverStation.getAlliance() == DriverStation.Alliance.Red && getBallColor() == "red");
+    }
+
+    public String getBallColor() {
         Color color = colorSensorV3.getColor();
-        if(whatColor.equalsIgnoreCase("red")) {
-            return color.red;
-        } else if(whatColor.equalsIgnoreCase("green")) {
-            return color.green;
-        } else if(whatColor.equalsIgnoreCase("blue")) {
-            return color.blue;
+        if(color.red > 0.35) {
+            return "red";
+        } else if(color.blue > 0.35) {
+            return "blue";
         } else {
-            return -1; //For troubleshooting purposes, if you are getting -1 then something's wrong.
+            return "no ball";
         }
     }
 

@@ -138,6 +138,7 @@ public class Robot extends TimedRobot {
         var MLcore = MLCore.getInstance();
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
+        var intakeSensors = IntakeSensors.getInstance();
         //field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -165,10 +166,6 @@ public class Robot extends TimedRobot {
         climb.setEntry("Kp", cl.kp);
         climb.setEntry("velocity", cl.getVelocity());
 
-        collect.setEntry("RedValue", IntakeSensors.getInstance().getColorValue("red"));
-        collect.setEntry("GreenValue", IntakeSensors.getInstance().getColorValue("green"));
-        collect.setEntry("BlueValue", IntakeSensors.getInstance().getColorValue("blue"));
-
         limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
         limeLight.setEntry("distance", Limelight.getInstance().getDistance());
 
@@ -189,6 +186,11 @@ public class Robot extends TimedRobot {
         shoot.setEntry("target speed", floppShooter.getTargetVelocity());
         shoot.setEntry("actuator angle", floppActuator.getAngle());
         shoot.setEntry("actuator tick raw", floppActuator.getTicks());
+        shoot.setEntry("Detected Red", intakeSensors.getColorSensorV3().getColor().red);
+        shoot.setEntry("Detected Green", intakeSensors.getColorSensorV3().getColor().green);
+        shoot.setEntry("Detected Blue", intakeSensors.getColorSensorV3().getColor().blue);
+        shoot.setEntry("ball color", intakeSensors.getBallColor());
+        shoot.setEntry("Is Alliance Ball", intakeSensors.isTeamBall());
 
         limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
         limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
