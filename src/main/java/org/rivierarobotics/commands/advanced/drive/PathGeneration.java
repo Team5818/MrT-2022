@@ -46,8 +46,8 @@ public class PathGeneration extends CommandBase {
         var currentX = driveTrain.getPoseEstimator().getRobotPose().getX();
         var currentY = driveTrain.getPoseEstimator().getRobotPose().getY();
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, currentX + relativeX,
-                currentY + relativeY, true, 0, driveTrain.getSwerveDriveKinematics());
-        trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+            currentY + relativeY, true, 0, driveTrain.getSwerveDriveKinematics());
+        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
     }
 
     @Override

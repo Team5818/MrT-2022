@@ -33,13 +33,13 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import java.util.ArrayList;
 
 public class FloppaFlywheels extends SubsystemBase {
+    private static FloppaFlywheels INSTANCE;
 
-    private static FloppaFlywheels floppaFlywheels;
     public static FloppaFlywheels getInstance() {
-        if (floppaFlywheels == null) {
-            floppaFlywheels = new FloppaFlywheels();
+        if (INSTANCE == null) {
+            INSTANCE = new FloppaFlywheels();
         }
-        return floppaFlywheels;
+        return INSTANCE;
     }
 
     private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.08, 0.0, 5.6, 0.047);

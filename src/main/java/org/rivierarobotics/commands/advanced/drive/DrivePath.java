@@ -30,7 +30,7 @@ public class DrivePath extends CommandBase {
     private final DriveTrain driveTrain;
     private TrajectoryFollower trajectoryFollower;
 
-    public DrivePath (String path) {
+    public DrivePath(String path) {
         this.path = path;
         this.driveTrain = DriveTrain.getInstance();
         addRequirements(driveTrain);

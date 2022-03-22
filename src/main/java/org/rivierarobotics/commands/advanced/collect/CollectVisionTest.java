@@ -29,7 +29,7 @@ import org.rivierarobotics.util.ml.MLObject;
 public class CollectVisionTest extends CommandBase {
 //    public MLObject ball;
 //    public final MLCore mlCore;
-    public final BoundingBox defaultBallBox = new BoundingBox(0,0,0,0);
+    public final BoundingBox defaultBallBox = new BoundingBox(0, 0, 0, 0);
 
     public CollectVisionTest() {
 //        this.mlCore = MLCore.getInstance();
@@ -50,13 +50,14 @@ public class CollectVisionTest extends CommandBase {
 
         try {
             ball = core.getDetectedObjects().get("red").get(0);
-        } catch (NullPointerException nullPointerException){
+        } catch (NullPointerException ignored) {
+            // Padding for checkstyle
         }
 
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationY);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallY", ball.relativeLocationX);
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target Ball Distance", ball.relativeLocationDistance);
-        Logging.robotShuffleboard.getTab("ML").setEntry("TX", ball.ty);
-        Logging.robotShuffleboard.getTab("ML").setEntry("TY", ball.tx);
+        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationY)
+                .setEntry("Target BallY", ball.relativeLocationX)
+                .setEntry("Target Ball Distance", ball.relativeLocationDistance)
+                .setEntry("TX", ball.ty)
+                .setEntry("TY", ball.tx);
     }
 }

@@ -55,7 +55,7 @@ public class DriveToClosest extends SequentialCommandGroup {
         MLCore core = MLCore.getInstance();
         var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
         var balls = core.getDetectedObjects().get(ballColor);
-        if(balls == null || balls.isEmpty()) {
+        if (balls == null || balls.isEmpty()) {
             return;
         }
 
@@ -67,7 +67,7 @@ public class DriveToClosest extends SequentialCommandGroup {
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
 
-        trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
     }
 
     @Override

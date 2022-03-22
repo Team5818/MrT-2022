@@ -23,12 +23,13 @@ package org.rivierarobotics.subsystems.climb;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimbClaws extends SubsystemBase {
-    private static ClimbClaws pistons;
+    private static ClimbClaws INSTANCE;
+
     public static ClimbClaws getInstance() {
-        if (pistons == null) {
-            pistons = new ClimbClaws();
+        if (INSTANCE == null) {
+            INSTANCE = new ClimbClaws();
         }
-        return pistons;
+        return INSTANCE;
     }
 
     private ClimbClaws() {

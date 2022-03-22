@@ -79,4 +79,7 @@ public class SwerveUtil {
 
         return new SwerveModuleState(targetSpeed, new Rotation2d(targetAng));
     }
+
+    private SwerveUtil() {
+    }
 }

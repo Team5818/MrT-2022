@@ -33,36 +33,28 @@ import org.rivierarobotics.util.StatusFrameDemolisher;
 
 import java.util.ArrayList;
 
-import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ROTATE_A;
-import static org.rivierarobotics.subsystems.MotorIDs.CLIMB_ROTATE_B;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.MAX_CLIMB_ACCELERATION;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.MAX_CLIMB_VELOCITY;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.MOTOR_ANGLE_TO_TICK;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.MOTOR_TICK_TO_ANGLE;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.TIMEOUT_MS;
-
 public class Climb extends SubsystemBase {
-    private static Climb climbMotors;
+    private static Climb INSTANCE;
 
     public static Climb getInstance() {
-        if (climbMotors == null) {
-            climbMotors = new Climb();
+        if (INSTANCE == null) {
+            INSTANCE = new Climb();
         }
-        return climbMotors;
+        return INSTANCE;
     }
+
+    // All of these values are bs change them later
+    public static final double KP = 0.2;
+    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(new ArrayList<>(), true, ClimbConstants.MAX_CLIMB_VELOCITY, ClimbConstants.MAX_CLIMB_ACCELERATION, 100, 0, ClimbConstants.TIMEOUT_MS, 10);
+    private static final PIDConfig CM_MM_PID = new PIDConfig(KP, 0, 0, 0);
 
     private final WPI_TalonFX climbMaster;
     private final WPI_TalonFX climbFollower;
-
-    //all of these values are bs change them later
-    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(new ArrayList<>(), true, MAX_CLIMB_VELOCITY, MAX_CLIMB_ACCELERATION, 100, 0, TIMEOUT_MS, 10);
-    public static final double kp = 0.2;
-    private static final PIDConfig CM_MM_PID = new PIDConfig(kp, 0, 0, 0);
     private boolean play = true;
 
     private Climb() {
-        this.climbMaster = new WPI_TalonFX(CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
-        this.climbFollower = new WPI_TalonFX(CLIMB_ROTATE_B, MotorIDs.CANFD_NAME);
+        this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
+        this.climbFollower = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B, MotorIDs.CANFD_NAME);
         climbFollower.follow(climbMaster);
         setCoast(false);
         climbMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -71,9 +63,9 @@ public class Climb extends SubsystemBase {
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, CM_MM_PID, CM_MM_CONFIG, climbMaster);
-        climbMaster.configFeedbackNotContinuous(true, TIMEOUT_MS);
+        climbMaster.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbMaster.setSensorPhase(false);
-        climbFollower.configFeedbackNotContinuous(true, TIMEOUT_MS);
+        climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbFollower.setSensorPhase(false);
     }
 
@@ -88,7 +80,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void setPosition(double radians) {
-        climbMaster.set(ControlMode.MotionMagic, radians * MOTOR_ANGLE_TO_TICK);
+        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK);
     }
 
     public void setPlay(boolean play) {
@@ -105,7 +97,7 @@ public class Climb extends SubsystemBase {
 
     public double getAngle() {
         var angle = climbMaster.getSensorCollection().getIntegratedSensorPosition();
-        return climbMaster.getSelectedSensorPosition() * MOTOR_TICK_TO_ANGLE;
+        return climbMaster.getSelectedSensorPosition() * ClimbConstants.MOTOR_TICK_TO_ANGLE;
     }
 
     public double getVelocity() {

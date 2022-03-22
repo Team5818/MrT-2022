@@ -30,10 +30,6 @@ import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-import static org.rivierarobotics.subsystems.climb.ClimbPositions.HIGH;
-import static org.rivierarobotics.subsystems.climb.ClimbPositions.LOW;
-import static org.rivierarobotics.subsystems.climb.ClimbPositions.MID;
-
 public class RunClimb extends SequentialCommandGroup {
     private static final double voltage = 9;
 
@@ -41,28 +37,28 @@ public class RunClimb extends SequentialCommandGroup {
         final ClimbPositions first;
         final ClimbPositions last;
         if (reversed) {
-            first = HIGH;
-            last = LOW;
+            first = ClimbPositions.HIGH;
+            last = ClimbPositions.LOW;
         } else {
-            last = HIGH;
-            first = LOW;
+            last = ClimbPositions.HIGH;
+            first = ClimbPositions.LOW;
         }
         addCommands(
                 //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(first)),
-                        new ClimbSetPosition(LOW, reversed)
+                        new ClimbSetPosition(ClimbPositions.LOW, reversed)
                 ),
                 new TogglePiston(first, true, 0),
                 new WaitCommand(0.25),
                 //new SetDriveVelocity(0,0,0),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(MID)),
+                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(ClimbPositions.MID)),
                         new InteruptableSetVoltage(reversed, voltage)),
                 new ClimbSetVoltage(reversed, 0),
-                new TogglePiston(MID, true, 0),
+                new TogglePiston(ClimbPositions.MID, true, 0),
 //                new WaitCommand(0.2),
-                new WaitPiston(MID, 0.5, 1, reversed),
+                new WaitPiston(ClimbPositions.MID, 0.5, 1, reversed),
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
 //                new InteruptableSetVoltage(reversed, voltage).withTimeout(0.9),
@@ -73,8 +69,8 @@ public class RunClimb extends SequentialCommandGroup {
 //                new WaitCommand(0.3),
                 new WaitPiston(last, 0.5, 1.0, reversed),
                 new ClimbSetVoltage(reversed, 0),
-                new TogglePiston(MID, false, 0),
-                new ClimbSetPosition(HIGH, reversed)
+                new TogglePiston(ClimbPositions.MID, false, 0),
+                new ClimbSetPosition(ClimbPositions.HIGH, reversed)
         );
     }
 }

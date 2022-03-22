@@ -27,6 +27,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 public class Sideways extends CommandBase {
     private final double time;
     private double starttime = 0;
+
     public Sideways(double time) {
         this.time = time;
         addRequirements(DriveTrain.getInstance());
@@ -34,8 +35,8 @@ public class Sideways extends CommandBase {
 
     @Override
     public void initialize() {
-        starttime = Timer.getFPGATimestamp();
-        DriveTrain.getInstance().drive(0,1,0, true);
+        this.starttime = Timer.getFPGATimestamp();
+        DriveTrain.getInstance().drive(0, 1, 0, true);
     }
 
     @Override
@@ -45,6 +46,6 @@ public class Sideways extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        DriveTrain.getInstance().drive(0,0,0,true);
+        DriveTrain.getInstance().drive(0, 0, 0, true);
     }
 }

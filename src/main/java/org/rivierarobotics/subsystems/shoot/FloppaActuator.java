@@ -31,15 +31,18 @@ import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
 import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
 
-
 public class FloppaActuator extends SubsystemBase {
-    public static FloppaActuator floppasActuator;
+    public static FloppaActuator INSTANCE;
 
     public static FloppaActuator getInstance() {
-        if (floppasActuator == null) {
-            floppasActuator = new FloppaActuator();
+        if (INSTANCE == null) {
+            INSTANCE = new FloppaActuator();
         }
-        return floppasActuator;
+        return INSTANCE;
+    }
+
+    public static double convertAngleToTicks(double angleInRads) {
+        return angleInRads + ShooterConstant.ACTUATOR_ZERO_TICKS;
     }
 
     private final PIDConfig actuatorConfig;
@@ -75,12 +78,8 @@ public class FloppaActuator extends SubsystemBase {
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 1000);
     }
 
-    public static double convertAngleToTicks(double angleInRads) {
-        return angleInRads + ShooterConstant.ACTUATOR_ZERO_TICKS;
-    }
-
     /**
-     * takes angle in radians setpoint should be in rotations and adjusted for gearing
+     * Takes angle in radians setpoint should be in rotations and adjusted for gearing.
      */
     public void setFloppaAngle(double angle) {
         var setpoint = convertAngleToTicks(angle);
@@ -94,7 +93,7 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     /**
-     * returns angle without gearing values possibly in rotations
+     * Returns angle without gearing values possibly in rotations.
      */
     public double getAngle() {
         return (actuatorMotor.getEncoder().getPosition() - ShooterConstant.ACTUATOR_ZERO_TICKS);

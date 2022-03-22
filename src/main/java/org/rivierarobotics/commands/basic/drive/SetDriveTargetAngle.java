@@ -25,6 +25,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
 public class SetDriveTargetAngle extends InstantCommand {
     private final double angle;
+
     public SetDriveTargetAngle(double angle) {
         this.angle = angle;
     }

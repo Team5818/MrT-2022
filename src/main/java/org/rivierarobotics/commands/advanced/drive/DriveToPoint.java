@@ -54,7 +54,7 @@ public class DriveToPoint extends CommandBase {
         var dtPose = driveTrain.getPoseEstimator().getRobotPose();
         var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, DriveTrain.getInstance().getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
-        trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class TrackGoal extends CommandBase {
     private final DriveTrain drive;
     private final Limelight lime;
     private double storedTx;
-    private Gyro gyro;
+    private final Gyro gyro;
     private final boolean isAuto;
 
     public TrackGoal() {
@@ -41,7 +41,9 @@ public class TrackGoal extends CommandBase {
         this.drive = DriveTrain.getInstance();
         this.lime = Limelight.getInstance();
         this.gyro = Gyro.getInstance();
-        if(isAuto) addRequirements(drive);
+        if (isAuto) {
+            addRequirements(drive);
+        }
     }
 
     @Override
@@ -52,7 +54,7 @@ public class TrackGoal extends CommandBase {
     @Override
     public void execute() {
         if (lime.getDetected()) {
-            if(isAuto) {
+            if (isAuto) {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
             this.storedTx = lime.getTx() - (16 / lime.getDistance());
@@ -68,6 +70,8 @@ public class TrackGoal extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         drive.setUseDriverAssist(false);
-        if(isAuto) drive.drive(0,0,0,true);
+        if (isAuto) {
+            drive.drive(0, 0, 0, true);
+        }
     }
 }

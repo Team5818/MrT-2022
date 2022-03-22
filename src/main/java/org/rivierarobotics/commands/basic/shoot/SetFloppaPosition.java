@@ -28,6 +28,7 @@ import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 public class SetFloppaPosition extends CommandBase {
     private final double flywheelRads;
     private final FloppaActuator floppasActuator;
+
     public SetFloppaPosition(double flywheelRads) {
         this.flywheelRads = flywheelRads;
         this.floppasActuator = FloppaActuator.getInstance();

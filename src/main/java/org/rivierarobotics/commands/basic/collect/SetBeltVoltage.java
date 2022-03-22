@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 
 public class SetBeltVoltage extends InstantCommand {
-
     private final IntakeBelt intakeBelt;
     private final double voltage;
+
     public SetBeltVoltage(double voltage) {
         this.intakeBelt = IntakeBelt.getInstance();
         this.voltage = voltage;

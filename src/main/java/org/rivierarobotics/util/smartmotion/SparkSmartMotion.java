@@ -28,12 +28,50 @@ import org.rivierarobotics.lib.shuffleboard.RSTab;
 
 
 public class SparkSmartMotion {
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, minVel, maxAcc, allowedErr;
+    /**
+     * Configures a SparkMax motor to use Smart Motion.
+     *
+     * @param motor motor to configure
+     * @param pidConfig pid config
+     * @param sparkMotionConfig spark max specific config
+     * @return pid controller
+     */
+    public static SparkMaxPIDController setupSmartMotion(CANSparkMax motor, PIDConfig pidConfig, SparkMotionConfig sparkMotionConfig) {
+        motor.restoreFactoryDefaults();
+        var mPidController = motor.getPIDController();
+
+        mPidController.setP(pidConfig.getP());
+        mPidController.setI(pidConfig.getI());
+        mPidController.setD(pidConfig.getD());
+        mPidController.setIZone(sparkMotionConfig.getIntegralZone());
+        mPidController.setFF(pidConfig.getF());
+        mPidController.setOutputRange(-pidConfig.getRange(), pidConfig.getRange());
+
+        mPidController.setSmartMotionMaxVelocity(sparkMotionConfig.getMaxVel(), 0);
+        mPidController.setSmartMotionMinOutputVelocity(sparkMotionConfig.getMinVel(), 0);
+        mPidController.setSmartMotionMaxAccel(sparkMotionConfig.getMaxAccel(), 0);
+        mPidController.setSmartMotionAllowedClosedLoopError(pidConfig.getTolerance(), 0);
+
+        motor.burnFlash();
+        return mPidController;
+    }
+
+    public double kP;
+    public double kI;
+    public double kD;
+    public double kIz;
+    public double kFF;
+    public double kMaxOutput;
+    public double kMinOutput;
+    public double maxVel;
+    public double minVel;
+    public double maxAcc;
+    public double allowedErr;
     private final RSTab tuningTab;
     private final SparkMaxPIDController pidController;
 
+
     /**
-     *
      * Constructs a SparkSmartMotion object for live tuning. Make sure to call
      * checkForPIDChanges periodically for this to work.
      *
@@ -45,17 +83,17 @@ public class SparkSmartMotion {
     public SparkSmartMotion(CANSparkMax motor, PIDConfig pidConfig, SparkMotionConfig sparkMotionConfig, RSTab tuningTab) {
         this.pidController = setupSmartMotion(motor, pidConfig, sparkMotionConfig);
 
-        kP = pidConfig.getP();
-        kI = pidConfig.getI();
-        kD = pidConfig.getD();
-        kIz = sparkMotionConfig.getIntegralZone();
-        kFF = pidConfig.getF();
-        kMaxOutput = pidConfig.getRange();
-        kMinOutput = -pidConfig.getRange();
-        minVel = sparkMotionConfig.getMinVel();
-        maxVel = sparkMotionConfig.getMaxVel();
-        maxAcc = sparkMotionConfig.getMaxAccel();
-        allowedErr = pidConfig.getTolerance();
+        this.kP = pidConfig.getP();
+        this.kI = pidConfig.getI();
+        this.kD = pidConfig.getD();
+        this.kIz = sparkMotionConfig.getIntegralZone();
+        this.kFF = pidConfig.getF();
+        this.kMaxOutput = pidConfig.getRange();
+        this.kMinOutput = -pidConfig.getRange();
+        this.minVel = sparkMotionConfig.getMinVel();
+        this.maxVel = sparkMotionConfig.getMaxVel();
+        this.maxAcc = sparkMotionConfig.getMaxAccel();
+        this.allowedErr = pidConfig.getTolerance();
 
         this.tuningTab = tuningTab;
 
@@ -93,15 +131,15 @@ public class SparkSmartMotion {
 
         if (p != kP) {
             pidController.setP(p);
-            kP = p;
+            this.kP = p;
         }
         if (i != kI) {
             pidController.setI(i);
-            kI = i;
+            this.kI = i;
         }
         if (d != kD) {
             pidController.setD(d);
-            kD = d;
+            this.kD = d;
         }
         if (iz != kIz) {
             pidController.setIZone(iz);
@@ -134,35 +172,7 @@ public class SparkSmartMotion {
         }
     }
 
-    public SparkMaxPIDController getPidController(){
+    public SparkMaxPIDController getPidController() {
         return pidController;
-    }
-
-    /**
-     * Configures a SparkMax motor to use Smart Motion.
-     *
-     * @param motor motor to configure
-     * @param pidConfig pid config
-     * @param sparkMotionConfig spark max specific config
-     * @return pid controller
-     */
-    public static SparkMaxPIDController setupSmartMotion(CANSparkMax motor, PIDConfig pidConfig, SparkMotionConfig sparkMotionConfig) {
-        motor.restoreFactoryDefaults();
-        var mPidController = motor.getPIDController();
-
-        mPidController.setP(pidConfig.getP());
-        mPidController.setI(pidConfig.getI());
-        mPidController.setD(pidConfig.getD());
-        mPidController.setIZone(sparkMotionConfig.getIntegralZone());
-        mPidController.setFF(pidConfig.getF());
-        mPidController.setOutputRange(-pidConfig.getRange(), pidConfig.getRange());
-
-        mPidController.setSmartMotionMaxVelocity(sparkMotionConfig.getMaxVel(), 0);
-        mPidController.setSmartMotionMinOutputVelocity(sparkMotionConfig.getMinVel(), 0);
-        mPidController.setSmartMotionMaxAccel(sparkMotionConfig.getMaxAccel(), 0);
-        mPidController.setSmartMotionAllowedClosedLoopError(pidConfig.getTolerance(), 0);
-
-        motor.burnFlash();
-        return mPidController;
     }
 }

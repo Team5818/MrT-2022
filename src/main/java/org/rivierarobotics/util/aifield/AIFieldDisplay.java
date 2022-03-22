@@ -72,12 +72,15 @@ public class AIFieldDisplay {
 
     private void startFieldThread(int updateRate) {
         int size = 480;
-        Mat resizeFrame = new Mat((int) (size), (int) (size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
+        Mat resizeFrame = new Mat(size, (int) (size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
             Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
-            if (!Robot.isReal()) outputStream.putFrame(image);
-            else outputStream.putFrame(resizeFrame);
+            if (!Robot.isReal()) {
+                outputStream.putFrame(image);
+            } else {
+                outputStream.putFrame(resizeFrame);
+            }
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
 
@@ -96,11 +99,11 @@ public class AIFieldDisplay {
                 var pose2 = trajectory.sample(i + 0.1);
 
                 Imgproc.arrowedLine(
-                        newRenderFrame,
-                        new Point(pose1.poseMeters.getX() * 100 * scalingRatio, pose1.poseMeters.getY() * 100 * scalingRatio),
-                        new Point(pose2.poseMeters.getX() * 100 * scalingRatio, pose2.poseMeters.getY() * 100 * scalingRatio),
-                        new Scalar(0, 0, 255 * (trajectory.sample(i).velocityMetersPerSecond) / 2),
-                        10
+                    newRenderFrame,
+                    new Point(pose1.poseMeters.getX() * 100 * scalingRatio, pose1.poseMeters.getY() * 100 * scalingRatio),
+                    new Point(pose2.poseMeters.getX() * 100 * scalingRatio, pose2.poseMeters.getY() * 100 * scalingRatio),
+                    new Scalar(0, 0, 255 * (trajectory.sample(i).velocityMetersPerSecond) / 2),
+                    10
                 );
             }
             renderFrame.setOpaque(newRenderFrame);
@@ -149,11 +152,11 @@ public class AIFieldDisplay {
         var weightedAreas = fieldMesh.getAreaWeights();
         for (var aw : weightedAreas) {
             Imgproc.rectangle(
-                    field,
-                    new Point(aw.x1 * scalingRatio, aw.y1 * scalingRatio),
-                    new Point(aw.x2 * scalingRatio, aw.y2 * scalingRatio),
-                    new Scalar(0, 0, 255 * (aw.weight / 20.0)),
-                    3);
+                field,
+                new Point(aw.x1 * scalingRatio, aw.y1 * scalingRatio),
+                new Point(aw.x2 * scalingRatio, aw.y2 * scalingRatio),
+                new Scalar(0, 0, 255 * (aw.weight / 20.0)),
+                3);
         }
     }
 

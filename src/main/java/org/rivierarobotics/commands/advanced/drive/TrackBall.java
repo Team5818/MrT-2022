@@ -30,20 +30,18 @@ public class TrackBall extends CommandBase {
     private final DriveTrain driveTrain;
     private final MLCore mlCore;
 
-    public TrackBall(){
+    public TrackBall() {
         this.driveTrain = DriveTrain.getInstance();
         this.mlCore = MLCore.getInstance();
     }
 
     @Override
     public void execute() {
-        MLObject ball = new MLObject(MLCore.TARGET_COLOR, new BoundingBox(0,0,0,0), 10);
         try {
-            ball = mlCore.getDetectedObjects().get(MLCore.TARGET_COLOR).get(0);
+            MLObject ball = mlCore.getDetectedObjects().get(MLCore.TARGET_COLOR).get(0);
             driveTrain.setTargetRotationAngle(ball.tx + driveTrain.getPoseEstimator().getRobotPose().getRotation().getRadians());
-        } catch (Exception e) {
-            return;
+        } catch (Exception ignored) {
+            // Padding for checkstyle
         }
-
     }
 }

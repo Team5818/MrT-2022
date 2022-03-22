@@ -26,7 +26,7 @@ public class InterpolationTable {
     private final TreeMap<Double, Double> interpolationTable;
 
     public InterpolationTable() {
-        interpolationTable = new TreeMap<Double, Double>();
+        this.interpolationTable = new TreeMap<>();
     }
 
     public void addValue(double key, double value) {
@@ -39,15 +39,19 @@ public class InterpolationTable {
         return slope * interpolationVal + intercept;
     }
 
-    public double getValue(double key){
-        if(interpolationTable.size() <= 1) return 0.0;
-        if(interpolationTable.containsKey(key)) return interpolationTable.get(key);
-        if(interpolationTable.floorKey(key) == null) {
+    public double getValue(double key) {
+        if (interpolationTable.size() <= 1) {
+            return 0.0;
+        }
+        if (interpolationTable.containsKey(key)) {
+            return interpolationTable.get(key);
+        }
+        if (interpolationTable.floorKey(key) == null) {
             var firstValue = interpolationTable.firstEntry();
             var secondValue = interpolationTable.higherEntry(firstValue.getKey());
             return interpolateBetweenPoints(firstValue.getKey(), firstValue.getValue(), secondValue.getKey(), secondValue.getValue(), key);
         }
-        if(interpolationTable.higherKey(key) == null) {
+        if (interpolationTable.higherKey(key) == null) {
             var firstValue = interpolationTable.lastEntry();
             var secondValue = interpolationTable.lowerEntry(firstValue.getKey());
             return interpolateBetweenPoints(firstValue.getKey(), firstValue.getValue(), secondValue.getKey(), secondValue.getValue(), key);

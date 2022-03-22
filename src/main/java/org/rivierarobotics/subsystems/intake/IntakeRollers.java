@@ -26,17 +26,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 
 public class IntakeRollers extends SubsystemBase {
-    private static IntakeRollers intakeRollers;
+    private static IntakeRollers INSTANCE;
+
     public static IntakeRollers getInstance() {
-        if(intakeRollers == null) {
-            intakeRollers = new IntakeRollers();
+        if (INSTANCE == null) {
+            INSTANCE = new IntakeRollers();
         }
-        return intakeRollers;
+        return INSTANCE;
     }
 
     private final CANSparkMax rollerMotor;
+
     public IntakeRollers() {
-        rollerMotor = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.rollerMotor = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);
         rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
         rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 1000);
         rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 1000);

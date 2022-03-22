@@ -38,15 +38,16 @@ public class Limelight {
         return limelight;
     }
 
-    private static Limelight limelight;
     private static final double LL_ANGLE = 30; // deg
     private static final double ROBOT_HEIGHT = 1.092; // m;
     private static final double GOAL_HEIGHT = 2.6416; // m
+    private static final double LL_OFFSET = 0.2286;
+    private static Limelight limelight;
+
     private final PhotonCamera camera;
-    private static final double llOffset = 0.2286;
 
     //TODO: figure out correct implementation
-    private Pose2d limelightTargetPose = new Pose2d();
+    private final Pose2d limelightTargetPose = new Pose2d();
 
     public Limelight() {
         this.camera = new PhotonCamera("gloworm");
@@ -78,9 +79,9 @@ public class Limelight {
         return PhotonUtils.calculateDistanceToTargetMeters(ROBOT_HEIGHT, GOAL_HEIGHT, Math.toRadians(LL_ANGLE), Math.toRadians(getTy()));
     }
 
-    public double getAdjustedDistance () {
-        return Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(llOffset, 2) - 2 * getDistance()
-                * llOffset * Math.cos(Math.toRadians(90 + getTx())));
+    public double getAdjustedDistance() {
+        return Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(LL_OFFSET, 2) - 2 * getDistance()
+                * LL_OFFSET * Math.cos(Math.toRadians(90 + getTx())));
     }
 
     // returns new Tx in Radians

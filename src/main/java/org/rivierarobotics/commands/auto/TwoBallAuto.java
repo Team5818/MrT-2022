@@ -25,12 +25,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.advanced.drive.DrivePath;
 import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
 
-public class twoBallAuto extends SequentialCommandGroup {
+public class TwoBallAuto extends SequentialCommandGroup {
 
-    public twoBallAuto() {
+    public TwoBallAuto() {
         addCommands(
                 //Shoot command
-                new ParallelDeadlineGroup( new DrivePath("2BallTest1")),
+                new ParallelDeadlineGroup(new DrivePath("2BallTest1")),
                 new SetWheelbaseAngle(0)
                 //Shoot command
         );

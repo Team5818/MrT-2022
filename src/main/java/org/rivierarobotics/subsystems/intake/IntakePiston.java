@@ -26,12 +26,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.climb.Piston;
 
 public class IntakePiston extends SubsystemBase {
-    private static IntakePiston intakePiston;
+    private static IntakePiston INSTANCE;
+
     public static IntakePiston getInstance() {
-        if(intakePiston == null) {
-            intakePiston = new IntakePiston();
+        if (INSTANCE == null) {
+            INSTANCE = new IntakePiston();
         }
-        return intakePiston;
+        return INSTANCE;
     }
 
     private final Piston p1;
@@ -39,9 +40,9 @@ public class IntakePiston extends SubsystemBase {
     private final Compressor compressor;
 
     public IntakePiston() {
-        p1 = new Piston(1);
-        p2 = new Piston(2);
-        compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        this.p1 = new Piston(1);
+        this.p2 = new Piston(2);
+        this.compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     }
 
     public void setIntakeState(boolean deploy) {

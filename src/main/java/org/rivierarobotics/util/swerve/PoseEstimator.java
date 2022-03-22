@@ -82,9 +82,9 @@ public class PoseEstimator {
         SwerveModuleState[] swerveModuleStates = Arrays.stream(swerveModules).map(SwerveModule::getState).toArray(a -> new SwerveModuleState[swerveModules.length]);
         try {
             var pose2d = swerveDrivePoseEstimator.updateWithTime(
-                    Timer.getFPGATimestamp(),
-                    gyro.getRotation2d(),
-                    swerveModuleStates
+                Timer.getFPGATimestamp(),
+                gyro.getRotation2d(),
+                swerveModuleStates
             );
             robotPose.set(pose2d);
         } finally {
@@ -104,18 +104,18 @@ public class PoseEstimator {
     public void resetPose(Pose2d pose2d) {
         resetLock.lock();
         try {
-            Field m_observerField = SwerveDrivePoseEstimator.class.getDeclaredField("m_observer");
-            Field m_latencyCompensatorField = SwerveDrivePoseEstimator.class.getDeclaredField("m_latencyCompensator");
-            m_observerField.setAccessible(true);
-            m_latencyCompensatorField.setAccessible(true);
+            Field observerField = SwerveDrivePoseEstimator.class.getDeclaredField("m_observer");
+            Field latencyCompensatorField = SwerveDrivePoseEstimator.class.getDeclaredField("m_latencyCompensator");
+            observerField.setAccessible(true);
+            latencyCompensatorField.setAccessible(true);
             @SuppressWarnings("unchecked")
-            var m_observer = (UnscentedKalmanFilter<N3, N3, N1>) m_observerField.get(swerveDrivePoseEstimator);
+            var observer = (UnscentedKalmanFilter<N3, N3, N1>) observerField.get(swerveDrivePoseEstimator);
             @SuppressWarnings("unchecked")
-            var m_latencyCompensator = (KalmanFilterLatencyCompensator<N3, N3, N1>) m_latencyCompensatorField.get(swerveDrivePoseEstimator);
-            m_observer.reset();
-            m_latencyCompensator.reset();
+            var latencyCompensator = (KalmanFilterLatencyCompensator<N3, N3, N1>) latencyCompensatorField.get(swerveDrivePoseEstimator);
+            observer.reset();
+            latencyCompensator.reset();
 
-            m_observer.setXhat(StateSpaceUtil.poseTo3dVector(pose2d));
+            observer.setXhat(StateSpaceUtil.poseTo3dVector(pose2d));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         } finally {

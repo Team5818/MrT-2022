@@ -50,9 +50,6 @@ public class MLCore {
     public static final int CAMERA_HEIGHT = 480;
     public static final String TARGET_COLOR = "red";
 
-    public double closestBallTX = 0;
-    public double closestBallTY = 0;
-
     private static class MLResponseDeserializer implements JsonDeserializer<MLResponse> {
         public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {

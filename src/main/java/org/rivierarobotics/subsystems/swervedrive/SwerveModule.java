@@ -52,7 +52,6 @@ public class SwerveModule {
     private static final double MAX_TURN_ACCELERATION = 4800; //Rad/s
     private static final double MAX_TURN_VELOCITY = 4800; //Rad/s
     private static final int TIMEOUT_MS = 60;
-    private final double zeroTicks;
 
     //Turn Motor Motion Magic
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
@@ -71,6 +70,8 @@ public class SwerveModule {
             TIMEOUT_MS, 10
     );
     private static final PIDConfig DM_MM_PID = new PIDConfig(0.0026, 0.0001, 0, 0.06);
+
+    private final double zeroTicks;
 
     //Motors
     private final WPI_TalonFX driveMotor;
@@ -145,7 +146,7 @@ public class SwerveModule {
     }
 
     public void setDriveMotorVelocity(double metersPerSecond) {
-        Logging.robotShuffleboard.getTab("Swerve").setEntry("target velocity " + driveMotor.getDeviceID(),metersPerSecond);
+        Logging.robotShuffleboard.getTab("Swerve").setEntry("target velocity " + driveMotor.getDeviceID(), metersPerSecond);
         driveMotor.set(TalonFXControlMode.Velocity, convertVelocityToTicksPer100ms(metersPerSecond));
     }
 

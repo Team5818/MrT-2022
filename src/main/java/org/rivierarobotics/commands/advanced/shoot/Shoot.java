@@ -38,7 +38,7 @@ public class Shoot extends SequentialCommandGroup {
     private static final double SHOOT_BELT_VOLTAGE = -7;
     private static final double SHOOT_MINIWHEEL_VOLTAGE = 5;
 
-    public Shoot(){
+    public Shoot() {
         addCommands(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(

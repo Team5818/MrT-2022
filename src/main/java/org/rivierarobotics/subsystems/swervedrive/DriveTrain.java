@@ -44,16 +44,14 @@ import org.rivierarobotics.util.swerve.PoseEstimator;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrain extends SubsystemBase {
+    private static DriveTrain INSTANCE;
 
     public static DriveTrain getInstance() {
-        if (swerveDriveTrain == null) {
-            swerveDriveTrain = new DriveTrain();
+        if (INSTANCE == null) {
+            INSTANCE = new DriveTrain();
         }
-        return swerveDriveTrain;
+        return INSTANCE;
     }
-
-    private static DriveTrain swerveDriveTrain;
-
 
     //Drive Speed Constants
     public static final double MAX_SPEED = 10; // m/s
@@ -93,9 +91,9 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
         swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 1149 + 2048);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 613+ 2048);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 3407+ 2048);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 6800+ 2048);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 613 + 2048);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 3407 + 2048);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 6800 + 2048);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -153,7 +151,7 @@ public class DriveTrain extends SubsystemBase {
         }
         double vel = (TURN_SPEED_P * (targetRotationAngle - gyroAngle));
 
-        if(Math.abs(vel) < MIN_ROT_SPEED) {
+        if (Math.abs(vel) < MIN_ROT_SPEED) {
             return Math.signum(vel) * MIN_ROT_SPEED;
         }
 
@@ -222,7 +220,10 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicLogging() {
-        if (DriverStation.isFMSAttached()) return;
+        //TODO logging toggle button
+        if (DriverStation.isFMSAttached()) {
+            return;
+        }
         for (int i = 0; i < swerveModules.length; i++) {
             loggingTables[i].setEntry("Swerve Velocity", swerveModules[i].getVelocity());
             loggingTables[i].setEntry("Swerve Angle", swerveModules[i].getAbsoluteAngle());
@@ -233,7 +234,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void updateSwerveStates() {
-        for(var sm : swerveModules) {
+        for (var sm : swerveModules) {
             sm.updateSwerveInformation();
         }
     }

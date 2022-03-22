@@ -33,7 +33,7 @@ import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.robot.Robot;
 
-import java.awt.*;
+import java.awt.Polygon;
 import java.awt.geom.Line2D;
 import java.io.FileReader;
 import java.nio.file.Path;
@@ -274,10 +274,10 @@ public class FieldMesh {
             for (int i = 1; i < obstacle.npoints; i++) {
                 Line2D testIntersect = new Line2D.Double();
                 testIntersect.setLine(
-                        obstacle.xpoints[i],
-                        obstacle.ypoints[i],
-                        obstacle.xpoints[i - 1],
-                        obstacle.ypoints[i - 1]);
+                    obstacle.xpoints[i],
+                    obstacle.ypoints[i],
+                    obstacle.xpoints[i - 1],
+                    obstacle.ypoints[i - 1]);
                 if (testIntersect.intersectsLine(nodeLines)) {
                     return false;
                 }
@@ -339,8 +339,8 @@ public class FieldMesh {
 
             totalTimePassed += (System.nanoTime() - startTime) / 1e7;
             if (totalTimePassed < 0) {
-                totalTimePassed = 0;
-                amtOfCalculations = 0;
+                this.totalTimePassed = 0;
+                this.amtOfCalculations = 0;
             }
             amtOfCalculations++;
             double avgTime = totalTimePassed / amtOfCalculations;

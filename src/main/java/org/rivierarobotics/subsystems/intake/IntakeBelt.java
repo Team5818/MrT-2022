@@ -25,19 +25,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
 
 public class IntakeBelt extends SubsystemBase {
-    private static IntakeBelt intakeBelt;
+    private static IntakeBelt INSTANCE;
+
     public static IntakeBelt getInstance() {
-        if(intakeBelt == null) {
-            intakeBelt = new IntakeBelt();
+        if (INSTANCE == null) {
+            INSTANCE = new IntakeBelt();
         }
-        return intakeBelt;
+        return INSTANCE;
     }
 
     private final WPI_TalonSRX beltMotor;
     private final WPI_TalonSRX miniWheelMotor;
 
     public IntakeBelt() {
-        beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+        this.beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
         this.miniWheelMotor = new WPI_TalonSRX(MotorIDs.COLLECT_WHEEL);
     }
 

@@ -30,7 +30,7 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class OneBallSimpleAuto extends SequentialCommandGroup {
     public OneBallSimpleAuto(boolean rightSide) {
-        if(!rightSide) {
+        if (!rightSide) {
             addCommands(
                     new SetDriveAngle(-135).withTimeout(3),
                     new AutoAimShoot().withTimeout(5),

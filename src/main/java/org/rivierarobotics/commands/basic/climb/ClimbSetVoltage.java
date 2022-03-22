@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class ClimbSetVoltage extends InstantCommand {
+    private final Climb climb;
+    private final double voltage;
 
-    private Climb climb;
-    private double voltage;
     public ClimbSetVoltage(boolean reversed, double voltage) {
         this.climb = Climb.getInstance();
         this.voltage = reversed ? voltage : -voltage;

@@ -23,11 +23,6 @@ package org.rivierarobotics.subsystems.shoot;
 import org.rivierarobotics.util.InterpolationTable;
 
 public class ShootingTables {
-
-    private ShootingTables() {
-
-    }
-
     public static InterpolationTable getFloppaAngleTable() {
         var angleTable = new InterpolationTable();
 
@@ -49,4 +44,6 @@ public class ShootingTables {
         return speedTable;
     }
 
+    private ShootingTables() {
+    }
 }

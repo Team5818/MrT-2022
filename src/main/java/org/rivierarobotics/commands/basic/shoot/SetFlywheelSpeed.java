@@ -40,7 +40,7 @@ public class SetFlywheelSpeed extends InstantCommand {
 
     @Override
     public void end(boolean interrupted) {
-        if(interrupted) {
+        if (interrupted) {
             floppas.setVoltage(0);
         }
     }

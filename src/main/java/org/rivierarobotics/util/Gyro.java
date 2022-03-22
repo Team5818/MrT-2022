@@ -28,8 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Gyro {
     private static Gyro INSTANCE;
-    private final ReentrantLock gyroLock = new ReentrantLock();
-
 
     public static Gyro getInstance() {
         if (INSTANCE == null) {

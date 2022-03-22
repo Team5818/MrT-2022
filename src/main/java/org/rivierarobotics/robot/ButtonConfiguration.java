@@ -62,25 +62,35 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
                 .whenPressed(new RunClimb(true));
 
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whileHeld(new SetDriverAssist(true));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13).whenReleased(new SetDriverAssist(false));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
+                .whileHeld(new SetDriverAssist(true));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
+                .whenReleased(new SetDriverAssist(false));
 
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).
-                whenPressed(new SetCameraCentric());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15)
+                .whenPressed(new SetCameraCentric());
 
         //CO-DRIVER
 
         //CO-DRIVER JOYSTICK
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT,1).whileHeld(new TestPathPlanner("forward90"));
+        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
+                .whileHeld(new TestPathPlanner("forward90"));
 
         //CO-DRIVER BUTTONS
 
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1).whenPressed(new Shoot());
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2).whenPressed(new SetIntakeState(false));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3).whileHeld(new SetFlywheelSpeed(0));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4).whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() - 200)));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5).whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 200)));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6).whenPressed(new SetFlywheelSpeed(5000));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7).whenPressed(new TestPathPlanner("aDvAnCed"));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
+                .whenPressed(new Shoot());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
+                .whenPressed(new SetIntakeState(false));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
+                .whileHeld(new SetFlywheelSpeed(0));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
+                .whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() - 200)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
+                .whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 200)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
+                .whenPressed(new SetFlywheelSpeed(5000));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
+                .whenPressed(new TestPathPlanner("aDvAnCed"));
     }
 }

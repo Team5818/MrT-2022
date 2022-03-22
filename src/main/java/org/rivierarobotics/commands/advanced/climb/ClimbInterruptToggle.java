@@ -26,7 +26,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 public class ClimbInterruptToggle extends InstantCommand {
     private final Climb climb;
 
-    public ClimbInterruptToggle(){
+    public ClimbInterruptToggle() {
         this.climb = Climb.getInstance();
     }
 

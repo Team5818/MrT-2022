@@ -30,56 +30,60 @@ import java.util.Objects;
 
 // do not make this a subsystem please thank you
 public class IntakeSensors {
-
-    private final static double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
-    private final String testingAllianceColor = "red";
-
-    private static IntakeSensors intakeSensors;
     public static IntakeSensors getInstance() {
-        if(intakeSensors == null) {
+        if (intakeSensors == null) {
             intakeSensors = new IntakeSensors();
         }
         return intakeSensors;
     }
 
-    private final ColorSensorV3 colorSensorV3;
+    private static final double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
+    private static final String TESTING_ALLIANCE_COLOR = "red";
+    private static IntakeSensors intakeSensors;
+
+    private final ColorSensorV3 colorSensor;
     private final AnalogInput distanceSensor;
     private final AnalogInput distanceSensor2;
+
     public IntakeSensors() {
-        this.colorSensorV3 = new ColorSensorV3(I2C.Port.kOnboard);
+        this.colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
         this.distanceSensor = new AnalogInput(3);
         this.distanceSensor2 = new AnalogInput(0);
     }
 
-    public boolean colorSensorHasBall(){
-        return Math.abs(colorSensorV3.getProximity()) > 170;
+    public boolean colorSensorHasBall() {
+        return Math.abs(colorSensor.getProximity()) > 170;
     }
 
-    public boolean distanceSensorHasBall(){
+    public boolean distanceSensorHasBall() {
 //        return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
         return (Math.abs(distanceSensor.getValue()) < 2000);
     }
 
-    public ColorSensorV3 getColorSensorV3(){
-        return this.colorSensorV3;
+    public ColorSensorV3 getColorSensor() {
+        return this.colorSensor;
     }
 
-    public boolean isTeamBall(){
+    public boolean isTeamBall() {
 //        return this.testingAllianceColor == getBallColor();
         var bc = getBallColor();
 
-        if(bc.equals("no ball")) return true;
+        if (bc.equals("no ball")) {
+            return true;
+        }
 
         if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && Objects.equals(bc, "blue")) {
             return true;
-        } else return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
+        } else {
+            return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
+        }
     }
 
     public String getBallColor() {
-        Color color = colorSensorV3.getColor();
-        if(color.red > 0.35) {
+        Color color = colorSensor.getColor();
+        if (color.red > 0.35) {
             return "red";
-        } else if(color.blue > 0.35) {
+        } else if (color.blue > 0.35) {
             return "blue";
         } else {
             return "no ball";

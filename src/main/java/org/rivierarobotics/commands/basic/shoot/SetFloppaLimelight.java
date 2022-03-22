@@ -32,6 +32,7 @@ public class SetFloppaLimelight extends CommandBase {
     private final boolean isLimelight;
     private final double ang;
     private final double speed;
+
     public SetFloppaLimelight(boolean isLimelight, double ang, double speed) {
         this.floppasActuator = FloppaActuator.getInstance();
         this.floppaFlywheels = FloppaFlywheels.getInstance();
@@ -42,19 +43,18 @@ public class SetFloppaLimelight extends CommandBase {
     }
 
     public SetFloppaLimelight(boolean isLimelight) {
-        this(isLimelight, 0,0);
+        this(isLimelight, 0, 0);
     }
 
     @Override
     public void initialize() {
-        if(isLimelight) {
+        if (isLimelight) {
             this.floppasActuator.setFloppaAngle(ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
             this.floppaFlywheels.setFlywheelSpeed(ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()));
         } else {
             this.floppasActuator.setFloppaAngle(ang);
             this.floppaFlywheels.setFlywheelSpeed(speed);
         }
-
     }
 
     @Override

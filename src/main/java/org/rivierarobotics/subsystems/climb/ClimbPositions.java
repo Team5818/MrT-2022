@@ -21,25 +21,27 @@
 package org.rivierarobotics.subsystems.climb;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-
-import static org.rivierarobotics.subsystems.MotorIDs.HIGH_SWITCH_A;
-import static org.rivierarobotics.subsystems.MotorIDs.HIGH_SWITCH_B;
-import static org.rivierarobotics.subsystems.MotorIDs.LOW_SWITCH_A;
-import static org.rivierarobotics.subsystems.MotorIDs.LOW_SWITCH_B;
-import static org.rivierarobotics.subsystems.MotorIDs.MID_SWITCH_A;
-import static org.rivierarobotics.subsystems.MotorIDs.MID_SWITCH_B;
-import static org.rivierarobotics.subsystems.MotorIDs.SOLENOID_HIGH;
-import static org.rivierarobotics.subsystems.MotorIDs.SOLENOID_LOW;
-import static org.rivierarobotics.subsystems.MotorIDs.SOLENOID_MID;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.HIGH_RADIANS;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.LOW_RADIANS;
-import static org.rivierarobotics.subsystems.climb.ClimbConstants.MID_RADIANS;
+import org.rivierarobotics.subsystems.MotorIDs;
 
 public enum ClimbPositions {
-
-    LOW(LOW_RADIANS, new Piston(SOLENOID_LOW), new DigitalInput(LOW_SWITCH_A), new DigitalInput(LOW_SWITCH_B)),
-    MID(MID_RADIANS, new Piston(SOLENOID_MID), new DigitalInput(MID_SWITCH_A), new DigitalInput(MID_SWITCH_B)),
-    HIGH(HIGH_RADIANS, new Piston(SOLENOID_HIGH), new DigitalInput(HIGH_SWITCH_A), new DigitalInput(HIGH_SWITCH_B));
+    LOW(
+            ClimbConstants.LOW_RADIANS,
+            new Piston(MotorIDs.SOLENOID_LOW),
+            new DigitalInput(MotorIDs.LOW_SWITCH_A),
+            new DigitalInput(MotorIDs.LOW_SWITCH_B)
+    ),
+    MID(
+            ClimbConstants.MID_RADIANS,
+            new Piston(MotorIDs.SOLENOID_MID),
+            new DigitalInput(MotorIDs.MID_SWITCH_A),
+            new DigitalInput(MotorIDs.MID_SWITCH_B)
+    ),
+    HIGH(
+            ClimbConstants.HIGH_RADIANS,
+            new Piston(MotorIDs.SOLENOID_HIGH),
+            new DigitalInput(MotorIDs.HIGH_SWITCH_A),
+            new DigitalInput(MotorIDs.HIGH_SWITCH_B)
+    );
 
     public final double locationRadians;
     public final Piston piston;

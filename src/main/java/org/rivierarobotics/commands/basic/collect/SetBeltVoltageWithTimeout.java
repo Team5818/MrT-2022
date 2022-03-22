@@ -25,11 +25,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 
 public class SetBeltVoltageWithTimeout extends CommandBase {
-
     private final IntakeBelt intakeBelt;
     private final double voltage;
     private final double timeout;
     private double startTime = 0.0;
+
     public SetBeltVoltageWithTimeout(double voltage, double timeout) {
         this.intakeBelt = IntakeBelt.getInstance();
         this.voltage = voltage;
@@ -40,7 +40,7 @@ public class SetBeltVoltageWithTimeout extends CommandBase {
     @Override
     public void initialize() {
         intakeBelt.setBeltVoltage(voltage);
-        startTime = Timer.getFPGATimestamp();
+        this.startTime = Timer.getFPGATimestamp();
     }
 
     @Override
