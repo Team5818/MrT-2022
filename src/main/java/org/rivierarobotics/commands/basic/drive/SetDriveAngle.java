@@ -43,6 +43,11 @@ public class SetDriveAngle extends CommandBase {
     }
 
     @Override
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(DriveTrain.getInstance().getTargetRotationAngle(), angle, 3);
+    }
+
+    @Override
     public void execute() {
         dt.drive(0, 0, dt.getRotationSpeed(), true);
     }

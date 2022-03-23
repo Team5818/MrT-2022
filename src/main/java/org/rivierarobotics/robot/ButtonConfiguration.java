@@ -21,7 +21,6 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
@@ -29,7 +28,7 @@ import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
 import org.rivierarobotics.commands.auto.CaptainJIsRSCollect;
-import org.rivierarobotics.commands.auto.TestPathPlanner;
+import org.rivierarobotics.commands.auto.DrivePathPlannerPath;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
@@ -76,7 +75,7 @@ public class ButtonConfiguration {
 
         //CO-DRIVER JOYSTICK
         new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
-                .whileHeld(new TestPathPlanner("forward90"));
+                .whileHeld(new DrivePathPlannerPath("forward90", 2, 0.5));
 
         //CO-DRIVER BUTTONS
 

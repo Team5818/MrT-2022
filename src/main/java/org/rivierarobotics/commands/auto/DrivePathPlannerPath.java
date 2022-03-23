@@ -32,23 +32,27 @@ import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
 //These will have differences: PathPlanner allows you to input a speed and acceleration into your path. There is still a
 //task here though and that is modifying the constructor to pass in a double maxSpeed and double maxAcceleration.
-public class TestPathPlanner extends CommandBase {
+public class DrivePathPlannerPath extends CommandBase {
     private final DriveTrain driveTrain;
     private final Gyro gyro;
+    private final double maxVel;
+    private final double maxAccel;
     private final String trajectoryJSON;
     private TrajectoryFollower trajectoryFollower;
 
-    public TestPathPlanner(String path) {
+    public DrivePathPlannerPath(String path, double maxVelocity, double maxAcceleration) {
         this.trajectoryJSON = path;
         this.driveTrain = DriveTrain.getInstance();
         this.gyro = Gyro.getInstance();
+        this.maxAccel = maxAcceleration;
+        this.maxVel = maxVelocity;
         addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
         this.trajectoryFollower = new TrajectoryFollower(
-                PathPlanner.loadPath(trajectoryJSON, 1.9, 0.4, false),
+                PathPlanner.loadPath(trajectoryJSON, maxVel, maxAccel, false),
                 true, gyro, driveTrain
         );
     }
