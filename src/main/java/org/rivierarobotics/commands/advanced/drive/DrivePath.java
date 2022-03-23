@@ -38,9 +38,7 @@ public class DrivePath extends CommandBase {
 
     @Override
     public void initialize() {
-        //TODO the stored instance of driveTrain isn't getting used.
-        // I'd recommend using it even if it technically points to the same object.
-        this.trajectoryFollower = new TrajectoryFollower(TrajectoryFollower.getTrajectoryFromPathweaver(path), true, Gyro.getInstance(), DriveTrain.getInstance());
+        this.trajectoryFollower = new TrajectoryFollower(TrajectoryFollower.getTrajectoryFromPathweaver(path), true, Gyro.getInstance(), driveTrain);
     }
 
     @Override
