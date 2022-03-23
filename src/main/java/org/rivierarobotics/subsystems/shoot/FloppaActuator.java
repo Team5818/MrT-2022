@@ -45,28 +45,24 @@ public class FloppaActuator extends SubsystemBase {
         return angleInRads + ShooterConstant.ACTUATOR_ZERO_TICKS;
     }
 
-    //TODO actuatorConfig, sparkSmartMotionConfig, and tunningTab (spelling too) don't need to be fields
-    private final PIDConfig actuatorConfig;
-    private final SparkMotionConfig sparkSmartMotionConfig;
     private final SparkSmartMotion actuatorController;
-    private final RSTab tunningTab;
     private final CANSparkMax actuatorMotor;
     private double targetAngle = 0.0;
 
     public FloppaActuator() {
         this.actuatorMotor = new CANSparkMax(MotorIDs.SHOOTER_ANGLE, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.actuatorConfig = new PIDConfig(0.15, 0.0, 0, 0.0);
+        PIDConfig actuatorConfig = new PIDConfig(0.15, 0.0, 0, 0.0);
         actuatorConfig.setRange(1);
         actuatorConfig.setTolerance(0.0);
         actuatorMotor.restoreFactoryDefaults();
-        this.sparkSmartMotionConfig = new SparkMotionConfig(
+        SparkMotionConfig sparkSmartMotionConfig = new SparkMotionConfig(
                 true,
                 ShooterConstant.MAX_ACTUATOR_VELOCITY, ShooterConstant.MAX_ACTUATOR_ACCELERATION,
                 2, -ShooterConstant.MAX_ACTUATOR_VELOCITY,
                 ShooterConstant.TIMEOUTMS, 10
         );
-        this.tunningTab = Logging.robotShuffleboard.getTab("actuator tuning");
-        this.actuatorController = new SparkSmartMotion(actuatorMotor, actuatorConfig, sparkSmartMotionConfig, tunningTab);
+        RSTab tuningTab = Logging.robotShuffleboard.getTab("actuator tuning");
+        this.actuatorController = new SparkSmartMotion(actuatorMotor, actuatorConfig, sparkSmartMotionConfig, tuningTab);
         this.actuatorMotor.getEncoder().setPositionConversionFactor(1);
         this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ShooterConstant.MAX_ACTUATOR_TICKS);
         this.actuatorMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ShooterConstant.MIN_ACTUATOR_TICKS);
