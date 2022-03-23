@@ -37,12 +37,7 @@ public class InteruptableSetVoltage extends CommandBase {
 
     @Override
     public void execute() {
-        //TODO use a ternary here
-        if (climb.getPlay()) {
-            climb.setVoltage(voltage * modifier);
-        } else {
-            climb.setVoltage(0);
-        }
+        climb.setVoltage(climb.getPlay()? (voltage * modifier) : 0);
     }
     //TODO are you sure this should not end? Maybe it should be an InstantCommand
 }
