@@ -31,8 +31,7 @@ import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double voltage = 9;
-    //TODO what is this voltage? MAX_VOLTAGE? regardless change it to be UPPER_CASE
+    private static final double RUN_VOLTAGE = 9;
 
     public RunClimb(boolean reversed) {
         final ClimbPositions first;
@@ -56,7 +55,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new WaitCommand(0.25),
                 //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(ClimbPositions.MID)),
-                        new InteruptableSetVoltage(reversed, voltage)),
+                        new InteruptableSetVoltage(reversed, RUN_VOLTAGE)),
                 new ClimbSetVoltage(reversed, 0),
                 new TogglePiston(ClimbPositions.MID, true, 0),
 //                new WaitCommand(0.2),
@@ -65,8 +64,8 @@ public class RunClimb extends SequentialCommandGroup {
                 new WaitCommand(0.15),
 //                new InteruptableSetVoltage(reversed, voltage).withTimeout(0.9),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
-                        new InteruptableSetVoltage(reversed, voltage * 1.15)),
-                new ClimbSetVoltage(reversed, voltage * 0.5),
+                        new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
+                new ClimbSetVoltage(reversed, RUN_VOLTAGE * 0.5),
                 new TogglePiston(last, true, 0),
 //                new WaitCommand(0.3),
                 new WaitPiston(last, 0.5, 1.0, reversed),
