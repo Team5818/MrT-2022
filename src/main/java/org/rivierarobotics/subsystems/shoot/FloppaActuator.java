@@ -101,12 +101,6 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        //TODO remove comment if unused (and currTicks)
-        var currTicks = getTicks();
-//        if ((currTicks >= ShooterConstant.MAX_ACTUATOR_TICKS && Math.signum(voltage) > 0) ||
-//                currTicks <= ShooterConstant.MIN_ACTUATOR_TICKS && Math.signum(voltage) < 0) {
-//            voltage = 0;
-//        }
         this.actuatorMotor.setVoltage(voltage);
     }
 }
