@@ -22,20 +22,21 @@ package org.rivierarobotics.commands.advanced.climb;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
+
+import static org.rivierarobotics.subsystems.climb.ClimbPositions.*;
 
 public class OpenAllPistons extends InstantCommand {
     private final ClimbClaws climb;
 
     public OpenAllPistons() {
         this.climb = ClimbClaws.getInstance();
-        addRequirements(climb);
     }
 
     @Override
     public void initialize() {
-        //TODO this is the only use of setAllPistons, perhaps just move the logic into this command
-        // then also iirc you don't need to require the subsystem (or even pass it in ig)
-        // and ofc delete the method from the subsystem
-        climb.setAllPistons(true);
+        climb.setPiston(LOW, true);
+        climb.setPiston(MID, true);
+        climb.setPiston(HIGH, true);
     }
 }
