@@ -48,15 +48,13 @@ public class DriveToClosest extends SequentialCommandGroup {
     public void initialize() {
         gyro.resetGyro();
 
-        //TODO this is the same value twice right? driveTrain.getPoseEstimator().getRobotPose()?
-        // so save to var and use twice instead of making an extra two calls
-        var currentX = driveTrain.getPoseEstimator().getRobotPose().getX();
-        var currentY = driveTrain.getPoseEstimator().getRobotPose().getY();
+        var currentPose = driveTrain.getPoseEstimator().getRobotPose();
+        var currentX = currentPose.getX();
+        var currentY = currentPose.getY();
 
 
         MLCore core = MLCore.getInstance();
-        //TODO suggestion: DriverStation.getAlliance().name().toLowerCase()
-        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+        var ballColor = DriverStation.getAlliance().name().toLowerCase();
         var balls = core.getDetectedObjects().get(ballColor);
         if (balls == null || balls.isEmpty()) {
             return;
@@ -64,17 +62,15 @@ public class DriveToClosest extends SequentialCommandGroup {
 
         balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
         var ball = balls.get(0);
-        //TODO use the gyro instance you have stored instead of Gyro.getInstance()
-        // same applies to trajFollower below
-        //TODO this is the same value twice right? Gyro.getInstance().getRotation2d().getRadians()?
-        // so save to var and use twice instead of making a new rot2d again
-        var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
-        var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
 
-        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targety, true, 0, driveTrain.getSwerveDriveKinematics());
+        var gyroMath = gyro.getRotation2d().getRadians() + Math.toRadians(ball.ty);
+        var targetX = currentX + Math.cos(gyroMath) * ball.relativeLocationDistance;
+        var targetY = currentY + Math.sin(gyroMath) * ball.relativeLocationDistance;
+
+        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targetY, true, 0, driveTrain.getSwerveDriveKinematics());
         Logging.aiFieldDisplay.updatePath(trajectory);
 
-        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
     }
 
     @Override
