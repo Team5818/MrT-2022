@@ -29,6 +29,9 @@ import org.rivierarobotics.util.swerve.TrajectoryFollower;
 //TODO the only difference b/n this and DrivePath is PathPlanner.loadPath() instead of TrajectoryFollower.getTrajectoryFromPathweaver()
 // please combine, but put a boolean flag in the constructor for DrivePath (i.e. usePathPlanner)
 // (and then delete this if no longer needed, ofc moving usages
+
+//These will have differences: PathPlanner allows you to input a speed and acceleration into your path. There is still a
+//task here though and that is modifying the constructor to pass in a double maxSpeed and double maxAcceleration.
 public class TestPathPlanner extends CommandBase {
     private final DriveTrain driveTrain;
     private final Gyro gyro;

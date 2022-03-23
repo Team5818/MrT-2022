@@ -26,6 +26,9 @@ import org.rivierarobotics.subsystems.intake.IntakeBelt;
 
 //TODO I don't think you need this class. Just use: new SetBeltVoltage().withTimeout()
 // and then you don't have to do any of the timing logic
+
+// I would say keep the class because it's convenient.
+// You can turn it into a sequential command that is just SetBeltVoltage() then new WaitCommand() then SetBeltVoltage() back to 0.
 public class SetBeltVoltageWithTimeout extends CommandBase {
     private final IntakeBelt intakeBelt;
     private final double voltage;

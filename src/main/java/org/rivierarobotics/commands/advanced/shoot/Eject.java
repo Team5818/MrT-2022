@@ -37,6 +37,7 @@ import org.rivierarobotics.subsystems.intake.IntakeSensors;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
+//TODO: Delete this whole class
 public class Eject extends CommandBase {
     private final double floppaPosition;
     private final double miniwheelVoltage;

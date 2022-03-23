@@ -58,9 +58,8 @@ public class SetFloppaLimelight extends CommandBase {
         }
     }
 
-    //TODO either remove comment and method or re-add comment
     @Override
     public void end(boolean interrupted) {
-        //floppasActuator.setVoltage(0);
+        floppasActuator.setVoltage(0);
     }
 }

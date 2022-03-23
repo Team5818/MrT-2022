@@ -38,7 +38,7 @@ public class ClimbControl extends CommandBase {
 
     @Override
     public void execute() {
-        //TODO what is this 11 for? pull to static final const
+        //TODO what is this 11 for? pull to static final const (voltage)
         var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 11;
         this.climb.setVoltage(xSpeed);
     }

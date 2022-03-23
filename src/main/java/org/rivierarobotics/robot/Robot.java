@@ -295,10 +295,9 @@ public class Robot extends TimedRobot {
     private void initializeCustomLoops() {
         //TODO either remove comments or uncomment
         // if removed, maybe no use for this method >> put addPeriodic in robotInit
-//        addPeriodic(() -> {
-//            DriveTrain.getInstance().periodicLogging();
-//        }, 0.5, 0.0);
-
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicLogging();
+        }, 0.5, 0.0);
         addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
     }
 
