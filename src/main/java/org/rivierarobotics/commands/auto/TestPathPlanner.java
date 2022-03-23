@@ -45,7 +45,7 @@ public class TestPathPlanner extends CommandBase {
     @Override
     public void initialize() {
         this.trajectoryFollower = new TrajectoryFollower(
-                PathPlanner.loadPath(trajectoryJSON, 2, 0.75, false),
+                PathPlanner.loadPath(trajectoryJSON, 1.9, 0.4, false),
                 true, gyro, driveTrain
         );
     }
@@ -58,5 +58,10 @@ public class TestPathPlanner extends CommandBase {
     @Override
     public boolean isFinished() {
         return trajectoryFollower.isFinished();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        DriveTrain.getInstance().drive(0,0,0,true);
     }
 }

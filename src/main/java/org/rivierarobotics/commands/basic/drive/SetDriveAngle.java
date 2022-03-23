@@ -48,11 +48,6 @@ public class SetDriveAngle extends CommandBase {
     }
 
     @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(dt.getTargetRotationAngle(), gyro.getRotation2d().getDegrees(), 1);
-    }
-
-    @Override
     public void end(boolean interrupted) {
         dt.drive(0, 0, 0, false);
     }

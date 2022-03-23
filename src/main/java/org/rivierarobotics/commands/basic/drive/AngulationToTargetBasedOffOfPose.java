@@ -1,5 +1,5 @@
 /*
- * This file is part of Placeholder-2022, licensed under the GNU General Public License (GPLv3).
+ * This file is part of MrT-2022, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -18,37 +18,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.basic.drive;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
+import org.rivierarobotics.util.Gyro;
 
-//TODO what exactly does this do Sideways? DriveSideways? change name pls
-public class Sideways extends CommandBase {
-    private final double time;
-    private double starttime = 0;
 
-    public Sideways(double time) {
-        this.time = time;
-        addRequirements(DriveTrain.getInstance());
+public class AngulationToTargetBasedOffOfPose extends CommandBase {
+    private final DriveTrain dt;
+    private final Gyro gyro;
+
+    public AngulationToTargetBasedOffOfPose() {
+        this.dt = DriveTrain.getInstance();
+        this.gyro = Gyro.getInstance();
+        addRequirements(this.dt);
     }
 
     @Override
     public void initialize() {
-        this.starttime = Timer.getFPGATimestamp();
-        DriveTrain.getInstance().drive(0, 1, 0, true);
+        dt.setTargetRotationAngle(Limelight.getInstance().getShootingAssistAngle());
     }
 
-    //TODO this is a manual calculation of a timeout. Can you use .withTimeout() instead?
+    @Override
+    public void execute() {
+        dt.drive(0, 0, dt.getRotationSpeed(), true);
+    }
 
     @Override
     public boolean isFinished() {
-        return Timer.getFPGATimestamp() - starttime > time;
+        return !MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), dt.getTargetRotationAngle(), 1);
     }
 
     @Override
     public void end(boolean interrupted) {
-        DriveTrain.getInstance().drive(0, 0, 0, true);
+        dt.drive(0, 0, 0, false);
     }
 }

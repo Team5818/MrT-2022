@@ -80,8 +80,8 @@ public class Shoot extends SequentialCommandGroup {
         // then this class should be a ParallelDeadlineGroup instead of a SequentialCommandGroup
         addCommands(
                 new ParallelDeadlineGroup(
-                        new WaitCommand(1.5),
-                        new SetBeltAndMiniwheelVoltage(SHOOT_BELT_VOLTAGE, SHOOT_MINIWHEEL_VOLTAGE),
+                        new WaitCommand(2.5),
+                        new WaitCommand(1).andThen(new SetBeltAndMiniwheelVoltage(SHOOT_BELT_VOLTAGE, SHOOT_MINIWHEEL_VOLTAGE)),
                         new SetFloppaLimelight(true)
                 )
         );

@@ -21,21 +21,23 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
+import org.rivierarobotics.commands.auto.CaptainJIsRSCollect;
 import org.rivierarobotics.commands.auto.TestPathPlanner;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
-import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
-import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
-import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
+import org.rivierarobotics.commands.basic.drive.*;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
 
 public class ButtonConfiguration {
     public void initTeleop() {
@@ -90,8 +92,18 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
                 .whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 200)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
-                .whenPressed(new SetFlywheelSpeed(5000));
+                .whenPressed(new CaptainJIsRSCollect());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
-                .whenPressed(new TestPathPlanner("aDvAnCed"));
+                .whileHeld(new AngulationToTargetBasedOffOfPose());
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)
+//                .whileHeld(new SequentialCommandGroup(new SetDriveAngle(77)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)
+                .whenPressed(new InstantCommand(() -> {
+                    DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose());
+                }));
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9)
+//                .whenPressed(new InstantCommand(() -> {
+//                    DriveTrain.getInstance().setMinTurnSpeed(DriveTrain.getInstance().getMinTurnSpeed() - 0.001);
+//                }));
     }
 }

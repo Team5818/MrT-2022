@@ -33,6 +33,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.swervedrive.SwerveModule;
 import org.rivierarobotics.util.Gyro;
 
@@ -68,8 +69,9 @@ public class PoseEstimator {
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01) //Vision Measurement stdev
         );
 
-        var e = Executors.newSingleThreadScheduledExecutor();
-        e.scheduleWithFixedDelay(this::updateOdometry, 5, 1, TimeUnit.MILLISECONDS);
+        var e = Executors.newScheduledThreadPool(2);
+        e.scheduleWithFixedDelay(this::updateOdometry, 5, 15, TimeUnit.MILLISECONDS);
+        robotPose.set(new Pose2d());
     }
 
     public Pose2d getRobotPose() {
@@ -77,6 +79,7 @@ public class PoseEstimator {
     }
 
     public void updateOdometry() {
+        var start = System.nanoTime();
         resetLock.lock();
         SwerveModuleState[] swerveModuleStates = Arrays.stream(swerveModules).map(SwerveModule::getState).toArray(a -> new SwerveModuleState[swerveModules.length]);
         try {
@@ -89,6 +92,7 @@ public class PoseEstimator {
         } finally {
             resetLock.unlock();
         }
+        SmartDashboard.putNumber("updateTime", (System.nanoTime() - start) / 1e9);
     }
 
     public void resetPose() {

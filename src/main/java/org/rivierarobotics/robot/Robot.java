@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -32,8 +33,6 @@ import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
-import org.rivierarobotics.commands.auto.OneBallSimpleAuto;
-import org.rivierarobotics.commands.auto.ShootFender;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltageWithTimeout;
 import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
@@ -79,27 +78,26 @@ public class Robot extends TimedRobot {
 
         this.chooser = new SendableChooser<>();
         chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
-        chooser.addOption("RShootAndCollect2", new OneBallSimpleAuto(true));
-        chooser.addOption("LShootAndCollect2", new OneBallSimpleAuto(false));
         chooser.addOption("MLAUTO", new MLAuto());
         chooser.addOption("No Auto", null);
         chooser.addOption("SimpleShootR", new DriveShoot(true));
         chooser.addOption("SimpleShootL", new DriveShoot(false));
         chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
-        chooser.setDefaultOption("Fender", new ShootFender());
 
         Shuffleboard.getTab("Autos").add(chooser);
 
         FieldMesh.getInstance();
 
-        var threader = Executors.newSingleThreadScheduledExecutor();
-        threader.scheduleWithFixedDelay(new Thread(() -> {
-            DriveTrain.getInstance().updateSwerveStates();
-        }), 7, 10, TimeUnit.MILLISECONDS);
+//        var threader = Executors.newSingleThreadScheduledExecutor();
+//        threader.scheduleWithFixedDelay(new Thread(() -> {
+//            DriveTrain.getInstance().updateSwerveStates();
+//        }), 7, 20, TimeUnit.MILLISECONDS);
+        LiveWindow.disableAllTelemetry();
     }
 
     @Override
     public void robotPeriodic() {
+        DriveTrain.getInstance().updateSwerveStates();
         var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
         if (command == null && ran) {
             CommandScheduler.getInstance().schedule(new SetBeltVoltageWithTimeout(-CollectBalls.COLLECT_VOLTAGE, 0.2));
@@ -124,6 +122,12 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
+//        Logging.robotShuffleboard.getTab("Field")
+//                .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
+//        Logging.robotShuffleboard.getTab("Field")
+//                .setEntry("RTA", Limelight.getInstance().getShootingAssistAngle());
+
+
         Logging.robotShuffleboard.getTab("Field")
                 .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
@@ -131,7 +135,15 @@ public class Robot extends TimedRobot {
             return;
         }
         var sb = Logging.robotShuffleboard;
+
         var drive = sb.getTab("Drive");
+
+        drive.setEntry("Turn P", DriveTrain.getInstance().getTURN_SPEED_P());
+        drive.setEntry("Turn Min", DriveTrain.getInstance().getMinTurnSpeed());
+//        if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
+//            return;
+//        }
+
         var climb = sb.getTab("Climb");
         var collect = sb.getTab("collect");
         var ml = sb.getTab("ML");

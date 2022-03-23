@@ -65,7 +65,7 @@ public class SwerveModule {
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
-            DriveTrain.MAX_TURN_SPEED, DriveTrain.MAX_ACCELERATION,
+            10.0, DriveTrain.MAX_ACCELERATION,
             300, 2,
             TIMEOUT_MS, 10
     );
@@ -103,7 +103,7 @@ public class SwerveModule {
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, driveMotor);
         driveMotor.configAllowableClosedloopError(0, 5);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
+        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 10);
         driveMotor.setNeutralMode(NeutralMode.Brake);
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 

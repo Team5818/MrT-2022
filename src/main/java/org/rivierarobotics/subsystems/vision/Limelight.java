@@ -43,6 +43,9 @@ public class Limelight {
     private static final double ROBOT_HEIGHT = 1.092; // m;
     private static final double GOAL_HEIGHT = 2.6416; // m
     private static final double LL_OFFSET = 0.2286;
+    private double targetX = 8.22;
+    private double targetY = 4.11;
+    private static Limelight limelight;
 
     private final PhotonCamera camera;
 
@@ -93,16 +96,13 @@ public class Limelight {
         var robotX = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getX();
         var robotY = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getY();
 
-        var targetX = limelightTargetPose.getX();
-        var targetY = limelightTargetPose.getY();
-
-        var targetAngle = Math.atan((targetX - robotX) / (targetY - robotY));
-        return Gyro.getInstance().getRotation2d().getDegrees() + (targetAngle - MathUtil.wrapToCircle(Gyro.getInstance().getRotation2d().getDegrees()));
+        var targetAngle = -Math.atan((targetX - robotX) / (targetY - robotY));
+        return Math.toDegrees(targetAngle);
     }
 
-    public Translation2d getLLAbsPose() {
-        double xpose = Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(getTx())) * getDistance();
-        double ypose = Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(getTx())) * getDistance();
-        return new Translation2d(xpose, ypose);
+    public Pose2d getLLAbsPose() {
+        double xpose = Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(getTx() - 90)) * getDistance() + targetX;
+        double ypose = Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(getTx() - 90)) * getDistance() + targetY;
+        return new Pose2d(new Translation2d(xpose, ypose), Gyro.getInstance().getRotation2d());
     }
 }

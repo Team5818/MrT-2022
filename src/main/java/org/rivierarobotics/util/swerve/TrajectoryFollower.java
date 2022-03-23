@@ -111,7 +111,7 @@ public class TrajectoryFollower {
 
         var controls = trajectory == null ? followPathPlannerTrajectory(timePassed) : followTrajectory(timePassed);
 
-        driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, DriveTrain.getInstance().getRotationSpeed(), false);
+        driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, DriveTrain.getInstance().getRotationSpeed() + controls.omegaRadiansPerSecond, false);
     }
 
     private ChassisSpeeds followPathPlannerTrajectory(double intTime) {
