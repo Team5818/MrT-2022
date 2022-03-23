@@ -31,29 +31,22 @@ import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakeRollers;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
 
-public class CollectBalls extends SequentialCommandGroup {
+public class CollectBalls extends ConditionalCommand {
     public static final double COLLECT_VOLTAGE = -8;
     private static final double INTAKE_VOLTAGE = -12;
     private static final double MINIWHEEL_VOLTAGE = -7;
 
     public CollectBalls() {
-        //TODO if this is just a single ConditionalCommand, then this class should
-        // extend ConditionalCommand not SequentialCommandGroup and pass the super() arguments as below
-        addCommands(
-                new ConditionalCommand(
-                        //TODO similar thing here, remove the SequentialCommandGroup
-                        // to expose the ParallelDeadlineGroup
-                        new SequentialCommandGroup(
-                                new ParallelDeadlineGroup(
-                                        new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),
-                                        new SetIntakeVoltage(INTAKE_VOLTAGE),
-                                        new EjectCollect(COLLECT_VOLTAGE, MINIWHEEL_VOLTAGE)
-                                )
-                        ),
-                        new WaitCommand(0.1),
-                        () -> IntakeSensors.getInstance().canCollect()
-                )
-        );
+        super(
+                new ParallelDeadlineGroup(
+                        new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),
+                        new SetIntakeVoltage(INTAKE_VOLTAGE),
+                        new EjectCollect(COLLECT_VOLTAGE, MINIWHEEL_VOLTAGE)
+                ),
+                new WaitCommand(0.1),
+                () -> IntakeSensors.getInstance().canCollect()
+                );
+
     }
 
     @Override
