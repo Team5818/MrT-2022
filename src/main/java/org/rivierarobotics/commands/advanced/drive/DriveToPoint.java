@@ -48,15 +48,17 @@ public class DriveToPoint extends CommandBase {
         addRequirements(driveTrain);
     }
 
-    //TODO: Surround all of this in a try/catch just in case a trajectory is invalid.
     @Override
     public void initialize() {
-        var dtPose = driveTrain.getPoseEstimator().getRobotPose();
-        //TODO the stored instances of driveTrain and gyro aren't getting used.
-        // I'd recommend using them even if they technically point to the same objects.
-        var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, DriveTrain.getInstance().getSwerveDriveKinematics());
-        Logging.aiFieldDisplay.updatePath(trajectory);
-        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, Gyro.getInstance(), driveTrain);
+        try {
+            var dtPose = driveTrain.getPoseEstimator().getRobotPose();
+            var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, driveTrain.getSwerveDriveKinematics());
+            Logging.aiFieldDisplay.updatePath(trajectory);
+            this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
+        } catch (Exception e) {
+            //invalid trajectory
+        }
+
     }
 
     @Override
