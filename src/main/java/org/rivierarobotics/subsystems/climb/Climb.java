@@ -99,8 +99,6 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        //TODO var angle is not used, remove
-        var angle = climbMaster.getSensorCollection().getIntegratedSensorPosition();
         return climbMaster.getSelectedSensorPosition() * ClimbConstants.MOTOR_TICK_TO_ANGLE;
     }
 
