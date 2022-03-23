@@ -63,15 +63,13 @@ public class Climb extends SubsystemBase {
         climbMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         climbMaster.setInverted(true);
         climbFollower.setInverted(true);
-        StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
-        StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, CM_MM_PID, CM_MM_CONFIG, climbMaster);
-        //TODO this sets up motion magic with reset AFTER "demolishing" the frames,
-        // so that frame demolisher will not do anything (change order)
         climbMaster.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbFollower.setSensorPhase(false);
+        StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
+        StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
     }
 
     public void setCoast(boolean coast) {
