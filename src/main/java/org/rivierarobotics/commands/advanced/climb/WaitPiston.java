@@ -22,7 +22,6 @@ package org.rivierarobotics.commands.advanced.climb;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
@@ -33,10 +32,10 @@ public class WaitPiston extends CommandBase {
     private final ClimbPositions climbModule;
     private final double endTime;
     private final double timeout;
-    private final boolean reversed;
     private double switchTime;
     private double retryTimeout;
-    private boolean retryMode;
+    private boolean mode;
+    private final double voltage;
 
     public WaitPiston(ClimbPositions climbModule, double endTime, double timeout, boolean reversed) {
         this.climb = Climb.getInstance();
@@ -44,55 +43,42 @@ public class WaitPiston extends CommandBase {
         this.climbModule = climbModule;
         this.endTime = endTime;
         this.timeout = timeout;
-        this.reversed = reversed;
+        this.voltage = reversed ? 4.5 : -4.5;
         this.addRequirements(this.climb, this.climbClaws);
     }
 
     @Override
     public void initialize() {
         this.switchTime = Timer.getFPGATimestamp();
-        this.retryTimeout = this.switchTime;
-        this.retryMode = false;
+        this.retryTimeout = this.switchTime +timeout;
+        this.mode = true;
     }
 
     @Override
     public void execute() {
-        //TODO make the logic in this less confusing
-        if (retryMode) {
-            if (climbClaws.isSwitchSet(climbModule)) {
-                climbClaws.setPiston(climbModule, true);
-                this.retryMode = false;
-                this.retryTimeout = Timer.getFPGATimestamp();
-                this.switchTime = Timer.getFPGATimestamp();
-            }
-            //TODO replace this whole if block w/
-            // climb.setVoltage(climb.getPlay() ? 0 : voltage);
-            // where voltage is precomputed to be +/- some constant within the constructor (as reversed is final)
-            if (climb.getPlay()) {
-                if (reversed) {
-                    climb.setVoltage(4.5);
-                } else {
-                    climb.setVoltage(-4.5);
-                }
-            } else {
-                climb.setVoltage(0);
-            }
-        } else {
+        if (mode) {
             climb.setVoltage(0);
-            if (Timer.getFPGATimestamp() <= retryTimeout + timeout) {
+            if (Timer.getFPGATimestamp() <= retryTimeout) {
                 if (!climbClaws.isSwitchSet(climbModule)) {
-                    this.switchTime = Timer.getFPGATimestamp();
+                    this.switchTime = Timer.getFPGATimestamp() + endTime;
                 }
-                Logging.robotShuffleboard.getTab("Climb").setEntry("Switch time", switchTime);
             } else {
                 climbClaws.setPiston(climbModule, false);
-                this.retryMode = true;
+                this.mode = false;
             }
+        } else {
+            if (climbClaws.isSwitchSet(climbModule)) {
+                climbClaws.setPiston(climbModule, true);
+                this.retryTimeout = Timer.getFPGATimestamp() + timeout;
+                this.switchTime = Timer.getFPGATimestamp() + endTime;
+                this.mode = true;
+            }
+            climb.setVoltage(climb.getPlay() ? voltage : 0);
         }
     }
 
     @Override
     public boolean isFinished() {
-        return climbClaws.isPistonSet(climbModule) && Timer.getFPGATimestamp() >= switchTime + endTime;
+        return climbClaws.isPistonSet(climbModule) && Timer.getFPGATimestamp() >= switchTime;
     }
 }
