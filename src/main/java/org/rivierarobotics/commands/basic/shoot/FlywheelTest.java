@@ -23,6 +23,7 @@ package org.rivierarobotics.commands.basic.shoot;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
+//TODO is this testing the flywheel or setting it to its target velocity?
 public class FlywheelTest extends InstantCommand {
     private final FloppaFlywheels floppas;
 

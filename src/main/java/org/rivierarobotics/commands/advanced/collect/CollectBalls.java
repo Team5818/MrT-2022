@@ -37,8 +37,12 @@ public class CollectBalls extends SequentialCommandGroup {
     private static final double MINIWHEEL_VOLTAGE = -7;
 
     public CollectBalls() {
+        //TODO if this is just a single ConditionalCommand, then this class should
+        // extend ConditionalCommand not SequentialCommandGroup and pass the super() arguments as below
         addCommands(
                 new ConditionalCommand(
+                        //TODO similar thing here, remove the SequentialCommandGroup
+                        // to expose the ParallelDeadlineGroup
                         new SequentialCommandGroup(
                                 new ParallelDeadlineGroup(
                                         new WaitUntilCommand(() -> !IntakeSensors.getInstance().canCollect()),

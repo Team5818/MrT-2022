@@ -30,6 +30,9 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class OneBallSimpleAuto extends SequentialCommandGroup {
     public OneBallSimpleAuto(boolean rightSide) {
+        //TODO can you do some math/logic to find the rightSide setpoints and drive paths
+        // instead of having two separate copies of the same thing? will make it easier if
+        // say you want to change timeouts for things
         if (!rightSide) {
             addCommands(
                     new SetDriveAngle(-135).withTimeout(3),

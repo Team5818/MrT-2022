@@ -26,6 +26,9 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
+//TODO the only difference b/n this and DrivePath is PathPlanner.loadPath() instead of TrajectoryFollower.getTrajectoryFromPathweaver()
+// please combine, but put a boolean flag in the constructor for DrivePath (i.e. usePathPlanner)
+// (and then delete this if no longer needed, ofc moving usages
 public class TestPathPlanner extends CommandBase {
     private final DriveTrain driveTrain;
     private final Gyro gyro;
@@ -49,7 +52,6 @@ public class TestPathPlanner extends CommandBase {
 
     @Override
     public void execute() {
-
         trajectoryFollower.followController();
     }
 

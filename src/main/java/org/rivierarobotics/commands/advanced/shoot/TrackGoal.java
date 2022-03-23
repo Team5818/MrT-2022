@@ -57,14 +57,10 @@ public class TrackGoal extends CommandBase {
             if (isAuto) {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
+            //TODO is this an instance var for a reason? if not just make it a local var
             this.storedTx = lime.getTx() - (16 / lime.getDistance());
             drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - storedTx);
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 
     @Override

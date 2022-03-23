@@ -23,6 +23,7 @@ package org.rivierarobotics.commands.basic.collect;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 
+//TODO this seems redundant considering you have both SetBeltVoltage and SetMiniwheelVoltage commands
 public class SetBeltAndMiniwheelVoltage extends InstantCommand {
     private final IntakeBelt intakeBelt;
     private final double beltVoltage;

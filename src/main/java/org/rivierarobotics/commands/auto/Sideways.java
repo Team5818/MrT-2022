@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 
+//TODO what exactly does this do Sideways? DriveSideways? change name pls
 public class Sideways extends CommandBase {
     private final double time;
     private double starttime = 0;
@@ -38,6 +39,8 @@ public class Sideways extends CommandBase {
         this.starttime = Timer.getFPGATimestamp();
         DriveTrain.getInstance().drive(0, 1, 0, true);
     }
+
+    //TODO this is a manual calculation of a timeout. Can you use .withTimeout() instead?
 
     @Override
     public boolean isFinished() {

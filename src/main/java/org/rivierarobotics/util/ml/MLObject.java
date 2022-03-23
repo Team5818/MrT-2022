@@ -32,6 +32,7 @@ public class MLObject {
     public final double relativeLocationX;
     public final double relativeLocationDistance;
     public final double confidence;
+    //TODO remove comment if unused
 //    private final Map<Double, Double> yAngle = new HashMap<Double, Double>();
 //    private final Map<Double, Double> xAngle = new HashMap<Double, Double>();
 
@@ -50,6 +51,7 @@ public class MLObject {
         this.relativeLocationDistance = Math.sqrt(Math.pow(relativeLocationY, 2) + Math.pow(relativeLocationX, 2));
         this.confidence = confidence;
 
+        //TODO remove comments if unused
 //        yAngle.put(464., 36.87);
 //        yAngle.put(432., 32.005);
 //        yAngle.put(400., 26.565);

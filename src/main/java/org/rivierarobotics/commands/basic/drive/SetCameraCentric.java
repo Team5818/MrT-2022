@@ -35,6 +35,9 @@ public class SetCameraCentric extends CommandBase {
         driveTrain.setFieldCentric(false);
     }
 
+    //TODO this command will execute forever without isFinished(),
+    // below will probably do nothing except flip fieldCentric over and over
+    // but either converting to InstantCommand or adding a proper isFinished is needed
     //@Override
     //public boolean isFinished() {
     //    driveTrain.setFieldCentric(true);
@@ -43,6 +46,7 @@ public class SetCameraCentric extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        //TODO is this the behavior you expect? if interrupted then it's field-centric?
         driveTrain.setFieldCentric(interrupted);
     }
 }

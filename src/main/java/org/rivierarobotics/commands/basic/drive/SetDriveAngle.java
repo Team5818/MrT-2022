@@ -25,7 +25,6 @@ import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 
-
 public class SetDriveAngle extends CommandBase {
     private final DriveTrain dt;
     private final Gyro gyro;

@@ -23,6 +23,8 @@ package org.rivierarobotics.commands.auto;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class TestCollectAuto extends SequentialCommandGroup {
+    //TODO either uncomment these lines and fill in the actual comments or remove
+    // if remove, I suggest deleting the class as it is unused.
     public TestCollectAuto() {
         addCommands(
                 // deploy intake

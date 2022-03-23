@@ -45,7 +45,10 @@ public class Climb extends SubsystemBase {
 
     // All of these values are bs change them later
     public static final double KP = 0.2;
-    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(new ArrayList<>(), true, ClimbConstants.MAX_CLIMB_VELOCITY, ClimbConstants.MAX_CLIMB_ACCELERATION, 100, 0, ClimbConstants.TIMEOUT_MS, 10);
+    private static final MotionMagicConfig CM_MM_CONFIG = new MotionMagicConfig(
+            new ArrayList<>(), true, ClimbConstants.MAX_CLIMB_VELOCITY, ClimbConstants.MAX_CLIMB_ACCELERATION,
+            100, 0, ClimbConstants.TIMEOUT_MS, 10
+    );
     private static final PIDConfig CM_MM_PID = new PIDConfig(KP, 0, 0, 0);
 
     private final WPI_TalonFX climbMaster;
@@ -63,6 +66,8 @@ public class Climb extends SubsystemBase {
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, CM_MM_PID, CM_MM_CONFIG, climbMaster);
+        //TODO this sets up motion magic with reset AFTER "demolishing" the frames,
+        // so that frame demolisher will not do anything (change order)
         climbMaster.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
@@ -96,6 +101,7 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
+        //TODO var angle is not used, remove
         var angle = climbMaster.getSensorCollection().getIntegratedSensorPosition();
         return climbMaster.getSelectedSensorPosition() * ClimbConstants.MOTOR_TICK_TO_ANGLE;
     }

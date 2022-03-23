@@ -26,7 +26,8 @@ import org.rivierarobotics.commands.advanced.drive.DrivePath;
 import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
 
 public class TwoBallAuto extends SequentialCommandGroup {
-
+    //TODO either uncomment these lines and fill in the actual comments or remove
+    // if remove, I suggest deleting the class as it is unused.
     public TwoBallAuto() {
         addCommands(
                 //Shoot command

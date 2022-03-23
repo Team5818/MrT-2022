@@ -84,6 +84,7 @@ public class ButtonConfiguration {
                 .whenPressed(new SetIntakeState(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
                 .whileHeld(new SetFlywheelSpeed(0));
+        //TODO if these are going to be here, make actual command classes for them
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
                 .whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() - 200)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)

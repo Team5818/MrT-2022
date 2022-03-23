@@ -30,19 +30,19 @@ import org.rivierarobotics.util.Gyro;
 
 // do not make this a subsystem please thank you
 public class Limelight {
+    private static Limelight INSTANCE;
 
     public static Limelight getInstance() {
-        if (limelight == null) {
-            limelight = new Limelight();
+        if (INSTANCE == null) {
+            INSTANCE = new Limelight();
         }
-        return limelight;
+        return INSTANCE;
     }
 
     private static final double LL_ANGLE = 30; // deg
     private static final double ROBOT_HEIGHT = 1.092; // m;
     private static final double GOAL_HEIGHT = 2.6416; // m
     private static final double LL_OFFSET = 0.2286;
-    private static Limelight limelight;
 
     private final PhotonCamera camera;
 

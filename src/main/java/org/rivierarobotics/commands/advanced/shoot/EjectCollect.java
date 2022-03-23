@@ -60,6 +60,12 @@ public class EjectCollect extends CommandBase {
         this.firstRun = false;
     }
 
+    //TODO startTimer(), timerFinished(), and startTime are copied across:
+    // Eject, EjectCollect, and EjectShoot
+    // please pull this out into a class that you can use, i.e. RRTimer or something
+    // alternatively you could have that class extend CommandBase and you could
+    // extend some new TimedCommand or something.
+
     private void startTimer() {
         this.startTime = Timer.getFPGATimestamp();
     }

@@ -49,6 +49,7 @@ public class SetFloppaLimelight extends CommandBase {
     @Override
     public void initialize() {
         if (isLimelight) {
+            //TODO Limelight.getInstance().getDistance() is an expensive calculation, pull to local var
             this.floppasActuator.setFloppaAngle(ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
             this.floppaFlywheels.setFlywheelSpeed(ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()));
         } else {
@@ -57,6 +58,7 @@ public class SetFloppaLimelight extends CommandBase {
         }
     }
 
+    //TODO either remove comment and method or re-add comment
     @Override
     public void end(boolean interrupted) {
         //floppasActuator.setVoltage(0);

@@ -43,6 +43,8 @@ public class PathGeneration extends CommandBase {
 
     @Override
     public void initialize() {
+        //TODO this is the same value twice right? driveTrain.getPoseEstimator().getRobotPose()?
+        // so save to var and use twice instead of making an extra two calls
         var currentX = driveTrain.getPoseEstimator().getRobotPose().getX();
         var currentY = driveTrain.getPoseEstimator().getRobotPose().getY();
         var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, currentX + relativeX,

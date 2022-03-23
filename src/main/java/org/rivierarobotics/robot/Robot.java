@@ -127,6 +127,7 @@ public class Robot extends TimedRobot {
         Logging.robotShuffleboard.getTab("Field")
                 .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
+            //TODO maybe also a shuffleboard boolean to show if logging is enabled or not
             return;
         }
         var sb = Logging.robotShuffleboard;
@@ -145,6 +146,7 @@ public class Robot extends TimedRobot {
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
         var intakeSensors = IntakeSensors.getInstance();
+        //TODO either remove comments or uncomment
         //field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
         //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
@@ -169,7 +171,7 @@ public class Robot extends TimedRobot {
         climb.setEntry("Piston low", clc.isPistonSet(ClimbPositions.LOW));
         climb.setEntry("Piston mid", clc.isPistonSet(ClimbPositions.MID));
         climb.setEntry("Piston high", clc.isPistonSet(ClimbPositions.HIGH));
-        climb.setEntry("Kp", cl.KP);
+        climb.setEntry("Kp", Climb.KP);
         climb.setEntry("velocity", cl.getVelocity());
 
         limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
@@ -238,6 +240,7 @@ public class Robot extends TimedRobot {
             if (command != null) {
                 CommandScheduler.getInstance().schedule(command);
             }
+            //TODO not a great idea to be catching *all* Exceptions. only catch the ones you're looking for
         } catch (Exception ignored) {
             // Padding for checkstyle
         }
@@ -278,6 +281,8 @@ public class Robot extends TimedRobot {
     }
 
     private void initializeCustomLoops() {
+        //TODO either remove comments or uncomment
+        // if removed, maybe no use for this method >> put addPeriodic in robotInit
 //        addPeriodic(() -> {
 //            DriveTrain.getInstance().periodicLogging();
 //        }, 0.5, 0.0);
@@ -287,6 +292,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationInit() {
+        //TODO either remove comments or uncomment
         //DriveTrain.getInstance().resetPose(new Pose2d(20,20, new Rotation2d(50)));
     }
 }

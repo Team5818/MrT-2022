@@ -28,6 +28,7 @@ public class SetIntakeState extends InstantCommand {
 
     public SetIntakeState(boolean isOpen) {
         this.isOpen = isOpen;
+        //TODO pull IntakePiston into an instance field then use in init()
         addRequirements(IntakePiston.getInstance());
     }
 

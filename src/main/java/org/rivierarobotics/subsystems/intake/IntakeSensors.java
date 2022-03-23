@@ -30,16 +30,18 @@ import java.util.Objects;
 
 // do not make this a subsystem please thank you
 public class IntakeSensors {
+    private static IntakeSensors INSTANCE;
+
     public static IntakeSensors getInstance() {
-        if (intakeSensors == null) {
-            intakeSensors = new IntakeSensors();
+        if (INSTANCE == null) {
+            INSTANCE = new IntakeSensors();
         }
-        return intakeSensors;
+        return INSTANCE;
     }
 
+    //TODO remove these if they are unused
     private static final double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
     private static final String TESTING_ALLIANCE_COLOR = "red";
-    private static IntakeSensors intakeSensors;
 
     private final ColorSensorV3 colorSensor;
     private final AnalogInput distanceSensor;
@@ -56,6 +58,7 @@ public class IntakeSensors {
     }
 
     public boolean distanceSensorHasBall() {
+        //TODO remove comment if unused
 //        return (Math.abs(distanceSensor.getValue()) < 2000) || (Math.abs(distanceSensor2.getValue()) < 2000);
         return (Math.abs(distanceSensor.getValue()) < 2000);
     }
@@ -65,6 +68,7 @@ public class IntakeSensors {
     }
 
     public boolean isTeamBall() {
+        //TODO remove comment if unused
 //        return this.testingAllianceColor == getBallColor();
         var bc = getBallColor();
 
@@ -72,6 +76,9 @@ public class IntakeSensors {
             return true;
         }
 
+        //TODO Objects.equals(bc, "blue") --> bc.equals("blue") (more clear)
+        //TODO simplify this logic down. At present it could be a big return-boolean but I feel like the basic logic is:
+        // if station == color, true OR invalid == red, true
         if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && Objects.equals(bc, "blue")) {
             return true;
         } else {
@@ -91,6 +98,7 @@ public class IntakeSensors {
     }
 
     public boolean canCollect() {
+        //TODO remove comment if unused
         //return !distanceSensorHasBall();
         return !colorSensorHasBall() || !distanceSensorHasBall();
     }

@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 
+//TODO I don't think you need this class. Just use: new SetBeltVoltage().withTimeout()
+// and then you don't have to do any of the timing logic
 public class SetBeltVoltageWithTimeout extends CommandBase {
     private final IntakeBelt intakeBelt;
     private final double voltage;
@@ -42,6 +44,8 @@ public class SetBeltVoltageWithTimeout extends CommandBase {
         intakeBelt.setBeltVoltage(voltage);
         this.startTime = Timer.getFPGATimestamp();
     }
+
+    //TODO this is a manual calculation of a timeout. Can you use .withTimeout() instead?
 
     @Override
     public boolean isFinished() {

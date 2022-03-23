@@ -31,13 +31,12 @@ public class WaitPiston extends CommandBase {
     private final Climb climb;
     private final ClimbClaws climbClaws;
     private final ClimbPositions climbModule;
+    private final double endTime;
+    private final double timeout;
+    private final boolean reversed;
     private double switchTime;
     private double retryTimeout;
-    private double endTime;
-    private double timeout;
     private boolean retryMode;
-    private final boolean reversed;
-
 
     public WaitPiston(ClimbPositions climbModule, double endTime, double timeout, boolean reversed) {
         this.climb = Climb.getInstance();
@@ -58,6 +57,7 @@ public class WaitPiston extends CommandBase {
 
     @Override
     public void execute() {
+        //TODO make the logic in this less confusing
         if (retryMode) {
             if (climbClaws.isSwitchSet(climbModule)) {
                 climbClaws.setPiston(climbModule, true);
@@ -65,6 +65,9 @@ public class WaitPiston extends CommandBase {
                 this.retryTimeout = Timer.getFPGATimestamp();
                 this.switchTime = Timer.getFPGATimestamp();
             }
+            //TODO replace this whole if block w/
+            // climb.setVoltage(climb.getPlay() ? 0 : voltage);
+            // where voltage is precomputed to be +/- some constant within the constructor (as reversed is final)
             if (climb.getPlay()) {
                 if (reversed) {
                     climb.setVoltage(4.5);

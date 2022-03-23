@@ -26,7 +26,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 public class InteruptableSetVoltage extends CommandBase {
     private final double modifier;
     private final double voltage;
-    private Climb climb;
+    private final Climb climb;
 
     public InteruptableSetVoltage(boolean reversed, double voltage) {
         this.modifier = reversed ? 1 : -1;
@@ -37,10 +37,12 @@ public class InteruptableSetVoltage extends CommandBase {
 
     @Override
     public void execute() {
+        //TODO use a ternary here
         if (climb.getPlay()) {
             climb.setVoltage(voltage * modifier);
         } else {
             climb.setVoltage(0);
         }
     }
+    //TODO are you sure this should not end? Maybe it should be an InstantCommand
 }

@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class IdleMode extends CommandBase {
-    private Climb climb;
-    private boolean coast;
+    private final Climb climb;
+    private final boolean coast;
 
     public IdleMode(boolean coast) {
         this.climb = Climb.getInstance();

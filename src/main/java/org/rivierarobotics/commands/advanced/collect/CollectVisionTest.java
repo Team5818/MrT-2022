@@ -29,8 +29,11 @@ import org.rivierarobotics.util.ml.MLObject;
 public class CollectVisionTest extends CommandBase {
 //    public MLObject ball;
 //    public final MLCore mlCore;
+    //TODO make this static and DEFAULT_BALL_BOX
     public final BoundingBox defaultBallBox = new BoundingBox(0, 0, 0, 0);
 
+    //TODO either uncomment these things or remove them
+    // It seems the constructor and initialize() are the exact same, I'd just remove the constructor entirely
     public CollectVisionTest() {
 //        this.mlCore = MLCore.getInstance();
 //        this.ball = new MLObject("red", defaultBallBox,1);

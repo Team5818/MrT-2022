@@ -76,7 +76,6 @@ public class PoseEstimator {
         return robotPose.get();
     }
 
-
     public void updateOdometry() {
         resetLock.lock();
         SwerveModuleState[] swerveModuleStates = Arrays.stream(swerveModules).map(SwerveModule::getState).toArray(a -> new SwerveModuleState[swerveModules.length]);

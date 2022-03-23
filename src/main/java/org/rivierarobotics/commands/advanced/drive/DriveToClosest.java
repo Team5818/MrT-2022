@@ -48,11 +48,14 @@ public class DriveToClosest extends SequentialCommandGroup {
     public void initialize() {
         gyro.resetGyro();
 
+        //TODO this is the same value twice right? driveTrain.getPoseEstimator().getRobotPose()?
+        // so save to var and use twice instead of making an extra two calls
         var currentX = driveTrain.getPoseEstimator().getRobotPose().getX();
         var currentY = driveTrain.getPoseEstimator().getRobotPose().getY();
 
 
         MLCore core = MLCore.getInstance();
+        //TODO suggestion: DriverStation.getAlliance().name().toLowerCase()
         var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
         var balls = core.getDetectedObjects().get(ballColor);
         if (balls == null || balls.isEmpty()) {
@@ -61,6 +64,10 @@ public class DriveToClosest extends SequentialCommandGroup {
 
         balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
         var ball = balls.get(0);
+        //TODO use the gyro instance you have stored instead of Gyro.getInstance()
+        // same applies to trajFollower below
+        //TODO this is the same value twice right? Gyro.getInstance().getRotation2d().getRadians()?
+        // so save to var and use twice instead of making a new rot2d again
         var targetX = currentX + Math.cos(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
         var targety = currentY + Math.sin(Gyro.getInstance().getRotation2d().getRadians() + Math.toRadians(ball.ty)) * ball.relativeLocationDistance;
 

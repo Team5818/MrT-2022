@@ -80,6 +80,12 @@ public class Eject extends CommandBase {
         this.shootBadBall = false;
     }
 
+    //TODO startTimer(), timerFinished(), and startTime are copied across:
+    // Eject, EjectCollect, and EjectShoot
+    // please pull this out into a class that you can use, i.e. RRTimer or something
+    // alternatively you could have that class extend CommandBase and you could
+    // extend some new TimedCommand or something.
+
     private void startTimer() {
         this.startTime = Timer.getFPGATimestamp();
     }
@@ -90,13 +96,17 @@ public class Eject extends CommandBase {
 
     @Override
     public void execute() {
+        //TODO remove SmartDashboard calls on prod/master
         SmartDashboard.putBoolean("SHOULD DO THINGS", !IntakeSensors.getInstance().isTeamBall() && !isEjectPos);
         SmartDashboard.putBoolean("BAD BALL", shootBadBall);
 
+        //TODO I feel like this should not be this complicated but idk, cleanup if possible
         if (!IntakeSensors.getInstance().isTeamBall() && !isEjectPos) {
+            //TODO what is this magic 1 constant? pull to const field?
             floppaActuator.setFloppaAngle(1);
             if (isCollect) {
                 intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
+                //TODO what is this magic 8 constant? pull to const field?
                 floppaFlywheels.setVoltage(8);
             } else {
                 this.shootBadBall = true;
@@ -124,6 +134,7 @@ public class Eject extends CommandBase {
                 floppaActuator.setFloppaAngle(0);
                 floppaFlywheels.setVoltage(0);
             }
+            //TODO what is this magic -7 constant? pull to const field?
             intakeBelt.setBeltVoltage(isCollect ? CollectBalls.COLLECT_VOLTAGE : -7);
             this.firstRun = true;
         }

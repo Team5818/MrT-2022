@@ -61,6 +61,4 @@ public class InterpolationTable {
         var secondValue = interpolationTable.lowerEntry(key);
         return interpolateBetweenPoints(firstValue.getKey(), firstValue.getValue(), secondValue.getKey(), secondValue.getValue(), key);
     }
-
-
 }

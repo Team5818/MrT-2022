@@ -53,15 +53,15 @@ import java.util.stream.Collectors;
  * avoidance.
  */
 public class FieldMesh {
+    private static FieldMesh INSTANCE;
 
     public static FieldMesh getInstance() {
-        if (fieldMesh == null) {
-            fieldMesh = new FieldMesh();
+        if (INSTANCE == null) {
+            INSTANCE = new FieldMesh();
         }
-        return fieldMesh;
+        return INSTANCE;
     }
 
-    private static FieldMesh fieldMesh;
     public static final double MAX_VELOCITY = 5;
     public static final double MAX_ACCELERATION = 0.5;
     public static final double DEFAULT_NODE_WEIGHT = 0;

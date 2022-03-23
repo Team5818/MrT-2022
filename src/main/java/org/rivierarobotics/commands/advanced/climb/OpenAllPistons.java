@@ -33,6 +33,9 @@ public class OpenAllPistons extends InstantCommand {
 
     @Override
     public void initialize() {
+        //TODO this is the only use of setAllPistons, perhaps just move the logic into this command
+        // then also iirc you don't need to require the subsystem (or even pass it in ig)
+        // and ofc delete the method from the subsystem
         climb.setAllPistons(true);
     }
 }

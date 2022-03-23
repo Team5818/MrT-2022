@@ -53,6 +53,4 @@ public class IntakePiston extends SubsystemBase {
     public boolean getIntakeState() {
         return p1.getState();
     }
-
-
 }

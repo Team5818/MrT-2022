@@ -20,12 +20,10 @@
 
 package org.rivierarobotics.util.smartmotion;
 
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
-
 
 public class SparkSmartMotion {
     /**

@@ -32,6 +32,7 @@ import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class RunClimb extends SequentialCommandGroup {
     private static final double voltage = 9;
+    //TODO what is this voltage? MAX_VOLTAGE? regardless change it to be UPPER_CASE
 
     public RunClimb(boolean reversed) {
         final ClimbPositions first;
@@ -43,6 +44,7 @@ public class RunClimb extends SequentialCommandGroup {
             last = ClimbPositions.HIGH;
             first = ClimbPositions.LOW;
         }
+        //TODO either remove these comments or uncomment them
         addCommands(
                 //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),

@@ -45,6 +45,7 @@ public class FloppaActuator extends SubsystemBase {
         return angleInRads + ShooterConstant.ACTUATOR_ZERO_TICKS;
     }
 
+    //TODO actuatorConfig, sparkSmartMotionConfig, and tunningTab (spelling too) don't need to be fields
     private final PIDConfig actuatorConfig;
     private final SparkMotionConfig sparkSmartMotionConfig;
     private final SparkSmartMotion actuatorController;
@@ -104,6 +105,7 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
+        //TODO remove comment if unused (and currTicks)
         var currTicks = getTicks();
 //        if ((currTicks >= ShooterConstant.MAX_ACTUATOR_TICKS && Math.signum(voltage) > 0) ||
 //                currTicks <= ShooterConstant.MIN_ACTUATOR_TICKS && Math.signum(voltage) < 0) {

@@ -25,9 +25,9 @@ import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class SetPiston extends InstantCommand {
-    private ClimbClaws climbClaws;
-    private ClimbPositions climbPosition;
-    private boolean isEngaged;
+    private final ClimbClaws climbClaws;
+    private final ClimbPositions climbPosition;
+    private final boolean isEngaged;
 
     public SetPiston(ClimbPositions climbPosition, boolean isEngaged) {
         this.climbClaws = ClimbClaws.getInstance();

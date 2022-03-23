@@ -25,6 +25,7 @@ import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
+//TODO this is exactly the same as DrivePath but passing in "straight". Please delete this as it is redundant and unused.
 public class SimpleAuto extends CommandBase {
     private final DriveTrain driveTrain;
     private TrajectoryFollower trajectoryFollower;

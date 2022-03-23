@@ -220,7 +220,6 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicLogging() {
-        //TODO logging toggle button
         if (DriverStation.isFMSAttached()) {
             return;
         }
