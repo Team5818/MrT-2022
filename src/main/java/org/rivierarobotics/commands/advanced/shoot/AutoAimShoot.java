@@ -27,22 +27,18 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
-public class AutoAimShoot extends SequentialCommandGroup {
+public class AutoAimShoot extends ConditionalCommand {
     public AutoAimShoot(boolean isAuto) {
-        addCommands(
-                //TODO if this is just a single ConditionalCommand, then this class should
-                // extend ConditionalCommand not SequentialCommandGroup and pass the super() arguments as below
-                new ConditionalCommand(
-                        new ParallelDeadlineGroup(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(1),
-                                        new Shoot(true)
-                                ),
-                                new TrackGoal(isAuto)
+        super(
+                new ParallelDeadlineGroup(
+                        new SequentialCommandGroup(
+                                new WaitCommand(1),
+                                new Shoot(true)
                         ),
-                        new WaitCommand(0.5),
-                        () -> Limelight.getInstance().getDetected()
-                )
+                        new TrackGoal(isAuto)
+                ),
+                new WaitCommand(0.5),
+                () -> Limelight.getInstance().getDetected()
         );
     }
 
