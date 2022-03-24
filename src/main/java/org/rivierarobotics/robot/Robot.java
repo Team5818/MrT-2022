@@ -33,7 +33,7 @@ import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
-import org.rivierarobotics.commands.basic.collect.SetBeltVoltageWithTimeout;
+import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
@@ -52,9 +52,6 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
@@ -102,7 +99,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
         var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
         if (command == null && ran) {
-            CommandScheduler.getInstance().schedule(new SetBeltVoltageWithTimeout(-CollectBalls.COLLECT_VOLTAGE, 0.2));
+            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).withTimeout(0.2));
             this.ran = false;
         }
         if (command != null) {
