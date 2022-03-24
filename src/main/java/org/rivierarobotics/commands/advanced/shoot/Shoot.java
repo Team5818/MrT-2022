@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.advanced.shoot;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.basic.collect.SetBeltAndMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.FlywheelTest;
@@ -65,7 +64,8 @@ public class Shoot extends SequentialCommandGroup {
         addCommands(
                 new ParallelDeadlineGroup(
                         new WaitCommand(1.5),
-                        new SetBeltAndMiniwheelVoltage(SHOOT_BELT_VOLTAGE, SHOOT_MINIWHEEL_VOLTAGE),
+                        new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
+                        new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                         new SetFloppaPosition(flywheelAngle),
                         new SetFlywheelSpeed(speed)
                 )
@@ -80,8 +80,8 @@ public class Shoot extends SequentialCommandGroup {
         // then this class should be a ParallelDeadlineGroup instead of a SequentialCommandGroup
         addCommands(
                 new ParallelDeadlineGroup(
-                        new WaitCommand(1.4),
-                        new WaitCommand(0.2).andThen(new SetBeltAndMiniwheelVoltage(SHOOT_BELT_VOLTAGE, SHOOT_MINIWHEEL_VOLTAGE)),
+                        new WaitCommand(2),
+                        new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),
                         new SetFloppaLimelight(true)
                 )
         );
