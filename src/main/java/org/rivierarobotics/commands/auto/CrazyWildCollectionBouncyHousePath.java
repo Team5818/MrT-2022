@@ -37,20 +37,19 @@ public class CrazyWildCollectionBouncyHousePath extends SequentialCommandGroup {
     public CrazyWildCollectionBouncyHousePath() {
         addCommands(
                 new SetIntakeState(true),
-                new SetDriveAngle(-20).withTimeout(0.3),
-                new AutoAimShoot().withTimeout(1.4),
+                new AutoAimShoot(true).withTimeout(1.6),
                 new SetDriveAngle(-90).withTimeout(0.5),
                 new ParallelDeadlineGroup(
                   new DrivePathPlannerPath("fiveBallStart", 5, 1.2),
                   new CollectBalls()
                 ),
                 new SetDriveAngle(-47).withTimeout(1.2),
-                new AutoAimShoot(),
+                new AutoAimShoot(true),
                 new ParallelDeadlineGroup(
                         new DrivePathPlannerPath("fiveBallEnd", 7, 2),
                         new CollectBalls()
                 ),
-                new AutoAimShoot()
+                new AutoAimShoot(true)
         );
     }
 }
