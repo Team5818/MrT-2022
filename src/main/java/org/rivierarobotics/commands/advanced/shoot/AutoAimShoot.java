@@ -27,12 +27,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
-public class AutoAimShoot extends ConditionalCommand {
+public class AutoAimShoot extends SequentialCommandGroup {
     public AutoAimShoot(boolean isAuto) {
         super(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
-                                new WaitCommand(1),
+                                new WaitCommand(0.5),
                                 new Shoot(true)
                         ),
                         new TrackGoal(isAuto)

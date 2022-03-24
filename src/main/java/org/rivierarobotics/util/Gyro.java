@@ -24,10 +24,12 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Gyro {
     private static Gyro INSTANCE;
+
 
     public static Gyro getInstance() {
         if (INSTANCE == null) {
@@ -37,6 +39,7 @@ public class Gyro {
     }
 
     private final AHRS navX;
+    private final AtomicReference<Rotation2d> atomicReference = new AtomicReference<>(new Rotation2d(0));
 
     private Gyro() {
         this.navX = new AHRS(SPI.Port.kMXP);
@@ -47,7 +50,11 @@ public class Gyro {
     }
 
     public Rotation2d getRotation2d() {
-        return new Rotation2d(Math.toRadians(-getAngle()));
+        return atomicReference.get();
+    }
+
+    public void updateRotation2D() {
+        atomicReference.set(new Rotation2d(Math.toRadians(-getAngle())));
     }
 
     public double getRate() {

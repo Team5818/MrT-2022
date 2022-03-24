@@ -49,18 +49,18 @@ public class SwerveModule {
     private static final double GEARING = 11.0 / 40.0;
     private static final double DRIVE_MOTOR_TICK_TO_SPEED = 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048; // m/s
     //Controller Constants
-    private static final double MAX_TURN_ACCELERATION = 4800; //Rad/s
-    private static final double MAX_TURN_VELOCITY = 4800; //Rad/s
+    private static final double MAX_TURN_ACCELERATION = 20000; //Rad/s
+    private static final double MAX_TURN_VELOCITY = 20000; //Rad/s
     private static final int TIMEOUT_MS = 60;
 
     //Turn Motor Motion Magic
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION,
-            150, 0,
+            200, 0,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig TM_MM_PID = new PIDConfig(3.5, 0.001, 0, 0);
+    private static final PIDConfig TM_MM_PID = new PIDConfig(3.5, 0.002, 0, 0);
 
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
@@ -96,6 +96,7 @@ public class SwerveModule {
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, TM_MM_CONFIG, steeringMotor);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
+        steeringMotor.setNeutralMode(NeutralMode.Coast);
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
 
         //Drive Motor
@@ -152,7 +153,7 @@ public class SwerveModule {
 
     public void setSteeringMotorAngle(double angleInRad) {
         Logging.robotShuffleboard.getTab("Swerve").setEntry("target Angle" + driveMotor.getDeviceID(), angleInRad);
-        steeringMotor.set(ControlMode.MotionMagic, angleInRad);
+        steeringMotor.set(ControlMode.Position, angleInRad);
     }
 
     public void updateSwerveInformation() {

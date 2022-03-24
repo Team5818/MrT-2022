@@ -79,11 +79,12 @@ public class IntakeSensors {
         //TODO Objects.equals(bc, "blue") --> bc.equals("blue") (more clear)
         //TODO simplify this logic down. At present it could be a big return-boolean but I feel like the basic logic is:
         // if station == color, true OR invalid == red, true
-        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && Objects.equals(bc, "blue")) {
-            return true;
-        } else {
-            return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
-        }
+        return true;
+//        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue && Objects.equals(bc, "blue")) {
+//            return true;
+//        } else {
+//            return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
+//        }
     }
 
     public String getBallColor() {

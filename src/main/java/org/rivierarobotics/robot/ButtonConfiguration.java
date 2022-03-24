@@ -28,9 +28,11 @@ import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.Shoot;
 import org.rivierarobotics.commands.auto.CaptainJIsRSCollect;
+import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.DrivePathPlannerPath;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
+import org.rivierarobotics.commands.basic.collect.SetIntakeVoltage;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
 import org.rivierarobotics.commands.basic.drive.*;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
@@ -80,9 +82,11 @@ public class ButtonConfiguration {
         //CO-DRIVER BUTTONS
 
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
-                .whenPressed(new Shoot());
+                .whenPressed(new SetDriveAngle(-20));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
-                .whenPressed(new SetIntakeState(false));
+                .whenPressed(new SetDriveAngle(-180));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
+                .whenPressed(new SetDriveAngle(180));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
                 .whileHeld(new SetFlywheelSpeed(0));
         //TODO if these are going to be here, make actual command classes for them
@@ -91,7 +95,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
                 .whenPressed(new InstantCommand(() -> FloppaFlywheels.getInstance().setTargetVelocity(FloppaFlywheels.getInstance().getTargetVelocity() + 200)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
-                .whenPressed(new CaptainJIsRSCollect());
+                .whenPressed(new CrazyWildCollectionBouncyHousePath());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
                 .whileHeld(new AngulationToTargetBasedOffOfPose());
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)

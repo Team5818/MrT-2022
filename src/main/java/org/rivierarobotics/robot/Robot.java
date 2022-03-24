@@ -88,16 +88,18 @@ public class Robot extends TimedRobot {
 
         FieldMesh.getInstance();
 
-//        var threader = Executors.newSingleThreadScheduledExecutor();
-//        threader.scheduleWithFixedDelay(new Thread(() -> {
-//            DriveTrain.getInstance().updateSwerveStates();
-//        }), 7, 20, TimeUnit.MILLISECONDS);
+        var threader = Executors.newSingleThreadScheduledExecutor();
+        threader.scheduleWithFixedDelay(new Thread(() -> {
+            Gyro.getInstance().updateRotation2D();
+        }), 0, 5, TimeUnit.MILLISECONDS);
         LiveWindow.disableAllTelemetry();
+        LiveWindow.setEnabled(false);
     }
 
     @Override
     public void robotPeriodic() {
         DriveTrain.getInstance().updateSwerveStates();
+        CommandScheduler.getInstance().run();
         var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
         if (command == null && ran) {
             CommandScheduler.getInstance().schedule(new SetBeltVoltageWithTimeout(-CollectBalls.COLLECT_VOLTAGE, 0.2));
@@ -128,12 +130,13 @@ public class Robot extends TimedRobot {
 //                .setEntry("RTA", Limelight.getInstance().getShootingAssistAngle());
 
 
-        Logging.robotShuffleboard.getTab("Field")
-                .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
+
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
             //TODO maybe also a shuffleboard boolean to show if logging is enabled or not
             return;
         }
+        Logging.robotShuffleboard.getTab("Field")
+                .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
         var sb = Logging.robotShuffleboard;
 
         var drive = sb.getTab("Drive");
@@ -236,11 +239,6 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void teleopPeriodic() {
-        CommandScheduler.getInstance().run();
-    }
-
-    @Override
     public void autonomousInit() {
         this.autoFlag = true;
         initializeAllSubsystems();
@@ -256,11 +254,6 @@ public class Robot extends TimedRobot {
         } catch (Exception ignored) {
             // Padding for checkstyle
         }
-    }
-
-    @Override
-    public void autonomousPeriodic() {
-        CommandScheduler.getInstance().run();
     }
 
     @Override
