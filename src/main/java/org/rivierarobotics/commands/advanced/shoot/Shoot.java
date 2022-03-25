@@ -23,6 +23,7 @@ package org.rivierarobotics.commands.advanced.shoot;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.FlywheelTest;
@@ -34,23 +35,22 @@ import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 //TODO maybe make this name a bit more descriptive. how many does it shoot? any conditions? etc
-public class Shoot extends SequentialCommandGroup {
+public class Shoot extends ParallelDeadlineGroup {
     private static final double SHOOT_BELT_VOLTAGE = -7;
     private static final double SHOOT_MINIWHEEL_VOLTAGE = 5;
 
     public Shoot() {
         //TODO if the only thing being added is a ParallelDeadlineGroup,
         // then this class should be a ParallelDeadlineGroup instead of a SequentialCommandGroup
-        addCommands(
-                new ParallelDeadlineGroup(
-                        new SequentialCommandGroup(
-//                                new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(800)).withTimeout(2),
-                                new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
-                                new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
-                                new WaitCommand(1.5)
-                        ),
-                        new FlywheelTest()
-                )
+
+        super(
+                new SequentialCommandGroup(
+                        new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(800)).withTimeout(2),
+                        new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
+                        new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
+                        new WaitCommand(1.5)
+                ),
+                new FlywheelTest()
         );
     }
 
@@ -59,16 +59,12 @@ public class Shoot extends SequentialCommandGroup {
     }
 
     public Shoot(double speed, double flywheelAngle) {
-        //TODO if the only thing being added is a ParallelDeadlineGroup,
-        // then this class should be a ParallelDeadlineGroup instead of a SequentialCommandGroup
-        addCommands(
-                new ParallelDeadlineGroup(
-                        new WaitCommand(1.5),
-                        new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
-                        new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
-                        new SetFloppaPosition(flywheelAngle),
-                        new SetFlywheelSpeed(speed)
-                )
+        super(
+                new WaitCommand(1.5),
+                new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
+                new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
+                new SetFloppaPosition(flywheelAngle),
+                new SetFlywheelSpeed(speed)
         );
     }
 
@@ -76,14 +72,10 @@ public class Shoot extends SequentialCommandGroup {
     // passed in then this constructor has an if which decides between the current contents of this constructor or the
     // current contents of the no-args constructor.
     public Shoot(boolean isAutoaim) {
-        //TODO if the only thing being added is a ParallelDeadlineGroup,
-        // then this class should be a ParallelDeadlineGroup instead of a SequentialCommandGroup
-        addCommands(
-                new ParallelDeadlineGroup(
-                        new WaitCommand(2),
-                        new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),
-                        new SetFloppaLimelight(true)
-                )
+        super(
+                new WaitCommand(2),
+                new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),
+                new SetFloppaLimelight(true)
         );
     }
 
