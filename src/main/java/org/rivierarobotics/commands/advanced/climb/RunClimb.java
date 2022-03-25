@@ -43,9 +43,7 @@ public class RunClimb extends SequentialCommandGroup {
             last = ClimbPositions.HIGH;
             first = ClimbPositions.LOW;
         }
-        //TODO either remove these comments or uncomment them
         addCommands(
-                //new SetDriveAngle(90, 0.2),
                 new OpenAllPistons(),
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(first)),
@@ -53,21 +51,17 @@ public class RunClimb extends SequentialCommandGroup {
                 ),
                 new TogglePiston(first, true, 0),
                 new WaitCommand(0.25),
-                //new SetDriveVelocity(0,0,0),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(ClimbPositions.MID)),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE)),
                 new ClimbSetVoltage(reversed, 0),
                 new TogglePiston(ClimbPositions.MID, true, 0),
-//                new WaitCommand(0.2),
                 new WaitPiston(ClimbPositions.MID, 0.5, 1, reversed),
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
-//                new InteruptableSetVoltage(reversed, voltage).withTimeout(0.9),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
                 new ClimbSetVoltage(reversed, RUN_VOLTAGE * 0.5),
                 new TogglePiston(last, true, 0),
-//                new WaitCommand(0.3),
                 new WaitPiston(last, 0.5, 1.0, reversed),
                 new ClimbSetVoltage(reversed, 0),
                 new TogglePiston(ClimbPositions.MID, false, 0),
