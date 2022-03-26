@@ -34,20 +34,13 @@ public class MLAuto extends SequentialCommandGroup {
         addCommands(
                 new SetDriveTargetAngle(-180),
                 new SetIntakeState(true),
-                //TODO this is a ParallelDeadlineGroup without a command
-                // i.e. the ParallelDeadlineGroup does nothing and could be removed
-                // also in this case you have a waitcommand sequentially after it,
-                // which could just be another command in the parent commandgroup instead of .andThen()
-                new ParallelDeadlineGroup(
-                        new DrivePath("mlauto/mlstart").andThen(new WaitCommand(1))
-                ),
+                new DrivePath("mlauto/mlstart"),
+                new WaitCommand(1),
                 new SetDriveAngle(-70).withTimeout(1.5),
                 new AutoAimShoot(),
                 new SetDriveTargetAngle(-180),
-                //TODO same comment as above
-                new ParallelDeadlineGroup(
-                        new DrivePath("mlauto/mlend").andThen(new WaitCommand(1))
-                ),
+                new DrivePath("mlauto/mlend"),
+                new WaitCommand(1),
                 new SetDriveAngle(-50).withTimeout(1.5),
                 new AutoAimShoot()
         );
