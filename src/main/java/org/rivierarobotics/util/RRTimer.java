@@ -12,10 +12,10 @@ public class RRTimer {
         this.absoluteStart = waitTime;
     }
 
-    public boolean timerFinished() {
+    public boolean finished() {
         return Timer.getFPGATimestamp() - startTime >= this.waitTime;
     }
-    public boolean timerFinished(double waitTime) {
+    public boolean finished(double waitTime) {
         return Timer.getFPGATimestamp() - startTime >= waitTime;
     }
 

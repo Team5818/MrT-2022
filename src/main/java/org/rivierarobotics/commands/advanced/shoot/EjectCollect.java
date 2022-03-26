@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.advanced.shoot;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
@@ -72,7 +71,7 @@ public class EjectCollect extends CommandBase {
             this.isEjectPos = true;
             timer.reset();
         } else if (isEjectPos) {
-            if (!timer.timerFinished() && !firstRun) {
+            if (!timer.finished() && !firstRun) {
                 return;
             }
             this.isEjectPos = false;

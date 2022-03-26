@@ -20,20 +20,18 @@
 
 package org.rivierarobotics.commands.advanced.climb;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
+import org.rivierarobotics.util.RRTimer;
 
 public class WaitPiston extends CommandBase {
     private final Climb climb;
     private final ClimbClaws climbClaws;
     private final ClimbPositions climbModule;
-    private final double endTime;
-    private final double timeout;
-    private double switchTime;
-    private double retryTimeout;
+    private RRTimer waitTimer;
+    private RRTimer retryTimer;
     private boolean mode;
     private final double voltage;
 
@@ -41,16 +39,16 @@ public class WaitPiston extends CommandBase {
         this.climb = Climb.getInstance();
         this.climbClaws = ClimbClaws.getInstance();
         this.climbModule = climbModule;
-        this.endTime = endTime;
-        this.timeout = timeout;
+        this.waitTimer = new RRTimer(endTime);
+        this.retryTimer = new RRTimer(timeout);
         this.voltage = reversed ? 4.5 : -4.5;
         this.addRequirements(this.climb, this.climbClaws);
     }
 
     @Override
     public void initialize() {
-        this.switchTime = Timer.getFPGATimestamp();
-        this.retryTimeout = this.switchTime +timeout;
+        waitTimer.reset();
+        retryTimer.reset();
         this.mode = true;
     }
 
@@ -58,9 +56,9 @@ public class WaitPiston extends CommandBase {
     public void execute() {
         if (mode) {
             climb.setVoltage(0);
-            if (Timer.getFPGATimestamp() <= retryTimeout) {
+            if (waitTimer.finished()) {
                 if (!climbClaws.isSwitchSet(climbModule)) {
-                    this.switchTime = Timer.getFPGATimestamp() + endTime;
+                    waitTimer.reset();
                 }
             } else {
                 climbClaws.setPiston(climbModule, false);
@@ -69,8 +67,8 @@ public class WaitPiston extends CommandBase {
         } else {
             if (climbClaws.isSwitchSet(climbModule)) {
                 climbClaws.setPiston(climbModule, true);
-                this.retryTimeout = Timer.getFPGATimestamp() + timeout;
-                this.switchTime = Timer.getFPGATimestamp() + endTime;
+                retryTimer.reset();
+                waitTimer.reset();
                 this.mode = true;
             }
             climb.setVoltage(climb.getPlay() ? voltage : 0);
@@ -79,6 +77,6 @@ public class WaitPiston extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return climbClaws.isPistonSet(climbModule) && Timer.getFPGATimestamp() >= switchTime;
+        return climbClaws.isPistonSet(climbModule) && waitTimer.finished();
     }
 }
