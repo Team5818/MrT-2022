@@ -34,15 +34,11 @@ import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
-//TODO maybe make this name a bit more descriptive. how many does it shoot? any conditions? etc
-public class Shoot extends ParallelDeadlineGroup {
+public class ShootAll extends ParallelDeadlineGroup {
     private static final double SHOOT_BELT_VOLTAGE = -7;
     private static final double SHOOT_MINIWHEEL_VOLTAGE = 5;
 
-    public Shoot() {
-        //TODO if the only thing being added is a ParallelDeadlineGroup,
-        // then this class should be a ParallelDeadlineGroup instead of a SequentialCommandGroup
-
+    public ShootAll() {
         super(
                 new SequentialCommandGroup(
                         new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(800)).withTimeout(2),
@@ -54,11 +50,11 @@ public class Shoot extends ParallelDeadlineGroup {
         );
     }
 
-    public Shoot(ShooterLocations locations) {
+    public ShootAll(ShooterLocations locations) {
         this(locations.flyWheelSpeed, locations.floppaAngle);
     }
 
-    public Shoot(double speed, double flywheelAngle) {
+    public ShootAll(double speed, double flywheelAngle) {
         super(
                 new WaitCommand(1.5),
                 new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
@@ -71,7 +67,7 @@ public class Shoot extends ParallelDeadlineGroup {
     //TODO boolean not actually being used, I suggest the default no-args constructor calls this with false
     // passed in then this constructor has an if which decides between the current contents of this constructor or the
     // current contents of the no-args constructor.
-    public Shoot(boolean isAutoaim) {
+    public ShootAll(boolean isAutoaim) {
         super(
                 new WaitCommand(2),
                 new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),

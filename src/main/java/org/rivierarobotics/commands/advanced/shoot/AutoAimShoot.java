@@ -33,7 +33,7 @@ public class AutoAimShoot extends ConditionalCommand {
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
                                 new WaitCommand(0.5),
-                                new Shoot(true)
+                                new ShootAll(true)
                         ),
                         new TrackGoal(isAuto)
                 ),
