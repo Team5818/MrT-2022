@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
-import org.rivierarobotics.commands.basic.shoot.FlywheelTest;
+import org.rivierarobotics.commands.basic.shoot.FlywheelActivate;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
@@ -46,7 +46,7 @@ public class ShootAll extends ParallelDeadlineGroup {
                         new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                         new WaitCommand(1.5)
                 ),
-                new FlywheelTest()
+                new FlywheelActivate()
         );
     }
 

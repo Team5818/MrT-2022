@@ -23,11 +23,10 @@ package org.rivierarobotics.commands.basic.shoot;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 
-//TODO is this testing the flywheel or setting it to its target velocity?
-public class FlywheelTest extends InstantCommand {
+public class FlywheelActivate extends InstantCommand {
     private final FloppaFlywheels floppas;
 
-    public FlywheelTest() {
+    public FlywheelActivate() {
         this.floppas = FloppaFlywheels.getInstance();
         addRequirements(floppas);
     }
