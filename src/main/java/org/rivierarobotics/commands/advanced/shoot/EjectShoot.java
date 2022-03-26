@@ -28,6 +28,7 @@ import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.vision.Limelight;
+import org.rivierarobotics.util.RRTimer;
 
 public class EjectShoot extends CommandBase {
     private double floppaPosition;
@@ -42,6 +43,7 @@ public class EjectShoot extends CommandBase {
     private final FloppaFlywheels floppaFlywheels;
     private final IntakeBelt intakeBelt;
     private double startTime = 0.0;
+    private RRTimer rrTimer;
 
     public EjectShoot(double floppaPosition, double miniwheelVoltage, double flywheelSpeed, double beltVoltage) {
         this.floppaActuator = FloppaActuator.getInstance();
@@ -69,7 +71,7 @@ public class EjectShoot extends CommandBase {
     public void initialize() {
         this.isEjectPos = true;
         this.firstRun = false;
-
+        this.rrTimer = new RRTimer(0.5);
         if (useLimelight) {
             this.flywheelSpeed = ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance());
             this.floppaPosition = ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance());
@@ -77,20 +79,6 @@ public class EjectShoot extends CommandBase {
 
         this.floppaActuator.setFloppaAngle(this.floppaPosition);
         this.floppaFlywheels.setFlywheelSpeed(this.flywheelSpeed);
-    }
-
-    //TODO startTimer(), timerFinished(), and startTime are copied across:
-    // Eject, EjectCollect, and EjectShoot
-    // please pull this out into a class that you can use, i.e. RRTimer or something
-    // alternatively you could have that class extend CommandBase and you could
-    // extend some new TimedCommand or something.
-
-    private void startTimer() {
-        this.startTime = Timer.getFPGATimestamp();
-    }
-
-    private boolean timerFinished(double waitTime) {
-        return Timer.getFPGATimestamp() - startTime >= waitTime;
     }
 
     @Override
@@ -101,9 +89,9 @@ public class EjectShoot extends CommandBase {
             intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
             floppaFlywheels.setVoltage(0);
             this.isEjectPos = true;
-            startTimer();
+            rrTimer.reset();
         } else if (isEjectPos) {
-            if (!timerFinished(0.5) && !firstRun) {
+            if (!rrTimer.timerFinished() && !firstRun) {
                 return;
             }
             this.isEjectPos = false;

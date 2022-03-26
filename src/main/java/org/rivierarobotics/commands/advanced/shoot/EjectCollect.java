@@ -26,12 +26,14 @@ import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.util.RRTimer;
 
 public class EjectCollect extends CommandBase {
     private final double miniwheelVoltage;
     private final double beltVoltage;
     private boolean isEjectPos = true;
     private boolean firstRun = false;
+    private RRTimer timer;
 
     private final FloppaActuator floppaActuator;
     private final IntakeBelt intakeBelt;
@@ -58,20 +60,7 @@ public class EjectCollect extends CommandBase {
         floppaActuator.setFloppaAngle(0);
         this.isEjectPos = true;
         this.firstRun = false;
-    }
-
-    //TODO startTimer(), timerFinished(), and startTime are copied across:
-    // Eject, EjectCollect, and EjectShoot
-    // please pull this out into a class that you can use, i.e. RRTimer or something
-    // alternatively you could have that class extend CommandBase and you could
-    // extend some new TimedCommand or something.
-
-    private void startTimer() {
-        this.startTime = Timer.getFPGATimestamp();
-    }
-
-    private boolean timerFinished(double waitTime) {
-        return Timer.getFPGATimestamp() - startTime >= waitTime;
+        this.timer = new RRTimer(0.25);
     }
 
     @Override
@@ -81,9 +70,9 @@ public class EjectCollect extends CommandBase {
             intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
             floppaFlywheels.setVoltage(8);
             this.isEjectPos = true;
-            startTimer();
+            timer.reset();
         } else if (isEjectPos) {
-            if (!timerFinished(0.25) && !firstRun) {
+            if (!timer.timerFinished() && !firstRun) {
                 return;
             }
             this.isEjectPos = false;
