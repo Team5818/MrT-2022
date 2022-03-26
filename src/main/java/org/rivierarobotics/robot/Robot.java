@@ -53,6 +53,7 @@ import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
 
+import java.text.NumberFormat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -74,7 +75,11 @@ public class Robot extends TimedRobot {
                 .withPosition(0, 0)
                 .withWidget("Field");
 
-        initializeCustomLoops();
+        //initialize custom loops
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicLogging();
+        }, 0.5, 0.0);
+        addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
 
         this.chooser = new SendableChooser<>();
         chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
@@ -129,12 +134,13 @@ public class Robot extends TimedRobot {
 //        Logging.robotShuffleboard.getTab("Field")
 //                .setEntry("RTA", Limelight.getInstance().getShootingAssistAngle());
 
-
-
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
-            //TODO maybe also a shuffleboard boolean to show if logging is enabled or not
+            Logging.robotShuffleboard.getTab("Field").setEntry("logging", false);
             return;
         }
+
+        Logging.robotShuffleboard.getTab("Field")
+                .setEntry("logging", false);
         Logging.robotShuffleboard.getTab("Field")
                 .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
         var sb = Logging.robotShuffleboard;
@@ -161,9 +167,6 @@ public class Robot extends TimedRobot {
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
         var intakeSensors = IntakeSensors.getInstance();
-        //TODO either remove comments or uncomment
-        //field2d.setRobotPose(dt.getPoseEstimator().getRobotPose());
-        //DriveTrain.getInstance().periodicLogging();
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
@@ -250,9 +253,8 @@ public class Robot extends TimedRobot {
             if (command != null) {
                 CommandScheduler.getInstance().schedule(command);
             }
-            //TODO not a great idea to be catching *all* Exceptions. only catch the ones you're looking for
         } catch (Exception ignored) {
-            // Padding for checkstyle
+            //if this fails we need robot code to still try to work in teleop so unless debugging there is no case where we want this to throw anything.
         }
     }
 
@@ -285,19 +287,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
     }
 
-    private void initializeCustomLoops() {
-        //TODO either remove comments or uncomment
-        // if removed, maybe no use for this method >> put addPeriodic in robotInit
-        addPeriodic(() -> {
-            DriveTrain.getInstance().periodicLogging();
-        }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
-    }
-
     @Override
     public void simulationInit() {
-        //TODO either remove comments or uncomment
-        //DriveTrain.getInstance().resetPose(new Pose2d(20,20, new Rotation2d(50)));
     }
 }
 
