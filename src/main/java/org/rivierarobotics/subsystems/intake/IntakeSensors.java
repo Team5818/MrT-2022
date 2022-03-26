@@ -39,9 +39,7 @@ public class IntakeSensors {
         return INSTANCE;
     }
 
-    //TODO remove these if they are unused
     private static final double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
-    private static final String TESTING_ALLIANCE_COLOR = "red";
 
     private final ColorSensorV3 colorSensor;
     private final AnalogInput distanceSensor;
@@ -68,8 +66,6 @@ public class IntakeSensors {
     }
 
     public boolean isTeamBall() {
-        //TODO remove comment if unused
-//        return this.testingAllianceColor == getBallColor();
         var bc = getBallColor();
 
         if (bc.equals("no ball")) {
@@ -99,8 +95,6 @@ public class IntakeSensors {
     }
 
     public boolean canCollect() {
-        //TODO remove comment if unused
-        //return !distanceSensorHasBall();
         return !colorSensorHasBall() || !distanceSensorHasBall();
     }
 }
