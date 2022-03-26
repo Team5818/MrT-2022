@@ -44,12 +44,6 @@ public class SetFloppaPosition extends CommandBase {
         this.floppasActuator.setFloppaAngle(flywheelRads);
     }
 
-    //TODO either remove comment and method or re-add comment
-    @Override
-    public void end(boolean interrupted) {
-        //floppasActuator.setVoltage(0);
-    }
-
     @Override
     public boolean isFinished() {
         return MathUtil.isWithinTolerance(floppasActuator.getAngle(), flywheelRads, 0.05);
