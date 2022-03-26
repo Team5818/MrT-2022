@@ -25,15 +25,16 @@ import org.rivierarobotics.subsystems.intake.IntakePiston;
 
 public class SetIntakeState extends InstantCommand {
     private final boolean isOpen;
+    private IntakePiston intakePiston;
 
     public SetIntakeState(boolean isOpen) {
         this.isOpen = isOpen;
-        //TODO pull IntakePiston into an instance field then use in init()
-        addRequirements(IntakePiston.getInstance());
+        this.intakePiston = IntakePiston.getInstance();
+        addRequirements(intakePiston);
     }
 
     @Override
     public void initialize() {
-        IntakePiston.getInstance().setIntakeState(isOpen);
+        intakePiston.setIntakeState(isOpen);
     }
 }
