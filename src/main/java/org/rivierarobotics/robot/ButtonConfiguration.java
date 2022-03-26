@@ -67,7 +67,7 @@ public class ButtonConfiguration {
                 .whenReleased(new SetDriverAssist(false));
 
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 15)
-                .whenPressed(new SetCameraCentric());
+                .whileHeld(new SetCameraCentric());
 
         //CO-DRIVER
 
