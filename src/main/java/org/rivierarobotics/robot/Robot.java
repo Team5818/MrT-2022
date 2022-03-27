@@ -283,7 +283,7 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
     }
 

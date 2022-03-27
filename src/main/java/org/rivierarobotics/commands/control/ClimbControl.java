@@ -29,6 +29,7 @@ import org.rivierarobotics.subsystems.climb.Climb;
 public class ClimbControl extends CommandBase {
     private final Climb climb;
     private final Joystick leftJoystick;
+    public static final double PEAK_VOLTAGE = 11;
 
     public ClimbControl() {
         this.climb = Climb.getInstance();
@@ -38,9 +39,8 @@ public class ClimbControl extends CommandBase {
 
     @Override
     public void execute() {
-        //TODO what is this 11 for? pull to static final const (voltage)
-        //var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * 11;
-        //this.climb.setVoltage(xSpeed);
+        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * PEAK_VOLTAGE;
+        this.climb.setVoltage(xSpeed);
     }
 }
 
