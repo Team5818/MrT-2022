@@ -35,8 +35,8 @@ import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 public class ShootAll extends ParallelDeadlineGroup {
-    private static final double SHOOT_BELT_VOLTAGE = -7;
-    private static final double SHOOT_MINIWHEEL_VOLTAGE = 5;
+    public static final double SHOOT_BELT_VOLTAGE = -7;
+    public static final double SHOOT_MINIWHEEL_VOLTAGE = 5;
 
     public ShootAll() {
         super(
@@ -61,17 +61,6 @@ public class ShootAll extends ParallelDeadlineGroup {
                 new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                 new SetFloppaPosition(flywheelAngle),
                 new SetFlywheelSpeed(speed)
-        );
-    }
-
-    //TODO boolean not actually being used, I suggest the default no-args constructor calls this with false
-    // passed in then this constructor has an if which decides between the current contents of this constructor or the
-    // current contents of the no-args constructor.
-    public ShootAll(boolean isAutoaim) {
-        super(
-                new WaitCommand(2),
-                new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),
-                new SetFloppaLimelight(true)
         );
     }
 

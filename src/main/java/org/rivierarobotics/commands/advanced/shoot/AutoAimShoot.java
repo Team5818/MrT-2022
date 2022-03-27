@@ -24,8 +24,14 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
+import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
+import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
+
+import static org.rivierarobotics.commands.advanced.shoot.ShootAll.SHOOT_BELT_VOLTAGE;
+import static org.rivierarobotics.commands.advanced.shoot.ShootAll.SHOOT_MINIWHEEL_VOLTAGE;
 
 public class AutoAimShoot extends ConditionalCommand {
     public AutoAimShoot(boolean isAuto) {
@@ -33,7 +39,11 @@ public class AutoAimShoot extends ConditionalCommand {
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
                                 new WaitCommand(0.5),
-                                new ShootAll(true)
+                                new ParallelDeadlineGroup(
+                                        new WaitCommand(2),
+                                        new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),
+                                        new SetFloppaLimelight(true)
+                                )
                         ),
                         new TrackGoal(isAuto)
                 ),
