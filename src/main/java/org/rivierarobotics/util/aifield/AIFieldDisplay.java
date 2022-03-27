@@ -23,6 +23,7 @@ package org.rivierarobotics.util.aifield;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -58,7 +59,7 @@ public class AIFieldDisplay {
     private Mat fieldMat;
     private int tick;
 
-    public AIFieldDisplay(int updateRate) {
+    public AIFieldDisplay(int updateRate, boolean fieldThread) {
         this.imgHeight = SCALING_FACTOR;
         this.fieldMesh = FieldMesh.getInstance();
         this.imgWidth = (int) (SCALING_FACTOR * (((double) fieldMesh.fieldWidth) / fieldMesh.fieldHeight));
@@ -67,8 +68,9 @@ public class AIFieldDisplay {
         outputStream.setResolution(480, 480);
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
-        //TODO remove comment if unused (also do same w/ updateRate if unused)
-//        if (!DriverStation.isFMSAttached()) startFieldThread(updateRate);
+        if (fieldThread) {
+            if (!DriverStation.isFMSAttached()) startFieldThread(updateRate);
+        }
     }
 
     private void startFieldThread(int updateRate) {
