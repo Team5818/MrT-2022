@@ -37,11 +37,4 @@ public class SetFlywheelSpeed extends InstantCommand {
     public void initialize() {
         floppas.setFlywheelSpeed(speed);
     }
-
-    @Override
-    public void end(boolean interrupted) {
-        if (interrupted) {
-            floppas.setVoltage(0);
-        }
-    }
 }
