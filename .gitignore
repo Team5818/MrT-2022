@@ -12,5 +12,6 @@ out/
 *.ipr
 *.iws
 /.sysid/
+/Paths
 pathweaver.json
-Paths
+simgui*

@@ -20,60 +20,93 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.auto.TestPathGeneration;
-import org.rivierarobotics.commands.climb.ClimbSetAngle;
-import org.rivierarobotics.commands.climb.RunClimb;
-import org.rivierarobotics.commands.climb.WaitPiston;
-import org.rivierarobotics.commands.drive.SetCameraCentric;
-import org.rivierarobotics.commands.drive.SetDriveAngle;
-import org.rivierarobotics.commands.drive.SetWheelbaseAngle;
-import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
+import org.rivierarobotics.commands.advanced.climb.RunClimb;
+import org.rivierarobotics.commands.advanced.collect.CollectBalls;
+import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfPose;
+import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
+import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
+import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
+import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
+import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
+import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
+import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
+import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
 
 public class ButtonConfiguration {
     public void initTeleop() {
-        //DRIVER JOYSTICK BUTTONS
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
-                .whileHeld(new TestPathGeneration());
-        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
-                .whenPressed(new SetWheelbaseAngle(180).withTimeout(4));
+        //Driver Left
+        new JoystickButton(ControlMap.DRIVER_LEFT, 1)
+                .toggleWhenPressed(new SetWheelbaseAngle(0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .whileHeld(new SetDriveAngle(-90, 0.1));
+                .toggleWhenPressed(new SetWheelbaseAngle(90));
+        //Driver Right
+        new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
+                .whenPressed(new ToggleIntakeState());
+        new JoystickButton(ControlMap.DRIVER_RIGHT, 2)
+                .toggleWhenPressed(new CollectBalls());
 
-        //CO-DRIVER JOYSTICK BUTTONS
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
+        //Driver Buttons
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
+                .whenPressed(new AutoAimShoot());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
+                .whenPressed(new ClimbInterruptToggle());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+                .whenPressed(new ClimbSetVoltage(false, 0));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
                 .whenPressed(new RunClimb(false));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
+                .whenPressed(new RunClimb(true));
 
-        //DRIVER BUTTONS
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1).whenPressed(new ClimbSetAngle(0));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2).whenPressed(new SetWheelbaseAngle(90).withTimeout(2));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 3).whenPressed(new SetWheelbaseAngle(0).withTimeout(2));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 4).whenPressed(new SetWheelbaseAngle(-90).withTimeout(2));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new InstantCommand(() -> DriveTrain.getInstance().setTargetRotationAngle(90)));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8).whenPressed(new InstantCommand(() -> DriveTrain.getInstance().setTargetRotationAngle(0)));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9).whenPressed(new InstantCommand(() -> {
-            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(0)));
-            }
-        }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 10).whenPressed(new InstantCommand(() -> {
-            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(Math.PI / 2)));
-            }
-        }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11).whenPressed(new InstantCommand(() -> {
-            for (var sm : DriveTrain.getInstance().getSwerveModules()) {
-                sm.setDesiredState(new SwerveModuleState(0, new Rotation2d(-Math.PI / 2)));
-            }
-        }));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 6).whenPressed(new WaitPiston(Climb.Position.HIGH, 4, 8, false));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7).whenPressed(new ClimbSetAngle(1));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15).whenHeld(new SetCameraCentric());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
+                .whileHeld(new SetDriverAssist(true));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
+                .whenReleased(new SetDriverAssist(false));
+
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15)
+                .whileHeld(new SetCameraCentric());
+
+        //CO-DRIVER
+
+        //CO-DRIVER JOYSTICK
+        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
+                .whileHeld(new DrivePathPlannerPath("forward90", 2, 0.5));
 
         //CO-DRIVER BUTTONS
+
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
+                .whenPressed(new SetDriveAngle(-20));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
+                .whenPressed(new SetDriveAngle(-180));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
+                .whenPressed(new SetDriveAngle(180));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
+                .whileHeld(new SetFlywheelSpeed(0));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
+                .whenPressed(new SetFlywheelSpeed(FloppaFlywheels.getInstance().getTargetVelocity() - 200));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
+                .whenPressed(new SetFlywheelSpeed(FloppaFlywheels.getInstance().getTargetVelocity() + 200));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
+                .whenPressed(new CrazyWildCollectionBouncyHousePath());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
+                .whileHeld(new AngulationToTargetBasedOffOfPose());
+        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)
+        //    .whileHeld(new SequentialCommandGroup(new SetDriveAngle(77)));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8).whenPressed(
+                    new InstantCommand(() -> {
+                        DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose());
+                    })
+        );
+        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9)
+        //   .whenPressed(new InstantCommand(() -> {
+        //          DriveTrain.getInstance().setMinTurnSpeed(DriveTrain.getInstance().getMinTurnSpeed() - 0.001);
+        //   }));
     }
 }

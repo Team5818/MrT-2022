@@ -30,7 +30,6 @@ import java.util.List;
  * connections to nearby nodes.
  */
 public class FieldNode implements Comparable<FieldNode> {
-
     public static class Edge {
         Edge(double weight, FieldNode node) {
             this.weight = weight;

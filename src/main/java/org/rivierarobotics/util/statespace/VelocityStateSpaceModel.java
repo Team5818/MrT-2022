@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.util.statespace;
 
-
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -138,6 +137,7 @@ public class VelocityStateSpaceModel {
     public double getAppliedVoltage(double unitsPerS) {
         linearSystemLoop.correct(VecBuilder.fill(unitsPerS));
         linearSystemLoop.predict(loopTime);
-        return linearSystemLoop.getU(0) + (MathUtil.isWithinTolerance(unitsPerS, 0, ksTolerance) ? 0 : Math.signum(targetVelocity) * systemIdentification.kS);
+        return linearSystemLoop.getU(0) + (MathUtil.isWithinTolerance(unitsPerS, 0, ksTolerance) ? 0
+                : Math.signum(targetVelocity) * systemIdentification.kS);
     }
 }

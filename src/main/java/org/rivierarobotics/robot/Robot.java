@@ -20,33 +20,51 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.commands.climb.ClimbControl;
-import org.rivierarobotics.commands.drive.SwerveControl;
+import org.rivierarobotics.commands.advanced.collect.CollectBalls;
+import org.rivierarobotics.commands.advanced.drive.PathGeneration;
+import org.rivierarobotics.commands.auto.DriveShoot;
+import org.rivierarobotics.commands.auto.MLAuto;
+import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
+import org.rivierarobotics.commands.control.ShooterControl;
+import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
+import org.rivierarobotics.subsystems.intake.IntakeBelt;
+import org.rivierarobotics.subsystems.intake.IntakePiston;
+import org.rivierarobotics.subsystems.intake.IntakeRollers;
+import org.rivierarobotics.subsystems.intake.IntakeSensors;
+import org.rivierarobotics.subsystems.shoot.FloppaActuator;
+import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.aifield.FieldMesh;
+import org.rivierarobotics.util.ml.MLCore;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Robot extends TimedRobot {
     private final Field2d field2d = new Field2d();
-
-    private int tick = 0;
-    private int frame = 0;
-    private boolean[][] states = {
-            {false, false, true, true, false, false},
-            {false, false, false, false, true, true},
-            {true, true, false, false, false, false}
-    };
+    private SendableChooser<Command> chooser;
+    private boolean autoFlag = false;
+    private boolean ran = false;
 
     @Override
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
-        DriveTrain.getInstance().resetPose();
         Gyro.getInstance().resetGyro();
 
         var drive = Shuffleboard.getTab("Drive");
@@ -55,72 +73,179 @@ public class Robot extends TimedRobot {
                 .withPosition(0, 0)
                 .withWidget("Field");
 
-        initializeCustomLoops();
+        //initialize custom loops
+        addPeriodic(() -> {
+            DriveTrain.getInstance().periodicLogging();
+        }, 0.5, 0.0);
+        addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
 
-        Climb.getInstance().setOffset();
+        this.chooser = new SendableChooser<>();
+        chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
+        chooser.addOption("MLAUTO", new MLAuto());
+        chooser.addOption("No Auto", null);
+        chooser.addOption("SimpleShootR", new DriveShoot(true));
+        chooser.addOption("SimpleShootL", new DriveShoot(false));
+        chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
+
+        Shuffleboard.getTab("Autos").add(chooser);
+
+        FieldMesh.getInstance();
+
+        var threader = Executors.newSingleThreadScheduledExecutor();
+        threader.scheduleWithFixedDelay(new Thread(() -> {
+            Gyro.getInstance().updateRotation2D();
+        }), 0, 5, TimeUnit.MILLISECONDS);
+        LiveWindow.disableAllTelemetry();
+        LiveWindow.setEnabled(false);
     }
 
     @Override
     public void robotPeriodic() {
-        //Logging.aiFieldDisplay.update();
-
-        //iterates through button frames
-        tick++;
-        if (tick > 20) {
-            for (int i = 1; i <= 6; i++) {
-                ControlMap.DRIVER_BUTTONS.setOutput(i, states[frame][i - 1]);
-            }
-            this.frame = frame >= states.length ? 0 : frame + 1;
-            this.tick = 0;
+        DriveTrain.getInstance().updateSwerveStates();
+        CommandScheduler.getInstance().run();
+        var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
+        if (command == null && ran) {
+            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).withTimeout(0.2));
+            this.ran = false;
+        }
+        if (command != null) {
+            this.ran = true;
         }
     }
 
     @Override
     public void teleopInit() {
+        CommandScheduler.getInstance().cancelAll();
         new ButtonConfiguration().initTeleop();
         initializeAllSubsystems();
         initializeDefaultCommands();
-        Climb.getInstance().setOffset();
+
+        if (!autoFlag) {
+            resetRobotPoseAndGyro();
+        }
+        this.autoFlag = false;
     }
 
     private void shuffleboardLogging() {
+        if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
+            Logging.robotShuffleboard.getTab("Field").setEntry("logging", false);
+            return;
+        }
+
+        Logging.robotShuffleboard.getTab("Field")
+                .setEntry("logging", false);
+        Logging.robotShuffleboard.getTab("Field")
+                .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
         var sb = Logging.robotShuffleboard;
+
         var drive = sb.getTab("Drive");
+
+        drive.setEntry("Turn P", DriveTrain.getInstance().getTurnSpeedP());
+        drive.setEntry("Turn Min", DriveTrain.getInstance().getMinTurnSpeed());
+
         var climb = sb.getTab("Climb");
+        var collect = sb.getTab("collect");
+        var ml = sb.getTab("ML");
         var limeLight = sb.getTab("LL");
+        var shoot = sb.getTab("shoot");
+        var field = sb.getTab("Field");
+
         var dt = DriveTrain.getInstance();
         var cl = Climb.getInstance();
-        field2d.setRobotPose(dt.getRobotPose());
-        //DriveTrain.getInstance().periodicLogging();
+        var clc = ClimbClaws.getInstance();
+        var mlCore = MLCore.getInstance();
+        var floppShooter = FloppaFlywheels.getInstance();
+        var floppActuator = FloppaActuator.getInstance();
+        var intakeSensors = IntakeSensors.getInstance();
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
         drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
-        drive.setEntry("x pose", dt.getRobotPose().getX());
-        drive.setEntry("y pose", dt.getRobotPose().getY());
-        drive.setEntry("Robot Angle", dt.getRobotPose().getRotation().getDegrees());
+        drive.setEntry("x pose", dt.getPoseEstimator().getRobotPose().getX());
+        drive.setEntry("y pose", dt.getPoseEstimator().getRobotPose().getY());
+        drive.setEntry("pose angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
+
+        drive.setEntry("Robot Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
 
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
+        drive.setEntry("Gyro Angle raw", Gyro.getInstance().getRotation2d().getRadians());
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
-        climb.setEntry("Climb Ticks", cl.getRawTicks());
-        climb.setEntry("Switch low", cl.isSwitchSet(Climb.Position.LOW));
-        climb.setEntry("Switch mid", cl.isSwitchSet(Climb.Position.MID));
-        climb.setEntry("Switch high", cl.isSwitchSet(Climb.Position.HIGH));
-        climb.setEntry("Piston low", cl.isPistonSet(Climb.Position.LOW));
-        climb.setEntry("Piston mid", cl.isPistonSet(Climb.Position.MID));
-        climb.setEntry("Piston high", cl.isPistonSet(Climb.Position.HIGH));
+        climb.setEntry("Climb Position", cl.getAngle());
+        climb.setEntry("Switch low", clc.isSwitchSet(ClimbPositions.LOW));
+        climb.setEntry("Switch mid", clc.isSwitchSet(ClimbPositions.MID));
+        climb.setEntry("Switch high", clc.isSwitchSet(ClimbPositions.HIGH));
+        climb.setEntry("Piston low", clc.isPistonSet(ClimbPositions.LOW));
+        climb.setEntry("Piston mid", clc.isPistonSet(ClimbPositions.MID));
+        climb.setEntry("Piston high", clc.isPistonSet(ClimbPositions.HIGH));
+        climb.setEntry("Kp", Climb.KP);
+        climb.setEntry("velocity", cl.getVelocity());
+
+        limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
+        limeLight.setEntry("distance", Limelight.getInstance().getDistance());
+
+        var cc = CommandScheduler.getInstance().requiring(FloppaActuator.getInstance());
+        if (cc != null) {
+            limeLight.setEntry("CC FLOP", cc.getName());
+        }
+
+
+        var redBalls = mlCore.getDetectedObjects().get("red");
+        if (redBalls != null && redBalls.size() > 0) {
+            var ball = redBalls.get(0);
+            if (ball != null) {
+                ml.setEntry("Red BallY", ball.relativeLocationY);
+                ml.setEntry("Red BallX", ball.relativeLocationX);
+                ml.setEntry("Red Ball Distance", ball.relativeLocationDistance);
+                ml.setEntry("Red TX", ball.tx);
+                ml.setEntry("Red TY", ball.ty);
+            }
+        }
+
+        shoot.setEntry("flywheel right v", floppShooter.getRightFlywheelSpeed());
+        shoot.setEntry("flywheel left v", -floppShooter.getLeftFlywheelSpeed());
+        shoot.setEntry("target speed", floppShooter.getTargetVelocity());
+        shoot.setEntry("actuator angle", floppActuator.getAngle());
+        shoot.setEntry("actuator tick raw", floppActuator.getTicks());
+        shoot.setEntry("Detected Red", intakeSensors.getColorSensor().getColor().red);
+        shoot.setEntry("Detected Green", intakeSensors.getColorSensor().getColor().green);
+        shoot.setEntry("Detected Blue", intakeSensors.getColorSensor().getColor().blue);
+        shoot.setEntry("ball color", intakeSensors.getBallColor());
+        shoot.setEntry("Is Alliance Ball", intakeSensors.isTeamBall());
+        shoot.setEntry("alliance color", DriverStation.getAlliance().toString());
+
+        limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
+        limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
+        limeLight.setEntry("LL TX", Limelight.getInstance().getTx());
+        limeLight.setEntry("flop tuning", floppShooter.getTargetVelocity());
+        limeLight.setEntry("LL Assist Angle", Limelight.getInstance().getShootingAssistAngle());
+        limeLight.setEntry("Correct Position", Limelight.getInstance().getLLAbsPose().toString());
+        limeLight.setEntry("Target Ang", ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
+        limeLight.setEntry("Target Speed", ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()));
+
+
+        limeLight = sb.getTab("LL");
+        limeLight.setEntry("Hood Angle", floppActuator.getAngle());
+
+        field.setEntry("drive pos", dt.getPoseEstimator().getRobotPose().toString());
     }
 
     @Override
-    public void teleopPeriodic() {
-        CommandScheduler.getInstance().run();
-    }
+    public void autonomousInit() {
+        this.autoFlag = true;
+        initializeAllSubsystems();
+        initializeDefaultCommands();
 
-    @Override
-    public void autonomousPeriodic() {
-        CommandScheduler.getInstance().run();
+        resetRobotPoseAndGyro();
+        try {
+            var command = chooser.getSelected();
+            if (command != null) {
+                CommandScheduler.getInstance().schedule(command);
+            }
+        } catch (Exception ignored) {
+            //if this fails we need robot code to still try to work in teleop so unless debugging there is no case where we want this to throw anything.
+        }
     }
 
     @Override
@@ -130,27 +255,30 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+        IntakePiston.getInstance();
+        FloppaActuator.getInstance();
+        FloppaFlywheels.getInstance();
+        Limelight.getInstance();
+        IntakeBelt.getInstance();
+        IntakeRollers.getInstance();
+        IntakeSensors.getInstance();
         Climb.getInstance();
+        ClimbClaws.getInstance();
+    }
+
+    private void resetRobotPoseAndGyro() {
+        Gyro.getInstance().resetGyro();
+        DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
-    }
-
-    private void initializeCustomLoops() {
-        addPeriodic(() -> {
-            DriveTrain.getInstance().periodicStateSpaceControl();
-        }, DriveTrain.STATE_SPACE_LOOP_TIME, 0.0);
-        addPeriodic(() -> {
-            DriveTrain.getInstance().periodicLogging();
-        }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 0.5, 0.0);
+        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
     }
 
     @Override
-    public void simulationPeriodic() {
-        Logging.aiFieldDisplay.update();
+    public void simulationInit() {
     }
 }
 

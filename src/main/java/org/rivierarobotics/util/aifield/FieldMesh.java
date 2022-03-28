@@ -31,6 +31,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Filesystem;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.robot.Robot;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
@@ -47,22 +48,22 @@ import java.util.stream.Collectors;
 
 
 /**
- * Constructs a Field Mesh using parameters found inside the fieldInfo.txt and fieldObstacles.txt files.
- * A* Pathfinding is used to find Trajectories from point a to point b on the mesh, and the mesh supports weighted paths
- * and object avoidance.
+ * Constructs a Field Mesh using parameters found inside the fieldInfo.txt and fieldObstacles.txt files. A* Pathfinding
+ * is used to find Trajectories from point a to point b on the mesh, and the mesh supports weighted paths and object
+ * avoidance.
  */
 public class FieldMesh {
+    private static FieldMesh INSTANCE;
 
     public static FieldMesh getInstance() {
-        if (fieldMesh == null) {
-            fieldMesh = new FieldMesh();
+        if (INSTANCE == null) {
+            INSTANCE = new FieldMesh();
         }
-        return fieldMesh;
+        return INSTANCE;
     }
 
-    private static FieldMesh fieldMesh;
-    public static final double MAX_VELOCITY = 0.75;
-    public static final double MAX_ACCELERATION = 0.2;
+    public static final double MAX_VELOCITY = 5;
+    public static final double MAX_ACCELERATION = 0.5;
     public static final double DEFAULT_NODE_WEIGHT = 0;
     private double totalTimePassed = 0;
     private double amtOfCalculations = 1;
@@ -145,8 +146,8 @@ public class FieldMesh {
     }
 
     /**
-     * Creates a field mesh of nodes, mesh is represented as a graph where each
-     * node is set as a neighbor of adjacent nodes.
+     * Creates a field mesh of nodes, mesh is represented as a graph where each node is set as a neighbor of adjacent
+     * nodes.
      */
     private void updateFieldMesh() {
         nodes.clear();
@@ -212,8 +213,8 @@ public class FieldMesh {
     }
 
     /**
-     * Sets the resolution of the grid (lower is more accurate).
-     * for a grid of size 1m by 1m, a resolution of 10 would produce 100 nodes (10*10).
+     * Sets the resolution of the grid (lower is more accurate). for a grid of size 1m by 1m, a resolution of 10 would
+     * produce 100 nodes (10*10).
      *
      * @param resolution resolution for the grid
      */
@@ -236,14 +237,14 @@ public class FieldMesh {
     }
 
     /**
-     * Add weights to the nodes in an area to penalize traveling through it. negative weights will
-     * prioritize a zone more than others.
+     * Add weights to the nodes in an area to penalize traveling through it. negative weights will prioritize a zone
+     * more than others.
      *
      * @param weight amount of weight you want to add to a node (default is 1)
-     * @param x1     top left x location of zone (cm)
-     * @param y1     top left y location of zone (cm)
-     * @param x2     bottom right x location of zone (cm)
-     * @param y2     bottom right y location of zone (cm)
+     * @param x1 top left x location of zone (cm)
+     * @param y1 top left y location of zone (cm)
+     * @param x2 bottom right x location of zone (cm)
+     * @param y2 bottom right y location of zone (cm)
      */
     public void addWeightToArea(double weight, double x1, double y1, double x2, double y2) {
         int cNodeX1 = MathUtil.clamp((int) (x1 / aiResolution), 0, nodes.get(0).size() - 1);
@@ -294,16 +295,17 @@ public class FieldMesh {
     }
 
     /**
-     * Trajectory Generator which utilizes A* Pathfinding to generate a trajectory that avoids
-     * any obstacles on the field.
+     * Trajectory Generator which utilizes A* Pathfinding to generate a trajectory that avoids any obstacles on the
+     * field.
      *
-     * @param x1              start x value (m)
-     * @param y1              start y value (m)
-     * @param x2              end x value (m)
-     * @param y2              end y value (m)
-     * @param shouldStop      whether the path should stop at 0 m/s or continue at max velocity
+     * @param x1 start x value (m)
+     * @param y1 start y value (m)
+     * @param x2 end x value (m)
+     * @param y2 end y value (m)
+     * @param shouldStop whether the path should stop at 0 m/s or continue at max velocity
      * @param initialVelocity initial velocity of robot. useful for periodic path generation
-     * @return Trajectory which corresponds to the start and end values on the field. Avoid objects specified in fieldObstacles.txt
+     * @return Trajectory which corresponds to the start and end values on the field. Avoid objects specified in
+     *     fieldObstacles.txt
      */
     public Trajectory getTrajectory(double x1, double y1, double x2, double y2, boolean shouldStop, double initialVelocity, SwerveDriveKinematics swerveDriveKinematics) {
         try {
@@ -318,14 +320,17 @@ public class FieldMesh {
             config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
+            if (Robot.isReal()) {
+                //config.setKinematics(DriveTrain.getInstance().getSwerveDriveKinematics());
+            }
 
             Trajectory trajectory = null;
             try {
                 trajectory = TrajectoryGenerator.generateTrajectory(
-                        poseList.get(0),
-                        poseList.size() >= 2 ? poseList.subList(1, poseList.size() - 2).stream().map(Pose2d::getTranslation).collect(Collectors.toList()) : new ArrayList<>(),
-                        poseList.get(poseList.size() - 1),
-                        config
+                    poseList.get(0),
+                    poseList.size() >= 2 ? poseList.subList(1, poseList.size() - 2).stream().map(Pose2d::getTranslation).collect(Collectors.toList()) : new ArrayList<>(),
+                    poseList.get(poseList.size() - 1),
+                    config
                 );
             } catch (Exception e) {
                 e.printStackTrace();
@@ -416,8 +421,7 @@ public class FieldMesh {
     }
 
     /**
-     * have fun :)
-     * https://stackabuse.com/graphs-in-java-a-star-algorithm/
+     * have fun :) https://stackabuse.com/graphs-in-java-a-star-algorithm/
      */
     public FieldNode findShortestPath(FieldNode start, FieldNode target) {
         if (!start.isValid || !target.isValid) {
