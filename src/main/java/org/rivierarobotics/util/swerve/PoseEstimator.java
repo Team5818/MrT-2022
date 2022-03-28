@@ -33,7 +33,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.swervedrive.SwerveModule;
 import org.rivierarobotics.util.Gyro;
 
@@ -79,7 +78,6 @@ public class PoseEstimator {
     }
 
     public void updateOdometry() {
-        var start = System.nanoTime();
         resetLock.lock();
         SwerveModuleState[] swerveModuleStates = Arrays.stream(swerveModules).map(SwerveModule::getState).toArray(a -> new SwerveModuleState[swerveModules.length]);
         try {
@@ -92,7 +90,6 @@ public class PoseEstimator {
         } finally {
             resetLock.unlock();
         }
-        SmartDashboard.putNumber("updateTime", (System.nanoTime() - start) / 1e9);
     }
 
     public void resetPose() {

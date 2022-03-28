@@ -30,7 +30,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
@@ -40,9 +39,6 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.swerve.PoseEstimator;
-import org.rivierarobotics.util.swerve.SwerveUtil;
-
-import static org.rivierarobotics.util.swerve.SwerveUtil.getClosestAngle;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -63,26 +59,6 @@ public class DriveTrain extends SubsystemBase {
     public static final double MAX_ANGULAR_SPEED = Math.PI * 3 * 0.8; // rad/s
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 3; // rad/s
     //Turn Constraints
-    public static double MIN_ROT_SPEED = 0.0;
-
-    public double getTURN_SPEED_P() {
-        return TURN_SPEED_P;
-    }
-
-    public void setTURN_SPEED_P(double TURN_SPEED_P) {
-        this.TURN_SPEED_P = TURN_SPEED_P;
-    }
-
-    public double getMinTurnSpeed() {
-        return minTurnSpeed;
-    }
-
-    public void setMinTurnSpeed(double minTurnSpeed) {
-        this.minTurnSpeed = minTurnSpeed;
-    }
-
-    private double TURN_SPEED_P = 0.05;
-    private double minTurnSpeed = 0.46;
     public static double MAX_TURN_SPEED = 10;
     public static double TOLERANCE = 1;
     //Module Mappings / Measurements
@@ -104,7 +80,8 @@ public class DriveTrain extends SubsystemBase {
     private boolean isFieldCentric = true;
     private boolean useDriverAssist = false;
     private double targetRotationAngle = 0.0;
-
+    private double turnSpeedP = 0.05;
+    private double minTurnSpeed = 0.46;
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center (m)
@@ -113,10 +90,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 9358+2048);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 628+2048);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 7523+2048);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 10899+2048);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 9358 + 2048);
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 628 + 2048);
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 7523 + 2048);
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 10899 + 2048);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -174,17 +151,14 @@ public class DriveTrain extends SubsystemBase {
         }
         double targetAngle = MathUtil.wrapToCircle(targetRotationAngle);
         var diff = targetAngle - gyroAngle;
-        SmartDashboard.putNumber("ANGDIFF",diff);
-        if(Math.abs(diff) >= 180 && diff < 0) {
+        if (Math.abs(diff) >= 180 && diff < 0) {
             diff += 360;
         }
-        if(Math.abs(diff) >= 180 && diff > 0) {
+        if (Math.abs(diff) >= 180 && diff > 0) {
             diff -= 360;
         }
 
-        double vel = (TURN_SPEED_P * (diff));
-        SmartDashboard.putNumber("Turn Err", diff);
-        SmartDashboard.putNumber("Target Speed", Math.signum(diff) * (Math.min(Math.abs(vel), MAX_ANGULAR_SPEED) + minTurnSpeed));
+        double vel = (turnSpeedP * (diff));
         return Math.signum(diff) * (Math.min(Math.abs(vel), MAX_ANGULAR_SPEED) + minTurnSpeed);
     }
 
@@ -249,6 +223,22 @@ public class DriveTrain extends SubsystemBase {
         return swerveModules;
     }
 
+    public double getTurnSpeedP() {
+        return turnSpeedP;
+    }
+
+    public void setTurnSpeedP(double turnSpeedP) {
+        this.turnSpeedP = turnSpeedP;
+    }
+
+    public double getMinTurnSpeed() {
+        return minTurnSpeed;
+    }
+
+    public void setMinTurnSpeed(double minTurnSpeed) {
+        this.minTurnSpeed = minTurnSpeed;
+    }
+
     public void periodicLogging() {
         if (DriverStation.isFMSAttached()) {
             return;
@@ -266,22 +256,5 @@ public class DriveTrain extends SubsystemBase {
         for (var sm : swerveModules) {
             sm.updateSwerveInformation();
         }
-    }
-
-    @Override
-    public void periodic() {
-        double gyroAngle = MathUtil.wrapToCircle(gyro.getRotation2d().getDegrees());
-        double targetAngle = MathUtil.wrapToCircle(targetRotationAngle);
-        var diff = targetAngle - gyroAngle;
-        SmartDashboard.putNumber("ANGDIFFLIVE",diff);
-
-        if(Math.abs(diff) > 180 && diff < 0) {
-            diff += 360;
-        }
-        if(Math.abs(diff) > 180 && diff > 0) {
-            diff -= 360;
-        }
-
-        SmartDashboard.putNumber("FINALDIFF", diff);
     }
 }

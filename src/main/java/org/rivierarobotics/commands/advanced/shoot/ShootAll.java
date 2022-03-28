@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.FlywheelActivate;
-import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;

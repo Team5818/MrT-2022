@@ -69,7 +69,9 @@ public class AIFieldDisplay {
         updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
         if (fieldThread) {
-            if (!DriverStation.isFMSAttached()) startFieldThread(updateRate);
+            if (!DriverStation.isFMSAttached()) {
+                startFieldThread(updateRate);
+            }
         }
     }
 

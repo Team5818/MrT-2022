@@ -24,7 +24,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
-import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 

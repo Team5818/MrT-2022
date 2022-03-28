@@ -30,9 +30,6 @@ import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
-import static org.rivierarobotics.commands.advanced.shoot.ShootAll.SHOOT_BELT_VOLTAGE;
-import static org.rivierarobotics.commands.advanced.shoot.ShootAll.SHOOT_MINIWHEEL_VOLTAGE;
-
 public class AutoAimShoot extends ConditionalCommand {
     public AutoAimShoot(boolean isAuto) {
         super(
@@ -41,14 +38,14 @@ public class AutoAimShoot extends ConditionalCommand {
                                 new WaitCommand(0.5),
                                 new ParallelDeadlineGroup(
                                         new WaitCommand(2),
-                                        new WaitCommand(0.5).andThen(new SetBeltVoltage(SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE)),
+                                        new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
                                         new SetFloppaLimelight(true)
                                 )
                         ),
                         new TrackGoal(isAuto)
                 ),
                 new WaitCommand(0.5),
-                () -> Limelight.getInstance().getDetected()
+            () -> Limelight.getInstance().getDetected()
         );
     }
 

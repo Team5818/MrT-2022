@@ -22,7 +22,6 @@ package org.rivierarobotics.commands.advanced.collect;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.rivierarobotics.commands.advanced.shoot.EjectCollect;
@@ -44,9 +43,8 @@ public class CollectBalls extends ConditionalCommand {
                         new EjectCollect(COLLECT_VOLTAGE, MINIWHEEL_VOLTAGE)
                 ),
                 new WaitCommand(0.1),
-                () -> IntakeSensors.getInstance().canCollect()
+            () -> IntakeSensors.getInstance().canCollect()
         );
-
     }
 
     @Override

@@ -34,7 +34,6 @@ import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
-import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
@@ -53,7 +52,6 @@ import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
 
-import java.text.NumberFormat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -129,11 +127,6 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-//        Logging.robotShuffleboard.getTab("Field")
-//                .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
-//        Logging.robotShuffleboard.getTab("Field")
-//                .setEntry("RTA", Limelight.getInstance().getShootingAssistAngle());
-
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
             Logging.robotShuffleboard.getTab("Field").setEntry("logging", false);
             return;
@@ -147,11 +140,8 @@ public class Robot extends TimedRobot {
 
         var drive = sb.getTab("Drive");
 
-        drive.setEntry("Turn P", DriveTrain.getInstance().getTURN_SPEED_P());
+        drive.setEntry("Turn P", DriveTrain.getInstance().getTurnSpeedP());
         drive.setEntry("Turn Min", DriveTrain.getInstance().getMinTurnSpeed());
-//        if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
-//            return;
-//        }
 
         var climb = sb.getTab("Climb");
         var collect = sb.getTab("collect");

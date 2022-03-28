@@ -27,9 +27,9 @@ import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.climb.Climb;
 
 public class ClimbControl extends CommandBase {
+    public static final double PEAK_VOLTAGE = 11;
     private final Climb climb;
     private final Joystick leftJoystick;
-    public static final double PEAK_VOLTAGE = 11;
 
     public ClimbControl() {
         this.climb = Climb.getInstance();

@@ -22,7 +22,6 @@ package org.rivierarobotics.commands.advanced.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.util.ml.BoundingBox;
 import org.rivierarobotics.util.ml.MLCore;
 import org.rivierarobotics.util.ml.MLObject;
 
