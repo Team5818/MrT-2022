@@ -49,7 +49,6 @@ public class Limelight {
 
     private final PhotonCamera camera;
 
-    //TODO: figure out correct implementation
     private final Pose2d limelightTargetPose = new Pose2d();
 
     public Limelight() {
@@ -83,13 +82,13 @@ public class Limelight {
     }
 
     public double getAdjustedDistance() {
-        return Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(LL_OFFSET, 2) - 2 * getDistance()
-                * LL_OFFSET * Math.cos(Math.toRadians(90 + getTx())));
+        return Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(LL_OFFSET, 2) - 2 * getDistance() * LL_OFFSET * Math.cos(Math.toRadians(90 + getTx())));
     }
 
     // returns new Tx in Radians
     public double getAdjustedTx() {
-        return Math.asin(getDistance() * (Math.sin(Math.toRadians(90 + getTx()))) / getDistance() % 1) * (180 / Math.PI) - 90;
+        var tx = Math.asin((getAdjustedDistance() * Math.sin(Math.toRadians(getTx()+90)))/getDistance());
+        return getTx() > 0 ? 90 - tx : tx - 90;
     }
 
     public double getShootingAssistAngle() {
