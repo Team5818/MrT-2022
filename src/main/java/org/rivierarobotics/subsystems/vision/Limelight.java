@@ -45,7 +45,6 @@ public class Limelight {
     private static final double LL_OFFSET = 0.2286;
     private double targetX = 8.22;
     private double targetY = 4.11;
-    private static Limelight limelight;
 
     private final PhotonCamera camera;
 
@@ -87,7 +86,7 @@ public class Limelight {
 
     // returns new Tx in Radians
     public double getAdjustedTx() {
-        var tx = Math.asin((getAdjustedDistance() * Math.sin(Math.toRadians(getTx()+90)))/getDistance());
+        var tx = Math.asin((getAdjustedDistance() * Math.sin(Math.toRadians(getTx() + 90))) / getDistance());
         return getTx() > 0 ? 90 - tx : tx - 90;
     }
 
