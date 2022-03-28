@@ -37,6 +37,6 @@ public class InteruptableSetVoltage extends CommandBase {
 
     @Override
     public void execute() {
-        climb.setVoltage(climb.getPlay()? (voltage * modifier) : 0);
+        climb.setVoltage(climb.getPlay() ? (voltage * modifier) : 0);
     }
 }

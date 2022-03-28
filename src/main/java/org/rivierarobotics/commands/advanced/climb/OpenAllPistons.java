@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-import static org.rivierarobotics.subsystems.climb.ClimbPositions.*;
-
 public class OpenAllPistons extends InstantCommand {
     private final ClimbClaws climb;
 
@@ -35,8 +33,8 @@ public class OpenAllPistons extends InstantCommand {
 
     @Override
     public void initialize() {
-        climb.setPiston(LOW, true);
-        climb.setPiston(MID, true);
-        climb.setPiston(HIGH, true);
+        climb.setPiston(ClimbPositions.LOW, true);
+        climb.setPiston(ClimbPositions.MID, true);
+        climb.setPiston(ClimbPositions.HIGH, true);
     }
 }

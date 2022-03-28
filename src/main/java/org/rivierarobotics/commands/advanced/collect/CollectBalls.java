@@ -45,7 +45,7 @@ public class CollectBalls extends ConditionalCommand {
                 ),
                 new WaitCommand(0.1),
                 () -> IntakeSensors.getInstance().canCollect()
-                );
+        );
 
     }
 
