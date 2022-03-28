@@ -18,42 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.basic.drive;
+package org.rivierarobotics.commands.advanced.drive;
 
+import com.pathplanner.lib.PathPlanner;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
-
-public class AngulationToTargetBasedOffOfPose extends CommandBase {
-    private final DriveTrain dt;
+public class DrivePathPlannerPath extends CommandBase {
+    private final DriveTrain driveTrain;
     private final Gyro gyro;
+    private final double maxVel;
+    private final double maxAccel;
+    private final String trajectoryJSON;
+    private TrajectoryFollower trajectoryFollower;
 
-    public AngulationToTargetBasedOffOfPose() {
-        this.dt = DriveTrain.getInstance();
+    public DrivePathPlannerPath(String path, double maxVelocity, double maxAcceleration) {
+        this.trajectoryJSON = path;
+        this.driveTrain = DriveTrain.getInstance();
         this.gyro = Gyro.getInstance();
-        addRequirements(this.dt);
+        this.maxAccel = maxAcceleration;
+        this.maxVel = maxVelocity;
+        addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
-        dt.setTargetRotationAngle(Limelight.getInstance().getShootingAssistAngle());
+        this.trajectoryFollower = new TrajectoryFollower(
+                PathPlanner.loadPath(trajectoryJSON, maxVel, maxAccel, false),
+                true, gyro, driveTrain
+        );
     }
 
     @Override
     public void execute() {
-        dt.drive(0, 0, dt.getRotationSpeed(), true);
+        trajectoryFollower.followController();
     }
 
     @Override
     public boolean isFinished() {
-        return !MathUtil.isWithinTolerance(Gyro.getInstance().getRotation2d().getDegrees(), dt.getTargetRotationAngle(), 1);
+        return trajectoryFollower.isFinished();
     }
 
     @Override
     public void end(boolean interrupted) {
-        dt.drive(0, 0, 0, false);
+        DriveTrain.getInstance().drive(0, 0, 0, true);
     }
 }

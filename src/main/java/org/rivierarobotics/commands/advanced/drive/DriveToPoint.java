@@ -58,7 +58,6 @@ public class DriveToPoint extends CommandBase {
         } catch (Exception e) {
             //invalid trajectory
         }
-
     }
 
     @Override

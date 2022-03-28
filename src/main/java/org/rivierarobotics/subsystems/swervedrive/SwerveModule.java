@@ -101,10 +101,11 @@ public class SwerveModule {
 
         //Drive Motor
         this.driveMotor = new WPI_TalonFX(driveMotorChannel, MotorIDs.CANFD_NAME);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DM_MM_PID, DM_MM_CONFIG, driveMotor);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, DM_MM_PID, DM_MM_CONFIG, driveMotor);
         driveMotor.configAllowableClosedloopError(0, 5);
-        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 10);
+        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        driveMotor.setStatusFramePeriod(21, 10);
+        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10);
         driveMotor.setNeutralMode(NeutralMode.Brake);
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 

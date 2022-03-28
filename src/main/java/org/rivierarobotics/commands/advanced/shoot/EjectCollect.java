@@ -37,7 +37,6 @@ public class EjectCollect extends CommandBase {
     private final FloppaActuator floppaActuator;
     private final IntakeBelt intakeBelt;
     private final FloppaFlywheels floppaFlywheels;
-    private double startTime = 0.0;
 
     public EjectCollect(double beltVoltage, double miniwheelVoltage) {
         this.floppaActuator = FloppaActuator.getInstance();

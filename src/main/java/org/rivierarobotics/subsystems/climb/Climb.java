@@ -58,12 +58,12 @@ public class Climb extends SubsystemBase {
     private Climb() {
         this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
         this.climbFollower = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_B, MotorIDs.CANFD_NAME);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, CM_MM_PID, CM_MM_CONFIG, climbMaster);
         climbFollower.follow(climbMaster);
         setCoast(false);
         climbMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         climbMaster.setInverted(true);
         climbFollower.setInverted(true);
-        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, CM_MM_PID, CM_MM_CONFIG, climbMaster);
         climbMaster.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);

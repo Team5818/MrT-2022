@@ -41,7 +41,6 @@ public class EjectShoot extends CommandBase {
     private final FloppaActuator floppaActuator;
     private final FloppaFlywheels floppaFlywheels;
     private final IntakeBelt intakeBelt;
-    private double startTime = 0.0;
     private RRTimer rrTimer;
 
     public EjectShoot(double floppaPosition, double miniwheelVoltage, double flywheelSpeed, double beltVoltage) {

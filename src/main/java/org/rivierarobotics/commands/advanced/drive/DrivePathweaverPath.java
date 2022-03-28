@@ -18,51 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.auto;
+package org.rivierarobotics.commands.advanced.drive;
 
-import com.pathplanner.lib.PathPlanner;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
-public class DrivePathPlannerPath extends CommandBase {
+public class DrivePathweaverPath extends CommandBase {
+    private final String path;
     private final DriveTrain driveTrain;
-    private final Gyro gyro;
-    private final double maxVel;
-    private final double maxAccel;
-    private final String trajectoryJSON;
     private TrajectoryFollower trajectoryFollower;
 
-    public DrivePathPlannerPath(String path, double maxVelocity, double maxAcceleration) {
-        this.trajectoryJSON = path;
+    public DrivePathweaverPath(String path) {
+        this.path = path;
         this.driveTrain = DriveTrain.getInstance();
-        this.gyro = Gyro.getInstance();
-        this.maxAccel = maxAcceleration;
-        this.maxVel = maxVelocity;
         addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
-        this.trajectoryFollower = new TrajectoryFollower(
-                PathPlanner.loadPath(trajectoryJSON, maxVel, maxAccel, false),
-                true, gyro, driveTrain
-        );
+        this.trajectoryFollower = new TrajectoryFollower(TrajectoryFollower.getTrajectoryFromPathweaver(path), true, Gyro.getInstance(), driveTrain);
     }
 
     @Override
     public void execute() {
-        trajectoryFollower.followController();
+        this.trajectoryFollower.followController();
     }
 
     @Override
     public boolean isFinished() {
         return trajectoryFollower.isFinished();
     }
-
-    @Override
-    public void end(boolean interrupted) {
-        DriveTrain.getInstance().drive(0, 0, 0, true);
-    }
 }
+

@@ -21,34 +21,39 @@
 package org.rivierarobotics.commands.advanced.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
-import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
-public class DrivePath extends CommandBase {
-    private final String path;
-    private final DriveTrain driveTrain;
-    private TrajectoryFollower trajectoryFollower;
 
-    public DrivePath(String path) {
-        this.path = path;
-        this.driveTrain = DriveTrain.getInstance();
-        addRequirements(driveTrain);
+public class AngulationToTargetBasedOffOfPose extends CommandBase {
+    private final DriveTrain dt;
+    private final Gyro gyro;
+
+    public AngulationToTargetBasedOffOfPose() {
+        this.dt = DriveTrain.getInstance();
+        this.gyro = Gyro.getInstance();
+        addRequirements(this.dt);
     }
 
     @Override
     public void initialize() {
-        this.trajectoryFollower = new TrajectoryFollower(TrajectoryFollower.getTrajectoryFromPathweaver(path), true, Gyro.getInstance(), driveTrain);
+        dt.setTargetRotationAngle(Limelight.getInstance().getShootingAssistAngle());
     }
 
     @Override
     public void execute() {
-        this.trajectoryFollower.followController();
+        dt.drive(0, 0, dt.getRotationSpeed(), true);
     }
 
     @Override
     public boolean isFinished() {
-        return trajectoryFollower.isFinished();
+        return !MathUtil.isWithinTolerance(gyro.getRotation2d().getDegrees(), dt.getTargetRotationAngle(), 1);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        dt.drive(0, 0, 0, false);
     }
 }
-
