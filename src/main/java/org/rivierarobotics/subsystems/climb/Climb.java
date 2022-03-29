@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems.climb;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MotionMagicConfig;
@@ -68,6 +69,14 @@ public class Climb extends SubsystemBase {
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbFollower.setSensorPhase(false);
+        climbMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 25, 2));
+        climbFollower.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 25, 2));
+
+        climbMaster.configForwardSoftLimitEnable(true);
+        climbMaster.configReverseSoftLimitEnable(true);
+        climbMaster.configReverseSoftLimitThreshold(-651890);
+        climbMaster.configForwardSoftLimitThreshold(284690);
+
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
     }
@@ -83,7 +92,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void setPosition(double radians) {
-        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK);
+        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK + ClimbConstants.ZERO_TICKS);
     }
 
     public void setPlay(boolean play) {
@@ -99,7 +108,11 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return climbMaster.getSelectedSensorPosition() * ClimbConstants.MOTOR_TICK_TO_ANGLE;
+        return (climbMaster.getSelectedSensorPosition() - ClimbConstants.ZERO_TICKS) * ClimbConstants.MOTOR_TICK_TO_ANGLE;
+    }
+
+    public double getRawAngle() {
+        return climbMaster.getSelectedSensorPosition();
     }
 
     public double getVelocity() {

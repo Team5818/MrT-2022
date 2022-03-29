@@ -34,6 +34,7 @@ import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
+import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
@@ -173,6 +174,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Position", cl.getAngle());
+        climb.setEntry("Climb Raw", cl.getRawAngle());
         climb.setEntry("Switch low", clc.isSwitchSet(ClimbPositions.LOW));
         climb.setEntry("Switch mid", clc.isSwitchSet(ClimbPositions.MID));
         climb.setEntry("Switch high", clc.isSwitchSet(ClimbPositions.HIGH));
@@ -273,7 +275,7 @@ public class Robot extends TimedRobot {
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
     }
 

@@ -65,7 +65,7 @@ public class SwerveModule {
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
-            10.0, DriveTrain.MAX_ACCELERATION,
+            10000.0, 10000.0,
             300, 2,
             TIMEOUT_MS, 10
     );
