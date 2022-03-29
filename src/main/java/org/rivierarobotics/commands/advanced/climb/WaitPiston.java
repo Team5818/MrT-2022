@@ -41,7 +41,7 @@ public class WaitPiston extends CommandBase {
         this.climbModule = climbModule;
         this.waitTimer = new RRTimer(endTime);
         this.retryTimer = new RRTimer(timeout);
-        this.voltage = reversed ? 4.5 : -4.5;
+        this.voltage = reversed ? -4.5 : 4.5;
         this.addRequirements(this.climb, this.climbClaws);
     }
 

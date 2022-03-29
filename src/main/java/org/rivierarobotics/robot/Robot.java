@@ -39,6 +39,7 @@ import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbConstants;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakePiston;
@@ -91,7 +92,7 @@ public class Robot extends TimedRobot {
         Shuffleboard.getTab("Autos").add(chooser);
 
         FieldMesh.getInstance();
-
+        resetRobotPoseAndGyro();
         var threader = Executors.newSingleThreadScheduledExecutor();
         threader.scheduleWithFixedDelay(new Thread(() -> {
             Gyro.getInstance().updateRotation2D();
@@ -145,6 +146,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("Turn Min", DriveTrain.getInstance().getMinTurnSpeed());
 
         var climb = sb.getTab("Climb");
+
         var collect = sb.getTab("collect");
         var ml = sb.getTab("ML");
         var limeLight = sb.getTab("LL");
@@ -165,7 +167,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("x pose", dt.getPoseEstimator().getRobotPose().getX());
         drive.setEntry("y pose", dt.getPoseEstimator().getRobotPose().getY());
         drive.setEntry("pose angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
-
+        climb.setEntry("CL RAW", cl.getDutyCyclePose());
         drive.setEntry("Robot Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
 
@@ -174,7 +176,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Position", cl.getAngle());
-        climb.setEntry("Climb Raw", cl.getRawAngle());
+        climb.setEntry("Climb Raw Ticks", cl.getRawAngle());
         climb.setEntry("Switch low", clc.isSwitchSet(ClimbPositions.LOW));
         climb.setEntry("Switch mid", clc.isSwitchSet(ClimbPositions.MID));
         climb.setEntry("Switch high", clc.isSwitchSet(ClimbPositions.HIGH));
@@ -269,13 +271,14 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
+        Climb.getInstance().resetZeros();
         Gyro.getInstance().resetGyro();
         DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-//        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
     }
 

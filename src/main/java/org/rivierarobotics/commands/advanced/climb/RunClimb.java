@@ -31,7 +31,7 @@ import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double RUN_VOLTAGE = 6;
+    private static final double RUN_VOLTAGE = 7;
 
     public RunClimb(boolean reversed) {
         final ClimbPositions first;

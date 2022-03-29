@@ -25,7 +25,6 @@ public class ClimbConstants {
     public static final double MID_RADIANS = 2.64;
     public static final double HIGH_RADIANS = -1.53;
     public static final double MAX_RADS = 4.17;
-    public static final double ZERO_TICKS = -184264;
     public static final double MAX_CLIMB_VELOCITY = 30000;
     public static final double MAX_CLIMB_ACCELERATION = 10000;
     public static final int TIMEOUT_MS = 60;
@@ -33,6 +32,7 @@ public class ClimbConstants {
     public static final double CLIMB_ENCODER_TICKS = 2048;
     public static final double MOTOR_TICK_TO_ANGLE = (2 * Math.PI) / (CLIMB_ENCODER_TICKS * GEAR_RATIO);
     public static final double MOTOR_ANGLE_TO_TICK = 1 / MOTOR_TICK_TO_ANGLE;
+    public static final double ABSOLUTE_ZERO = 5.1946;
 
     private ClimbConstants() {
     }
