@@ -85,7 +85,7 @@ public class Limelight {
 
     // returns new Tx in Radians
     public double getAdjustedTx() {
-        var tx = Math.asin((getAdjustedDistance() * Math.sin(Math.toRadians(getTx() + 90))) / getDistance());
+        var tx = Math.asin((getDistance() * Math.sin(Math.toRadians(getTx() + 90))) / getAdjustedDistance());
         return getTx() > 0 ? 90 - tx : tx - 90;
     }
 
