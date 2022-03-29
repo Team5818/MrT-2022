@@ -56,9 +56,11 @@ public class WaitPiston extends CommandBase {
     public void execute() {
         if (mode) {
             climb.setVoltage(0);
-            if (waitTimer.finished()) {
-                if (!climbClaws.isSwitchSet(climbModule)) {
-                    waitTimer.reset();
+            if (!retryTimer.finished()) {
+                if (!waitTimer.finished()) {
+                    if (!climbClaws.isSwitchSet(climbModule)) {
+                        waitTimer.reset();
+                    }
                 }
             } else {
                 climbClaws.setPiston(climbModule, false);

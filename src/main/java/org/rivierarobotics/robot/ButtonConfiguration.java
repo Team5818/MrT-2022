@@ -29,7 +29,9 @@ import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfP
 import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
+import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
+import org.rivierarobotics.commands.basic.climb.IdleMode;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
@@ -44,7 +46,7 @@ public class ButtonConfiguration {
     public void initTeleop() {
         //Driver Left
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .toggleWhenPressed(new SetWheelbaseAngle(0));
+                .toggleWhenPressed(new ClimbSetAngle(0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .toggleWhenPressed(new SetWheelbaseAngle(90));
         //Driver Right
