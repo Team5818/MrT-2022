@@ -62,6 +62,8 @@ public class Climb extends SubsystemBase {
     private final DutyCycleEncoder dutyCycleEncoder = new DutyCycleEncoder(MotorIDs.CLIMB_ENCODER);
     private boolean play = true;
     public double ZERO_TICKS = -184264;
+    //TODO:swap this for a real value
+    public double ABSOLUTE_ZERO_RADIANS = 0;
 
     private Climb() {
         this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
@@ -105,9 +107,15 @@ public class Climb extends SubsystemBase {
         return MathUtil.wrapToCircle(dutyCycleEncoder.getDistance() - ClimbConstants.ABSOLUTE_ZERO, Math.PI * 2);
     }
 
-    public void resetZeros() {
+    public void resetZeros(boolean absolute) {
         double range = 467626;
-        double tickAdjust = climbMaster.getSelectedSensorPosition();
+        double tickAdjust;
+        if (absolute) {
+            //don't use this mode yet, the math is not finished
+            tickAdjust = climbMaster.getSelectedSensorPosition() - (dutyCycleEncoder.getDistance() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
+        } else {
+            tickAdjust = climbMaster.getSelectedSensorPosition();
+        }
         ZERO_TICKS = tickAdjust;
         climbMaster.configForwardSoftLimitEnable(true);
         climbMaster.configReverseSoftLimitEnable(true);
@@ -133,6 +141,12 @@ public class Climb extends SubsystemBase {
 
     public double getAngle() {
         return (climbMaster.getSelectedSensorPosition() - ZERO_TICKS) * ClimbConstants.MOTOR_TICK_TO_ANGLE;
+    }
+
+    //for use clearing the
+    public void killController() {
+        climbMaster.set(ControlMode.Disabled, 0);
+        climbFollower.set(ControlMode.Disabled, 0);
     }
 
     public double getRawAngle() {

@@ -257,6 +257,11 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
     }
 
+    @Override
+    public void teleopExit() {
+        Climb.getInstance().killController();
+    }
+
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
         IntakePiston.getInstance();
@@ -271,7 +276,7 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
-        Climb.getInstance().resetZeros();
+        Climb.getInstance().resetZeros(false);
         Gyro.getInstance().resetGyro();
         DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
