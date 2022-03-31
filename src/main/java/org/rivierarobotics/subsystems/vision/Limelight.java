@@ -80,13 +80,18 @@ public class Limelight {
     }
 
     public double getAdjustedDistance() {
-        return Math.sqrt(Math.pow(getDistance(), 2) + Math.pow(LL_OFFSET, 2) - 2 * getDistance() * LL_OFFSET * Math.cos(Math.toRadians(90 + getTx())));
+        var dist = getDistance();
+        return Math.sqrt(Math.pow(dist, 2) + Math.pow(LL_OFFSET, 2) - 2 * dist * LL_OFFSET * Math.cos(Math.toRadians(90 + getTx())));
     }
 
     // returns new Tx in Radians
     public double getAdjustedTx() {
-        var tx = Math.asin((getDistance() * Math.sin(Math.toRadians(getTx() + 90))) / getAdjustedDistance());
-        return getTx() > 0 ? 90 - tx : tx - 90;
+        var adj = getAdjustedDistance();
+        var tx = getTx();
+        var dist = getDistance();
+        var cutoff = Math.sqrt(dist * dist - LL_OFFSET * LL_OFFSET);
+        var txp = 90 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90 + tx)) / adj * dist) % 1));
+        return adj < cutoff ? -1 * txp : txp;
     }
 
     public double getShootingAssistAngle() {
