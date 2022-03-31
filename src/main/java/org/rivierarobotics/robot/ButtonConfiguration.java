@@ -21,6 +21,7 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
@@ -46,9 +47,11 @@ public class ButtonConfiguration {
     public void initTeleop() {
         //Driver Left
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .toggleWhenPressed(new ClimbSetAngle(0));
+                .toggleWhenPressed(new ClimbSetAngle(0, false));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
-                .toggleWhenPressed(new SetWheelbaseAngle(90));
+                .toggleWhenPressed(new InstantCommand(() -> {
+                    DriveTrain.getInstance().setTargetRotationAngle(-45);
+                }));
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
                 .whenPressed(new ToggleIntakeState());
@@ -106,9 +109,7 @@ public class ButtonConfiguration {
                         DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose());
                     })
         );
-        //new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9)
-        //   .whenPressed(new InstantCommand(() -> {
-        //          DriveTrain.getInstance().setMinTurnSpeed(DriveTrain.getInstance().getMinTurnSpeed() - 0.001);
-        //   }));
+
+
     }
 }

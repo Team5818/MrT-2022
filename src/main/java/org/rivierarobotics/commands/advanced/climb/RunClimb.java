@@ -25,13 +25,15 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetPosition;
+import org.rivierarobotics.commands.basic.climb.ClimbSetPositionSlow;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double RUN_VOLTAGE = 7;
+    private static final double RUN_VOLTAGE = 7.5;
 
     public RunClimb(boolean reversed) {
         final ClimbPositions first;
@@ -55,17 +57,19 @@ public class RunClimb extends SequentialCommandGroup {
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE)),
                 new ClimbSetVoltage(reversed, 0),
                 new TogglePiston(ClimbPositions.MID, true, 0),
-                new WaitPiston(ClimbPositions.MID, 0.5, 1, reversed),
+                new ClimbSetPositionSlow(ClimbPositions.MID, reversed).withTimeout(3),
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
                 new ClimbSetVoltage(reversed, RUN_VOLTAGE * 0.5),
                 new TogglePiston(last, true, 0),
-                new WaitPiston(last, 0.5, 1.0, reversed),
                 new ClimbSetVoltage(reversed, 0),
+                new ClimbSetPositionSlow(ClimbPositions.HIGH, reversed).withTimeout(3),
                 new TogglePiston(ClimbPositions.MID, false, 0),
-                new ClimbSetPosition(ClimbPositions.HIGH, reversed)
+                new ClimbSetAngle(-0.88, reversed),
+                new WaitCommand(4)
+
         );
     }
 }

@@ -22,10 +22,10 @@ package org.rivierarobotics.subsystems.climb;
 
 public class ClimbConstants {
     public static final double LOW_RADIANS = -4.05;
-    public static final double MID_RADIANS = 2.64;
-    public static final double HIGH_RADIANS = -1.53;
+    public static final double MID_RADIANS = -3.426;
+    public static final double HIGH_RADIANS = -1.48;
     public static final double MAX_RADS = 4.17;
-    public static final double MAX_CLIMB_VELOCITY = 30000;
+    public static final double MAX_CLIMB_VELOCITY = 40000;
     public static final double MAX_CLIMB_ACCELERATION = 10000;
     public static final int TIMEOUT_MS = 60;
     public static final double GEAR_RATIO = 4000 / 12.0;

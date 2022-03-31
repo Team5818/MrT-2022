@@ -20,21 +20,30 @@
 
 package org.rivierarobotics.commands.basic.climb;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.climb.Climb;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
-public class ClimbSetAngle extends InstantCommand {
+public class ClimbSetPositionSlow extends CommandBase {
     private final Climb climb;
-    private final double angle;
+    private final double target;
 
-    public ClimbSetAngle(double angle, boolean reversed) {
+    public ClimbSetPositionSlow(ClimbPositions climbModule, boolean reversed) {
         this.climb = Climb.getInstance();
-        this.angle = reversed ? angle * -1 : angle;
-        addRequirements(this.climb);
+        this.target = climbModule.locationRadians * (reversed ? -1 : 1);
+        this.addRequirements(this.climb);
     }
 
     @Override
     public void initialize() {
-        climb.setPosition(angle);
+        climb.setPosition(target);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(climb.getAngle(), target, 0.1);
+        //return climb.getAngle() > target -0.1 && climb.getAngle() < target + 0.1;
     }
 }

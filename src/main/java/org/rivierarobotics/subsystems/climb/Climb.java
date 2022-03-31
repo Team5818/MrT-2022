@@ -146,7 +146,6 @@ public class Climb extends SubsystemBase {
     //for use clearing the
     public void killController() {
         climbMaster.set(ControlMode.Disabled, 0);
-        climbFollower.set(ControlMode.Disabled, 0);
     }
 
     public double getRawAngle() {
