@@ -111,8 +111,8 @@ public class Climb extends SubsystemBase {
         double range = 467626;
         double tickAdjust;
         if (absolute) {
-            //don't use this mode yet, the math is not finished
-            tickAdjust = climbMaster.getSelectedSensorPosition() - (dutyCycleEncoder.getDistance() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
+            //you must replace the Absolute Zero first to mak this work
+            tickAdjust = climbMaster.getSelectedSensorPosition() + (dutyCycleEncoder.getDistance() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
         } else {
             tickAdjust = climbMaster.getSelectedSensorPosition();
         }
@@ -143,7 +143,7 @@ public class Climb extends SubsystemBase {
         return (climbMaster.getSelectedSensorPosition() - ZERO_TICKS) * ClimbConstants.MOTOR_TICK_TO_ANGLE;
     }
 
-    //for use clearing the
+    //for use clearing the saved MM angle
     public void killController() {
         climbMaster.set(ControlMode.Disabled, 0);
     }
