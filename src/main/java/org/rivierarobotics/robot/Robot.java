@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
         addPeriodic(() -> {
             DriveTrain.getInstance().periodicLogging();
         }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
+        addPeriodic(this::shuffleboardLogging, 0.5, 0.01);
 
         this.chooser = new SendableChooser<>();
         chooser.addOption("Drive backwards", new PathGeneration(-2, 0));

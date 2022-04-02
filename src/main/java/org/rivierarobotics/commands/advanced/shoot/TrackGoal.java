@@ -46,9 +46,14 @@ public class TrackGoal extends CommandBase {
         }
     }
 
+    public double getTargetAngle(){
+        return gyro.getRotation2d().getDegrees() - (lime.getAdjustedTx() + (3 / lime.getAdjustedDistance()));
+    }
+
     @Override
     public void initialize() {
         drive.setUseDriverAssist(true);
+        storedTx = getTargetAngle();
     }
 
     @Override
@@ -57,7 +62,15 @@ public class TrackGoal extends CommandBase {
             if (isAuto) {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
-            drive.setTargetRotationAngle(gyro.getRotation2d().getDegrees() - (lime.getTx() + (3 / lime.getDistance())));
+
+            var newAngle = getTargetAngle();
+//            drive.setTargetRotationAngle((angle + 5 * drive.getTargetRotationAngle()) / 6);
+            var tolerance = 5;
+
+            if(newAngle < drive.getTargetRotationAngle() - tolerance || newAngle > drive.getTargetRotationAngle() + tolerance) {
+                drive.setTargetRotationAngle(newAngle);
+
+            }
         }
     }
 

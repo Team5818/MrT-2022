@@ -29,6 +29,7 @@ import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfPose;
 import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.advanced.shoot.TrackGoal;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
@@ -109,7 +110,8 @@ public class ButtonConfiguration {
                         DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose());
                     })
         );
-
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15)
+                .whileHeld(new TrackGoal());
 
     }
 }
