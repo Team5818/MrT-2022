@@ -27,8 +27,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.DriveShoot;
@@ -106,8 +108,9 @@ public class Robot extends TimedRobot {
         DriveTrain.getInstance().updateSwerveStates();
         CommandScheduler.getInstance().run();
         var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
+        SmartDashboard.putBoolean("ran", ran);
         if (command == null && ran) {
-            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).withTimeout(0.2));
+            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).andThen(new WaitCommand(0.2)).andThen(new SetBeltVoltage(0)));
             this.ran = false;
         }
         if (command != null) {
