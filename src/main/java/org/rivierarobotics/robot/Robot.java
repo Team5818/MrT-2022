@@ -167,7 +167,6 @@ public class Robot extends TimedRobot {
         drive.setEntry("x pose", dt.getPoseEstimator().getRobotPose().getX());
         drive.setEntry("y pose", dt.getPoseEstimator().getRobotPose().getY());
         drive.setEntry("pose angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
-        climb.setEntry("CL RAW", cl.getDutyCyclePose());
         drive.setEntry("Robot Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
         drive.setEntry("is field centric", dt.getFieldCentric());
 
@@ -177,6 +176,7 @@ public class Robot extends TimedRobot {
 
         climb.setEntry("Climb Position", cl.getAngle());
         climb.setEntry("Climb Raw Ticks", cl.getRawAngle());
+        climb.setEntry("Absolute ticks", cl.getDutyCyclePose());
         climb.setEntry("Switch low", clc.isSwitchSet(ClimbPositions.LOW));
         climb.setEntry("Switch mid", clc.isSwitchSet(ClimbPositions.MID));
         climb.setEntry("Switch high", clc.isSwitchSet(ClimbPositions.HIGH));
@@ -276,7 +276,7 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
-        Climb.getInstance().resetZeros(false);
+        Climb.getInstance().resetZeros(true);
         Gyro.getInstance().resetGyro();
         DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }

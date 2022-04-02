@@ -112,7 +112,7 @@ public class Climb extends SubsystemBase {
         double tickAdjust;
         if (absolute) {
             //you must replace the Absolute Zero first to mak this work
-            tickAdjust = climbMaster.getSelectedSensorPosition() + (dutyCycleEncoder.getDistance() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
+            tickAdjust = climbMaster.getSelectedSensorPosition() + (getDutyCyclePose() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
         } else {
             tickAdjust = climbMaster.getSelectedSensorPosition();
         }
