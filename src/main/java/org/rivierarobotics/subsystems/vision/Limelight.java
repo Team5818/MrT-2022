@@ -44,6 +44,7 @@ public class Limelight {
     private static final double LL_OFFSET = 0.2286;
     private double targetX = 8.22;
     private double targetY = 4.11;
+    private double storedAngle;
 
     private final PhotonCamera camera;
 
@@ -90,8 +91,12 @@ public class Limelight {
         var tx = getTx();
         var dist = getDistance();
         var cutoff = Math.sqrt(dist * dist - LL_OFFSET * LL_OFFSET);
-        var txp = 90 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90 + tx)) / adj * dist) % 1));
-        return adj < cutoff ? -1 * txp : txp;
+        var txp = 90.0 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90.0 + tx)) / (adj * dist)) % 1.0));
+        var fin = adj < cutoff ? -1 * txp : txp;
+        if (Math.abs(getDistance() - getAdjustedDistance()) < 45) {
+            this.storedAngle = fin;
+        }
+        return storedAngle;
     }
 
     public double getShootingAssistAngle() {
