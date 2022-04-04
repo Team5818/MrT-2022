@@ -57,10 +57,10 @@ public class SwerveModule {
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION,
-            200, 0,
+            600, 0,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig TM_MM_PID = new PIDConfig(3.5, 0.002, 0, 0);
+    private static final PIDConfig TM_MM_PID = new PIDConfig(3.4, 0.01, 0, 0);
 
     //Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
@@ -69,7 +69,7 @@ public class SwerveModule {
             300, 2,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0026, 0.0001, 0, 0.06);
+    private static final PIDConfig DM_MM_PID = new PIDConfig(0.035, 0.0001, 0, 0.06);
 
     private final double zeroTicks;
 
@@ -93,6 +93,7 @@ public class SwerveModule {
 
         //Steer Motor
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
+        TM_MM_PID.setTolerance(0);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, TM_MM_CONFIG, steeringMotor);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
@@ -113,6 +114,11 @@ public class SwerveModule {
         this.driveMotor.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.05));
         this.steeringMotor.configContinuousCurrentLimit(30);
         this.steeringMotor.configPeakCurrentLimit(30);
+
+        try {
+            Thread.sleep(200);
+        } catch (Exception e) {
+        }
     }
 
     public double getAbsoluteAngle() {

@@ -35,6 +35,7 @@ import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.lib.shuffleboard.RSTable;
 import org.rivierarobotics.lib.shuffleboard.RSTileOptions;
+import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.Gyro;
@@ -60,7 +61,7 @@ public class DriveTrain extends SubsystemBase {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI * 3; // rad/s
     //Turn Constraints
     public static double MAX_TURN_SPEED = 10;
-    public static double TOLERANCE = 1;
+    public static double TOLERANCE = 1.5;
     //Module Mappings / Measurements
     private static final double WHEEL_DIST_TO_CENTER = 0.29; //m
 
@@ -90,10 +91,10 @@ public class DriveTrain extends SubsystemBase {
         swervePosition[2] = new Translation2d(-WHEEL_DIST_TO_CENTER, WHEEL_DIST_TO_CENTER); //BL
         swervePosition[3] = new Translation2d(-WHEEL_DIST_TO_CENTER, -WHEEL_DIST_TO_CENTER); //BR
 
-        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 9358 + 2048);
-        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, 628 + 2048);
-        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, 7523 + 2048);
-        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, 10899 + 2048);
+        swerveModules[0] = new SwerveModule(MotorIDs.FRONT_LEFT_DRIVE, MotorIDs.FRONT_LEFT_STEER, 1123 + 2049 );
+        swerveModules[1] = new SwerveModule(MotorIDs.FRONT_RIGHT_DRIVE, MotorIDs.FRONT_RIGHT_STEER, -3488 + 2048 );
+        swerveModules[2] = new SwerveModule(MotorIDs.BACK_LEFT_DRIVE, MotorIDs.BACK_LEFT_STEER, -2750 + 2048 );
+        swerveModules[3] = new SwerveModule(MotorIDs.BACK_RIGHT_DRIVE, MotorIDs.BACK_RIGHT_STEER, -1473 + 2048);
 
         this.tab = Logging.robotShuffleboard.getTab("Swerve");
         this.gyro = Gyro.getInstance();
@@ -240,7 +241,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void periodicLogging() {
-        if (DriverStation.isFMSAttached()) {
+        if (DriverStation.isFMSAttached() || ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
             return;
         }
         for (int i = 0; i < swerveModules.length; i++) {

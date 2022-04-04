@@ -61,5 +61,6 @@ public class SetFloppaLimelight extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         floppasActuator.setVoltage(0);
+        floppaFlywheels.setTargetVelocity(0);
     }
 }

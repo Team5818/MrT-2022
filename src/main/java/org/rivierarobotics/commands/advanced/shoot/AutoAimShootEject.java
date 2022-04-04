@@ -28,31 +28,41 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
+import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
-public class AutoAimShoot extends ConditionalCommand {
-    public AutoAimShoot(boolean isAuto) {
+public class AutoAimShootEject extends ConditionalCommand {
+    public AutoAimShootEject(boolean isAuto) {
         super(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
                                 new WaitCommand(0.5),
                                 new ParallelDeadlineGroup(
-                                        new WaitCommand(2),
-                                        new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE))
+                                        new WaitCommand(3),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
+                                                new WaitCommand(0.75),
+                                                new SetBeltVoltage(0).andThen(new InstantCommand(() -> {
+                                                    FloppaActuator.getInstance().setFloppaAngle(0);
+                                                })).andThen(new SetMiniwheelVoltage(0)),
+                                                new WaitCommand(0.5),
+                                                new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)
+                                        ),
+                                        new SetFloppaLimelight(true)
                                 )
                         ),
                         new TrackGoal(isAuto)
                 ),
                 new WaitCommand(0.5),
-            () -> Limelight.getInstance().getDetected()
+                () -> Limelight.getInstance().getDetected()
         );
     }
 
-    public AutoAimShoot() {
+    public AutoAimShootEject() {
         this(false);
     }
 

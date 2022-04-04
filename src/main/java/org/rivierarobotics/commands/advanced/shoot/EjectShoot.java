@@ -68,7 +68,7 @@ public class EjectShoot extends CommandBase {
     @Override
     public void initialize() {
         this.isEjectPos = true;
-        this.firstRun = false;
+        this.firstRun = true;
         this.rrTimer = new RRTimer(0.5);
         if (useLimelight) {
             this.flywheelSpeed = ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance());
@@ -96,7 +96,7 @@ public class EjectShoot extends CommandBase {
             floppaFlywheels.setFlywheelSpeed(flywheelSpeed);
             intakeBelt.setMiniWheelMotorVoltage(miniwheelVoltage);
             intakeBelt.setBeltVoltage(beltVoltage);
-            this.firstRun = true;
+            this.firstRun = false;
         }
     }
 }

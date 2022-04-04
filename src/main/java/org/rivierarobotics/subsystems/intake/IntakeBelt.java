@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems.intake;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.MotorIDs;
@@ -39,6 +40,8 @@ public class IntakeBelt extends SubsystemBase {
 
     public IntakeBelt() {
         this.beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
+        this.beltMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30,30,1), 50);
+        this.beltMotor.configContinuousCurrentLimit(30);
         this.miniWheelMotor = new WPI_TalonSRX(MotorIDs.COLLECT_WHEEL);
     }
 

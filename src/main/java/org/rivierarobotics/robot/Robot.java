@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
+import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("SimpleShootR", new DriveShoot(true));
         chooser.addOption("SimpleShootL", new DriveShoot(false));
         chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
+        chooser.addOption("5ball", new CrazyWildCollectionBouncyHousePath());
 
         Shuffleboard.getTab("Autos").add(chooser);
 
@@ -267,6 +269,10 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {}
+
         IntakePiston.getInstance();
         FloppaActuator.getInstance();
         FloppaFlywheels.getInstance();
@@ -279,7 +285,7 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
-        Climb.getInstance().resetZeros(true);
+        Climb.getInstance().resetZeros(false);
         Gyro.getInstance().resetGyro();
         DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
     }
