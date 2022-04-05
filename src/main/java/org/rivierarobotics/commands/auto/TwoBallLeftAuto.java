@@ -7,9 +7,9 @@ import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
-public class twoBallAuto extends SequentialCommandGroup {
+public class TwoBallLeftAuto extends SequentialCommandGroup {
 
-    public twoBallAuto(){
+    public TwoBallLeftAuto(){
         super(
             new ParallelDeadlineGroup(
                     new DrivePathPlannerPath("2BallLeft", 7,4 ),
