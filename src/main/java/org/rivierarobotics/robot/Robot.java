@@ -42,7 +42,6 @@ import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
-import org.rivierarobotics.subsystems.climb.ClimbConstants;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.intake.IntakePiston;
@@ -225,7 +224,7 @@ public class Robot extends TimedRobot {
         shoot.setEntry("alliance color", DriverStation.getAlliance().toString());
 
         limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
-        limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
+        limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTxAndCalc());
         limeLight.setEntry("LL TX", Limelight.getInstance().getTx());
         limeLight.setEntry("flop tuning", floppShooter.getTargetVelocity());
         limeLight.setEntry("LL Assist Angle", Limelight.getInstance().getShootingAssistAngle());

@@ -80,24 +80,22 @@ public class Limelight {
         return PhotonUtils.calculateDistanceToTargetMeters(ROBOT_HEIGHT, GOAL_HEIGHT, Math.toRadians(LL_ANGLE), Math.toRadians(getTy()));
     }
 
-    public double getAdjustedDistance() {
-        var dist = getDistance();
-        return dist;
-        //return Math.sqrt(Math.pow(dist, 2) + Math.pow(LL_OFFSET, 2) - 2 * dist * LL_OFFSET * Math.cos(Math.toRadians(90 + getTx())));
+    public double getAdjustedDistance(double dist, double tx) {
+        return Math.sqrt(Math.pow(dist, 2) + Math.pow(LL_OFFSET, 2) - 2 * dist * LL_OFFSET * Math.cos(Math.toRadians(90 + tx)));
     }
 
     // returns new Tx in Radians
-    public double getAdjustedTx() {
-        var adj = getAdjustedDistance();
+    public double getAdjustedTxAndCalc() {
         var tx = getTx();
         var dist = getDistance();
+        var adj = getAdjustedDistance(dist, tx);
         var cutoff = Math.sqrt(dist * dist - LL_OFFSET * LL_OFFSET);
         var txp = 90.0 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90.0 + tx)) / (adj * dist)) % 1.0));
         var fin = adj < cutoff ? -1 * txp : txp;
-        if (Math.abs(getDistance() - getAdjustedDistance()) < 45) {
+        if (Math.abs(txp) < 70) {
             this.storedAngle = fin;
         }
-        return getTx();
+        return storedAngle + (3 / adj);
     }
 
     public double getShootingAssistAngle() {

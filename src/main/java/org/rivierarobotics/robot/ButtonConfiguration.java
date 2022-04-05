@@ -42,6 +42,7 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
 import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
+import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -132,6 +133,7 @@ public class ButtonConfiguration {
                         DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose());
                     })
         );
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9).whenPressed(() -> Climb.getInstance().resetZeros(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15)
                 .whileHeld(new TrackGoal());
 

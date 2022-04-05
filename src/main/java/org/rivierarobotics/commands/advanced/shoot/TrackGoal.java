@@ -47,7 +47,7 @@ public class TrackGoal extends CommandBase {
     }
 
     public double getTargetAngle(){
-        return gyro.getRotation2d().getDegrees() - (lime.getAdjustedTx() + (3 / lime.getAdjustedDistance()));
+        return gyro.getRotation2d().getDegrees() - lime.getAdjustedTxAndCalc();
     }
 
     @Override
