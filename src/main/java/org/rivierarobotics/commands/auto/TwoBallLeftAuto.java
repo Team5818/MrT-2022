@@ -18,6 +18,7 @@ public class TwoBallLeftAuto extends SequentialCommandGroup {
                     new CollectBalls()
             ),
             new SetDriveAngle(-135),
+            new SetIntakeState(false),
             new AutoAimShoot(true)
         );
     }
