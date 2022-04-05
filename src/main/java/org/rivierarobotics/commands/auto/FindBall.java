@@ -1,4 +1,4 @@
-/*
+package org.rivierarobotics.commands.auto;/*
  * This file is part of MrT-2022, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.advanced.drive;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.robot.Logging;
@@ -31,32 +29,34 @@ import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
 import java.util.Comparator;
 
-public class DriveToClosest extends SequentialCommandGroup {
+public class FindBall extends SequentialCommandGroup {
     private final DriveTrain driveTrain;
     private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
-    private TrajectoryFollower trajectoryFollower;
+    private final double scanVelocity = 4;
+    private final boolean isRight;
 
 
-    public DriveToClosest() {
+    public FindBall(boolean isRight) {
         this.driveTrain = DriveTrain.getInstance();
         this.aiFieldMesh = FieldMesh.getInstance();
+        this.isRight = isRight;
         this.gyro = Gyro.getInstance();
     }
 
     @Override
     public void initialize() {
-        var trajectory = MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
-        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
-    }
-
-    @Override
-    public void execute() {
-        trajectoryFollower.followController();
+        driveTrain.drive(0,0, scanVelocity * (isRight ? -1 : 1), true);
     }
 
     @Override
     public boolean isFinished() {
-        return trajectoryFollower.isFinished();
+        var trajectory = MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
+        return trajectory != null;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        driveTrain.drive(0,0,0,true);
     }
 }

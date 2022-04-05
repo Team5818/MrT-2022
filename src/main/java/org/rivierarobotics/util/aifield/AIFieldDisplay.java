@@ -24,6 +24,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -111,6 +112,7 @@ public class AIFieldDisplay {
                     10
                 );
             }
+            Core.flip(newRenderFrame, newRenderFrame, 0);
             renderFrame.setOpaque(newRenderFrame);
         });
     }
