@@ -93,7 +93,7 @@ public class Limelight {
         //adjusted distance, from offset shooter to goal
         var adj = getAdjustedDistance(dist, tx);
         //angle math to solve for offset side to new tx
-        var txp = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90.0 + tx)) / (adj * dist)) % 1.0));
+        var txp = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90.0 + tx)) / adj * dist)));
         //final math and decision-making
         var cutoff = Math.asin(LL_OFFSET / dist);
         var fin = tx > cutoff ? 90 - txp : txp - 90;
@@ -101,10 +101,11 @@ public class Limelight {
     }
 
     public double getShootingAssistAngle() {
-        var robotX = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getX();
-        var robotY = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getY();
+        var robotX = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getX() - targetX;
+        var robotY = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getY() - targetY;
 
-        var targetAngle = -Math.atan((targetX - robotX) / (targetY - robotY));
+        var targetAngle = robotX <= 0 ? Math.atan((robotX) / (robotY)) - 90 : Math.atan((robotX) / (robotY)) + 90;
+        targetAngle += 90;
         return Math.toDegrees(targetAngle);
     }
 
