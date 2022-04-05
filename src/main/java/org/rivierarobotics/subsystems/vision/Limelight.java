@@ -95,7 +95,7 @@ public class Limelight {
         if (Math.abs(txp) < 70) {
             this.storedAngle = fin;
         }
-        return storedAngle + (3 / adj);
+        return fin;
     }
 
     public double getShootingAssistAngle() {

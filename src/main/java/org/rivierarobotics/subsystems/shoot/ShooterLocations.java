@@ -24,7 +24,7 @@ public enum ShooterLocations {
     LAUNCHPAD_A(0, 0, 0),
     LAUNCHPAD_B(1,  0, 0),
     LOW_GOAL(60, 0, 0),
-    FENDER(110, 0 - 0.15, 0);
+    FENDER(5250, -5, 0);
 
     public final double flyWheelSpeed;
     public final double floppaAngle;

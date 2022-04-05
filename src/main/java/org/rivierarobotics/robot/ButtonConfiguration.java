@@ -30,6 +30,7 @@ import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfP
 import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShootEject;
+import org.rivierarobotics.commands.advanced.shoot.FenderShot;
 import org.rivierarobotics.commands.advanced.shoot.TrackGoal;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
@@ -41,10 +42,12 @@ import org.rivierarobotics.commands.basic.drive.SetCameraCentric;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
 import org.rivierarobotics.commands.basic.drive.SetWheelbaseAngle;
+import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
@@ -64,8 +67,12 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(new CollectBalls());
 
         //Driver Buttons
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 1)
                 .whenPressed(new AutoAimShootEject());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
+                .whenPressed(new AutoAimShoot());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
+                .whenPressed(new FenderShot());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
                 .whenPressed(new ClimbInterruptToggle());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)

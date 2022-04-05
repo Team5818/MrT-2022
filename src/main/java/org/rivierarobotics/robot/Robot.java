@@ -223,7 +223,7 @@ public class Robot extends TimedRobot {
         shoot.setEntry("Is Alliance Ball", intakeSensors.isTeamBall());
         shoot.setEntry("alliance color", DriverStation.getAlliance().toString());
 
-        limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
+        limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance(Limelight.getInstance().getDistance(), Limelight.getInstance().getTx()));
         limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTxAndCalc());
         limeLight.setEntry("LL TX", Limelight.getInstance().getTx());
         limeLight.setEntry("flop tuning", floppShooter.getTargetVelocity());
