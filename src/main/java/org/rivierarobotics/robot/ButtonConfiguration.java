@@ -72,7 +72,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
                 .whenPressed(new AutoAimShoot());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
-                .whenPressed(new FenderShot());
+                .whenPressed(new DrivePathPlannerPath("2BallLeft", 1, 0.5));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
                 .whenPressed(new ClimbInterruptToggle());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)

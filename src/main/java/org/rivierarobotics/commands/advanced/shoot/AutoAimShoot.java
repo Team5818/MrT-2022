@@ -45,7 +45,7 @@ public class AutoAimShoot extends ConditionalCommand {
                                         new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE))
                                 )
                         ),
-                        new SetFloppaLimelight(isAuto),
+                        new SetFloppaLimelight(true),
                         new TrackGoal(isAuto)
                 ),
                 new WaitCommand(0.5),
