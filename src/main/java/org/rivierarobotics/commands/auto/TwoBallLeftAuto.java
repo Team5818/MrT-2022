@@ -5,17 +5,19 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
+import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class TwoBallLeftAuto extends SequentialCommandGroup {
 
     public TwoBallLeftAuto(){
         super(
+            new SetIntakeState(true),
             new ParallelDeadlineGroup(
-                    new DrivePathPlannerPath("2BallLeft", 7,4 ),
+                    new DrivePathPlannerPath("2BallLeft", 1,0.5 ),
                     new CollectBalls()
             ),
-            new SetDriveAngle(45),
+            new SetDriveAngle(-135),
             new AutoAimShoot(true)
         );
     }

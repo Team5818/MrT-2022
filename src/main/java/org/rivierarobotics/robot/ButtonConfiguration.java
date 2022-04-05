@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.robot;
 
+import com.ctre.phoenix.led.TwinkleAnimation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -33,6 +34,7 @@ import org.rivierarobotics.commands.advanced.shoot.AutoAimShootEject;
 import org.rivierarobotics.commands.advanced.shoot.FenderShot;
 import org.rivierarobotics.commands.advanced.shoot.TrackGoal;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
+import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.climb.IdleMode;
@@ -72,7 +74,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 2)
                 .whenPressed(new AutoAimShoot());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
-                .whenPressed(new DrivePathPlannerPath("2BallLeft", 1, 0.5));
+                .whenPressed(new TwoBallLeftAuto());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
                 .whenPressed(new ClimbInterruptToggle());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
