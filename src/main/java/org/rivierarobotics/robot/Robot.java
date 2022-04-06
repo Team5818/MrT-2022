@@ -309,5 +309,10 @@ public class Robot extends TimedRobot {
     @Override
     public void simulationInit() {
     }
+
+    @Override
+    public void simulationPeriodic() {
+        Logging.aiFieldDisplay.updateField();
+    }
 }
 

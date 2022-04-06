@@ -68,7 +68,7 @@ public class AIFieldDisplay {
         this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
         outputStream.setResolution(480, 480);
-        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
+        updatePath(fieldMesh.getTrajectory(5, 4, 3, 4, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
         if (fieldThread) {
             if (!DriverStation.isFMSAttached()) {
