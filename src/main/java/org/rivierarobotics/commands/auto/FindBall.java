@@ -33,7 +33,7 @@ public class FindBall extends SequentialCommandGroup {
     private final DriveTrain driveTrain;
     private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
-    private final double scanVelocity = 4;
+    private final double scanVelocity = 2;
     private final boolean isRight;
 
 
@@ -42,17 +42,22 @@ public class FindBall extends SequentialCommandGroup {
         this.aiFieldMesh = FieldMesh.getInstance();
         this.isRight = isRight;
         this.gyro = Gyro.getInstance();
-    }
-
-    @Override
-    public void initialize() {
-        driveTrain.drive(0,0, scanVelocity * (isRight ? -1 : 1), true);
+        addRequirements(driveTrain);
     }
 
     @Override
     public boolean isFinished() {
-        var trajectory = MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
-        return trajectory != null;
+        MLCore core = MLCore.getInstance();
+        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+
+        var balls = core.getDetectedObjects().get(ballColor);
+        if(balls != null) {
+            var trajectory = MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
+            return trajectory != null;
+        }
+        driveTrain.drive(0,0, scanVelocity * (isRight ? -1 : 1), true);
+
+        return false;
     }
 
     @Override

@@ -20,7 +20,8 @@ public class FourBallLeftAuto extends SequentialCommandGroup {
                 ),
                 new SetDriveAngle(-90),
                 new SetIntakeState(false),
-                new SetFloppaLimelight(true)
+                new SetFloppaLimelight(true),
+                new MLCollect2(false)
         );
     }
 }

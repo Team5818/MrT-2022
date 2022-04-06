@@ -28,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
@@ -56,6 +57,7 @@ public class MLCore {
     public static final int CAMERA_WIDTH = 640;
     public static final int CAMERA_HEIGHT = 480;
     public static final String TARGET_COLOR = "red";
+    public static Trajectory trajectory;
 
     private static class MLResponseDeserializer implements JsonDeserializer<MLResponse> {
         public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -130,12 +132,19 @@ public class MLCore {
         balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
         for (var ball : balls) {
             var gyroMath = gyro.getRotation2d().getRadians() + Math.toRadians(ball.ty);
+
             var targetX = currentX + Math.cos(gyroMath) * ball.relativeLocationDistance;
             var targetY = currentY + Math.sin(gyroMath) * ball.relativeLocationDistance;
+            SmartDashboard.putNumber("targetX", targetX);
+            SmartDashboard.putNumber("targetY", targetY);
+            SmartDashboard.putNumber("currentX", currentX);
+            SmartDashboard.putNumber("currentY", currentY);
+
 
             var trajectory = fieldMesh.getTrajectory(currentX, currentY, targetX, targetY, true, 0, driveTrain.getSwerveDriveKinematics());
             if (trajectory != null) {
                 Logging.aiFieldDisplay.updatePath(trajectory);
+                MLCore.trajectory = trajectory;
                 return trajectory;
             }
         }

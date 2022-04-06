@@ -66,7 +66,7 @@ public class EjectCollect extends CommandBase {
         if (!IntakeSensors.getInstance().isTeamBall() && !isEjectPos) {
             floppaActuator.setFloppaAngle(0);
             intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
-            floppaFlywheels.setVoltage(8);
+            floppaFlywheels.setVoltage(11);
             this.isEjectPos = true;
             timer.reset();
         } else if (isEjectPos) {

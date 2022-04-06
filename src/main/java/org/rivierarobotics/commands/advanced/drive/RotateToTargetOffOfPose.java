@@ -36,10 +36,18 @@ public class RotateToTargetOffOfPose extends CommandBase {
         addRequirements(this.dt);
     }
 
+
+    public RotateToTargetOffOfPose(boolean isAUTO) {
+        this.dt = DriveTrain.getInstance();
+        this.limelight = Limelight.getInstance();
+    }
+
     @Override
     public void initialize() {
         dt.setTargetRotationAngle(limelight.getShootingAssistAngle());
     }
+
+
 
     @Override
     public boolean isFinished() {
@@ -48,6 +56,7 @@ public class RotateToTargetOffOfPose extends CommandBase {
 
     @Override
     public void execute() {
+        dt.setTargetRotationAngle(limelight.getShootingAssistAngle());
         dt.drive(0, 0, dt.getRotationSpeed(), true);
     }
 

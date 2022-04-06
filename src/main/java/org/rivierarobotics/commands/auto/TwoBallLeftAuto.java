@@ -10,16 +10,17 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class TwoBallLeftAuto extends SequentialCommandGroup {
 
-    public TwoBallLeftAuto(){
+    public TwoBallLeftAuto() {
         super(
-            new SetIntakeState(true),
-            new ParallelDeadlineGroup(
-                    new DrivePathPlannerPath("2BallLeft", 1,0.5 ),
-                    new CollectBalls()
-            ),
-            new SetDriveAngle(-135),
-            new SetIntakeState(false),
-            new AutoAimShoot(true)
+                new SetIntakeState(true),
+                new ParallelDeadlineGroup(
+                        new DrivePathPlannerPath("2BallLeft", 1, 0.5),
+                        new CollectBalls()
+                ),
+                new SetDriveAngle(-135),
+                new SetIntakeState(false),
+                new AutoAimShoot(true),
+                new MLCollect2(true)
         );
     }
 }

@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands.advanced.drive;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
@@ -42,16 +43,32 @@ public class DriveToClosest extends SequentialCommandGroup {
         this.driveTrain = DriveTrain.getInstance();
         this.aiFieldMesh = FieldMesh.getInstance();
         this.gyro = Gyro.getInstance();
+        addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
-        var trajectory = MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
+        var trajectory = MLCore.trajectory != null ? MLCore.trajectory : MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
         this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
     }
 
     @Override
     public void execute() {
+//        MLCore core = MLCore.getInstance();
+//        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+//
+//        var balls = core.getDetectedObjects().get(ballColor);
+//        if (balls == null || balls.isEmpty()) {
+//            return;
+//        }
+//
+//        balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
+//        var ball = balls.get(0);
+//        SmartDashboard.putNumber("tx", ball.tx);
+//        SmartDashboard.putNumber("ty", ball.ty);
+//        driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees() + ball.ty);
+//        driveTrain.drive(xspeed, ball.tx >= 0 ? yspeed : -yspeed, driveTrain.getRotationSpeed(),false);
+//        driveTrain.drive(0,0,driveTrain.getRotationSpeed(), true);
         trajectoryFollower.followController();
     }
 

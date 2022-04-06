@@ -82,7 +82,7 @@ public class DriveTrain extends SubsystemBase {
     private boolean useDriverAssist = false;
     private double targetRotationAngle = 0.0;
     private double turnSpeedP = 0.05;
-    private double minTurnSpeed = 0.46;
+    private double minTurnSpeed = 0.42;
 
     private DriveTrain() {
         //Position relative to center of robot -> (0,0) is the center (m)

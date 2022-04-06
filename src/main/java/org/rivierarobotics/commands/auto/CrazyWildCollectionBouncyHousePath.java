@@ -43,7 +43,8 @@ public class CrazyWildCollectionBouncyHousePath extends SequentialCommandGroup {
                         new DrivePathPlannerPath("fiveBallEnd", 9, 5),
                         new CollectBalls()
                 ),
-                new AutoAimShoot(true)
+                new AutoAimShoot(true),
+                new MLCollect2(false)
         );
     }
 }

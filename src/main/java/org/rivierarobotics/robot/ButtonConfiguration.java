@@ -29,11 +29,11 @@ import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfPose;
 import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShootEject;
-import org.rivierarobotics.commands.advanced.shoot.FenderShot;
-import org.rivierarobotics.commands.advanced.shoot.TrackGoal;
+import org.rivierarobotics.commands.advanced.drive.DriveToClosest;
+import org.rivierarobotics.commands.advanced.shoot.*;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
+import org.rivierarobotics.commands.auto.FindBall;
+import org.rivierarobotics.commands.auto.MLCollect2;
 import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
@@ -143,6 +143,9 @@ public class ButtonConfiguration {
                     })
         );
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9).whenPressed(() -> Climb.getInstance().resetZeros(false));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 10).whenPressed(new RotateBall());
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 11).whenPressed(new FindBall(true));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 12).whenPressed(new MLCollect2(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15)
                 .whileHeld(new TrackGoal());
 

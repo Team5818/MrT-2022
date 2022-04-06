@@ -56,22 +56,24 @@ public class TrajectoryFollower {
     private final Trajectory trajectory;
     private final Gyro gyro;
     private final DriveTrain driveTrain;
+    private final boolean useAngle;
 
     public TrajectoryFollower(Trajectory trajectory, boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
-        this(trajectory, null, resetPose, gyro, driveTrain);
+        this(trajectory, null, resetPose, gyro, driveTrain, true);
     }
 
     public TrajectoryFollower(PathPlannerTrajectory trajectory, boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
-        this(null, trajectory, resetPose, gyro, driveTrain);
+        this(null, trajectory, resetPose, gyro, driveTrain, true);
     }
 
     private TrajectoryFollower(Trajectory trajectory, PathPlannerTrajectory pathPlannerTrajectory,
-        boolean resetPose, Gyro gyro, DriveTrain driveTrain) {
+        boolean resetPose, Gyro gyro, DriveTrain driveTrain, boolean useAngle) {
         this.holonomicDriveController = driveTrain.getHolonomicDriveController();
         this.pathPlannerTrajectory = pathPlannerTrajectory;
         this.startTime = Timer.getFPGATimestamp();
         this.gyro = gyro;
         this.driveTrain = driveTrain;
+        this.useAngle = useAngle;
         this.estimator = driveTrain.getPoseEstimator();
         this.trajectory = trajectory;
         if (trajectory == null && pathPlannerTrajectory == null) {
@@ -111,7 +113,7 @@ public class TrajectoryFollower {
 
         var controls = trajectory == null ? followPathPlannerTrajectory(timePassed) : followTrajectory(timePassed);
 
-        driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, DriveTrain.getInstance().getRotationSpeed() + controls.omegaRadiansPerSecond, false);
+        driveTrain.drive(controls.vxMetersPerSecond, controls.vyMetersPerSecond, useAngle ? DriveTrain.getInstance().getRotationSpeed() : 0, false);
     }
 
     private ChassisSpeeds followPathPlannerTrajectory(double intTime) {
@@ -126,6 +128,7 @@ public class TrajectoryFollower {
     }
 
     private ChassisSpeeds followTrajectory(double intTime) {
+        DriveTrain.getInstance().setTargetRotationAngle(estimator.getRobotPose().getRotation().getDegrees());
         return holonomicDriveController.calculate(
                 estimator.getRobotPose(),
                 trajectory.sample(intTime),

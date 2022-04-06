@@ -49,7 +49,8 @@ public class CaptainJIsRSCollect extends SequentialCommandGroup {
                 ),
                 new SetIntakeState(false),
                 new SetDriveAngle(-60).withTimeout(1.5),
-                new AutoAimShoot(true)
+                new AutoAimShoot(true),
+                new MLCollect2(false)
         );
     }
 }

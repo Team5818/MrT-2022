@@ -33,6 +33,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
+import org.rivierarobotics.util.swerve.PoseEstimator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class AIFieldDisplay {
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
             Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
+
             if (!Robot.isReal()) {
                 outputStream.putFrame(image);
             } else {

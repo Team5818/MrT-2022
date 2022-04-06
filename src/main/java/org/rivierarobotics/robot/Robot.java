@@ -36,6 +36,7 @@ import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.DriveShoot;
 import org.rivierarobotics.commands.auto.MLAuto;
+import org.rivierarobotics.commands.auto.MLCenter;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
@@ -66,6 +67,12 @@ public class Robot extends TimedRobot {
     private boolean ran = false;
 
     @Override
+    public void disabledPeriodic() {
+        DriveTrain.getInstance().drive(0,0,0,true);
+        CommandScheduler.getInstance().cancelAll();
+    }
+
+    @Override
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
@@ -85,7 +92,7 @@ public class Robot extends TimedRobot {
 
         this.chooser = new SendableChooser<>();
         chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
-        chooser.addOption("MLAUTO", new MLAuto());
+        chooser.addOption("ML Center", new MLCenter());
         chooser.addOption("No Auto", null);
         chooser.addOption("SimpleShootR", new DriveShoot(true));
         chooser.addOption("SimpleShootL", new DriveShoot(false));
@@ -164,6 +171,9 @@ public class Robot extends TimedRobot {
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
         var intakeSensors = IntakeSensors.getInstance();
+
+        var trajectory = MLCore.getBallTrajectory(dt, Gyro.getInstance(), FieldMesh.getInstance());
+        SmartDashboard.putBoolean("HAS VALID TRAJECTORY", trajectory != null);
         dt.periodicLogging();
         drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
         drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
@@ -286,7 +296,8 @@ public class Robot extends TimedRobot {
     private void resetRobotPoseAndGyro() {
         Climb.getInstance().resetZeros(false);
         Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(5, 7, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().drive(0,0,0,true);
     }
 
     private void initializeDefaultCommands() {

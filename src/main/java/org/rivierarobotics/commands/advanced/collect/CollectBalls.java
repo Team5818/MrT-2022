@@ -31,7 +31,7 @@ import org.rivierarobotics.subsystems.intake.IntakeRollers;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
 
 public class CollectBalls extends ConditionalCommand {
-    public static final double COLLECT_VOLTAGE = -8;
+    public static final double COLLECT_VOLTAGE = -10;
     private static final double INTAKE_VOLTAGE = -12;
     private static final double MINIWHEEL_VOLTAGE = -7;
 

@@ -63,13 +63,7 @@ public class TrackGoal extends CommandBase {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
 
-            var newAngle = getTargetAngle();
-//            drive.setTarget/RotationAngle((angle + 5 * drive.getTargetRotationAngle()) / 6);
-            var tolerance = 5;
-
-            if(newAngle < drive.getTargetRotationAngle() - tolerance || newAngle > drive.getTargetRotationAngle() + tolerance) {
-                drive.setTargetRotationAngle(newAngle);
-            }
+            drive.setTargetRotationAngle(getTargetAngle());
         }
     }
 
