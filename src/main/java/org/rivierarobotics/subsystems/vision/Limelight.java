@@ -100,11 +100,16 @@ public class Limelight {
     }
 
     public double getShootingAssistAngle() {
-        var robotX = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getX() - targetX;
-        var robotY = DriveTrain.getInstance().getPoseEstimator().getRobotPose().getY() - targetY;
+        var robotPose = DriveTrain.getInstance().getPoseEstimator().getRobotPose();
+        var robotX = robotPose.getX() - targetX;
+        var robotY = robotPose.getY() - targetY;
 
-        var targetAngle = robotX <= 0 ? Math.toDegrees(Math.atan((robotX) / (robotY))) - 90 : Math.toDegrees(Math.atan((robotX) / (robotY))) + 180;
-        targetAngle += 90;
+        double targetAngle = -Math.toDegrees(Math.atan((robotX) / (robotY)));
+
+        if(robotY > 0) {
+            targetAngle += 180;
+        }
+
         return targetAngle;
     }
 

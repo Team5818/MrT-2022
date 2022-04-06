@@ -28,6 +28,7 @@ public class Logging {
     public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
     public static AIFieldDisplay aiFieldDisplay = new AIFieldDisplay(20, true);
+    public static double autoStartTime = 0.0;
 
     private Logging() {
     }

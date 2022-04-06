@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -35,7 +36,6 @@ import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.PathGeneration;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.DriveShoot;
-import org.rivierarobotics.commands.auto.MLAuto;
 import org.rivierarobotics.commands.auto.MLCenter;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.control.ClimbControl;
@@ -256,6 +256,7 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
 
         resetRobotPoseAndGyro();
+        Logging.autoStartTime = Timer.getFPGATimestamp();
         try {
             var command = chooser.getSelected();
             if (command != null) {
@@ -304,15 +305,6 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
         CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
-    }
-
-    @Override
-    public void simulationInit() {
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        Logging.aiFieldDisplay.updateField();
     }
 }
 
