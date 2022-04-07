@@ -31,10 +31,7 @@ import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfP
 import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.drive.DriveToClosest;
 import org.rivierarobotics.commands.advanced.shoot.*;
-import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
-import org.rivierarobotics.commands.auto.FindBall;
-import org.rivierarobotics.commands.auto.MLCollect2;
-import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
+import org.rivierarobotics.commands.auto.*;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.climb.IdleMode;
@@ -60,7 +57,7 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(new ClimbSetAngle(0, false));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .toggleWhenPressed(new InstantCommand(() -> {
-                    DriveTrain.getInstance().setTargetRotationAngle(-45);
+                    DriveTrain.getInstance().setTargetRotationAngle(135);
                 }));
         //Driver Right
         new JoystickButton(ControlMap.DRIVER_RIGHT, 1)
@@ -81,16 +78,16 @@ public class ButtonConfiguration {
                 .whenPressed(new ClimbSetVoltage(false, 0));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
                 .whenPressed(new RunClimb(false));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
-                .whenPressed(new RunClimb(true));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
+//                .whenPressed(new RunClimb(true));
 
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
                 .whileHeld(new SetDriverAssist(true));
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
                 .whenReleased(new SetDriverAssist(false));
 
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15)
-                .whileHeld(new SetCameraCentric());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 15)
+//                .whileHeld(new SetCameraCentric());
 
         //CO-DRIVER
 
@@ -121,12 +118,12 @@ public class ButtonConfiguration {
 //                .whenPressed(new SetPiston(ClimbPositions.LOW, true));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
 //                .whenPressed(new SetPiston(ClimbPositions.LOW, false));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
-                .whenPressed(new SetPiston(ClimbPositions.MID, true));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
-                .whileHeld(new SetPiston(ClimbPositions.MID, false));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
-                .whenPressed(new SetPiston(ClimbPositions.HIGH, true));
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
+//                .whenPressed(new SetPiston(ClimbPositions.MID, true));
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 4)
+//                .whileHeld(new SetPiston(ClimbPositions.MID, false));
+//        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 5)
+//                .whenPressed(new SetPiston(ClimbPositions.HIGH, true));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 6)
                 .whenPressed(new RunClimb(false));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 7)
@@ -145,7 +142,7 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9).whenPressed(() -> Climb.getInstance().resetZeros(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 10).whenPressed(new RotateBall());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 11).whenPressed(new FindBall(true));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 12).whenPressed(new MLCollect2(false));
+        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 12).whenPressed(new MLCollect1(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15)
                 .whileHeld(new TrackGoal());
 

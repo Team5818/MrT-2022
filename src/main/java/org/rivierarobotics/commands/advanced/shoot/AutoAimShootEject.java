@@ -47,7 +47,7 @@ public class AutoAimShootEject extends ConditionalCommand {
                                         new WaitCommand(3),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
-                                                new WaitCommand(0.75),
+                                                new WaitCommand(0.4),
                                                 new SetBeltVoltage(0).andThen(new InstantCommand(() -> {
                                                     FloppaActuator.getInstance().setFloppaAngle(0);
                                                 })).andThen(new SetMiniwheelVoltage(0)),

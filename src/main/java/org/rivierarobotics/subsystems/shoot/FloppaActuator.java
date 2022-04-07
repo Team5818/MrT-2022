@@ -117,7 +117,12 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        this.actuatorMotor.setVoltage(voltage);
+        //Manual floppa control soft limits, autoaim has its own thing
+        if(getTicks() >= ShooterConstant.MAX_ACTUATOR_TICKS || getTicks() <= ShooterConstant.MIN_ACTUATOR_TICKS) {
+            this.actuatorMotor.setVoltage(0);
+        } else {
+            this.actuatorMotor.setVoltage(voltage);
+        }
     }
 
     @Override

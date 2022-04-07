@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
         var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
         SmartDashboard.putBoolean("ran", ran);
         if (command == null && ran) {
-            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).andThen(new WaitCommand(0.2)).andThen(new SetBeltVoltage(0)));
+            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).andThen(new WaitCommand(0.1)).andThen(new SetBeltVoltage(0)));
             this.ran = false;
         }
         if (command != null) {
