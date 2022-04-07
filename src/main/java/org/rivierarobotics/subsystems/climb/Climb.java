@@ -136,7 +136,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        climbMaster.setVoltage(voltage);
+        climbMaster.setVoltage(play ? voltage : 0);
     }
 
     public double getAngle() {
