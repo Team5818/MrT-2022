@@ -34,7 +34,7 @@ public class CrazyWildCollectionBouncyHousePath extends SequentialCommandGroup {
                 new SetIntakeState(true),
                 new AutoAimShoot(true).withTimeout(1.6),
                 new ParallelDeadlineGroup(
-                  new DrivePathPlannerPath("fiveBallStart", 7, 4),
+                  new DrivePathPlannerPath("fiveBallStart", 9, 5),
                   new CollectBalls()
                 ),
                 new SetDriveAngle(-47).withTimeout(1.25),
@@ -43,8 +43,8 @@ public class CrazyWildCollectionBouncyHousePath extends SequentialCommandGroup {
                         new DrivePathPlannerPath("fiveBallEnd", 9, 5),
                         new CollectBalls()
                 ),
-                new AutoAimShoot(true)
-//                new MLCollect2(false)
+                new AutoAimShoot(true),
+                new MLCollect2(false)
         );
     }
 }

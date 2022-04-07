@@ -60,17 +60,14 @@ public class RunClimb extends SequentialCommandGroup {
                 new ClimbSetPositionSlow(ClimbPositions.MID, reversed).withTimeout(3),
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
-                        new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
-                new WaitCommand(0.1),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
+                new ParallelDeadlineGroup(new RetryClicker(15, last),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
                 new TogglePiston(last, true, 0),
+                new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15).withTimeout(0.5),
                 new ClimbSetPositionSlow(ClimbPositions.HIGH, reversed).withTimeout(3),
                 new TogglePiston(ClimbPositions.MID, false, 0),
                 new ClimbSetAngle(-0.88, reversed),
                 new WaitCommand(4)
-
         );
     }
 }

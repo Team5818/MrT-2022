@@ -37,9 +37,9 @@ public class ShootingTables {
         var speedTable = new InterpolationTable();
 
         speedTable.addValue(2.684, 7000);
-        speedTable.addValue(4.62, 9400);
+        speedTable.addValue(4.62, 9400 * 1.1);
         speedTable.addValue(1.2, 5700);
-        speedTable.addValue(3.14, 8100);
+        speedTable.addValue(3.14, 8100 * 1.1);
 
         return speedTable;
     }

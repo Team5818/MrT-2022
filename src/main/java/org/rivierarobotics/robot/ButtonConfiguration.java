@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
+import org.rivierarobotics.commands.advanced.climb.RetryClicker;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.AngulationToTargetBasedOffOfPose;
@@ -98,7 +99,7 @@ public class ButtonConfiguration {
         //CO-DRIVER BUTTONS
 
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
-                .whenPressed(new SetDriveAngle(0).withTimeout(1));
+                .whenPressed(new MLCollect1(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
                 .whenPressed(new SetDriveAngle(180).withTimeout(1));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
