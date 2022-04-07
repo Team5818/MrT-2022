@@ -33,10 +33,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
-import org.rivierarobotics.commands.advanced.drive.PathGeneration;
+import org.rivierarobotics.commands.auto.CaptainJIsRSCollect;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
-import org.rivierarobotics.commands.auto.DriveShoot;
+import org.rivierarobotics.commands.auto.FourBallLeftAuto;
 import org.rivierarobotics.commands.auto.MLCenter;
+import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
@@ -91,12 +92,11 @@ public class Robot extends TimedRobot {
         addPeriodic(this::shuffleboardLogging, 0.5, 0.01);
 
         this.chooser = new SendableChooser<>();
-        chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
         chooser.addOption("ML Center", new MLCenter());
         chooser.addOption("No Auto", null);
-        chooser.addOption("SimpleShootR", new DriveShoot(true));
-        chooser.addOption("SimpleShootL", new DriveShoot(false));
-        chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
+        chooser.addOption("2BallLeftML", new TwoBallLeftAuto());
+        chooser.addOption("4BallLeftML", new FourBallLeftAuto());
+        chooser.addOption("3BallRight", new CaptainJIsRSCollect());
         chooser.addOption("5ball", new CrazyWildCollectionBouncyHousePath());
 
         Shuffleboard.getTab("Autos").add(chooser);
