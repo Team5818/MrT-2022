@@ -20,12 +20,7 @@
 
 package org.rivierarobotics.subsystems.swervedrive;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -111,9 +106,12 @@ public class SwerveModule {
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 
         //Current Limits
-        this.driveMotor.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.05));
-        this.steeringMotor.configContinuousCurrentLimit(15);
-        this.steeringMotor.configPeakCurrentLimit(15);
+        this.driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 20, 0.05)); //How much current the motor can use (outputwise)
+        this.steeringMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 25, 0.05)); //How much current can be supplied to the motor
+
+        this.steeringMotor.enableCurrentLimit(true);
+        this.steeringMotor.configContinuousCurrentLimit(20);
+        this.steeringMotor.configPeakCurrentLimit(20);
 
         try {
             Thread.sleep(200);
