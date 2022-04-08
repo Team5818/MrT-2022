@@ -43,10 +43,10 @@ public class AutoAimShoot extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new ParallelDeadlineGroup(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(0.5),
+                                        new WaitCommand(0.3),
                                         new ParallelDeadlineGroup(
                                                 new WaitCommand(2),
-                                                new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE))
+                                                new WaitCommand(0.3).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE))
                                         )
                                 ),
                                 new SetFloppaLimelight(true),
