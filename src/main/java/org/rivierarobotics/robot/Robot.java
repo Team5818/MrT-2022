@@ -143,6 +143,10 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
+        if (DriverStation.isFMSAttached())  {
+            return;
+        }
+
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
             Logging.robotShuffleboard.getTab("Field").setEntry("logging", false);
             return;
