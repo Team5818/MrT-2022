@@ -40,8 +40,8 @@ public class IntakeBelt extends SubsystemBase {
 
     public IntakeBelt() {
         this.beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
-        this.beltMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20,20,1), 50);
-        this.beltMotor.configContinuousCurrentLimit(20);
+        this.beltMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30,30,1), 50);
+        this.beltMotor.configContinuousCurrentLimit(30);
         this.miniWheelMotor = new WPI_TalonSRX(MotorIDs.COLLECT_WHEEL);
     }
 

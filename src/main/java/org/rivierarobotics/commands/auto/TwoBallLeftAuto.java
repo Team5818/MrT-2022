@@ -20,7 +20,7 @@ public class TwoBallLeftAuto extends SequentialCommandGroup {
                 ),
                 new SetDriveAngle(-135).withTimeout(1.5),
                 new SetIntakeState(false),
-                new AutoAimShoot(true).withTimeout(2),
+                new AutoAimShoot(true).withTimeout(5),
                 new MLCollect2(true)
         );
     }

@@ -81,7 +81,7 @@ public class Limelight {
     }
 
     public double getAdjustedDistance(double dist, double tx) {
-        return Math.sqrt(Math.pow(dist, 2) + Math.pow(LL_OFFSET, 2) - 2 * dist * LL_OFFSET * Math.cos(Math.toRadians(90 - tx)));
+        return Math.sqrt(Math.pow(dist, 2) + Math.pow(LL_OFFSET, 2) - 2 * dist * LL_OFFSET * Math.cos(Math.toRadians(90 + tx)));
     }
 
     // returns new Tx in Degrees
@@ -93,7 +93,7 @@ public class Limelight {
         //adjusted distance, from offset shooter to goal
         var adj = getAdjustedDistance(dist, tx);
         //angle math to solve for offset side to new tx
-        var txp = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90.0 - tx)) / adj * dist)));
+        var txp = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(90.0 + tx)) / adj * dist)));
         //final math and decision-making
         var cutoff = Math.asin(LL_OFFSET / dist);
         return tx > cutoff ? 90 - txp : txp - 90;

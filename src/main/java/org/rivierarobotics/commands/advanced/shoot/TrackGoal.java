@@ -32,6 +32,7 @@ public class TrackGoal extends CommandBase {
     private double storedTx;
     private final Gyro gyro;
     private final boolean isAuto;
+    private final static double tolerance = 3;
 
     public TrackGoal() {
         this(false);
@@ -63,7 +64,12 @@ public class TrackGoal extends CommandBase {
             if (isAuto) {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
-            drive.setTargetRotationAngle(getTargetAngle());
+
+            var newAngle = getTargetAngle();
+
+            if(newAngle < drive.getTargetRotationAngle() - tolerance || newAngle > drive.getTargetRotationAngle() + tolerance) {
+                drive.setTargetRotationAngle(newAngle);
+            }
         }
     }
 

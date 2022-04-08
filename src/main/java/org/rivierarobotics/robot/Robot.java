@@ -51,6 +51,7 @@ import org.rivierarobotics.subsystems.intake.IntakeRollers;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShooterConstant;
 import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -78,6 +79,7 @@ public class Robot extends TimedRobot {
         initializeAllSubsystems();
         initializeDefaultCommands();
         Gyro.getInstance().resetGyro();
+        ShooterConstant.ACTUATOR_ZERO_TICKS = (float) FloppaActuator.getInstance().getTicks();
 
         var drive = Shuffleboard.getTab("Drive");
         drive.add(field2d)
