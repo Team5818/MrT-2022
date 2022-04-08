@@ -111,9 +111,9 @@ public class SwerveModule {
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 
         //Current Limits
-        this.driveMotor.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 25, 0.05));
-        this.steeringMotor.configContinuousCurrentLimit(30);
-        this.steeringMotor.configPeakCurrentLimit(30);
+        this.driveMotor.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.05));
+        this.steeringMotor.configContinuousCurrentLimit(15);
+        this.steeringMotor.configPeakCurrentLimit(15);
 
         try {
             Thread.sleep(200);
