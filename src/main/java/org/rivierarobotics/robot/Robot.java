@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.auto.CaptainJIsRSCollect;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
+import org.rivierarobotics.commands.auto.Fast3Ball;
 import org.rivierarobotics.commands.auto.FourBallLeftAuto;
 import org.rivierarobotics.commands.auto.MLCenter;
 import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
@@ -98,7 +99,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("No Auto", null);
         chooser.addOption("2BallLeftML", new TwoBallLeftAuto());
         chooser.addOption("4BallLeftML", new FourBallLeftAuto());
-        chooser.addOption("3BallRight", new CaptainJIsRSCollect());
+        chooser.addOption("3BallRightML", new Fast3Ball());
         chooser.addOption("5ball", new CrazyWildCollectionBouncyHousePath());
 
         Shuffleboard.getTab("Autos").add(chooser);
