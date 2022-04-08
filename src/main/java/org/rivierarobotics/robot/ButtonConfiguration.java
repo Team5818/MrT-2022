@@ -94,8 +94,8 @@ public class ButtonConfiguration {
         //CO-DRIVER
 
         //CO-DRIVER JOYSTICK
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
-                .whenPressed(new RunClimb(false));
+//        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
+//                .whenPressed(new RunClimb(false));
 
         //CO-DRIVER BUTTONS
 
