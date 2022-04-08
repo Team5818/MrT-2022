@@ -84,7 +84,7 @@ public class Limelight {
         return Math.sqrt(Math.pow(dist, 2) + Math.pow(LL_OFFSET, 2) - 2 * dist * LL_OFFSET * Math.cos(Math.toRadians(90 - tx)));
     }
 
-    // returns new Tx in Radians
+    // returns new Tx in Degrees
     public double getAdjustedTxAndCalc() {
         //angle from limelight to goal, in degrees
         var tx = getTx();

@@ -24,12 +24,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.climb.Climb;
 
-public class ClimbInterruptToggle extends CommandBase {
+public class ClimbInterruptToggle extends InstantCommand {
     private final Climb climb;
 
     public ClimbInterruptToggle() {
         this.climb = Climb.getInstance();
-        addRequirements(climb);
     }
 
     @Override

@@ -78,8 +78,8 @@ public class Climb extends SubsystemBase {
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbFollower.setSensorPhase(false);
-        climbMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 30, 30, 2));
-        climbFollower.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 30, 30, 2));
+        climbMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 2));
+        climbFollower.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 2));
         dutyCycleEncoder.setDistancePerRotation(Math.PI * 2);
 
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
