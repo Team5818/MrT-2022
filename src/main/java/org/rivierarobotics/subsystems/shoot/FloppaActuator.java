@@ -120,15 +120,4 @@ public class FloppaActuator extends SubsystemBase {
         //Manual floppa control soft limits, autoaim has its own thing
             this.actuatorMotor.setVoltage(voltage);
     }
-
-    @Override
-    public void periodic() {
-        try {
-            BufferedWriter br = new BufferedWriter(new FileWriter(Filesystem.getOperatingDirectory().getPath() + "/temp.txt"));
-            br.write(getTicks() + "");
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

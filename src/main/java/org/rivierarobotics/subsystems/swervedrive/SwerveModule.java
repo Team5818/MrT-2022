@@ -110,8 +110,9 @@ public class SwerveModule {
         this.driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 53, 53, 0.05)); //How much current can be supplied to the motor
 
         this.steeringMotor.enableCurrentLimit(true);
-        this.steeringMotor.configContinuousCurrentLimit(30);
-        this.steeringMotor.configPeakCurrentLimit(30);
+        this.steeringMotor.configPeakCurrentDuration(0);
+        this.steeringMotor.configContinuousCurrentLimit(50);
+        this.steeringMotor.configPeakCurrentLimit(53);
 
         try {
             Thread.sleep(200);

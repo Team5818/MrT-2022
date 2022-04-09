@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
     }
 
     private void shuffleboardLogging() {
-        if (DriverStation.isFMSAttached())  {
+        if (true)  {
             return;
         }
 

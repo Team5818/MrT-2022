@@ -53,7 +53,7 @@ public class DriveToPoint extends CommandBase {
         try {
             var dtPose = driveTrain.getPoseEstimator().getRobotPose();
             var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, driveTrain.getSwerveDriveKinematics());
-            Logging.aiFieldDisplay.updatePath(trajectory);
+//            Logging.aiFieldDisplay.updatePath(trajectory);
             this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
         } catch (Exception e) {
             //invalid trajectory

@@ -27,7 +27,6 @@ public class RetryClicker extends CommandBase {
         } else {
             counter = 0;
         }
-        Logging.robotShuffleboard.getTab("Climb").setEntry("counter " + positions.toString(), counter);
     }
 
     @Override

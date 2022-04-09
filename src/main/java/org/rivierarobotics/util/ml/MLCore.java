@@ -143,7 +143,7 @@ public class MLCore {
 
             var trajectory = fieldMesh.getTrajectory(currentX, currentY, targetX, targetY, true, 0, driveTrain.getSwerveDriveKinematics());
             if (trajectory != null) {
-                Logging.aiFieldDisplay.updatePath(trajectory);
+//                Logging.aiFieldDisplay.updatePath(trajectory);
                 MLCore.trajectory = trajectory;
                 return trajectory;
             }
