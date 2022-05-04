@@ -106,13 +106,13 @@ public class SwerveModule {
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 
         //Current Limits
-        this.driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 50, 50, 0.05)); //How much current the motor can use (outputwise)
-        this.driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 53, 53, 0.05)); //How much current can be supplied to the motor
+        this.driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 50 * 0.4, 50 * 0.4, 0.05)); //How much current the motor can use (outputwise)
+        this.driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 53 * 0.4, 53 * 0.4, 0.05)); //How much current can be supplied to the motor
 
         this.steeringMotor.enableCurrentLimit(true);
         this.steeringMotor.configPeakCurrentDuration(0);
-        this.steeringMotor.configContinuousCurrentLimit(50);
-        this.steeringMotor.configPeakCurrentLimit(53);
+        this.steeringMotor.configContinuousCurrentLimit(20);
+        this.steeringMotor.configPeakCurrentLimit(21);
 
         try {
             Thread.sleep(200);
