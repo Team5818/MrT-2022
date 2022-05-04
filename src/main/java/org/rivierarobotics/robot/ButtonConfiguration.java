@@ -74,12 +74,12 @@ public class ButtonConfiguration {
                 .whenPressed(new AutoAimShoot());
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 3)
                 .whenPressed(new FenderShot());
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
-                .whenPressed(new ClimbInterruptToggle());
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
-                .whenPressed(new ClimbSetVoltage(false, 0));
-        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
-                .whenPressed(new RunClimb(false));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
+//                .whenPressed(new ClimbInterruptToggle());
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+//                .whenPressed(new ClimbSetVoltage(false, 0));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
+//                .whenPressed(new RunClimb(false));
 //        new JoystickButton(ControlMap.DRIVER_BUTTONS, 11)
 //                .whenPressed(new RunClimb(true));
 
@@ -101,6 +101,14 @@ public class ButtonConfiguration {
 
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
                 .whenPressed(new SetFloppaZero());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 7)
+                .whenPressed(new SetFlywheelSpeed(800));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 8)
+                .whenPressed(new ShootAll());
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 9)
+                .whenPressed(new SetFlywheelSpeed(FloppaFlywheels.getInstance().getTargetVelocity() + 100));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS,10)
+                .whenPressed(new SetFlywheelSpeed(FloppaFlywheels.getInstance().getTargetVelocity() - 100));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
 //                .whenPressed(new SetDriveAngle(-180));
 //        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
