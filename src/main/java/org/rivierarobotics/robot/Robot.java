@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
-import org.rivierarobotics.commands.auto.CaptainJIsRSCollect;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.Fast3Ball;
 import org.rivierarobotics.commands.auto.FourBallLeftAuto;
@@ -71,7 +70,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        DriveTrain.getInstance().drive(0,0,0,true);
+        DriveTrain.getInstance().drive(0, 0, 0, true);
         CommandScheduler.getInstance().cancelAll();
     }
 
@@ -288,7 +287,9 @@ public class Robot extends TimedRobot {
         DriveTrain.getInstance();
         try {
             Thread.sleep(500);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // Ignore all exceptions during sleep
+        }
 
         IntakePiston.getInstance();
         FloppaActuator.getInstance();
@@ -305,7 +306,7 @@ public class Robot extends TimedRobot {
         Climb.getInstance().resetZeros(false);
         Gyro.getInstance().resetGyro();
         DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(5, 7, Gyro.getInstance().getRotation2d()));
-        DriveTrain.getInstance().drive(0,0,0,true);
+        DriveTrain.getInstance().drive(0, 0, 0, true);
     }
 
     private void initializeDefaultCommands() {

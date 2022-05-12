@@ -27,7 +27,6 @@ import org.rivierarobotics.commands.advanced.drive.DrivePathPlannerPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
-import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
 
 public class FourBallLeftAuto extends SequentialCommandGroup {
 

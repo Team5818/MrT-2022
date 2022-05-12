@@ -29,8 +29,7 @@ import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class Fast3Ball extends SequentialCommandGroup {
-
-    public Fast3Ball(){
+    public Fast3Ball() {
         addCommands(
                 new SetIntakeState(true),
                 new AutoAimShoot(true).withTimeout(1.6),

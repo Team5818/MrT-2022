@@ -30,6 +30,7 @@ import java.util.Comparator;
 
 public class RotateBall extends CommandBase {
     private final DriveTrain driveTrain;
+
     public RotateBall() {
         this.driveTrain = DriveTrain.getInstance();
         addRequirements(driveTrain);
@@ -48,7 +49,7 @@ public class RotateBall extends CommandBase {
         balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
 
         driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees() + balls.get(0).ty);
-        driveTrain.drive(0,0,driveTrain.getRotationSpeed(), true);
+        driveTrain.drive(0, 0, driveTrain.getRotationSpeed(), true);
     }
 
     @Override
@@ -58,6 +59,6 @@ public class RotateBall extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        driveTrain.drive(0,0,0,true);
+        driveTrain.drive(0, 0, 0, true);
     }
 }

@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.advanced.drive;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
@@ -33,11 +32,12 @@ import org.rivierarobotics.util.swerve.TrajectoryFollower;
 import java.util.Comparator;
 
 public class DriveToClosest extends SequentialCommandGroup {
+    private static final double X_SPEED = 1;
+    private static final double Y_SPEED = 1;
     private final DriveTrain driveTrain;
     private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
     private TrajectoryFollower trajectoryFollower;
-
 
     public DriveToClosest() {
         this.driveTrain = DriveTrain.getInstance();
@@ -54,21 +54,21 @@ public class DriveToClosest extends SequentialCommandGroup {
 
     @Override
     public void execute() {
-//        MLCore core = MLCore.getInstance();
-//        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-//
-//        var balls = core.getDetectedObjects().get(ballColor);
-//        if (balls == null || balls.isEmpty()) {
-//            return;
-//        }
-//
-//        balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
-//        var ball = balls.get(0);
-//        SmartDashboard.putNumber("tx", ball.tx);
-//        SmartDashboard.putNumber("ty", ball.ty);
-//        driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees() + ball.ty);
-//        driveTrain.drive(xspeed, ball.tx >= 0 ? yspeed : -yspeed, driveTrain.getRotationSpeed(),false);
-//        driveTrain.drive(0,0,driveTrain.getRotationSpeed(), true);
+        MLCore core = MLCore.getInstance();
+        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+
+        var balls = core.getDetectedObjects().get(ballColor);
+        if (balls == null || balls.isEmpty()) {
+            return;
+        }
+
+        balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
+        var ball = balls.get(0);
+        SmartDashboard.putNumber("tx", ball.tx);
+        SmartDashboard.putNumber("ty", ball.ty);
+        driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees() + ball.ty);
+        driveTrain.drive(X_SPEED, ball.tx >= 0 ? Y_SPEED : -Y_SPEED, driveTrain.getRotationSpeed(), false);
+        driveTrain.drive(0, 0, driveTrain.getRotationSpeed(), true);
         trajectoryFollower.followController();
     }
 

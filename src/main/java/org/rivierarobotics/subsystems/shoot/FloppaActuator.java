@@ -33,10 +33,7 @@ import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
 import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class FloppaActuator extends SubsystemBase {
     public static FloppaActuator INSTANCE;
@@ -83,11 +80,12 @@ public class FloppaActuator extends SubsystemBase {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(Filesystem.getOperatingDirectory().getPath() + "/temp.txt"));
-            if(br.ready()) {
+            if (br.ready()) {
                 actuatorMotor.getEncoder().setPosition(Float.parseFloat(br.readLine()));
             }
             br.close();
         } catch (Exception e) {
+            // Ignore all read exceptions
         }
     }
 
@@ -117,7 +115,7 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        //Manual floppa control soft limits, autoaim has its own thing
-            this.actuatorMotor.setVoltage(voltage);
+        // Manual floppa control soft limits, autoaim has its own thing
+        this.actuatorMotor.setVoltage(voltage);
     }
 }

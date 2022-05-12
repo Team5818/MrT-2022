@@ -30,8 +30,7 @@ import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 public class FenderShot extends SequentialCommandGroup {
-
-    public FenderShot(){
+    public FenderShot() {
         super(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(

@@ -27,16 +27,11 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 public class TrackGoal extends CommandBase {
+    private static final double TOLERANCE = 3;
     private final DriveTrain drive;
     private final Limelight lime;
-    private double storedTx;
     private final Gyro gyro;
     private final boolean isAuto;
-    private final static double tolerance = 3;
-
-    public TrackGoal() {
-        this(false);
-    }
 
     public TrackGoal(boolean isAuto) {
         this.isAuto = isAuto;
@@ -48,26 +43,25 @@ public class TrackGoal extends CommandBase {
         }
     }
 
-    public double getTargetAngle(){
+    public double getTargetAngle() {
         return gyro.getRotation2d().getDegrees() - lime.getAdjustedTxAndCalc();
     }
 
     @Override
     public void initialize() {
         drive.setUseDriverAssist(true);
-        storedTx = getTargetAngle();
     }
 
     @Override
     public void execute() {
-        if (lime.getDetected()) {
+        if (lime.isDetected()) {
             if (isAuto) {
                 drive.drive(0, 0, drive.getRotationSpeed(), true);
             }
 
             var newAngle = getTargetAngle();
 
-            if(newAngle < drive.getTargetRotationAngle() - tolerance || newAngle > drive.getTargetRotationAngle() + tolerance) {
+            if (MathUtil.isWithinTolerance(newAngle, drive.getTargetRotationAngle(), TOLERANCE)) {
                 drive.setTargetRotationAngle(newAngle);
             }
         }

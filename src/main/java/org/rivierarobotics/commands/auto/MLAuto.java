@@ -36,12 +36,12 @@ public class MLAuto extends SequentialCommandGroup {
                 new DrivePathweaverPath("mlauto/mlstart"),
                 new WaitCommand(1),
                 new SetDriveAngle(-70).withTimeout(1.5),
-                new AutoAimShoot(),
+                new AutoAimShoot(false),
                 new SetDriveTargetAngle(-180),
                 new DrivePathweaverPath("mlauto/mlend"),
                 new WaitCommand(1),
                 new SetDriveAngle(-50).withTimeout(1.5),
-                new AutoAimShoot()
+                new AutoAimShoot(false)
         );
     }
 }

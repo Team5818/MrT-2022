@@ -25,12 +25,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.advanced.drive.RotateToTargetOffOfPose;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
-import org.rivierarobotics.commands.basic.shoot.SetFloppaPosition;
-import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
@@ -46,13 +43,15 @@ public class AutoAimShootEject extends ConditionalCommand {
                                 new ParallelDeadlineGroup(
                                         new WaitCommand(3),
                                         new SequentialCommandGroup(
-                                                new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
+                                                new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE))
+                                                        .andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
                                                 new WaitCommand(0.4),
-                                                new SetBeltVoltage(0).andThen(new InstantCommand(() -> {
-                                                    FloppaActuator.getInstance().setFloppaAngle(0);
-                                                })).andThen(new SetMiniwheelVoltage(0)),
+                                                new SetBeltVoltage(0).andThen(new InstantCommand(
+                                                        () -> FloppaActuator.getInstance().setFloppaAngle(0)))
+                                                        .andThen(new SetMiniwheelVoltage(0)),
                                                 new WaitCommand(0.5),
-                                                new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)
+                                                new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)
+                                        ).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)
                                         ),
                                         new SetFloppaLimelight(true)
                                 )
@@ -60,12 +59,8 @@ public class AutoAimShootEject extends ConditionalCommand {
                         new TrackGoal(isAuto)
                 ),
                 new WaitCommand(0.5),
-                () -> Limelight.getInstance().getDetected()
+            () -> Limelight.getInstance().isDetected()
         );
-    }
-
-    public AutoAimShootEject() {
-        this(false);
     }
 
     @Override

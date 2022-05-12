@@ -25,19 +25,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.commands.advanced.drive.RotateToTargetOffOfPose;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.shoot.SetFloppaLimelight;
-import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.intake.IntakeBelt;
-import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
 public class AutoAimShoot extends SequentialCommandGroup {
-    private final boolean isAuto;
     public AutoAimShoot(boolean isAuto) {
         super(
                 new ConditionalCommand(
@@ -53,14 +49,9 @@ public class AutoAimShoot extends SequentialCommandGroup {
                                 new TrackGoal(isAuto)
                         ),
                         new InstantCommand(),
-                        () -> Limelight.getInstance().getDetected()
+                        () -> Limelight.getInstance().isDetected()
                 )
         );
-        this.isAuto = isAuto;
-    }
-
-    public AutoAimShoot() {
-        this(false);
     }
 
     @Override

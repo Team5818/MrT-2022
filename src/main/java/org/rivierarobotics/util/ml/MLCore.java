@@ -33,7 +33,6 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
-import org.rivierarobotics.util.swerve.TrajectoryFollower;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -59,9 +58,42 @@ public class MLCore {
     public static final String TARGET_COLOR = "red";
     public static Trajectory trajectory;
 
+    public static Trajectory getBallTrajectory(DriveTrain driveTrain, Gyro gyro, FieldMesh fieldMesh) {
+        var currentPose = driveTrain.getPoseEstimator().getRobotPose();
+        var currentX = currentPose.getX();
+        var currentY = currentPose.getY();
+
+        MLCore core = MLCore.getInstance();
+        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+
+        var balls = core.getDetectedObjects().get(ballColor);
+        if (balls == null || balls.isEmpty()) {
+            return null;
+        }
+
+        balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
+        for (var ball : balls) {
+            var gyroMath = gyro.getRotation2d().getRadians() + Math.toRadians(ball.ty);
+
+            var targetX = currentX + Math.cos(gyroMath) * ball.relativeLocationDistance;
+            var targetY = currentY + Math.sin(gyroMath) * ball.relativeLocationDistance;
+            SmartDashboard.putNumber("targetX", targetX);
+            SmartDashboard.putNumber("targetY", targetY);
+            SmartDashboard.putNumber("currentX", currentX);
+            SmartDashboard.putNumber("currentY", currentY);
+
+
+            var trajectory = fieldMesh.getTrajectory(currentX, currentY, targetX, targetY, true, 0, driveTrain.getSwerveDriveKinematics());
+            if (trajectory != null) {
+                MLCore.trajectory = trajectory;
+                return trajectory;
+            }
+        }
+        return null;
+    }
+
     private static class MLResponseDeserializer implements JsonDeserializer<MLResponse> {
-        public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
+        public MLResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             MLResponse response = new MLResponse();
             var detectedObjects = json.getAsJsonArray();
 
@@ -115,40 +147,4 @@ public class MLCore {
         }
         return new MLResponse();
     }
-
-    public static Trajectory getBallTrajectory(DriveTrain driveTrain, Gyro gyro, FieldMesh fieldMesh) {
-        var currentPose = driveTrain.getPoseEstimator().getRobotPose();
-        var currentX = currentPose.getX();
-        var currentY = currentPose.getY();
-
-        MLCore core = MLCore.getInstance();
-        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-
-        var balls = core.getDetectedObjects().get(ballColor);
-        if (balls == null || balls.isEmpty()) {
-            return null;
-        }
-
-        balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
-        for (var ball : balls) {
-            var gyroMath = gyro.getRotation2d().getRadians() + Math.toRadians(ball.ty);
-
-            var targetX = currentX + Math.cos(gyroMath) * ball.relativeLocationDistance;
-            var targetY = currentY + Math.sin(gyroMath) * ball.relativeLocationDistance;
-            SmartDashboard.putNumber("targetX", targetX);
-            SmartDashboard.putNumber("targetY", targetY);
-            SmartDashboard.putNumber("currentX", currentX);
-            SmartDashboard.putNumber("currentY", currentY);
-
-
-            var trajectory = fieldMesh.getTrajectory(currentX, currentY, targetX, targetY, true, 0, driveTrain.getSwerveDriveKinematics());
-            if (trajectory != null) {
-//                Logging.aiFieldDisplay.updatePath(trajectory);
-                MLCore.trajectory = trajectory;
-                return trajectory;
-            }
-        }
-        return null;
-    }
-
 }

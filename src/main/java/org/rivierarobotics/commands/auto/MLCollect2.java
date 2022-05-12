@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.advanced.drive.DriveToClosest;
-import org.rivierarobotics.commands.advanced.drive.RotateToTargetOffOfPose;
+import org.rivierarobotics.commands.advanced.drive.RotateToTargetFromPose;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.RotateBall;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
@@ -43,7 +43,7 @@ public class MLCollect2 extends SequentialCommandGroup {
                   ).withInterrupt(() -> Timer.getFPGATimestamp() - Logging.autoStartTime >= 11),
                   new CollectBalls()
                 ),
-                new RotateToTargetOffOfPose(),
+                new RotateToTargetFromPose(),
                 new AutoAimShoot(true));
     }
 }

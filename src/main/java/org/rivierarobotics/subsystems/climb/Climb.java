@@ -26,15 +26,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.subsystems.MotorIDs;
-import org.rivierarobotics.subsystems.shoot.ShooterConstant;
-import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.util.StatusFrameDemolisher;
 
 import java.util.ArrayList;
@@ -56,14 +53,14 @@ public class Climb extends SubsystemBase {
             100, 0, ClimbConstants.TIMEOUT_MS, 10
     );
     private static final PIDConfig CM_MM_PID = new PIDConfig(KP, 0, 0, 0);
+    private static final double RANGE = 467626;
+    private static final double ABSOLUTE_ZERO_RADIANS = 0;
 
     private final WPI_TalonFX climbMaster;
     private final WPI_TalonFX climbFollower;
     private final DutyCycleEncoder dutyCycleEncoder = new DutyCycleEncoder(MotorIDs.CLIMB_ENCODER);
     private boolean play = true;
-    public double ZERO_TICKS = -184264;
-    //TODO:swap this for a real value
-    public double ABSOLUTE_ZERO_RADIANS = 0;
+    public double zeroTicks;
 
     private Climb() {
         this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
@@ -84,13 +81,12 @@ public class Climb extends SubsystemBase {
 
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
-        double range = 467626;
         double tickAdjust = climbMaster.getSelectedSensorPosition();
-        ZERO_TICKS = tickAdjust;
-        climbMaster.configForwardSoftLimitEnable(true);
+        this.zeroTicks = tickAdjust;
+        this.climbMaster.configForwardSoftLimitEnable(true);
         climbMaster.configReverseSoftLimitEnable(true);
-        climbMaster.configReverseSoftLimitThreshold(tickAdjust - range);
-        climbMaster.configForwardSoftLimitThreshold(tickAdjust + range);
+        climbMaster.configReverseSoftLimitThreshold(tickAdjust - RANGE);
+        climbMaster.configForwardSoftLimitThreshold(tickAdjust + RANGE);
     }
 
     public void setCoast(boolean coast) {
@@ -108,23 +104,22 @@ public class Climb extends SubsystemBase {
     }
 
     public void resetZeros(boolean absolute) {
-        double range = 467626;
         double tickAdjust;
         if (absolute) {
-            //you must replace the Absolute Zero first to mak this work
+            // You must replace the Absolute Zero first to make this work
             tickAdjust = climbMaster.getSelectedSensorPosition() + (getDutyCyclePose() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
         } else {
             tickAdjust = climbMaster.getSelectedSensorPosition();
         }
-        ZERO_TICKS = tickAdjust;
+        this.zeroTicks = tickAdjust;
         climbMaster.configForwardSoftLimitEnable(true);
         climbMaster.configReverseSoftLimitEnable(true);
-        climbMaster.configReverseSoftLimitThreshold(tickAdjust - range);
-        climbMaster.configForwardSoftLimitThreshold(tickAdjust + range);
+        climbMaster.configReverseSoftLimitThreshold(tickAdjust - RANGE);
+        climbMaster.configForwardSoftLimitThreshold(tickAdjust + RANGE);
     }
 
     public void setPosition(double radians) {
-        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK + ZERO_TICKS);
+        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK + zeroTicks);
     }
 
     public void setPlay(boolean play) {
@@ -140,10 +135,10 @@ public class Climb extends SubsystemBase {
     }
 
     public double getAngle() {
-        return (climbMaster.getSelectedSensorPosition() - ZERO_TICKS) * ClimbConstants.MOTOR_TICK_TO_ANGLE;
+        return (climbMaster.getSelectedSensorPosition() - zeroTicks) * ClimbConstants.MOTOR_TICK_TO_ANGLE;
     }
 
-    //for use clearing the saved MM angle
+    /** For use clearing the saved MM angle. */
     public void killController() {
         climbMaster.set(ControlMode.Disabled, 0);
     }
