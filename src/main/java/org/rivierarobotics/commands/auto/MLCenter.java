@@ -29,7 +29,7 @@ import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 
 public class MLCenter extends SequentialCommandGroup {
     public MLCenter() {
-        addCommands(
+        super(
                 new SetIntakeState(true),
                 new ParallelDeadlineGroup(
                         new DrivePathPlannerPath("MLBack", 5, 2),

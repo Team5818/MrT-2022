@@ -29,7 +29,6 @@ import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class ML2BallLeft extends SequentialCommandGroup {
-
     public ML2BallLeft() {
         super(
                 new SetIntakeState(true),

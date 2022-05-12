@@ -30,8 +30,8 @@ public class WaitPiston extends CommandBase {
     private final Climb climb;
     private final ClimbClaws climbClaws;
     private final ClimbPositions climbModule;
-    private RRTimer waitTimer;
-    private RRTimer retryTimer;
+    private final RRTimer waitTimer;
+    private final RRTimer retryTimer;
     private boolean mode;
     private final double voltage;
 
@@ -41,7 +41,7 @@ public class WaitPiston extends CommandBase {
         this.climbModule = climbModule;
         this.waitTimer = new RRTimer(endTime);
         this.retryTimer = new RRTimer(timeout);
-        this.voltage = reversed ? -4.5 : 4.5;
+        this.voltage = 4.5 * (reversed ? -1 : 1);
         this.addRequirements(this.climb, this.climbClaws);
     }
 
@@ -57,10 +57,8 @@ public class WaitPiston extends CommandBase {
         if (mode) {
             climb.setVoltage(0);
             if (!retryTimer.finished()) {
-                if (!waitTimer.finished()) {
-                    if (!climbClaws.isSwitchSet(climbModule)) {
-                        waitTimer.reset();
-                    }
+                if (!waitTimer.finished() && !climbClaws.isSwitchSet(climbModule)) {
+                    waitTimer.reset();
                 }
             } else {
                 climbClaws.setPiston(climbModule, false);

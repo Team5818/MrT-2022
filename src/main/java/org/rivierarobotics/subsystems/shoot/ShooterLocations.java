@@ -26,12 +26,12 @@ public enum ShooterLocations {
     LOW_GOAL(60, 0, 0),
     FENDER(5250, -5, 0);
 
-    public final double flyWheelSpeed;
+    public final double flywheelSpeed;
     public final double floppaAngle;
     public final double driveAngle;
 
-    ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle) {
-        this.flyWheelSpeed = flyWheelSpeed;
+    ShooterLocations(double flywheelSpeed, double floppaAngle, double driveAngle) {
+        this.flywheelSpeed = flywheelSpeed;
         this.floppaAngle = floppaAngle;
         this.driveAngle = driveAngle;
     }

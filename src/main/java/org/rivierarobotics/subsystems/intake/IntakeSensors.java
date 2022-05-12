@@ -39,8 +39,6 @@ public class IntakeSensors {
         return INSTANCE;
     }
 
-    private static final double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
-
     private final ColorSensorV3 colorSensor;
     private final AnalogInput distanceSensor;
     private final AnalogInput distanceSensor2;
@@ -69,7 +67,9 @@ public class IntakeSensors {
         if (bc.equals("no ball") || (DriverStation.getAlliance() == DriverStation.Alliance.Blue && bc.equals("blue"))) {
             return true;
         } else {
-            return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
+            return (DriverStation.getAlliance() == DriverStation.Alliance.Red
+                    || DriverStation.getAlliance() == DriverStation.Alliance.Invalid)
+                    && Objects.equals(bc, "red");
         }
     }
 

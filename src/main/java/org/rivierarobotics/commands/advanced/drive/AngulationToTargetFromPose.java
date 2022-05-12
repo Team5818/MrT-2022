@@ -27,11 +27,11 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 
-public class AngulationToTargetBasedOffOfPose extends CommandBase {
+public class AngulationToTargetFromPose extends CommandBase {
     private final DriveTrain dt;
     private final Gyro gyro;
 
-    public AngulationToTargetBasedOffOfPose() {
+    public AngulationToTargetFromPose() {
         this.dt = DriveTrain.getInstance();
         this.gyro = Gyro.getInstance();
         addRequirements(this.dt);

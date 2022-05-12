@@ -32,7 +32,7 @@ public class ClimbSetPositionSlow extends CommandBase {
     public ClimbSetPositionSlow(ClimbPositions climbModule, boolean reversed) {
         this.climb = Climb.getInstance();
         this.target = climbModule.locationRadians * (reversed ? -1 : 1);
-        this.addRequirements(this.climb);
+        addRequirements(climb);
     }
 
     @Override
@@ -43,6 +43,5 @@ public class ClimbSetPositionSlow extends CommandBase {
     @Override
     public boolean isFinished() {
         return MathUtil.isWithinTolerance(climb.getAngle(), target, 0.1);
-        //return climb.getAngle() > target -0.1 && climb.getAngle() < target + 0.1;
     }
 }

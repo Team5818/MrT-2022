@@ -37,8 +37,10 @@ public class FenderShot extends SequentialCommandGroup {
                                 new WaitCommand(0.5),
                                 new ParallelDeadlineGroup(
                                         new WaitCommand(2),
-                                        new WaitCommand(0.5).andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE)).andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
-                                        new SetFlywheelSpeed(ShooterLocations.FENDER.flyWheelSpeed)
+                                        new WaitCommand(0.5)
+                                                .andThen(new SetBeltVoltage(ShootAll.SHOOT_BELT_VOLTAGE))
+                                                .andThen(new SetMiniwheelVoltage(ShootAll.SHOOT_MINIWHEEL_VOLTAGE)),
+                                        new SetFlywheelSpeed(ShooterLocations.FENDER.flywheelSpeed)
                                 )
                         ),
                         new SetFloppaPosition(ShooterLocations.FENDER).withTimeout(1)

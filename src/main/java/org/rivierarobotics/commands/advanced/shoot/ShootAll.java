@@ -40,7 +40,8 @@ public class ShootAll extends ParallelDeadlineGroup {
     public ShootAll() {
         super(
                 new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(800)).withTimeout(2),
+                        new WaitUntilCommand(() -> FloppaFlywheels.getInstance().flywheelsWithinTolerance(800))
+                                .withTimeout(2),
                         new SetBeltVoltage(SHOOT_BELT_VOLTAGE),
                         new SetMiniwheelVoltage(SHOOT_MINIWHEEL_VOLTAGE),
                         new WaitCommand(1.5)
@@ -50,7 +51,7 @@ public class ShootAll extends ParallelDeadlineGroup {
     }
 
     public ShootAll(ShooterLocations locations) {
-        this(locations.flyWheelSpeed, locations.floppaAngle);
+        this(locations.flywheelSpeed, locations.floppaAngle);
     }
 
     public ShootAll(double speed, double flywheelAngle) {

@@ -34,12 +34,18 @@ import org.rivierarobotics.robot.Logging;
 
 public class MLCollect2 extends SequentialCommandGroup {
     public MLCollect2(boolean isRight) {
-        addCommands(
+        super(
                 new SetIntakeState(true),
                 new ParallelDeadlineGroup(
                   new SequentialCommandGroup(
-                          new FindBall(isRight), new RotateBall().withTimeout(1), new DriveToClosest().withTimeout(1).andThen(new WaitCommand(2)),
-                          new FindBall(isRight), new RotateBall().withTimeout(1), new DriveToClosest().withTimeout(1).andThen(new WaitCommand(2))
+                          new FindBall(isRight),
+                          new RotateBall().withTimeout(1),
+                          new DriveToClosest().withTimeout(1),
+                          new WaitCommand(2),
+                          new FindBall(isRight),
+                          new RotateBall().withTimeout(1),
+                          new DriveToClosest().withTimeout(1),
+                          new WaitCommand(2)
                   ).withInterrupt(() -> Timer.getFPGATimestamp() - Logging.autoStartTime >= 11),
                   new CollectBalls()
                 ),

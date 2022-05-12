@@ -118,7 +118,8 @@ public class TrajectoryFollower {
 
     private ChassisSpeeds followPathPlannerTrajectory(double intTime) {
         var plannerState = (PathPlannerTrajectory.PathPlannerState) pathPlannerTrajectory.sample(intTime);
-        Logging.robotShuffleboard.getTab("Field").setEntry("target pos", plannerState.poseMeters.toString());
+        Logging.robotShuffleboard.getTab("Field")
+                .setEntry("Target Pos", plannerState.poseMeters.toString());
         DriveTrain.getInstance().setTargetRotationAngle(plannerState.holonomicRotation.getDegrees());
         return holonomicDriveController.calculate(
                 estimator.getRobotPose(),

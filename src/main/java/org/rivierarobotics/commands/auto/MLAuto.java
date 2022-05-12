@@ -30,7 +30,7 @@ import org.rivierarobotics.commands.basic.drive.SetDriveTargetAngle;
 
 public class MLAuto extends SequentialCommandGroup {
     public MLAuto() {
-        addCommands(
+        super(
                 new SetDriveTargetAngle(-180),
                 new SetIntakeState(true),
                 new DrivePathweaverPath("mlauto/mlstart"),

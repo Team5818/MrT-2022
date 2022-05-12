@@ -126,10 +126,8 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)
             .whileHeld(new SequentialCommandGroup(new SetDriveAngle(77)));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 8)
-            .whenPressed(
-                new InstantCommand(() -> {
-                    DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose());
-                })
+            .whenPressed(new InstantCommand(() ->
+                    DriveTrain.getInstance().getPoseEstimator().resetPose(Limelight.getInstance().getLLAbsPose()))
         );
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 9)
             .whenPressed(() -> Climb.getInstance().resetZeros(false));
@@ -141,6 +139,5 @@ public class ButtonConfiguration {
             .whenPressed(new MLCollect1(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15)
             .whileHeld(new TrackGoal(false));
-
     }
 }

@@ -27,7 +27,6 @@ import org.rivierarobotics.util.ml.MLCore;
 import org.rivierarobotics.util.ml.MLObject;
 
 public class CollectVisionTest extends CommandBase {
-
     public static final BoundingBox DEFAULT_BALL_BOX = new BoundingBox(0, 0, 0, 0);
 
     @Override
@@ -41,7 +40,8 @@ public class CollectVisionTest extends CommandBase {
             // Padding for checkstyle
         }
 
-        Logging.robotShuffleboard.getTab("ML").setEntry("Target BallX", ball.relativeLocationY)
+        Logging.robotShuffleboard.getTab("ML")
+                .setEntry("Target BallX", ball.relativeLocationY)
                 .setEntry("Target BallY", ball.relativeLocationX)
                 .setEntry("Target Ball Distance", ball.relativeLocationDistance)
                 .setEntry("TX", ball.ty)

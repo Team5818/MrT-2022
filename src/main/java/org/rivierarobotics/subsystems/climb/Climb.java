@@ -81,12 +81,7 @@ public class Climb extends SubsystemBase {
 
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
-        double tickAdjust = climbMaster.getSelectedSensorPosition();
-        this.zeroTicks = tickAdjust;
-        this.climbMaster.configForwardSoftLimitEnable(true);
-        climbMaster.configReverseSoftLimitEnable(true);
-        climbMaster.configReverseSoftLimitThreshold(tickAdjust - RANGE);
-        climbMaster.configForwardSoftLimitThreshold(tickAdjust + RANGE);
+        resetZeros(false);
     }
 
     public void setCoast(boolean coast) {
@@ -105,17 +100,13 @@ public class Climb extends SubsystemBase {
 
     public void resetZeros(boolean absolute) {
         double tickAdjust;
+        tickAdjust = climbMaster.getSelectedSensorPosition();
         if (absolute) {
             // You must replace the Absolute Zero first to make this work
-            tickAdjust = climbMaster.getSelectedSensorPosition() + (getDutyCyclePose() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
-        } else {
-            tickAdjust = climbMaster.getSelectedSensorPosition();
+            tickAdjust += (getDutyCyclePose() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
         }
         this.zeroTicks = tickAdjust;
-        climbMaster.configForwardSoftLimitEnable(true);
-        climbMaster.configReverseSoftLimitEnable(true);
-        climbMaster.configReverseSoftLimitThreshold(tickAdjust - RANGE);
-        climbMaster.configForwardSoftLimitThreshold(tickAdjust + RANGE);
+        MotorUtil.setSoftLimits(tickAdjust + RANGE, tickAdjust - RANGE, climbMaster);
     }
 
     public void setPosition(double radians) {

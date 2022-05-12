@@ -77,11 +77,11 @@ public class MLCore {
 
             var targetX = currentX + Math.cos(gyroMath) * ball.relativeLocationDistance;
             var targetY = currentY + Math.sin(gyroMath) * ball.relativeLocationDistance;
-            SmartDashboard.putNumber("targetX", targetX);
-            SmartDashboard.putNumber("targetY", targetY);
-            SmartDashboard.putNumber("currentX", currentX);
-            SmartDashboard.putNumber("currentY", currentY);
-
+            Logging.robotShuffleboard.getTab("ML")
+                    .setEntry("targetX", targetX)
+                    .setEntry("targetY", targetY)
+                    .setEntry("currentX", currentX)
+                    .setEntry("currentY", currentY);
 
             var trajectory = fieldMesh.getTrajectory(currentX, currentY, targetX, targetY, true, 0, driveTrain.getSwerveDriveKinematics());
             if (trajectory != null) {

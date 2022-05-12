@@ -34,7 +34,7 @@ import org.rivierarobotics.robot.Logging;
 
 public class MLCollect1 extends SequentialCommandGroup {
     public MLCollect1(boolean isRight) {
-        addCommands(
+        super(
                 new SetIntakeState(true),
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(

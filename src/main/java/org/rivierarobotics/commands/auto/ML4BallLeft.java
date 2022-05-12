@@ -29,14 +29,15 @@ import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 
 public class ML4BallLeft extends SequentialCommandGroup {
     public ML4BallLeft() {
-        addCommands(
+        super(
                 new SetIntakeState(true),
                 new ParallelCommandGroup(
                         new DrivePathPlannerPath("2BallMLBack", 5, 2),
                         new CollectBalls()
                 ),
                 new AutoAimShoot(true),
-                new MLCollect2(false).andThen(new MLCollect2(false))
+                new MLCollect2(false),
+                new MLCollect2(false)
         );
     }
 }

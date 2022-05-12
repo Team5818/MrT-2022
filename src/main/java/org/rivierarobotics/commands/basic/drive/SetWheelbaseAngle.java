@@ -36,7 +36,7 @@ public class SetWheelbaseAngle extends CommandBase {
 
     @Override
     public void initialize() {
-        Logging.robotShuffleboard.getTab("Drive").setEntry("target Angle", angle);
+        Logging.robotShuffleboard.getTab("Drive").setEntry("Target Angle", angle);
         dt.setSwerveModuleAngle(angle);
     }
 }

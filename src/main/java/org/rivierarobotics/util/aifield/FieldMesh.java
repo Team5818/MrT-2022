@@ -111,7 +111,7 @@ public class FieldMesh {
             sc.nextLine();
 
             while (sc.hasNextLine()) {
-                //Don't you even think about moving this to satisfy check style... I'm watching you ()-()
+                // Don't you even think about moving this to satisfy check style... I'm watching you ()-()
                 final double wt = sc.nextDouble();
                 sc.nextLine();
                 var m = parseInput.matcher(sc.nextLine());
@@ -320,11 +320,8 @@ public class FieldMesh {
             config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
-            if (Robot.isReal()) {
-                //config.setKinematics(DriveTrain.getInstance().getSwerveDriveKinematics());
-            }
 
-            Trajectory trajectory = null;
+            Trajectory trajectory;
             try {
                 trajectory = TrajectoryGenerator.generateTrajectory(
                     poseList.get(0),

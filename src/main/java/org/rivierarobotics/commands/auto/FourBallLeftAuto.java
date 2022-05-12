@@ -29,7 +29,6 @@ import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class FourBallLeftAuto extends SequentialCommandGroup {
-
     public FourBallLeftAuto() {
         super(
                 new SetIntakeState(true),

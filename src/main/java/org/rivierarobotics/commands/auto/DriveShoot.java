@@ -27,7 +27,7 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class DriveShoot extends SequentialCommandGroup {
     public DriveShoot(boolean isRight) {
-        addCommands(
+        super(
                 new DrivePathweaverPath("back"),
                 new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
                 new AutoAimShoot(true)
