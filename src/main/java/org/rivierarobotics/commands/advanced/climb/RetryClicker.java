@@ -23,31 +23,29 @@ package org.rivierarobotics.commands.advanced.climb;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
+import org.rivierarobotics.util.RRTimer;
 
 public class RetryClicker extends CommandBase {
     private final ClimbClaws climbClaws;
-    private final int counterMax;
     private final ClimbPositions positions;
-    private int counter = 0;
+    private RRTimer rrTimer;
 
     public RetryClicker(int counterMax, ClimbPositions positions) {
         this.climbClaws = ClimbClaws.getInstance();
-        this.counterMax = counterMax;
         this.positions = positions;
+        this.rrTimer = new RRTimer(counterMax * 50);
         addRequirements(climbClaws);
     }
 
     @Override
     public void execute() {
-        if (climbClaws.isSwitchSet(positions)) {
-            this.counter++;
-        } else {
-            this.counter = 0;
+        if (!climbClaws.isSwitchSet(positions)) {
+            this.rrTimer.reset();
         }
     }
 
     @Override
     public boolean isFinished() {
-        return counter >= counterMax;
+        return rrTimer.finished();
     }
 }
