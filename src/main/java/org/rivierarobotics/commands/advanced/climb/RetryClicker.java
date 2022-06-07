@@ -38,6 +38,11 @@ public class RetryClicker extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        rrTimer.reset();
+    }
+
+    @Override
     public void execute() {
         if (!climbClaws.isSwitchSet(positions)) {
             this.rrTimer.reset();
