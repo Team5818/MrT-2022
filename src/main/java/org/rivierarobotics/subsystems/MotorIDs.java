@@ -24,7 +24,7 @@ public class MotorIDs {
     // Global Constants
     public static final String CANFD_NAME = "can1";
 
-    // Drivetrain
+    // Drive Train
     public static final int FRONT_RIGHT_DRIVE = 1;
     public static final int FRONT_RIGHT_STEER = 2;
     public static final int FRONT_LEFT_DRIVE = 3;
