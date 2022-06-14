@@ -26,7 +26,6 @@ import org.rivierarobotics.lib.shuffleboard.RobotShuffleboard;
 public class Logging {
     public static final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     public static final RobotShuffleboard robotShuffleboard = new RobotShuffleboard();
-    public static double autoStartTime = 0.0;
 
     private Logging() {
     }

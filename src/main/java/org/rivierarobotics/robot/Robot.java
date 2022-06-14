@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
     private SendableChooser<Command> chooser;
     private boolean autoFlag = false;
     private boolean ran = false;
+    public static double autoStartTime = 0.0;
 
     @Override
     public void disabledPeriodic() {
@@ -255,7 +256,7 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
 
         resetRobotPoseAndGyro();
-        Logging.autoStartTime = Timer.getFPGATimestamp();
+        Robot.autoStartTime = Timer.getFPGATimestamp();
         try {
             var command = chooser.getSelected();
             if (command != null) {

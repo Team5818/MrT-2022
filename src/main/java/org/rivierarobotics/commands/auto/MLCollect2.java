@@ -31,6 +31,7 @@ import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.RotateBall;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
 import org.rivierarobotics.robot.Logging;
+import org.rivierarobotics.robot.Robot;
 
 public class MLCollect2 extends SequentialCommandGroup {
     public MLCollect2(boolean isRight) {
@@ -46,7 +47,7 @@ public class MLCollect2 extends SequentialCommandGroup {
                           new RotateBall().withTimeout(1),
                           new DriveToClosest().withTimeout(1),
                           new WaitCommand(2)
-                  ).withInterrupt(() -> Timer.getFPGATimestamp() - Logging.autoStartTime >= 11),
+                  ).withInterrupt(() -> Timer.getFPGATimestamp() - Robot.autoStartTime >= 11),
                   new CollectBalls()
                 ),
                 new RotateToTargetFromPose(),
