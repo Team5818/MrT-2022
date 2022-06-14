@@ -41,11 +41,10 @@ public class ShooterControl extends CommandBase {
     @Override
     public void execute() {
         var voltage = MathUtil.fitDeadband(joystick.getY()) * MAX_VOLTAGE;
-        if (floppasActuator.getAngle() > ShooterConstant.MAX_ACTUATOR_TICKS && voltage > 0) {
+        if ((floppasActuator.getAngle() > ShooterConstant.MAX_ACTUATOR_TICKS && voltage > 0) || (floppasActuator.getAngle() < ShooterConstant.MIN_ACTUATOR_TICKS && voltage < 0)) {
             floppasActuator.setVoltage(0);
-        } else if (floppasActuator.getAngle() < ShooterConstant.MIN_ACTUATOR_TICKS && voltage < 0) {
-            floppasActuator.setVoltage(0);
-        } else {
+        }
+         else {
             floppasActuator.setVoltage(voltage);
         }
     }
