@@ -78,12 +78,8 @@ public class FloppaActuator extends SubsystemBase {
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 1000);
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(Filesystem.getOperatingDirectory().getPath() + "/temp.txt"));
-            if (br.ready()) {
-                actuatorMotor.getEncoder().setPosition(Float.parseFloat(br.readLine()));
-            }
-            br.close();
+        try (var br = new BufferedReader(new FileReader(Filesystem.getOperatingDirectory().getPath() + "/temp.txt"))) {
+            actuatorMotor.getEncoder().setPosition(Float.parseFloat(br.readLine()));
         } catch (Exception e) {
             // Ignore all read exceptions
         }
