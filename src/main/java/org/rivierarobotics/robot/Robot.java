@@ -62,11 +62,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Robot extends TimedRobot {
+    public static double autoStartTime = 0.0;
     private final Field2d field2d = new Field2d();
     private SendableChooser<Command> chooser;
     private boolean autoFlag = false;
     private boolean ran = false;
-    public static double autoStartTime = 0.0;
 
     @Override
     public void disabledPeriodic() {
