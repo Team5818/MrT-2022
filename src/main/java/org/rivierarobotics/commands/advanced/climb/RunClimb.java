@@ -46,26 +46,36 @@ public class RunClimb extends SequentialCommandGroup {
             first = ClimbPositions.LOW;
         }
         addCommands(
+                //Open all pistons
                 new OpenAllPistons(),
+                //Begin moving until the switch is confirmed
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(first)),
                         new ClimbSetPosition(ClimbPositions.LOW, reversed)
                 ),
+                //Engage the piston and wait to let the pneumatics catch up
                 new TogglePiston(first, true, 0),
                 new WaitCommand(0.25),
+                //Begin moving until the switch is confirmed, and then stop
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(ClimbPositions.MID)),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE)),
                 new ClimbSetVoltage(reversed, 0),
+                //Engage the piston
                 new TogglePiston(ClimbPositions.MID, true, 0),
+                //Move to position where release of the first hook is possible
                 new ClimbSetPositionSlow(ClimbPositions.MID, reversed).withTimeout(3),
+                //Release, and give it a moment to do it properly
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
+                //Begin moving until the switch is set, then engage and continue moving to ensure grip
                 new ParallelDeadlineGroup(new RetryClicker(15, last),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
                 new TogglePiston(last, true, 0),
                 new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15).withTimeout(0.5),
+                //Move to position where the second claw can be disengaged, and then do so
                 new ClimbSetPositionSlow(ClimbPositions.HIGH, reversed).withTimeout(3),
                 new TogglePiston(ClimbPositions.MID, false, 0),
+                //Move to final rest position, wait is necessary for it to actually move because of some issue with the command ending
                 new ClimbSetAngle(-0.88, reversed),
                 new WaitCommand(4)
         );
