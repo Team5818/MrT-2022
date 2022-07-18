@@ -64,12 +64,10 @@ public class IntakeSensors {
     public boolean isTeamBall() {
         var bc = getBallColor();
 
-        if (bc.equals("no ball") || (DriverStation.getAlliance() == DriverStation.Alliance.Blue && bc.equals("blue"))) {
-            return true;
-        } else {
-            return (DriverStation.getAlliance() == DriverStation.Alliance.Red
-                    || DriverStation.getAlliance() == DriverStation.Alliance.Invalid)
-                    && Objects.equals(bc, "red");
+        switch (bc) {
+            case "blue": return DriverStation.getAlliance() == DriverStation.Alliance.Blue;
+            case "red": return DriverStation.getAlliance() != DriverStation.Alliance.Blue;
+            default: return true;
         }
     }
 

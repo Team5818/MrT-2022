@@ -279,12 +279,6 @@ public class Robot extends TimedRobot {
 
     private void initializeAllSubsystems() {
         DriveTrain.getInstance();
-        try {
-            Thread.sleep(500);
-        } catch (Exception e) {
-            // Ignore all exceptions during sleep
-        }
-
         IntakePiston.getInstance();
         FloppaActuator.getInstance();
         FloppaFlywheels.getInstance();
