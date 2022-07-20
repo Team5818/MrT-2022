@@ -263,7 +263,8 @@ public class Robot extends TimedRobot {
                 CommandScheduler.getInstance().schedule(command);
             }
         } catch (Exception ignored) {
-            //if this fails we need robot code to still try to work in teleop so unless debugging there is no case where we want this to throw anything.
+            // If this fails we need robot code to still try to work in teleop,
+            // so unless debugging there is no case where we want this to throw anything.
         }
     }
 

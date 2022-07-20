@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.auto;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
@@ -45,9 +44,7 @@ public class FindBall extends SequentialCommandGroup {
     @Override
     public boolean isFinished() {
         MLCore core = MLCore.getInstance();
-        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-
-        var balls = core.getDetectedObjects().get(ballColor);
+        var balls = core.getBallObjects();
         if (balls != null) {
             var trajectory = MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
             return trajectory != null;

@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.advanced.drive;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
@@ -58,9 +57,7 @@ public class DriveToClosest extends SequentialCommandGroup {
     @Override
     public void execute() {
         MLCore core = MLCore.getInstance();
-        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-
-        var balls = core.getDetectedObjects().get(ballColor);
+        var balls = core.getBallObjects();
         if (balls == null || balls.isEmpty()) {
             return;
         }

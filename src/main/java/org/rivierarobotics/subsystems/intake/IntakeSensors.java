@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
-import java.util.Objects;
-
 // do not make this a subsystem please thank you
 public class IntakeSensors {
     private static IntakeSensors INSTANCE;

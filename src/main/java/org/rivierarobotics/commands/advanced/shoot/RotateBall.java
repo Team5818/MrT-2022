@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.advanced.shoot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
@@ -39,9 +38,7 @@ public class RotateBall extends CommandBase {
     @Override
     public void execute() {
         MLCore core = MLCore.getInstance();
-        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-
-        var balls = core.getDetectedObjects().get(ballColor);
+        var balls = core.getBallObjects();
         if (balls == null || balls.isEmpty()) {
             return;
         }

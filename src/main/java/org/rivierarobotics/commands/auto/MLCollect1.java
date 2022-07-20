@@ -30,7 +30,6 @@ import org.rivierarobotics.commands.advanced.drive.RotateToTargetFromPose;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.advanced.shoot.RotateBall;
 import org.rivierarobotics.commands.basic.collect.SetIntakeState;
-import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.robot.Robot;
 
 public class MLCollect1 extends SequentialCommandGroup {

@@ -28,7 +28,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
@@ -64,9 +63,7 @@ public class MLCore {
         var currentY = currentPose.getY();
 
         MLCore core = MLCore.getInstance();
-        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
-
-        var balls = core.getDetectedObjects().get(ballColor);
+        var balls = core.getBallObjects();
         if (balls == null || balls.isEmpty()) {
             return null;
         }
@@ -146,5 +143,10 @@ public class MLCore {
             e.printStackTrace();
         }
         return new MLResponse();
+    }
+
+    public List<MLObject> getBallObjects() {
+        var ballColor = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red";
+        return getDetectedObjects().get(ballColor);
     }
 }
