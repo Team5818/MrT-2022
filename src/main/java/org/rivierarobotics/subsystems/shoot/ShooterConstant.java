@@ -21,19 +21,21 @@
 package org.rivierarobotics.subsystems.shoot;
 
 public class ShooterConstant {
-    //FloppaActuator
+    // FloppaActuator
     public static final double MAX_ACTUATOR_ACCELERATION = 1800;
     public static final double MAX_ACTUATOR_VELOCITY = 1800;
-    public static final float ACTUATOR_ZERO_TICKS = -13.14f;
-    public static final float MAX_ACTUATOR_TICKS = 22.3f + ACTUATOR_ZERO_TICKS;
-    public static final float MIN_ACTUATOR_TICKS = -8.56f + ACTUATOR_ZERO_TICKS;
+    public static float ACTUATOR_ZERO_TICKS = 0f; // Set on init
+    public static final float MAX_ACTUATOR_TICKS = 22.21f + ACTUATOR_ZERO_TICKS;
+    public static final float MIN_ACTUATOR_TICKS = -13.19f + ACTUATOR_ZERO_TICKS;
     public static final double ACTUATOR_GEARING = 125;
-    //FloppaFlywheels
+
+    // FloppaFlywheels
     public static final double MAX_FLYWHEEL_ACCELERATION = 0;
     public static final double MAX_FLYWHEEL_VELOCITY = 0;
     public static final double MOTOR_TICKS = 2048;
     public static final double DEGREES_PER_TICK = 1 / MOTOR_TICKS;
-    //Universal
+
+    // Universal
     public static final int TIMEOUTMS = 60;
 
     private ShooterConstant() {

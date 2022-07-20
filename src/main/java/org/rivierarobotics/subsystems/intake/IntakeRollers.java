@@ -43,6 +43,8 @@ public class IntakeRollers extends SubsystemBase {
         rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 1000);
         rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 1000);
         rollerMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 1000);
+        rollerMotor.setSmartCurrentLimit(20);
+        rollerMotor.setSecondaryCurrentLimit(20);
     }
 
     public void setRollerVoltage(double v) {

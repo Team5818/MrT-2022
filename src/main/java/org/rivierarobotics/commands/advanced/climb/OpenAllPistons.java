@@ -33,8 +33,8 @@ public class OpenAllPistons extends InstantCommand {
 
     @Override
     public void initialize() {
-        climb.setPiston(ClimbPositions.LOW, true);
-        climb.setPiston(ClimbPositions.MID, true);
-        climb.setPiston(ClimbPositions.HIGH, true);
+        climb.setPiston(ClimbPositions.LOW, false);
+        climb.setPiston(ClimbPositions.MID, false);
+        climb.setPiston(ClimbPositions.HIGH, false);
     }
 }

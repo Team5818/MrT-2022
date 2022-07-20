@@ -40,8 +40,8 @@ public class IntakePiston extends SubsystemBase {
     private final Compressor compressor;
 
     public IntakePiston() {
-        this.p1 = new Piston(1);
-        this.p2 = new Piston(2);
+        this.p1 = new Piston(0);
+        this.p2 = new Piston(1);
         this.compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     }
 

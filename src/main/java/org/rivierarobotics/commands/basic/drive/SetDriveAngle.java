@@ -21,9 +21,7 @@
 package org.rivierarobotics.commands.basic.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.util.Gyro;
 
 public class SetDriveAngle extends CommandBase {
     private final DriveTrain dt;
@@ -42,7 +40,7 @@ public class SetDriveAngle extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(DriveTrain.getInstance().getTargetRotationAngle(), angle, 1);
+        return dt.getRotationSpeed() == 0;
     }
 
     @Override

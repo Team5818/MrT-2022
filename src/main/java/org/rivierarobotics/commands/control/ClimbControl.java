@@ -39,8 +39,8 @@ public class ClimbControl extends CommandBase {
 
     @Override
     public void execute() {
-        var xSpeed = MathUtil.fitDeadband(-leftJoystick.getY()) * PEAK_VOLTAGE;
-        this.climb.setVoltage(xSpeed);
+        var speed = MathUtil.fitDeadband(-leftJoystick.getY()) * PEAK_VOLTAGE;
+        this.climb.setVoltage(speed);
     }
 }
 

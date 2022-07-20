@@ -30,21 +30,21 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class CrazyWildCollectionBouncyHousePath extends SequentialCommandGroup {
     public CrazyWildCollectionBouncyHousePath() {
-        addCommands(
+        super(
                 new SetIntakeState(true),
                 new AutoAimShoot(true).withTimeout(1.6),
-                new SetDriveAngle(-90).withTimeout(0.5),
                 new ParallelDeadlineGroup(
-                  new DrivePathPlannerPath("fiveBallStart", 5, 1.2),
+                  new DrivePathPlannerPath("fiveBallStart", 9, 5),
                   new CollectBalls()
                 ),
-                new SetDriveAngle(-47).withTimeout(1.2),
+                new SetDriveAngle(-47).withTimeout(1.25),
                 new AutoAimShoot(true),
                 new ParallelDeadlineGroup(
-                        new DrivePathPlannerPath("fiveBallEnd", 7, 2),
+                        new DrivePathPlannerPath("fiveBallEnd", 9, 5),
                         new CollectBalls()
                 ),
-                new AutoAimShoot(true)
+                new AutoAimShoot(true),
+                new MLCollect2(false)
         );
     }
 }

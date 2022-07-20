@@ -24,19 +24,14 @@ public enum ShooterLocations {
     LAUNCHPAD_A(0, 0, 0),
     LAUNCHPAD_B(1,  0, 0),
     LOW_GOAL(60, 0, 0),
-    FENDER(110, 0 - 0.15, 0);
+    FENDER(5250, -5, 0);
 
-    public final double flyWheelSpeed;
+    public final double flywheelSpeed;
     public final double floppaAngle;
     public final double driveAngle;
 
-    ShooterLocations(double flyWheelSpeed, double floppaAngle, double driveAngle) {
-        this.flyWheelSpeed = flyWheelSpeed;
-        double floppaRaw = FloppaActuator.convertAngleToTicks(floppaAngle);
-        //comment out this check if it causes problems while creating locations
-        if (!(ShooterConstant.MIN_ACTUATOR_TICKS < floppaRaw && floppaRaw < ShooterConstant.MAX_ACTUATOR_TICKS)) {
-            throw new RuntimeException("floppa Angle out of bounds");
-        }
+    ShooterLocations(double flywheelSpeed, double floppaAngle, double driveAngle) {
+        this.flywheelSpeed = flywheelSpeed;
         this.floppaAngle = floppaAngle;
         this.driveAngle = driveAngle;
     }

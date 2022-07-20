@@ -31,7 +31,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Filesystem;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
-import org.rivierarobotics.robot.Robot;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
@@ -62,8 +61,8 @@ public class FieldMesh {
         return INSTANCE;
     }
 
-    public static final double MAX_VELOCITY = 5;
-    public static final double MAX_ACCELERATION = 0.5;
+    public static final double MAX_VELOCITY = 4;
+    public static final double MAX_ACCELERATION = 1;
     public static final double DEFAULT_NODE_WEIGHT = 0;
     private double totalTimePassed = 0;
     private double amtOfCalculations = 1;
@@ -111,7 +110,7 @@ public class FieldMesh {
             sc.nextLine();
 
             while (sc.hasNextLine()) {
-                //Don't you even think about moving this to satisfy check style... I'm watching you ()-()
+                // Don't you even think about moving this to satisfy check style... I'm watching you ()-()
                 final double wt = sc.nextDouble();
                 sc.nextLine();
                 var m = parseInput.matcher(sc.nextLine());
@@ -320,11 +319,8 @@ public class FieldMesh {
             config.setKinematics(swerveDriveKinematics);
             config.setEndVelocity(shouldStop ? 0 : MAX_VELOCITY);
             config.setStartVelocity(initialVelocity);
-            if (Robot.isReal()) {
-                //config.setKinematics(DriveTrain.getInstance().getSwerveDriveKinematics());
-            }
 
-            Trajectory trajectory = null;
+            Trajectory trajectory;
             try {
                 trajectory = TrajectoryGenerator.generateTrajectory(
                     poseList.get(0),

@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems.swervedrive;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -33,6 +34,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
+import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.StatusFrameDemolisher;
@@ -42,42 +44,43 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SwerveModule {
-    //Physical Constants
+    // Physical Constants
     private static final double WHEEL_RADIUS = 0.03915;
     private static final int ENCODER_RESOLUTION = 4096;
     private static final double STEER_MOTOR_TICK_TO_ANGLE = 2 * Math.PI / ENCODER_RESOLUTION; // radians
     private static final double GEARING = 11.0 / 40.0;
     private static final double DRIVE_MOTOR_TICK_TO_SPEED = 10 * GEARING * (2 * Math.PI * WHEEL_RADIUS) / 2048; // m/s
-    //Controller Constants
-    private static final double MAX_TURN_ACCELERATION = 20000; //Rad/s
-    private static final double MAX_TURN_VELOCITY = 20000; //Rad/s
+    // Controller Constants
+    private static final double MAX_TURN_ACCELERATION = 20000; // Rad/s
+    private static final double MAX_TURN_VELOCITY = 20000; // Rad/s
     private static final int TIMEOUT_MS = 60;
 
-    //Turn Motor Motion Magic
+    // Turn Motor Motion Magic
     private static final MotionMagicConfig TM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             MAX_TURN_VELOCITY, MAX_TURN_ACCELERATION,
-            200, 0,
+            600, 0,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig TM_MM_PID = new PIDConfig(3.5, 0.002, 0, 0);
+    private static final PIDConfig TM_MM_PID = new PIDConfig(3.4, 0.01, 0, 0);
 
-    //Drive Motor Motion Magic
+    // Drive Motor Motion Magic
     private static final MotionMagicConfig DM_MM_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
-            10.0, DriveTrain.MAX_ACCELERATION,
+            10000.0, 10000.0,
             300, 2,
             TIMEOUT_MS, 10
     );
-    private static final PIDConfig DM_MM_PID = new PIDConfig(0.0026, 0.0001, 0, 0.06);
+    private static final PIDConfig DM_MM_PID = new PIDConfig(0.035, 0.0001, 0, 0.06);
 
     private final double zeroTicks;
+    private final RSTab shuffleboard;
 
-    //Motors
+    // Motors
     private final WPI_TalonFX driveMotor;
     private final WPI_TalonSRX steeringMotor;
 
-    //Thread-Safe angles to reduce CAN usage
+    // Thread-Safe angles to reduce CAN usage
     private final AtomicReference<Double> swerveAngle = new AtomicReference<>(0.0);
     private final AtomicReference<Double> swerveSpeed = new AtomicReference<>(0.0);
 
@@ -90,16 +93,18 @@ public class SwerveModule {
      */
     public SwerveModule(int driveMotorChannel, int steeringMotorChannel, double zeroTicks) {
         this.zeroTicks = zeroTicks;
+        this.shuffleboard = Logging.robotShuffleboard.getTab("Swerve");
 
-        //Steer Motor
+        // Steer Motor
         this.steeringMotor = new WPI_TalonSRX(steeringMotorChannel);
+        TM_MM_PID.setTolerance(0);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, TM_MM_PID, TM_MM_CONFIG, steeringMotor);
         steeringMotor.setSensorPhase(false);
         steeringMotor.setInverted(true);
         steeringMotor.setNeutralMode(NeutralMode.Coast);
         StatusFrameDemolisher.demolishStatusFrames(steeringMotor, false);
 
-        //Drive Motor
+        // Drive Motor
         this.driveMotor = new WPI_TalonFX(driveMotorChannel, MotorIDs.CANFD_NAME);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor, DM_MM_PID, DM_MM_CONFIG, driveMotor);
         driveMotor.configAllowableClosedloopError(0, 5);
@@ -109,10 +114,20 @@ public class SwerveModule {
         driveMotor.setNeutralMode(NeutralMode.Brake);
         StatusFrameDemolisher.demolishStatusFrames(driveMotor, false);
 
-        //Current Limits
-        this.driveMotor.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.05));
-        this.steeringMotor.configContinuousCurrentLimit(30);
-        this.steeringMotor.configPeakCurrentLimit(30);
+        // Current Limits
+        this.driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 50 * 0.4, 50 * 0.4, 0.05)); //How much current the motor can use (outputwise)
+        this.driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 53 * 0.4, 53 * 0.4, 0.05)); //How much current can be supplied to the motor
+
+        this.steeringMotor.enableCurrentLimit(true);
+        this.steeringMotor.configPeakCurrentDuration(0);
+        this.steeringMotor.configContinuousCurrentLimit(20);
+        this.steeringMotor.configPeakCurrentLimit(21);
+
+        try {
+            Thread.sleep(200);
+        } catch (Exception e) {
+            // Ignore all sleep exceptions
+        }
     }
 
     public double getAbsoluteAngle() {
@@ -148,12 +163,12 @@ public class SwerveModule {
     }
 
     public void setDriveMotorVelocity(double metersPerSecond) {
-        Logging.robotShuffleboard.getTab("Swerve").setEntry("target velocity " + driveMotor.getDeviceID(), metersPerSecond);
+        shuffleboard.setEntry("target velocity " + driveMotor.getDeviceID(), metersPerSecond);
         driveMotor.set(TalonFXControlMode.Velocity, convertVelocityToTicksPer100ms(metersPerSecond));
     }
 
     public void setSteeringMotorAngle(double angleInRad) {
-        Logging.robotShuffleboard.getTab("Swerve").setEntry("target Angle" + driveMotor.getDeviceID(), angleInRad);
+        shuffleboard.setEntry("target Angle" + driveMotor.getDeviceID(), angleInRad);
         steeringMotor.set(ControlMode.Position, angleInRad);
     }
 

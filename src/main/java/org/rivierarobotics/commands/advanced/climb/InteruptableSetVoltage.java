@@ -29,7 +29,7 @@ public class InteruptableSetVoltage extends CommandBase {
     private final Climb climb;
 
     public InteruptableSetVoltage(boolean reversed, double voltage) {
-        this.modifier = reversed ? 1 : -1;
+        this.modifier = reversed ? -1 : 1;
         this.voltage = voltage;
         this.climb = Climb.getInstance();
         addRequirements(climb);

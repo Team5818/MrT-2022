@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands.advanced.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
@@ -53,10 +52,9 @@ public class DriveToPoint extends CommandBase {
         try {
             var dtPose = driveTrain.getPoseEstimator().getRobotPose();
             var trajectory = aiFieldMesh.getTrajectory(dtPose.getX(), dtPose.getY(), targetX, targetY, shouldStop, initialVelocity, driveTrain.getSwerveDriveKinematics());
-            Logging.aiFieldDisplay.updatePath(trajectory);
             this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
         } catch (Exception e) {
-            //invalid trajectory
+            // Invalid trajectory
         }
     }
 

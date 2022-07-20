@@ -20,8 +20,8 @@
 
 package org.rivierarobotics.commands.advanced.drive;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import org.rivierarobotics.lib.shuffleboard.RSTab;
 import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.util.Gyro;
@@ -32,49 +32,42 @@ import org.rivierarobotics.util.swerve.TrajectoryFollower;
 import java.util.Comparator;
 
 public class DriveToClosest extends SequentialCommandGroup {
+    private static final double X_SPEED = 1;
+    private static final double Y_SPEED = 1;
     private final DriveTrain driveTrain;
     private final Gyro gyro;
     private final FieldMesh aiFieldMesh;
+    private final RSTab shuffleboard;
     private TrajectoryFollower trajectoryFollower;
-
 
     public DriveToClosest() {
         this.driveTrain = DriveTrain.getInstance();
         this.aiFieldMesh = FieldMesh.getInstance();
         this.gyro = Gyro.getInstance();
+        this.shuffleboard = Logging.robotShuffleboard.getTab("drive");
+        addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
-        gyro.resetGyro();
+        var trajectory = MLCore.trajectory != null ? MLCore.trajectory : MLCore.getBallTrajectory(driveTrain, gyro, aiFieldMesh);
+        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
+    }
 
-        var currentPose = driveTrain.getPoseEstimator().getRobotPose();
-        var currentX = currentPose.getX();
-        var currentY = currentPose.getY();
-
-
+    @Override
+    public void execute() {
         MLCore core = MLCore.getInstance();
-        var ballColor = DriverStation.getAlliance().name().toLowerCase();
-        var balls = core.getDetectedObjects().get(ballColor);
+        var balls = core.getBallObjects();
         if (balls == null || balls.isEmpty()) {
             return;
         }
 
         balls.sort(Comparator.comparingDouble(a -> a.relativeLocationDistance));
         var ball = balls.get(0);
-
-        var gyroMath = gyro.getRotation2d().getRadians() + Math.toRadians(ball.ty);
-        var targetX = currentX + Math.cos(gyroMath) * ball.relativeLocationDistance;
-        var targetY = currentY + Math.sin(gyroMath) * ball.relativeLocationDistance;
-
-        var trajectory = aiFieldMesh.getTrajectory(currentX, currentY, targetX,  targetY, true, 0, driveTrain.getSwerveDriveKinematics());
-        Logging.aiFieldDisplay.updatePath(trajectory);
-
-        this.trajectoryFollower = new TrajectoryFollower(trajectory, false, gyro, driveTrain);
-    }
-
-    @Override
-    public void execute() {
+        shuffleboard.setEntry("tx", ball.tx).setEntry("ty", ball.ty);
+        driveTrain.setTargetRotationAngle(Gyro.getInstance().getRotation2d().getDegrees() + ball.ty);
+        driveTrain.drive(X_SPEED, ball.tx >= 0 ? Y_SPEED : -Y_SPEED, driveTrain.getRotationSpeed(), false);
+        driveTrain.drive(0, 0, driveTrain.getRotationSpeed(), true);
         trajectoryFollower.followController();
     }
 

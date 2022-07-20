@@ -36,11 +36,12 @@ public class ClimbClaws extends SubsystemBase {
     }
 
     public boolean isPistonSet(ClimbPositions climbModule) {
-        return climbModule.piston.getState();
+        return climbModule.pistonClosed.getState();
     }
 
     public void setPiston(ClimbPositions climbModule, boolean isEngaged) {
-        climbModule.piston.set(isEngaged);
+        climbModule.pistonClosed.set(!isEngaged);
+        climbModule.pistonOpen.set(isEngaged);
     }
 
     public boolean isSwitchSet(ClimbPositions climbModule) {

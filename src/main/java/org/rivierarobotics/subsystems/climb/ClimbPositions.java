@@ -26,31 +26,36 @@ import org.rivierarobotics.subsystems.MotorIDs;
 public enum ClimbPositions {
     LOW(
             ClimbConstants.LOW_RADIANS,
-            new Piston(MotorIDs.SOLENOID_LOW),
+            new Piston(MotorIDs.SOLENOID_LOW_OPEN),
+            new Piston(MotorIDs.SOLENOID_LOW_CLOSED),
             new DigitalInput(MotorIDs.LOW_SWITCH_A),
             new DigitalInput(MotorIDs.LOW_SWITCH_B)
     ),
     MID(
             ClimbConstants.MID_RADIANS,
-            new Piston(MotorIDs.SOLENOID_MID),
+            new Piston(MotorIDs.SOLENOID_MID_OPEN),
+            new Piston(MotorIDs.SOLENOID_MID_CLOSED),
             new DigitalInput(MotorIDs.MID_SWITCH_A),
             new DigitalInput(MotorIDs.MID_SWITCH_B)
     ),
     HIGH(
             ClimbConstants.HIGH_RADIANS,
-            new Piston(MotorIDs.SOLENOID_HIGH),
+            new Piston(MotorIDs.SOLENOID_HIGH_OPEN),
+            new Piston(MotorIDs.SOLENOID_HIGH_CLOSED),
             new DigitalInput(MotorIDs.HIGH_SWITCH_A),
             new DigitalInput(MotorIDs.HIGH_SWITCH_B)
     );
 
     public final double locationRadians;
-    public final Piston piston;
+    public final Piston pistonOpen;
+    public final Piston pistonClosed;
     public final DigitalInput input1;
     public final DigitalInput input2;
 
-    ClimbPositions(double rads, Piston piston, DigitalInput input1, DigitalInput input2) {
+    ClimbPositions(double rads, Piston pistonOpen, Piston pistonClosed, DigitalInput input1, DigitalInput input2) {
         this.locationRadians = rads;
-        this.piston = piston;
+        this.pistonOpen = pistonOpen;
+        this.pistonClosed = pistonClosed;
         this.input1 = input1;
         this.input2 = input2;
     }

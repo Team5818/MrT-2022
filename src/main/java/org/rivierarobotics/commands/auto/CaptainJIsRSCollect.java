@@ -31,10 +31,11 @@ import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 
 public class CaptainJIsRSCollect extends SequentialCommandGroup {
     public CaptainJIsRSCollect() {
-        addCommands(
+        super(
                 new SetDriveAngle(-90).withTimeout(1.5),
                 new ParallelDeadlineGroup(
-                        new DrivePathPlannerPath("updatedcollectone", 2, 0.5).andThen(new WaitCommand(0.2)),
+                        new DrivePathPlannerPath("updatedcollectone", 2, 0.5)
+                                .andThen(new WaitCommand(0.2)),
                         new CollectBalls(),
                         new SetIntakeState(true)
                 ),
@@ -43,13 +44,15 @@ public class CaptainJIsRSCollect extends SequentialCommandGroup {
                 new AutoAimShoot(true),
                 new SetDriveAngle(149.74).withTimeout(1.5),
                 new ParallelDeadlineGroup(
-                        new DrivePathPlannerPath("updatedCollectAnother", 2, 0.5).andThen(new WaitCommand(0.2)),
+                        new DrivePathPlannerPath("updatedCollectAnother", 2, 0.5)
+                                .andThen(new WaitCommand(0.2)),
                         new CollectBalls(),
                         new SetIntakeState(true)
                 ),
                 new SetIntakeState(false),
                 new SetDriveAngle(-60).withTimeout(1.5),
-                new AutoAimShoot(true)
+                new AutoAimShoot(true),
+                new MLCollect2(false)
         );
     }
 }

@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems.shoot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.lib.shuffleboard.RSTab;
@@ -30,6 +31,9 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
 import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class FloppaActuator extends SubsystemBase {
     public static FloppaActuator INSTANCE;
@@ -73,6 +77,12 @@ public class FloppaActuator extends SubsystemBase {
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 1000);
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
         this.actuatorMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 1000);
+
+        try (var br = new BufferedReader(new FileReader(Filesystem.getOperatingDirectory().getPath() + "/temp.txt"))) {
+            actuatorMotor.getEncoder().setPosition(Float.parseFloat(br.readLine()));
+        } catch (Exception e) {
+            // Ignore all read exceptions
+        }
     }
 
     /**
@@ -101,6 +111,7 @@ public class FloppaActuator extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
+        // Manual floppa control soft limits, autoaim has its own thing
         this.actuatorMotor.setVoltage(voltage);
     }
 }

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.robot.ControlMap;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
+import org.rivierarobotics.subsystems.shoot.ShooterConstant;
 
 public class ShooterControl extends CommandBase {
     private static final double MAX_VOLTAGE = 10;
@@ -40,6 +41,12 @@ public class ShooterControl extends CommandBase {
     @Override
     public void execute() {
         var voltage = MathUtil.fitDeadband(joystick.getY()) * MAX_VOLTAGE;
-        floppasActuator.setVoltage(voltage);
+        if (floppasActuator.getAngle() > ShooterConstant.MAX_ACTUATOR_TICKS && voltage > 0) {
+            floppasActuator.setVoltage(0);
+        } else if (floppasActuator.getAngle() < ShooterConstant.MIN_ACTUATOR_TICKS && voltage < 0) {
+            floppasActuator.setVoltage(0);
+        } else {
+            floppasActuator.setVoltage(voltage);
+        }
     }
 }

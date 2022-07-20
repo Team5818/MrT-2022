@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
-import java.util.Objects;
-
 // do not make this a subsystem please thank you
 public class IntakeSensors {
     private static IntakeSensors INSTANCE;
@@ -38,8 +36,6 @@ public class IntakeSensors {
         }
         return INSTANCE;
     }
-
-    private static final double COLOR_SENSOR_TOLERANCE = 0.1; //Color sensor's values can be 10% off of what the ideal values are.
 
     private final ColorSensorV3 colorSensor;
     private final AnalogInput distanceSensor;
@@ -66,10 +62,10 @@ public class IntakeSensors {
     public boolean isTeamBall() {
         var bc = getBallColor();
 
-        if (bc.equals("no ball") || (DriverStation.getAlliance() == DriverStation.Alliance.Blue && bc.equals("blue"))) {
-            return true;
-        } else {
-            return (DriverStation.getAlliance() == DriverStation.Alliance.Red || DriverStation.getAlliance() == DriverStation.Alliance.Invalid) && Objects.equals(bc, "red");
+        switch (bc) {
+            case "blue": return DriverStation.getAlliance() == DriverStation.Alliance.Blue;
+            case "red": return DriverStation.getAlliance() != DriverStation.Alliance.Blue;
+            default: return true;
         }
     }
 

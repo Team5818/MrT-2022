@@ -68,11 +68,12 @@ public class EjectShoot extends CommandBase {
     @Override
     public void initialize() {
         this.isEjectPos = true;
-        this.firstRun = false;
+        this.firstRun = true;
         this.rrTimer = new RRTimer(0.5);
         if (useLimelight) {
-            this.flywheelSpeed = ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance());
-            this.floppaPosition = ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance());
+            double llDist = Limelight.getInstance().getDistance();
+            this.flywheelSpeed = ShootingTables.createFloppaSpeedTable().getValue(llDist);
+            this.floppaPosition = ShootingTables.createFloppaAngleTable().getValue(llDist);
         }
 
         this.floppaActuator.setFloppaAngle(this.floppaPosition);
@@ -96,7 +97,7 @@ public class EjectShoot extends CommandBase {
             floppaFlywheels.setFlywheelSpeed(flywheelSpeed);
             intakeBelt.setMiniWheelMotorVoltage(miniwheelVoltage);
             intakeBelt.setBeltVoltage(beltVoltage);
-            this.firstRun = true;
+            this.firstRun = false;
         }
     }
 }

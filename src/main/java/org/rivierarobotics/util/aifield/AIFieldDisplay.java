@@ -24,6 +24,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -47,6 +48,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * The Thread is only here for testing purposes only, Updating the path should be done by calling updatePath
  */
 public class AIFieldDisplay {
+    private static final int SIZE = 480;
     private static final int SCALING_FACTOR = 1000;
     private final ScheduledExecutorService mainImageThread = Executors.newSingleThreadScheduledExecutor();
     private final AtomicReference<Mat> renderFrame = new AtomicReference<>();
@@ -66,25 +68,23 @@ public class AIFieldDisplay {
         this.scalingRatio = (double) SCALING_FACTOR / fieldMesh.fieldHeight;
         this.outputStream = CameraServer.putVideo("AI Mesh", imgWidth, imgHeight);
         outputStream.setResolution(480, 480);
-        updatePath(fieldMesh.getTrajectory(0, 0, 5, 5, true, 0.1, DriveTrain.getInstance().getSwerveDriveKinematics()));
+        updatePath(fieldMesh.getTrajectory(5, 4, 3, 4, true, 0.1,
+            DriveTrain.getInstance().getSwerveDriveKinematics()));
         updateField();
-        if (fieldThread) {
-            if (!DriverStation.isFMSAttached()) {
-                startFieldThread(updateRate);
-            }
+        if (fieldThread && !DriverStation.isFMSAttached()) {
+            startFieldThread(updateRate);
         }
     }
 
     private void startFieldThread(int updateRate) {
-        int size = 480;
-        Mat resizeFrame = new Mat(size, (int) (size * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
+        Mat resizeFrame = new Mat(SIZE, (int) (SIZE * scalingRatio), CvType.CV_8UC(4), Scalar.all(100));
         mainImageThread.scheduleWithFixedDelay(() -> {
             Mat image = renderFrame.getOpaque();
-            Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
-            if (!Robot.isReal()) {
-                outputStream.putFrame(image);
-            } else {
+            if (Robot.isReal()) {
+                Imgproc.resize(image, resizeFrame, resizeFrame.size(), 0, 0, 2);
                 outputStream.putFrame(resizeFrame);
+            } else {
+                outputStream.putFrame(image);
             }
         }, 0, updateRate, TimeUnit.MILLISECONDS);
     }
@@ -111,6 +111,7 @@ public class AIFieldDisplay {
                     10
                 );
             }
+            Core.flip(newRenderFrame, newRenderFrame, 0);
             renderFrame.setOpaque(newRenderFrame);
         });
     }

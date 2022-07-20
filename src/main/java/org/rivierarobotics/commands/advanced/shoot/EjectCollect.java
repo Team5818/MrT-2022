@@ -30,6 +30,7 @@ import org.rivierarobotics.util.RRTimer;
 public class EjectCollect extends CommandBase {
     private final double miniwheelVoltage;
     private final double beltVoltage;
+    private final double flywheelVoltage = 11;
     private boolean isEjectPos = true;
     private boolean firstRun = false;
     private RRTimer timer;
@@ -66,7 +67,7 @@ public class EjectCollect extends CommandBase {
         if (!IntakeSensors.getInstance().isTeamBall() && !isEjectPos) {
             floppaActuator.setFloppaAngle(0);
             intakeBelt.setMiniWheelMotorVoltage(-miniwheelVoltage);
-            floppaFlywheels.setVoltage(8);
+            floppaFlywheels.setVoltage(flywheelVoltage);
             this.isEjectPos = true;
             timer.reset();
         } else if (isEjectPos) {

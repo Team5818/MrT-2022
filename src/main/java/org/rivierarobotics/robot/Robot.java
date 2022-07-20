@@ -23,17 +23,22 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
-import org.rivierarobotics.commands.advanced.drive.PathGeneration;
-import org.rivierarobotics.commands.auto.DriveShoot;
-import org.rivierarobotics.commands.auto.MLAuto;
+import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
+import org.rivierarobotics.commands.auto.Fast3Ball;
+import org.rivierarobotics.commands.auto.FourBallLeftAuto;
+import org.rivierarobotics.commands.auto.MLCenter;
+import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
+import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
 import org.rivierarobotics.commands.control.SwerveControl;
 import org.rivierarobotics.subsystems.climb.Climb;
@@ -45,6 +50,7 @@ import org.rivierarobotics.subsystems.intake.IntakeRollers;
 import org.rivierarobotics.subsystems.intake.IntakeSensors;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShooterConstant;
 import org.rivierarobotics.subsystems.shoot.ShootingTables;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
@@ -56,16 +62,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Robot extends TimedRobot {
+    public static double autoStartTime = 0.0;
     private final Field2d field2d = new Field2d();
     private SendableChooser<Command> chooser;
     private boolean autoFlag = false;
     private boolean ran = false;
 
     @Override
+    public void disabledPeriodic() {
+        DriveTrain.getInstance().drive(0, 0, 0, true);
+        CommandScheduler.getInstance().cancelAll();
+    }
+
+    @Override
     public void robotInit() {
         initializeAllSubsystems();
         initializeDefaultCommands();
         Gyro.getInstance().resetGyro();
+        ShooterConstant.ACTUATOR_ZERO_TICKS = (float) FloppaActuator.getInstance().getTicks();
 
         var drive = Shuffleboard.getTab("Drive");
         drive.add(field2d)
@@ -73,28 +87,24 @@ public class Robot extends TimedRobot {
                 .withPosition(0, 0)
                 .withWidget("Field");
 
-        //initialize custom loops
-        addPeriodic(() -> {
-            DriveTrain.getInstance().periodicLogging();
-        }, 0.5, 0.0);
-        addPeriodic(this::shuffleboardLogging, 2.00, 0.01);
+        // Initialize custom loops
+        addPeriodic(() -> DriveTrain.getInstance().periodicLogging(), 0.5, 0.0);
+        addPeriodic(this::shuffleboardLogging, 0.5, 0.01);
 
         this.chooser = new SendableChooser<>();
-        chooser.addOption("Drive backwards", new PathGeneration(-2, 0));
-        chooser.addOption("MLAUTO", new MLAuto());
+        chooser.addOption("ML Center", new MLCenter());
         chooser.addOption("No Auto", null);
-        chooser.addOption("SimpleShootR", new DriveShoot(true));
-        chooser.addOption("SimpleShootL", new DriveShoot(false));
-        chooser.setDefaultOption("Drive backwards", new PathGeneration(-2, 0));
+        chooser.addOption("2BallLeftML", new TwoBallLeftAuto());
+        chooser.addOption("4BallLeftML", new FourBallLeftAuto());
+        chooser.addOption("3BallRightML", new Fast3Ball());
+        chooser.addOption("5ball", new CrazyWildCollectionBouncyHousePath());
 
         Shuffleboard.getTab("Autos").add(chooser);
 
         FieldMesh.getInstance();
-
+        resetRobotPoseAndGyro();
         var threader = Executors.newSingleThreadScheduledExecutor();
-        threader.scheduleWithFixedDelay(new Thread(() -> {
-            Gyro.getInstance().updateRotation2D();
-        }), 0, 5, TimeUnit.MILLISECONDS);
+        threader.scheduleWithFixedDelay(new Thread(() -> Gyro.getInstance().updateRotation2D()), 0, 5, TimeUnit.MILLISECONDS);
         LiveWindow.disableAllTelemetry();
         LiveWindow.setEnabled(false);
     }
@@ -105,7 +115,11 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
         var command = CommandScheduler.getInstance().requiring(IntakeRollers.getInstance());
         if (command == null && ran) {
-            CommandScheduler.getInstance().schedule(new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE).withTimeout(0.2));
+            CommandScheduler.getInstance().schedule(
+                new SetBeltVoltage(-CollectBalls.COLLECT_VOLTAGE)
+                .andThen(new WaitCommand(0.1))
+                .andThen(new SetBeltVoltage(0))
+            );
             this.ran = false;
         }
         if (command != null) {
@@ -128,14 +142,14 @@ public class Robot extends TimedRobot {
 
     private void shuffleboardLogging() {
         if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(13)) {
-            Logging.robotShuffleboard.getTab("Field").setEntry("logging", false);
+            Logging.robotShuffleboard.getTab("Field")
+                    .setEntry("Logging", false);
             return;
         }
 
         Logging.robotShuffleboard.getTab("Field")
-                .setEntry("logging", false);
-        Logging.robotShuffleboard.getTab("Field")
-                .setEntry("RPOSE", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
+                .setEntry("Logging", true)
+                .setEntry("Robot Pose", DriveTrain.getInstance().getPoseEstimator().getRobotPose().toString());
         var sb = Logging.robotShuffleboard;
 
         var drive = sb.getTab("Drive");
@@ -144,6 +158,7 @@ public class Robot extends TimedRobot {
         drive.setEntry("Turn Min", DriveTrain.getInstance().getMinTurnSpeed());
 
         var climb = sb.getTab("Climb");
+
         var collect = sb.getTab("collect");
         var ml = sb.getTab("ML");
         var limeLight = sb.getTab("LL");
@@ -157,39 +172,42 @@ public class Robot extends TimedRobot {
         var floppShooter = FloppaFlywheels.getInstance();
         var floppActuator = FloppaActuator.getInstance();
         var intakeSensors = IntakeSensors.getInstance();
-        dt.periodicLogging();
-        drive.setEntry("x vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
-        drive.setEntry("y vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
-        drive.setEntry("turn vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
-        drive.setEntry("x pose", dt.getPoseEstimator().getRobotPose().getX());
-        drive.setEntry("y pose", dt.getPoseEstimator().getRobotPose().getY());
-        drive.setEntry("pose angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
 
+        var trajectory = MLCore.getBallTrajectory(dt, Gyro.getInstance(), FieldMesh.getInstance());
+        drive.setEntry("Valid Trajectory", trajectory != null);
+        dt.periodicLogging();
+        drive.setEntry("X Vel (m/s)", dt.getChassisSpeeds().vxMetersPerSecond);
+        drive.setEntry("y Vel (m/s)", dt.getChassisSpeeds().vyMetersPerSecond);
+        drive.setEntry("Turn Vel (deg/s)", Math.toDegrees(dt.getChassisSpeeds().omegaRadiansPerSecond));
+        drive.setEntry("X Pose", dt.getPoseEstimator().getRobotPose().getX());
+        drive.setEntry("Y Pose", dt.getPoseEstimator().getRobotPose().getY());
+        drive.setEntry("Pose Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
         drive.setEntry("Robot Angle", dt.getPoseEstimator().getRobotPose().getRotation().getDegrees());
-        drive.setEntry("is field centric", dt.getFieldCentric());
+        drive.setEntry("Field Centric", dt.getFieldCentric());
 
         drive.setEntry("Gyro Angle", Gyro.getInstance().getRotation2d().getDegrees());
-        drive.setEntry("Gyro Angle raw", Gyro.getInstance().getRotation2d().getRadians());
-        drive.setEntry("target rotation angle", dt.getTargetRotationAngle());
+        drive.setEntry("Gyro Angle Raw", Gyro.getInstance().getRotation2d().getRadians());
+        drive.setEntry("Target Rotation Angle", dt.getTargetRotationAngle());
 
         climb.setEntry("Climb Position", cl.getAngle());
-        climb.setEntry("Switch low", clc.isSwitchSet(ClimbPositions.LOW));
-        climb.setEntry("Switch mid", clc.isSwitchSet(ClimbPositions.MID));
-        climb.setEntry("Switch high", clc.isSwitchSet(ClimbPositions.HIGH));
-        climb.setEntry("Piston low", clc.isPistonSet(ClimbPositions.LOW));
-        climb.setEntry("Piston mid", clc.isPistonSet(ClimbPositions.MID));
-        climb.setEntry("Piston high", clc.isPistonSet(ClimbPositions.HIGH));
-        climb.setEntry("Kp", Climb.KP);
-        climb.setEntry("velocity", cl.getVelocity());
+        climb.setEntry("Climb Raw Ticks", cl.getRawAngle());
+        climb.setEntry("Absolute ticks", cl.getDutyCyclePose());
+        climb.setEntry("Switch Low", clc.isSwitchSet(ClimbPositions.LOW));
+        climb.setEntry("Switch Mid", clc.isSwitchSet(ClimbPositions.MID));
+        climb.setEntry("Switch High", clc.isSwitchSet(ClimbPositions.HIGH));
+        climb.setEntry("Piston Low", clc.isPistonSet(ClimbPositions.LOW));
+        climb.setEntry("Piston Mid", clc.isPistonSet(ClimbPositions.MID));
+        climb.setEntry("Piston High", clc.isPistonSet(ClimbPositions.HIGH));
+        climb.setEntry("kP", Climb.KP);
+        climb.setEntry("Velocity", cl.getVelocity());
 
-        limeLight.setEntry("shooter speed", floppShooter.getTargetVelocity());
-        limeLight.setEntry("distance", Limelight.getInstance().getDistance());
+        limeLight.setEntry("Shooter Speed", floppShooter.getTargetVelocity());
+        limeLight.setEntry("Distance", Limelight.getInstance().getDistance());
 
         var cc = CommandScheduler.getInstance().requiring(FloppaActuator.getInstance());
         if (cc != null) {
-            limeLight.setEntry("CC FLOP", cc.getName());
+            limeLight.setEntry("CC Flop", cc.getName());
         }
-
 
         var redBalls = mlCore.getDetectedObjects().get("red");
         if (redBalls != null && redBalls.size() > 0) {
@@ -203,32 +221,32 @@ public class Robot extends TimedRobot {
             }
         }
 
-        shoot.setEntry("flywheel right v", floppShooter.getRightFlywheelSpeed());
-        shoot.setEntry("flywheel left v", -floppShooter.getLeftFlywheelSpeed());
-        shoot.setEntry("target speed", floppShooter.getTargetVelocity());
-        shoot.setEntry("actuator angle", floppActuator.getAngle());
-        shoot.setEntry("actuator tick raw", floppActuator.getTicks());
+        shoot.setEntry("Flywheel Right V", floppShooter.getRightFlywheelSpeed());
+        shoot.setEntry("Flywheel Left V", -floppShooter.getLeftFlywheelSpeed());
+        shoot.setEntry("Target Speed", floppShooter.getTargetVelocity());
+        shoot.setEntry("Actuator Angle", floppActuator.getAngle());
+        shoot.setEntry("Actuator Tick Raw", floppActuator.getTicks());
         shoot.setEntry("Detected Red", intakeSensors.getColorSensor().getColor().red);
         shoot.setEntry("Detected Green", intakeSensors.getColorSensor().getColor().green);
         shoot.setEntry("Detected Blue", intakeSensors.getColorSensor().getColor().blue);
-        shoot.setEntry("ball color", intakeSensors.getBallColor());
+        shoot.setEntry("Ball Color", intakeSensors.getBallColor());
         shoot.setEntry("Is Alliance Ball", intakeSensors.isTeamBall());
-        shoot.setEntry("alliance color", DriverStation.getAlliance().toString());
+        shoot.setEntry("Alliance Color", DriverStation.getAlliance().toString());
 
-        limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance());
-        limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTx());
+        limeLight.setEntry("LL Adjusted Dist", Limelight.getInstance().getAdjustedDistance(
+            Limelight.getInstance().getDistance(), Limelight.getInstance().getTx()));
+        limeLight.setEntry("LL Adjusted Angle", Limelight.getInstance().getAdjustedTxAndCalc());
         limeLight.setEntry("LL TX", Limelight.getInstance().getTx());
-        limeLight.setEntry("flop tuning", floppShooter.getTargetVelocity());
+        limeLight.setEntry("Flop Tuning", floppShooter.getTargetVelocity());
         limeLight.setEntry("LL Assist Angle", Limelight.getInstance().getShootingAssistAngle());
         limeLight.setEntry("Correct Position", Limelight.getInstance().getLLAbsPose().toString());
-        limeLight.setEntry("Target Ang", ShootingTables.getFloppaAngleTable().getValue(Limelight.getInstance().getDistance()));
-        limeLight.setEntry("Target Speed", ShootingTables.getFloppaSpeedTable().getValue(Limelight.getInstance().getDistance()));
-
-
-        limeLight = sb.getTab("LL");
+        limeLight.setEntry("Target Angle", ShootingTables.createFloppaAngleTable()
+            .getValue(Limelight.getInstance().getDistance()));
+        limeLight.setEntry("Target Speed", ShootingTables.createFloppaSpeedTable()
+            .getValue(Limelight.getInstance().getDistance()));
         limeLight.setEntry("Hood Angle", floppActuator.getAngle());
 
-        field.setEntry("drive pos", dt.getPoseEstimator().getRobotPose().toString());
+        field.setEntry("Drive Pos", dt.getPoseEstimator().getRobotPose().toString());
     }
 
     @Override
@@ -238,19 +256,26 @@ public class Robot extends TimedRobot {
         initializeDefaultCommands();
 
         resetRobotPoseAndGyro();
+        Robot.autoStartTime = Timer.getFPGATimestamp();
         try {
             var command = chooser.getSelected();
             if (command != null) {
                 CommandScheduler.getInstance().schedule(command);
             }
         } catch (Exception ignored) {
-            //if this fails we need robot code to still try to work in teleop so unless debugging there is no case where we want this to throw anything.
+            // If this fails we need robot code to still try to work in teleop,
+            // so unless debugging there is no case where we want this to throw anything.
         }
     }
 
     @Override
     public void disabledInit() {
         CommandScheduler.getInstance().cancelAll();
+    }
+
+    @Override
+    public void teleopExit() {
+        Climb.getInstance().killController();
     }
 
     private void initializeAllSubsystems() {
@@ -267,18 +292,16 @@ public class Robot extends TimedRobot {
     }
 
     private void resetRobotPoseAndGyro() {
+        Climb.getInstance().resetZeros(false);
         Gyro.getInstance().resetGyro();
-        DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(10, 10, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().getPoseEstimator().resetPose(new Pose2d(5, 7, Gyro.getInstance().getRotation2d()));
+        DriveTrain.getInstance().drive(0, 0, 0, true);
     }
 
     private void initializeDefaultCommands() {
         CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), new SwerveControl());
-        //CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
+        CommandScheduler.getInstance().setDefaultCommand(Climb.getInstance(), new ClimbControl());
         CommandScheduler.getInstance().setDefaultCommand(FloppaActuator.getInstance(), new ShooterControl());
-    }
-
-    @Override
-    public void simulationInit() {
     }
 }
 

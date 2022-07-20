@@ -31,21 +31,21 @@ import java.util.List;
  */
 public class FieldNode implements Comparable<FieldNode> {
     public static class Edge {
-        Edge(double weight, FieldNode node) {
+        public double weight;
+        public FieldNode node;
+
+        private Edge(double weight, FieldNode node) {
             this.weight = weight;
             this.node = node;
         }
-
-        public double weight;
-        public FieldNode node;
     }
 
-    boolean isValid = true;
+    public boolean isValid = true;
 
     public FieldNode parent = null;
-    double xValue = 0;
-    double yValue = 0;
-    double nodeWeight = 0;
+    public double xValue;
+    public double yValue;
+    public double nodeWeight = 0;
 
     public List<Edge> neighbors;
 

@@ -27,9 +27,9 @@ public class ClimbSetAngle extends InstantCommand {
     private final Climb climb;
     private final double angle;
 
-    public ClimbSetAngle(double angle) {
+    public ClimbSetAngle(double angle, boolean reversed) {
         this.climb = Climb.getInstance();
-        this.angle = angle;
+        this.angle = reversed ? -angle : angle;
         addRequirements(this.climb);
     }
 

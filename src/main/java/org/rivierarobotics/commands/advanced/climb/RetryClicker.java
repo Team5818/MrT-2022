@@ -18,42 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.advanced.drive;
+package org.rivierarobotics.commands.advanced.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.lib.MathUtil;
-import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
-import org.rivierarobotics.subsystems.vision.Limelight;
-import org.rivierarobotics.util.Gyro;
+import org.rivierarobotics.subsystems.climb.ClimbClaws;
+import org.rivierarobotics.subsystems.climb.ClimbPositions;
+import org.rivierarobotics.util.RRTimer;
 
+public class RetryClicker extends CommandBase {
+    private final ClimbClaws climbClaws;
+    private final ClimbPositions positions;
+    private RRTimer rrTimer;
 
-public class AngulationToTargetBasedOffOfPose extends CommandBase {
-    private final DriveTrain dt;
-    private final Gyro gyro;
-
-    public AngulationToTargetBasedOffOfPose() {
-        this.dt = DriveTrain.getInstance();
-        this.gyro = Gyro.getInstance();
-        addRequirements(this.dt);
+    public RetryClicker(int counterMax, ClimbPositions positions) {
+        this.climbClaws = ClimbClaws.getInstance();
+        this.positions = positions;
+        this.rrTimer = new RRTimer(counterMax * 50);
+        addRequirements(climbClaws);
     }
 
     @Override
     public void initialize() {
-        dt.setTargetRotationAngle(Limelight.getInstance().getShootingAssistAngle());
+        rrTimer.reset();
     }
 
     @Override
     public void execute() {
-        dt.drive(0, 0, dt.getRotationSpeed(), true);
+        if (!climbClaws.isSwitchSet(positions)) {
+            this.rrTimer.reset();
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return !MathUtil.isWithinTolerance(gyro.getRotation2d().getDegrees(), dt.getTargetRotationAngle(), 1);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        dt.drive(0, 0, 0, false);
+        return rrTimer.finished();
     }
 }

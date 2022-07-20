@@ -25,13 +25,15 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetPosition;
+import org.rivierarobotics.commands.basic.climb.ClimbSetPositionSlow;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double RUN_VOLTAGE = 9;
+    private static final double RUN_VOLTAGE = 7.5;
 
     public RunClimb(boolean reversed) {
         final ClimbPositions first;
@@ -44,28 +46,38 @@ public class RunClimb extends SequentialCommandGroup {
             first = ClimbPositions.LOW;
         }
         addCommands(
+                //Open all pistons
                 new OpenAllPistons(),
+                //Begin moving until the switch is confirmed
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(first)),
                         new ClimbSetPosition(ClimbPositions.LOW, reversed)
                 ),
+                //Engage the piston and wait to let the pneumatics catch up
                 new TogglePiston(first, true, 0),
                 new WaitCommand(0.25),
+                //Begin moving until the switch is confirmed, and then stop
                 new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(ClimbPositions.MID)),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE)),
                 new ClimbSetVoltage(reversed, 0),
+                //Engage the piston
                 new TogglePiston(ClimbPositions.MID, true, 0),
-                new WaitPiston(ClimbPositions.MID, 0.5, 1, reversed),
+                //Move to position where release of the first hook is possible
+                new ClimbSetPositionSlow(ClimbPositions.MID, reversed).withTimeout(3),
+                //Release, and give it a moment to do it properly
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
-                new ParallelDeadlineGroup(new WaitUntilCommand(() -> ClimbClaws.getInstance().isSwitchSet(last)),
+                //Begin moving until the switch is set, then engage and continue moving to ensure grip
+                new ParallelDeadlineGroup(new RetryClicker(15, last),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
-                new ClimbSetVoltage(reversed, RUN_VOLTAGE * 0.5),
                 new TogglePiston(last, true, 0),
-                new WaitPiston(last, 0.5, 1.0, reversed),
-                new ClimbSetVoltage(reversed, 0),
+                new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15).withTimeout(0.5),
+                //Move to position where the second claw can be disengaged, and then do so
+                new ClimbSetPositionSlow(ClimbPositions.HIGH, reversed).withTimeout(3),
                 new TogglePiston(ClimbPositions.MID, false, 0),
-                new ClimbSetPosition(ClimbPositions.HIGH, reversed)
+                //Move to final rest position, wait is necessary for it to actually move because of some issue with the command ending
+                new ClimbSetAngle(-0.88, reversed),
+                new WaitCommand(4)
         );
     }
 }

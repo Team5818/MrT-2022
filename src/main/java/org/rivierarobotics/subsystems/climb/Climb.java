@@ -23,8 +23,11 @@ package org.rivierarobotics.subsystems.climb;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.lib.MathUtil;
 import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
@@ -50,10 +53,14 @@ public class Climb extends SubsystemBase {
             100, 0, ClimbConstants.TIMEOUT_MS, 10
     );
     private static final PIDConfig CM_MM_PID = new PIDConfig(KP, 0, 0, 0);
+    private static final double RANGE = 467626;
+    private static final double ABSOLUTE_ZERO_RADIANS = 0;
 
     private final WPI_TalonFX climbMaster;
     private final WPI_TalonFX climbFollower;
+    private final DutyCycleEncoder dutyCycleEncoder = new DutyCycleEncoder(MotorIDs.CLIMB_ENCODER);
     private boolean play = true;
+    public double zeroTicks;
 
     private Climb() {
         this.climbMaster = new WPI_TalonFX(MotorIDs.CLIMB_ROTATE_A, MotorIDs.CANFD_NAME);
@@ -68,8 +75,13 @@ public class Climb extends SubsystemBase {
         climbMaster.setSensorPhase(false);
         climbFollower.configFeedbackNotContinuous(true, ClimbConstants.TIMEOUT_MS);
         climbFollower.setSensorPhase(false);
+        climbMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 2));
+        climbFollower.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 2));
+        dutyCycleEncoder.setDistancePerRotation(Math.PI * 2);
+
         StatusFrameDemolisher.demolishStatusFrames(climbMaster, false);
         StatusFrameDemolisher.demolishStatusFrames(climbFollower, true);
+        resetZeros(false);
     }
 
     public void setCoast(boolean coast) {
@@ -82,8 +94,23 @@ public class Climb extends SubsystemBase {
         }
     }
 
+    public double getDutyCyclePose() {
+        return MathUtil.wrapToCircle(dutyCycleEncoder.getDistance() - ClimbConstants.ABSOLUTE_ZERO, Math.PI * 2);
+    }
+
+    public void resetZeros(boolean absolute) {
+        double tickAdjust;
+        tickAdjust = climbMaster.getSelectedSensorPosition();
+        if (absolute) {
+            // You must replace the Absolute Zero first to make this work
+            tickAdjust += (getDutyCyclePose() - ABSOLUTE_ZERO_RADIANS) * ClimbConstants.MOTOR_ANGLE_TO_TICK;
+        }
+        this.zeroTicks = tickAdjust;
+        MotorUtil.setSoftLimits(tickAdjust + RANGE, tickAdjust - RANGE, climbMaster);
+    }
+
     public void setPosition(double radians) {
-        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK);
+        climbMaster.set(ControlMode.MotionMagic, radians * ClimbConstants.MOTOR_ANGLE_TO_TICK + zeroTicks);
     }
 
     public void setPlay(boolean play) {
@@ -95,11 +122,20 @@ public class Climb extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        climbMaster.setVoltage(voltage);
+        climbMaster.setVoltage(play ? voltage : 0);
     }
 
     public double getAngle() {
-        return climbMaster.getSelectedSensorPosition() * ClimbConstants.MOTOR_TICK_TO_ANGLE;
+        return (climbMaster.getSelectedSensorPosition() - zeroTicks) * ClimbConstants.MOTOR_TICK_TO_ANGLE;
+    }
+
+    /** For use clearing the saved MM angle. */
+    public void killController() {
+        climbMaster.set(ControlMode.Disabled, 0);
+    }
+
+    public double getRawAngle() {
+        return climbMaster.getSelectedSensorPosition();
     }
 
     public double getVelocity() {
