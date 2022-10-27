@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -107,6 +108,7 @@ public class Robot extends TimedRobot {
         threader.scheduleWithFixedDelay(new Thread(() -> Gyro.getInstance().updateRotation2D()), 0, 5, TimeUnit.MILLISECONDS);
         LiveWindow.disableAllTelemetry();
         LiveWindow.setEnabled(false);
+        SmartDashboard.putNumber("speed", 0);
     }
 
     @Override
@@ -125,6 +127,9 @@ public class Robot extends TimedRobot {
         if (command != null) {
             this.ran = true;
         }
+        SmartDashboard.putNumber("angle", FloppaActuator.getInstance().getAngle());
+        SmartDashboard.putNumber("distance", Limelight.getInstance().getDistance());
+//        FloppaFlywheels.getInstance().setFlywheelSpeed(SmartDashboard.getNumber("speed", 0));
     }
 
     @Override

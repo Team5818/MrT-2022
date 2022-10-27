@@ -26,9 +26,7 @@ public class ShootingTables {
     public static InterpolationTable createFloppaAngleTable() {
         var angleTable = new InterpolationTable();
 
-        angleTable.addValue(2.684, 12.6);
-        angleTable.addValue(1.2, 9.36);
-        angleTable.addValue(4.62, 14.261);
+        angleTable.addValue(1.25, 7.6);
 
         return angleTable;
     }
@@ -36,10 +34,7 @@ public class ShootingTables {
     public static InterpolationTable createFloppaSpeedTable() {
         var speedTable = new InterpolationTable();
 
-        speedTable.addValue(2.684, 7000 * 1.0);
-        speedTable.addValue(4.62, 9400 * 1.0);
-        speedTable.addValue(1.2, 5700 * 1.0);
-        speedTable.addValue(3.14, 8100 * 1.0);
+        speedTable.addValue(1.25, 9000 * 1.0);
 
         return speedTable;
     }

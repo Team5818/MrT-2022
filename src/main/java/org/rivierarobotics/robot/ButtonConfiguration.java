@@ -26,17 +26,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.advanced.climb.ClimbInterruptToggle;
 import org.rivierarobotics.commands.advanced.climb.RunClimb;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
-import org.rivierarobotics.commands.advanced.shoot.AutoAimShootEject;
-import org.rivierarobotics.commands.advanced.shoot.FenderShot;
-import org.rivierarobotics.commands.advanced.shoot.RotateBall;
-import org.rivierarobotics.commands.advanced.shoot.TrackGoal;
+import org.rivierarobotics.commands.advanced.shoot.*;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.FindBall;
 import org.rivierarobotics.commands.auto.MLCollect1;
 import org.rivierarobotics.commands.basic.climb.ClimbSetAngle;
 import org.rivierarobotics.commands.basic.climb.ClimbSetVoltage;
 import org.rivierarobotics.commands.basic.climb.SetPiston;
+import org.rivierarobotics.commands.basic.collect.SetMiniwheelVoltage;
 import org.rivierarobotics.commands.basic.collect.ToggleIntakeState;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
 import org.rivierarobotics.commands.basic.drive.SetDriverAssist;
@@ -44,7 +41,9 @@ import org.rivierarobotics.commands.basic.shoot.SetFloppaZero;
 import org.rivierarobotics.commands.basic.shoot.SetFlywheelSpeed;
 import org.rivierarobotics.subsystems.climb.Climb;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
+import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
+import org.rivierarobotics.subsystems.shoot.ShooterConstant;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
@@ -97,8 +96,6 @@ public class ButtonConfiguration {
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
             .whenPressed(new SetFloppaZero());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
-            .whenPressed(new SetDriveAngle(-180));
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
             .whenPressed(new SetDriveAngle(180));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 3)
             .whileHeld(new SetFlywheelSpeed(0));
@@ -139,5 +136,7 @@ public class ButtonConfiguration {
             .whenPressed(new MLCollect1(false));
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 15)
             .whileHeld(new TrackGoal(false));
+//        new JoystickButton(ControlMap.DRIVER_BUTTONS,4)
+//                .whenPressed(new InstantCommand(() -> FloppaActuator.getInstance().))
     }
 }
