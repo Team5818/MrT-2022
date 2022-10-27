@@ -48,7 +48,7 @@ import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.swervedrive.DriveTrain;
 import org.rivierarobotics.subsystems.vision.Limelight;
 
-public class ButtonConfiguration {
+public class   ButtonConfiguration {
     public void initTeleop() {
         // DRIVER LEFT
 
@@ -94,7 +94,7 @@ public class ButtonConfiguration {
 
         // CO-DRIVER BUTTONS
 
-        new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 1)
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 4)
             .whenPressed(new SetFloppaZero());
         new JoystickButton(ControlMap.CO_DRIVER_BUTTONS, 2)
             .whenPressed(new SetDriveAngle(-180));
