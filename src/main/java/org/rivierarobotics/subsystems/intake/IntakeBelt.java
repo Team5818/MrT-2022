@@ -20,10 +20,12 @@
 
 package org.rivierarobotics.subsystems.intake;
 
+import org.rivierarobotics.subsystems.MotorIDs;
+
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.subsystems.MotorIDs;
 
 public class IntakeBelt extends SubsystemBase {
     private static IntakeBelt INSTANCE;
