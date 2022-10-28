@@ -20,9 +20,18 @@
 
 package org.rivierarobotics.robot;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
 import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
 import org.rivierarobotics.commands.auto.Fast3Ball;
@@ -50,18 +59,8 @@ import org.rivierarobotics.util.Gyro;
 import org.rivierarobotics.util.aifield.FieldMesh;
 import org.rivierarobotics.util.ml.MLCore;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Robot extends TimedRobot {
     public static double autoStartTime = 0.0;
