@@ -31,7 +31,6 @@ import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.MotorIDs;
 import org.rivierarobotics.util.smartmotion.SparkMotionConfig;
 import org.rivierarobotics.util.smartmotion.SparkSmartMotion;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 

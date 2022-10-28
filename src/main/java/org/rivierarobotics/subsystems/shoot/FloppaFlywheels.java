@@ -29,7 +29,6 @@ import org.rivierarobotics.lib.MotionMagicConfig;
 import org.rivierarobotics.lib.MotorUtil;
 import org.rivierarobotics.lib.PIDConfig;
 import org.rivierarobotics.subsystems.MotorIDs;
-
 import java.util.ArrayList;
 
 public class FloppaFlywheels extends SubsystemBase {
