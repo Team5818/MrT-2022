@@ -52,7 +52,7 @@ public class SetFloppaLimelight extends CommandBase {
             double dist = Limelight.getInstance().getDistance();
             this.floppasActuator.setFloppaAngle(ShootingTables.createFloppaAngleTable().getValue(dist));
             this.floppaFlywheels.setFlywheelSpeed(ShootingTables.createFloppaSpeedTable().getValue(dist));
-//            this.floppasActuator.setFloppaAngle(Limelight.getInstance().getTy());
+            // this.floppasActuator.setFloppaAngle(Limelight.getInstance().getTy());
         } else {
             this.floppasActuator.setFloppaAngle(angle);
             this.floppaFlywheels.setFlywheelSpeed(speed);
