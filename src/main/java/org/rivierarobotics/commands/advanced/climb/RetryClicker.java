@@ -33,7 +33,7 @@ public class RetryClicker extends CommandBase {
     public RetryClicker(int counterMax, ClimbPositions positions) {
         this.climbClaws = ClimbClaws.getInstance();
         this.positions = positions;
-        this.rrTimer = new RRTimer(counterMax * 50);
+        this.rrTimer = new RRTimer(counterMax);
         addRequirements(climbClaws);
     }
 

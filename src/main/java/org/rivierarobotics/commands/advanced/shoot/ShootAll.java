@@ -35,7 +35,7 @@ import org.rivierarobotics.subsystems.shoot.ShooterLocations;
 
 public class ShootAll extends ParallelDeadlineGroup {
     public static final double SHOOT_BELT_VOLTAGE = -8;
-    public static final double SHOOT_MINIWHEEL_VOLTAGE = 7;
+    public static final double SHOOT_MINIWHEEL_VOLTAGE = 3;
 
     public ShootAll() {
         super(

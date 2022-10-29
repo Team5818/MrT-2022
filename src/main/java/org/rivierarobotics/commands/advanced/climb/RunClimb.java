@@ -68,7 +68,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
                 //Begin moving until the switch is set, then engage and continue moving to ensure grip
-                new ParallelDeadlineGroup(new RetryClicker(15, last),
+                new ParallelDeadlineGroup(new RetryClicker(1, last),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
                 new TogglePiston(last, true, 0),
                 new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15).withTimeout(0.5),

@@ -27,7 +27,7 @@ import org.rivierarobotics.subsystems.vision.Limelight;
 import org.rivierarobotics.util.Gyro;
 
 public class TrackGoal extends CommandBase {
-    private static final double TOLERANCE = 3;
+    private static final double TOLERANCE = 5;
     private final DriveTrain drive;
     private final Limelight lime;
     private final Gyro gyro;
@@ -61,7 +61,7 @@ public class TrackGoal extends CommandBase {
 
             var newAngle = getTargetAngle();
 
-            if (MathUtil.isWithinTolerance(newAngle, drive.getTargetRotationAngle(), TOLERANCE)) {
+            if (!MathUtil.isWithinTolerance(newAngle, drive.getTargetRotationAngle(), TOLERANCE)) {
                 drive.setTargetRotationAngle(newAngle);
             }
         }
