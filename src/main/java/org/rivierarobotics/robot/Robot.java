@@ -89,15 +89,11 @@ public class Robot extends TimedRobot {
         addPeriodic(this::shuffleboardLogging, 0.5, 0.01);
 
         this.chooser = new SendableChooser<>();
-        chooser.addOption("ML Center", new MLCenter());
-        chooser.addOption("No Auto", null);
-        chooser.addOption("2BallLeftML", new TwoBallLeftAuto());
-        chooser.addOption("4BallLeftML", new FourBallLeftAuto());
-        chooser.addOption("3BallRightML", new Fast3Ball());
         chooser.addOption("5ball", new CrazyWildCollectionBouncyHousePath());
         chooser.addOption("DriveShootRight", new DriveShoot(true));
         chooser.addOption("DriveShootLeft", new DriveShoot(false));
         chooser.addOption("FastThreeBall", new Fast3Ball());
+        chooser.addOption("FenderTaxi", new FenderTaxi());
 
         Shuffleboard.getTab("Autos").add(chooser);
 

@@ -57,7 +57,7 @@ public class   ButtonConfiguration {
 //            .toggleWhenPressed(new ClimbSetAngle(0, false));
 
         new JoystickButton(ControlMap.DRIVER_LEFT, 1)
-                .whenPressed(new SetDriveAngle(-180));
+                .whenPressed(new SetDriveAngle(0));
         new JoystickButton(ControlMap.DRIVER_LEFT, 2)
                 .whenPressed(new SetDriveAngle(180));
 
