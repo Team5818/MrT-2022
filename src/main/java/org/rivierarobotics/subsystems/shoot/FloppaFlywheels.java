@@ -50,8 +50,8 @@ public class FloppaFlywheels extends SubsystemBase {
             500, 0, ShooterConstant.TIMEOUTMS, 10
     );
 
-    private final WPI_TalonFX leftFlywheel;
-    private final WPI_TalonFX rightFlywheel;
+    public final WPI_TalonFX leftFlywheel;
+    public final WPI_TalonFX rightFlywheel;
 
     private double targetVelocity = 8000;
 

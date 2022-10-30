@@ -35,7 +35,7 @@ public class IntakeRollers extends SubsystemBase {
         return INSTANCE;
     }
 
-    private final CANSparkMax rollerMotor;
+    public final CANSparkMax rollerMotor;
 
     public IntakeRollers() {
         this.rollerMotor = new CANSparkMax(MotorIDs.COLLECT_INTAKE, CANSparkMaxLowLevel.MotorType.kBrushless);

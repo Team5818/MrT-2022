@@ -99,6 +99,11 @@ public class   ButtonConfiguration {
         new JoystickButton(ControlMap.DRIVER_BUTTONS, 13)
             .whenReleased(new SetDriverAssist(false));
 
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 14)
+                .whenHeld(new PowerSave(true));
+        new JoystickButton(ControlMap.DRIVER_BUTTONS, 14)
+                .whenReleased(new PowerSave(false));
+
         // CO-DRIVER LEFT
         new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 1)
                 .whenPressed(new ToggleIntakeState());

@@ -35,8 +35,8 @@ public class IntakeBelt extends SubsystemBase {
         return INSTANCE;
     }
 
-    private final WPI_TalonSRX beltMotor;
-    private final WPI_TalonSRX miniWheelMotor;
+    public final WPI_TalonSRX beltMotor;
+    public final WPI_TalonSRX miniWheelMotor;
 
     public IntakeBelt() {
         this.beltMotor = new WPI_TalonSRX(MotorIDs.COLLECT_BELTS);
