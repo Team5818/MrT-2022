@@ -21,6 +21,8 @@
 package org.rivierarobotics.commands.basic.shoot;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.robot.ControlMap;
+import org.rivierarobotics.robot.Logging;
 import org.rivierarobotics.subsystems.shoot.FloppaActuator;
 import org.rivierarobotics.subsystems.shoot.FloppaFlywheels;
 import org.rivierarobotics.subsystems.shoot.ShootingTables;
@@ -50,8 +52,15 @@ public class SetFloppaLimelight extends CommandBase {
     public void initialize() {
         if (isLimelight) {
             double dist = Limelight.getInstance().getDistance();
-            this.floppasActuator.setFloppaAngle(ShootingTables.createFloppaAngleTable().getValue(dist));
-            this.floppaFlywheels.setFlywheelSpeed(ShootingTables.createFloppaSpeedTable().getValue(dist));
+            if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(15)) {
+                double betterAngle = Limelight.getInstance().getTy() + dist/6;
+                this.floppasActuator.setFloppaAngle(betterAngle);
+                this.floppaFlywheels.setFlywheelSpeed(dist * 900 + 5000);
+            } else {
+                this.floppasActuator.setFloppaAngle(ShootingTables.createFloppaAngleTable().getValue(dist));
+                this.floppaFlywheels.setFlywheelSpeed(ShootingTables.createFloppaSpeedTable().getValue(dist));
+            }
+
         } else {
             this.floppasActuator.setFloppaAngle(angle);
             this.floppaFlywheels.setFlywheelSpeed(speed);
