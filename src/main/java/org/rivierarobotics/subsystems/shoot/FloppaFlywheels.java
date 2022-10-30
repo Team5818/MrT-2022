@@ -42,8 +42,8 @@ public class FloppaFlywheels extends SubsystemBase {
         return INSTANCE;
     }
 
-    private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.1, 0.0, 5.6, 0.047);
-    private static final PIDConfig FLYWHEEL_CONFIG_R = new PIDConfig(0.1, 0.0, 5.6, 0.047);
+    private static final PIDConfig FLYWHEEL_CONFIG_L = new PIDConfig(0.13, 0.001, 6.2, 0.047);
+    private static final PIDConfig FLYWHEEL_CONFIG_R = new PIDConfig(0.13, 0.001, 6.2, 0.047);
     private static final MotionMagicConfig MOTION_MAGIC_CONFIG = new MotionMagicConfig(
             new ArrayList<>(), true,
             ShooterConstant.MAX_FLYWHEEL_VELOCITY, ShooterConstant.MAX_FLYWHEEL_ACCELERATION,

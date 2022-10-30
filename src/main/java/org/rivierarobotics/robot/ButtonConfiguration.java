@@ -100,9 +100,9 @@ public class   ButtonConfiguration {
             .whenReleased(new SetDriverAssist(false));
 
         // CO-DRIVER LEFT
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 1)
+        new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 1)
                 .whenPressed(new ToggleIntakeState());
-        new JoystickButton(ControlMap.CO_DRIVER_LEFT, 2)
+        new JoystickButton(ControlMap.CO_DRIVER_RIGHT, 2)
                 .whenPressed(new CollectBalls());
         // CO-DRIVER RIGHT
 

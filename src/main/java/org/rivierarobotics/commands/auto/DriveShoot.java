@@ -21,15 +21,21 @@
 package org.rivierarobotics.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.drive.DrivePathweaverPath;
 import org.rivierarobotics.commands.advanced.shoot.AutoAimShoot;
 import org.rivierarobotics.commands.basic.drive.SetDriveAngle;
+import org.rivierarobotics.commands.basic.drive.SetDriveVelocity;
 
 public class DriveShoot extends SequentialCommandGroup {
     public DriveShoot(boolean isRight) {
         super(
-                new DrivePathweaverPath("back"),
-                new SetDriveAngle(isRight ? -70 : -135).withTimeout(2),
+                new SetDriveVelocity(1, 0, 0).withTimeout(2),
+                new WaitCommand(2.1),
+                new SetDriveVelocity(0,0,0),
+//                new DrivePathweaverPath("back")
+                new SetDriveAngle(isRight ? -90 : 90),
+                new WaitCommand(2),
                 new AutoAimShoot(true)
         );
     }

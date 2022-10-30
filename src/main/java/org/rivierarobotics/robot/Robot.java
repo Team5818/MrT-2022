@@ -28,15 +28,12 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.commands.advanced.collect.CollectBalls;
-import org.rivierarobotics.commands.auto.CrazyWildCollectionBouncyHousePath;
-import org.rivierarobotics.commands.auto.Fast3Ball;
-import org.rivierarobotics.commands.auto.FourBallLeftAuto;
-import org.rivierarobotics.commands.auto.MLCenter;
-import org.rivierarobotics.commands.auto.TwoBallLeftAuto;
+import org.rivierarobotics.commands.auto.*;
 import org.rivierarobotics.commands.basic.collect.SetBeltVoltage;
 import org.rivierarobotics.commands.control.ClimbControl;
 import org.rivierarobotics.commands.control.ShooterControl;
@@ -98,6 +95,9 @@ public class Robot extends TimedRobot {
         chooser.addOption("4BallLeftML", new FourBallLeftAuto());
         chooser.addOption("3BallRightML", new Fast3Ball());
         chooser.addOption("5ball", new CrazyWildCollectionBouncyHousePath());
+        chooser.addOption("DriveShootRight", new DriveShoot(true));
+        chooser.addOption("DriveShootLeft", new DriveShoot(false));
+        chooser.addOption("FastThreeBall", new Fast3Ball());
 
         Shuffleboard.getTab("Autos").add(chooser);
 
@@ -107,6 +107,7 @@ public class Robot extends TimedRobot {
         threader.scheduleWithFixedDelay(new Thread(() -> Gyro.getInstance().updateRotation2D()), 0, 5, TimeUnit.MILLISECONDS);
         LiveWindow.disableAllTelemetry();
         LiveWindow.setEnabled(false);
+        SmartDashboard.putNumber("period", getPeriod());
     }
 
     @Override

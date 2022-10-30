@@ -33,7 +33,7 @@ import org.rivierarobotics.subsystems.climb.ClimbClaws;
 import org.rivierarobotics.subsystems.climb.ClimbPositions;
 
 public class RunClimb extends SequentialCommandGroup {
-    private static final double RUN_VOLTAGE = 7.5;
+    private static final double RUN_VOLTAGE = 5;
 
     public RunClimb(boolean reversed) {
         final ClimbPositions first;
@@ -68,7 +68,7 @@ public class RunClimb extends SequentialCommandGroup {
                 new TogglePiston(first, false, 0),
                 new WaitCommand(0.15),
                 //Begin moving until the switch is set, then engage and continue moving to ensure grip
-                new ParallelDeadlineGroup(new RetryClicker(1, last),
+                new ParallelDeadlineGroup(new RetryClicker(25, last),
                         new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15)),
                 new TogglePiston(last, true, 0),
                 new InteruptableSetVoltage(reversed, RUN_VOLTAGE * 1.15).withTimeout(0.5),

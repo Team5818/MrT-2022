@@ -28,29 +28,33 @@ import org.rivierarobotics.util.RRTimer;
 public class RetryClicker extends CommandBase {
     private final ClimbClaws climbClaws;
     private final ClimbPositions positions;
-    private RRTimer rrTimer;
+//    private RRTimer rrTimer;
+    private int clicks = 0;
+    private int counterMax;
 
     public RetryClicker(int counterMax, ClimbPositions positions) {
         this.climbClaws = ClimbClaws.getInstance();
         this.positions = positions;
-        this.rrTimer = new RRTimer(counterMax);
+        this.counterMax = counterMax;
+//        this.rrTimer = new RRTimer(counterMax);
         addRequirements(climbClaws);
     }
 
     @Override
     public void initialize() {
-        rrTimer.reset();
+
     }
 
     @Override
     public void execute() {
         if (!climbClaws.isSwitchSet(positions)) {
-            this.rrTimer.reset();
+            clicks = 0;
         }
+        clicks++;
     }
 
     @Override
     public boolean isFinished() {
-        return rrTimer.finished();
+        return clicks >= counterMax;
     }
 }
