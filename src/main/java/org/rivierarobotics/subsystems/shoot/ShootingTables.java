@@ -36,11 +36,11 @@ public class ShootingTables {
     public static InterpolationTable createFloppaSpeedTable() {
         var speedTable = new InterpolationTable();
 
-        speedTable.addValue(2.684, 8000 * 1.0);
+        speedTable.addValue(2.684, 9000 * 1.0);
         speedTable.addValue(4.62, 9900 * 1.0);
         speedTable.addValue(1.2, 6800 * 1.0);
-        speedTable.addValue(1.6, 6000);
-        speedTable.addValue(3.14, 9400 * 1.0);
+        speedTable.addValue(1.6, 6500);
+        speedTable.addValue(3.14, 10000 * 1.0);
         speedTable.addValue(3.6, 10400 * 1.0);
 
         return speedTable;

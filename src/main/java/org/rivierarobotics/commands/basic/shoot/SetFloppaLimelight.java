@@ -57,9 +57,10 @@ public class SetFloppaLimelight extends CommandBase {
     public void initialize() {
         if (isLimelight) {
             double dist = Limelight.getInstance().getDistance();
-            if (ControlMap.CO_DRIVER_BUTTONS.getRawButton(15)) {
-                double betterAngle = getBetterAngle();
-                this.floppasActuator.setFloppaAngle(betterAngle);
+            if (ControlMap.DRIVER_BUTTONS.getRawButton(15)) {
+//                double betterAngle = getBetterAngle();
+//                this.floppasActuator.setFloppaAngle(betterAngle);
+                this.floppasActuator.setFloppaAngle(ShootingTables.createFloppaAngleTable().getValue(dist));
                 this.floppaFlywheels.setFlywheelSpeed(dist * 900 + 5000);
             } else {
                 this.floppasActuator.setFloppaAngle(ShootingTables.createFloppaAngleTable().getValue(dist));
